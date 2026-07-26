@@ -33,6 +33,7 @@ This repository contains the internship assignment solutions for **Code Plus Sof
 | Lesson | File | Topics Covered |
 |:------:|------|----------------|
 | 01 | [`lesson-1.dart`](lesson-1.dart) | Variables, data types, `const` / `final`, nullable types, conditionals, string interpolation |
+| 02 | [`lesson-2.dart`](lesson-2.dart) | Anonymous functions, arrow functions (`=>`), higher-order functions, function parameters as values |
 
 ---
 
@@ -67,6 +68,40 @@ Phone: null
 
 ---
 
+## Lesson 02 — Functions
+
+Explores Dart's first-class function support by declaring named, anonymous, and arrow-style functions, then passing them as arguments to higher-order functions.
+
+**Concepts practiced**
+- Function type annotations (e.g. `int Function(int)`)
+- Passing functions as parameters
+- Anonymous (lambda) functions: `() { ... }`
+- Arrow functions: `=>` shorthand for single-expression returns
+- Higher-order functions that accept function arguments
+
+**Sample output**
+
+```text
+Task 1 - Anonymous Function
+--------------------------
+Hello Dart!
+Task 2 - Arrow Functions
+------------------------
+Square of 5 = 25
+Hello Tarek
+Is 8 even? true
+Task 3 - Higher Order Function
+------------------------------
+Addition
+Result: 15
+Subtraction
+Result: 5
+Multiplication
+Result: 50
+```
+
+---
+
 ## Getting Started
 
 ### Prerequisites
@@ -78,6 +113,7 @@ Phone: null
 
 ```bash
 dart run lesson-1.dart
+dart run lesson-2.dart
 ```
 
 ---
@@ -89,6 +125,7 @@ codeplus-projects/
 ├── assets/
 │   └── code-plus-logo.png
 ├── lesson-1.dart
+├── lesson-2.dart
 └── README.md
 ```
 
