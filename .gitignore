@@ -43,3 +43,14 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# AI related files and directories
+.claude/
+.codex/
+.agents/
+.gemini/
+.cursor/
+.copilot/
+CLAUDE.md
+AGENTS.md
+AGETNS.md
