@@ -1,27 +1,25 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pinput/pinput.dart';
-import 'package:medora/apps/features/auth/presentation/screens/otp_verification_screen.dart';
-import 'package:medora/generated/app_strings.dart';
+import 'package:doctor_hunt/apps/features/auth/presentation/screens/otp_verification_screen.dart';
+import 'package:doctor_hunt/generated/i18n/translations.g.dart';
+import 'test_app.dart';
 
 void main() {
   testWidgets('OtpVerificationScreen renders all UI components properly', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const MaterialApp(home: OtpVerificationScreen()));
+    final t = AppLocale.en.buildSync();
 
-    // Verify Title & Subtitle
-    expect(find.text(AppStrings.verifyYourNumber), findsOneWidget);
-    expect(find.textContaining(AppStrings.defaultPhoneNumber), findsOneWidget);
+    await tester.pumpWidget(buildTestApp(const OtpVerificationScreen()));
 
-    // Verify Pinput
+    expect(find.text(t.verifyYourNumber), findsOneWidget);
+    expect(find.textContaining(t.defaultPhoneNumber), findsOneWidget);
+
     expect(find.byType(Pinput), findsOneWidget);
 
-    // Verify Timer and Resend code button
-    expect(find.text(AppStrings.resendTimerDefault), findsOneWidget);
-    expect(find.text(AppStrings.resendCode), findsOneWidget);
+    expect(find.text(t.resendTimerDefault), findsOneWidget);
+    expect(find.text(t.resendCode), findsOneWidget);
 
-    // Verify Continue button
-    expect(find.text(AppStrings.continueText), findsOneWidget);
+    expect(find.text(t.continueText), findsOneWidget);
   });
 }
