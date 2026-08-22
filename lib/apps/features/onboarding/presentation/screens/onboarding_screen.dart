@@ -1,44 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-import 'package:medora/apps/core/router/routes.dart';
-import 'package:medora/generated/app_strings.dart';
-import 'package:medora/generated/app_styles.dart';
-import 'package:medora/generated/image_assets.dart';
-import '../../data/models/onboarding_model.dart';
-import '../widgets/onboarding_screen_details.dart';
+import 'package:doctor_hunt/apps/core/router/routes.dart';
+import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
+import 'package:doctor_hunt/apps/features/onboarding/data/onboarding_data.dart';
+import 'package:doctor_hunt/apps/features/onboarding/data/models/onboarding_model.dart';
+import 'package:doctor_hunt/generated/i18n/translations.g.dart';
+import 'package:doctor_hunt/generated/style_atoms.dart';
 
-class OnBoardingPage extends StatefulWidget {
-  const OnBoardingPage({super.key});
+class OnboardingScreen extends StatefulWidget {
+  const OnboardingScreen({super.key});
 
   @override
-  State<OnBoardingPage> createState() => OnBoardingPageState();
+  State<OnboardingScreen> createState() => OnboardingScreenState();
 }
 
-class OnBoardingPageState extends State<OnBoardingPage> {
+class OnboardingScreenState extends State<OnboardingScreen> {
   final PageController controller = PageController();
   int currentIndex = 0;
-
-  static const List<OnboardingModel> pages = [
-    OnboardingModel(
-      illustration: Assets.assets02OnboardingWelcomeIllustration,
-      title: AppStrings.onboardingTitle1,
-      subtitle: AppStrings.onboardingSubtitle1,
-    ),
-    OnboardingModel(
-      illustration: Assets.assets03OnboardingConsultationIllustration,
-      title: AppStrings.onboardingTitle2,
-      subtitle: AppStrings.onboardingSubtitle2,
-    ),
-    OnboardingModel(
-      illustration: Assets.assets04OnboardingRecordsIllustration,
-      title: AppStrings.onboardingTitle3,
-      subtitle: AppStrings.onboardingSubtitle3,
-    ),
-  ];
-
-  final int counter = pages.length;
 
   @override
   void dispose() {
@@ -47,143 +26,146 @@ class OnBoardingPageState extends State<OnBoardingPage> {
   }
 
   void onSkip() {
-    context.go(Routes.login);
+    const LoginRoute().go(context);
   }
 
   void onNext() {
-    if (currentIndex < counter - 1) {
-      controller.nextPage(
-        duration: const Duration(milliseconds: 400),
-        curve: Curves.easeInOut,
-      );
-    } else {
-      context.go(Routes.login);
+    if (currentIndex == onboardingPages(context.t).length - 1) {
+      const LoginRoute().go(context);
+      return;
     }
-  }
 
-  void onPrevious() {
-    if (currentIndex > 0) {
-      controller.previousPage(
-        duration: const Duration(milliseconds: 400),
-        curve: Curves.easeInOut,
-      );
-    }
+    controller.nextPage(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOutCubic,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final pages = onboardingPages(context.t);
+
     return Scaffold(
-      backgroundColor: AppStyles.canvas,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Top Bar with Skip action
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppStyles.pageHorizontalPadding,
-                vertical: 8,
-              ),
-              child: Align(
-                alignment: Alignment.topRight,
-                child: TextButton(
-                  onPressed: onSkip,
-                  child: Text(
-                    AppStrings.skip,
-                    style: AppStyles.action.copyWith(
-                      color: AppStyles.primaryBlue,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
+      backgroundColor: AppColors.canvas,
+      body: Column(
+        children: [
+          Expanded(
+            child: PageView.builder(
+              controller: controller,
+              itemCount: pages.length,
+              onPageChanged: (index) => setState(() => currentIndex = index),
+              itemBuilder: (context, index) {
+                final page = pages[index];
+                return OnboardingDetailPage(
+                  page: page,
+                  controller: controller,
+                  pageCount: pages.length,
+                );
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(32, 12, 32, 28),
+            child: Row(
+              children: [
+                TextButton(onPressed: onSkip, child: Text(context.t.skip)),
+                const Spacer(),
+                IconButton(
+                  onPressed: onNext,
+                  icon: const Icon(Icons.arrow_forward_rounded),
+                  color: Colors.white,
+                  style: IconButton.styleFrom(
+                    backgroundColor: AppColors.primaryGreen,
+                    fixedSize: const Size(58, 58),
+                    elevation: 0,
+                    shadowColor: Colors.transparent,
                   ),
                 ),
-              ),
+              ],
             ),
-
-            // PageView Content
-            Expanded(
-              child: PageView.builder(
-                controller: controller,
-                itemCount: counter,
-                onPageChanged: (index) {
-                  setState(() {
-                    currentIndex = index;
-                  });
-                },
-                itemBuilder: (context, index) {
-                  final page = pages[index];
-                  return IntroductionPage(
-                    illustration: page.illustration,
-                    title: page.title,
-                    subtitle: page.subtitle,
-                  );
-                },
-              ),
-            ),
-
-            // Bottom Navigation Controls
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppStyles.pageHorizontalPadding,
-                vertical: 24,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Previous Circular Button
-                  currentIndex > 0
-                      ? GestureDetector(
-                          onTap: onPrevious,
-                          child: Container(
-                            width: 58,
-                            height: 58,
-                            decoration: AppStyles.circularActionDecoration(
-                              primary: false,
-                            ),
-                            child: const Icon(
-                              Icons.arrow_back,
-                              color: AppStyles.primaryBlue,
-                              size: 24,
-                            ),
-                          ),
-                        )
-                      : const SizedBox(width: 58, height: 58),
-
-                  // Smooth Page Indicator
-                  SmoothPageIndicator(
-                    controller: controller,
-                    count: counter,
-                    effect: const ExpandingDotsEffect(
-                      dotColor: AppStyles.disabled,
-                      activeDotColor: AppStyles.primaryBlue,
-                      dotHeight: 8,
-                      dotWidth: 8,
-                      expansionFactor: 3.5,
-                      spacing: 6,
-                    ),
-                  ),
-
-                  // Next / Done Circular Button
-                  GestureDetector(
-                    onTap: onNext,
-                    child: Container(
-                      width: 58,
-                      height: 58,
-                      decoration: AppStyles.circularActionDecoration(
-                        primary: true,
-                      ),
-                      child: const Icon(
-                        Icons.arrow_forward,
-                        color: Colors.white,
-                        size: 24,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
+    );
+  }
+}
+
+class OnboardingDetailPage extends StatelessWidget {
+  final OnboardingModel page;
+  final PageController controller;
+  final int pageCount;
+
+  const OnboardingDetailPage({
+    super.key,
+    required this.page,
+    required this.controller,
+    required this.pageCount,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final imageAlignment = page.imageAlignment == OnboardingImageAlignment.left
+        ? Alignment.centerLeft
+        : Alignment.centerRight;
+
+    return Column(
+      children: [
+        Expanded(
+          flex: 6,
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Align(
+              alignment: imageAlignment,
+              child: Image.asset(
+                page.illustration,
+                width: double.infinity,
+                alignment: imageAlignment,
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
+        ),
+        Expanded(
+          flex: 4,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 32),
+            child: Column(
+              children: [
+                const SizedBox(height: 16),
+                SmoothPageIndicator(
+                  controller: controller,
+                  count: pageCount,
+                  effect: const ExpandingDotsEffect(
+                    dotHeight: 7,
+                    dotWidth: 7,
+                    spacing: 6,
+                    expansionFactor: 3.14,
+                    radius: 4,
+
+                    dotColor: AppColors.disabled,
+                    activeDotColor: AppColors.primaryGreen,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  page.title,
+                  textAlign: TextAlign.center,
+                  style: context.bold28TextMain,
+                ),
+                const SizedBox(height: 14),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: Text(
+                    page.subtitle,
+                    textAlign: TextAlign.center,
+                    style: context.regular14TextSub,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

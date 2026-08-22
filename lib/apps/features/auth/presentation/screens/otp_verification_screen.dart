@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:pinput/pinput.dart';
 
-import 'package:medora/apps/core/router/routes.dart';
-import 'package:medora/generated/app_strings.dart';
-import 'package:medora/generated/app_styles.dart';
+import 'package:doctor_hunt/apps/core/extensions/context_extensions.dart';
+import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
+import 'package:doctor_hunt/apps/core/router/routes.dart';
+import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
+import 'package:doctor_hunt/generated/i18n/translations.g.dart';
+import 'package:doctor_hunt/generated/style_atoms.dart';
 import '../widgets/auth_back_button.dart';
 import '../widgets/auth_buttons.dart';
-import '../widgets/otp_verification_hero_illustration.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
   final String phoneNumber;
 
   const OtpVerificationScreen({
     super.key,
-    this.phoneNumber = AppStrings.defaultPhoneNumber,
+    this.phoneNumber = '+20 10 1234 5678',
   });
 
   @override
@@ -33,33 +34,37 @@ class OtpVerificationScreenState extends State<OtpVerificationScreen> {
   }
 
   void verifyOtp() {
-    FocusScope.of(context).unfocus();
-    context.push(Routes.roleSelection);
+    context.unfocus();
+    const RoleSelectionRoute().push(context);
+  }
+
+  void resendCode() {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(context.t.codeSentAgain)));
   }
 
   @override
   Widget build(BuildContext context) {
+    final t = context.t;
+
     final defaultPinTheme = PinTheme(
       width: 68,
       height: 84,
-      textStyle: const TextStyle(
-        fontSize: 32,
-        fontWeight: FontWeight.w700,
-        color: AppStyles.navy,
-      ),
+      textStyle: context.bold32TextMain,
       decoration: BoxDecoration(
-        color: AppStyles.surface,
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppStyles.outline, width: 1.2),
+        border: Border.all(color: AppColors.outline, width: 1.2),
       ),
     );
 
     final focusedPinTheme = defaultPinTheme.copyWith(
       decoration: defaultPinTheme.decoration?.copyWith(
-        border: Border.all(color: AppStyles.primaryBlue, width: 1.8),
+        border: Border.all(color: AppColors.primaryGreen, width: 1.8),
         boxShadow: const [
           BoxShadow(
-            color: Color(0x141D69EE),
+            color: Color(0x140EBE7E),
             blurRadius: 8,
             offset: Offset(0, 2),
           ),
@@ -67,132 +72,138 @@ class OtpVerificationScreenState extends State<OtpVerificationScreen> {
       ),
     );
 
-    final submittedPinTheme = defaultPinTheme.copyWith(
-      decoration: defaultPinTheme.decoration?.copyWith(
-        color: AppStyles.surface,
-      ),
-    );
-
     return Scaffold(
-      backgroundColor: AppStyles.canvas,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppStyles.pageHorizontalPadding,
-            vertical: 16,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: AuthBackButton(circular: true),
+      backgroundColor: AppColors.canvas,
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(24, 48, 24, 32),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: AuthBackButton(circular: true),
+            ),
+            16.verticalSpace,
+            const Center(child: OtpVerificationHeroIllustration(size: 160)),
+            24.verticalSpace,
+            Text(
+              t.verifyYourNumber,
+              textAlign: TextAlign.center,
+              style: context.bold28TextMain.copyWith(
+                fontWeight: FontWeight.w800,
               ),
-              const SizedBox(height: 16),
-              const Center(child: OtpVerificationHeroIllustration(size: 160)),
-              const SizedBox(height: 24),
-              Text(
-                AppStrings.verifyYourNumber,
-                textAlign: TextAlign.center,
-                style: AppStyles.display.copyWith(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w800,
+            ),
+            8.verticalSpace,
+            Text.rich(
+              TextSpan(
+                style: context.regular14TextSub.copyWith(
+                  fontSize: 14.5,
+                  height: 1.35,
                 ),
-              ),
-              const SizedBox(height: 8),
-              Text.rich(
-                TextSpan(
-                  style: AppStyles.body.copyWith(
-                    color: AppStyles.textSecondary,
-                    fontSize: 14.5,
-                    height: 1.35,
-                  ),
-                  children: [
-                    const TextSpan(text: AppStrings.otpSentTo),
-                    TextSpan(
-                      text: widget.phoneNumber,
-                      style: const TextStyle(
-                        color: AppStyles.navy,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ],
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 32),
-              Center(
-                child: Pinput(
-                  length: 4,
-                  controller: pinController,
-                  focusNode: pinFocusNode,
-                  defaultPinTheme: defaultPinTheme,
-                  focusedPinTheme: focusedPinTheme,
-                  submittedPinTheme: submittedPinTheme,
-                  showCursor: true,
-                  cursor: Container(
-                    width: 2,
-                    height: 28,
-                    color: AppStyles.primaryBlue,
-                  ),
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  onCompleted: (pin) => verifyOtp(),
-                ),
-              ),
-              const SizedBox(height: 32),
-              const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.access_time_rounded,
-                    color: AppStyles.success,
-                    size: 20,
-                  ),
-                  SizedBox(width: 8),
-                  Text(
-                    AppStrings.resendTimerDefault,
-                    style: TextStyle(
-                      color: AppStyles.navy,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                    ),
+                  TextSpan(text: t.otpSentTo),
+                  TextSpan(
+                    text: widget.phoneNumber,
+                    style: context.bold14TextMain.copyWith(fontSize: 14.5),
                   ),
                 ],
               ),
-              const SizedBox(height: 14),
-              const Center(
-                child: SizedBox(
-                  width: 80,
-                  child: Divider(color: AppStyles.outline, thickness: 1.2),
+              textAlign: TextAlign.center,
+            ),
+            32.verticalSpace,
+            Center(
+              child: Pinput(
+                length: 4,
+                controller: pinController,
+                focusNode: pinFocusNode,
+                defaultPinTheme: defaultPinTheme,
+                focusedPinTheme: focusedPinTheme,
+                submittedPinTheme: defaultPinTheme,
+                showCursor: true,
+                cursor: Container(
+                  width: 2,
+                  height: 28,
+                  color: AppColors.primaryGreen,
                 ),
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                onCompleted: (pin) => verifyOtp(),
               ),
-              const SizedBox(height: 14),
-              Center(
-                child: TextButton(
-                  onPressed: () {},
-                  style: TextButton.styleFrom(
-                    foregroundColor: AppStyles.primaryBlue,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
-                    textStyle: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                    ),
+            ),
+            32.verticalSpace,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.access_time_rounded,
+                  color: AppColors.success,
+                  size: 20,
+                ),
+                8.horizontalSpace,
+                Text(
+                  t.resendTimerDefault,
+                  style: context.bold16TextMain,
+                ),
+              ],
+            ),
+            14.verticalSpace,
+            const Center(
+              child: SizedBox(
+                width: 80,
+                child: Divider(color: AppColors.outline, thickness: 1.2),
+              ),
+            ),
+            14.verticalSpace,
+            Center(
+              child: TextButton(
+                onPressed: resendCode,
+                style: TextButton.styleFrom(
+                  foregroundColor: AppColors.primaryGreen,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
                   ),
-                  child: const Text(AppStrings.resendCode),
+                  textStyle: context.bold16Primary.copyWith(fontSize: 15),
                 ),
+                child: Text(t.resendCode),
               ),
-              const SizedBox(height: 32),
-              AuthPrimaryButton(
-                label: AppStrings.continueText,
-                onPressed: verifyOtp,
-                height: 54,
-                fontSize: 16,
-              ),
-            ],
-          ),
+            ),
+            32.verticalSpace,
+            AuthPrimaryButton(
+              label: t.continueText,
+              onPressed: verifyOtp,
+              height: 54,
+              fontSize: 16,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class OtpVerificationHeroIllustration extends StatelessWidget {
+  final double size;
+
+  const OtpVerificationHeroIllustration({super.key, this.size = 120});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: AppColors.softMint,
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: AppColors.primaryGreen.withValues(alpha: 0.3),
+          width: 2,
+        ),
+      ),
+      child: Center(
+        child: Icon(
+          Icons.mark_email_read_outlined,
+          size: size * 0.5,
+          color: AppColors.primaryGreen,
         ),
       ),
     );

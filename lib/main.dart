@@ -1,25 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'apps/core/router/app_router.dart';
-import 'generated/app_strings.dart';
-import 'generated/app_styles.dart';
+import 'apps/core/theme/app_theme.dart';
+import 'generated/i18n/translations.g.dart';
 
 void main() {
-  runApp(const MedoraApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  LocaleSettings.useDeviceLocale();
+  runApp(TranslationProvider(child: const DoctorHuntApp()));
 }
 
-class MedoraApp extends StatelessWidget {
-  const MedoraApp({super.key});
+class DoctorHuntApp extends StatelessWidget {
+  const DoctorHuntApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: AppStrings.appName,
+      title: context.t.appName,
       debugShowCheckedModeBanner: false,
-      theme: AppStyles.lightTheme,
+      theme: AppTheme.lightTheme,
+      locale: context.t.$meta.locale.flutterLocale,
+      supportedLocales: AppLocaleUtils.supportedLocales,
+      localizationsDelegates: GlobalMaterialLocalizations.delegates,
       routerConfig: AppRouter.router,
     );
   }
 }
-
-

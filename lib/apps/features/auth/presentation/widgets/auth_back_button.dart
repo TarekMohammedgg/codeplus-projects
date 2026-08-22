@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:medora/generated/app_strings.dart';
-import 'package:medora/generated/app_styles.dart';
+import 'package:doctor_hunt/apps/core/router/routes.dart';
+import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
+import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
 class AuthBackButton extends StatelessWidget {
   final VoidCallback? onPressed;
@@ -19,16 +20,16 @@ class AuthBackButton extends StatelessWidget {
             if (context.canPop()) {
               context.pop();
             } else {
-              context.go('/');
+              const OnboardingRoute().go(context);
             }
           },
       icon: const Icon(
         Icons.arrow_back_rounded,
-        color: AppStyles.navy,
+        color: AppColors.textMain,
         size: 24,
       ),
       padding: EdgeInsets.zero,
-      tooltip: AppStrings.back,
+      tooltip: context.t.back,
     );
 
     if (!circular) {
@@ -39,9 +40,9 @@ class AuthBackButton extends StatelessWidget {
       width: 48,
       height: 48,
       decoration: BoxDecoration(
-        color: AppStyles.surface,
+        color: AppColors.surface,
         shape: BoxShape.circle,
-        border: Border.all(color: AppStyles.outline.withAlpha(128)),
+        border: Border.all(color: AppColors.outline.withAlpha(128)),
         boxShadow: const [
           BoxShadow(
             color: Color(0x0C0C3268),

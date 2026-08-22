@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
-import 'package:medora/apps/core/router/routes.dart';
-import 'package:medora/generated/app_strings.dart';
-import 'package:medora/generated/app_styles.dart';
+import 'package:doctor_hunt/apps/core/extensions/context_extensions.dart';
+import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
+import 'package:doctor_hunt/apps/core/router/routes.dart';
+import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
+import 'package:doctor_hunt/apps/core/utils/validators.dart';
+import 'package:doctor_hunt/generated/app_image.dart';
+import 'package:doctor_hunt/generated/i18n/translations.g.dart';
+import 'package:doctor_hunt/generated/style_atoms.dart';
 import '../widgets/auth_buttons.dart';
+import '../widgets/auth_header.dart';
 import '../widgets/auth_text_field.dart';
-import '../widgets/login_hero_illustration.dart';
+import '../widgets/forgot_password_bottom_sheet.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -28,159 +33,132 @@ class LoginScreenState extends State<LoginScreen> {
   }
 
   void signIn() {
-    FocusScope.of(context).unfocus();
-    context.go(Routes.home);
+    context.unfocus();
+    const HomeRoute().go(context);
   }
 
   @override
   Widget build(BuildContext context) {
+    final t = context.t;
+
     return Scaffold(
-      backgroundColor: AppStyles.canvas,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          padding: const EdgeInsets.fromLTRB(24, 20, 24, 20),
-          child: Form(
-            key: formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SizedBox(height: 12),
-                const Center(child: LoginHeroIllustration(size: 130)),
-                const SizedBox(height: 16),
-                Text(
-                  AppStrings.welcomeBack,
-                  textAlign: TextAlign.center,
-                  style: AppStyles.display.copyWith(
-                    fontSize: 26,
-                    fontWeight: FontWeight.w700,
+      backgroundColor: AppColors.canvas,
+      body: SingleChildScrollView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        padding: const EdgeInsets.fromLTRB(24, 48, 24, 32),
+        child: Form(
+          key: formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              28.verticalSpace,
+              AuthHeader(title: t.welcomeBack, subtitle: t.loginSubtitle),
+              32.verticalSpace,
+              const SocialLoginSection(),
+              32.verticalSpace,
+              AuthTextField(
+                controller: emailController,
+                hintText: t.emailHint,
+                prefixIcon: Icons.mail_outline_rounded,
+                iconColor: AppColors.textSecondary,
+                keyboardType: TextInputType.emailAddress,
+                textInputAction: TextInputAction.next,
+                autofillHints: const [AutofillHints.email],
+                validator: (value) => AppValidators.validateEmail(value, t),
+              ),
+              18.verticalSpace,
+              AuthTextField(
+                controller: passwordController,
+                hintText: t.enterPasswordHint,
+                prefixIcon: Icons.lock_outline_rounded,
+                iconColor: AppColors.textSecondary,
+                isPassword: true,
+                textInputAction: TextInputAction.done,
+                autofillHints: const [AutofillHints.password],
+                validator: (value) =>
+                    AppValidators.validateRequiredPassword(value, t),
+              ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () => ForgotPasswordBottomSheet.show(context),
+                  style: TextButton.styleFrom(
+                    foregroundColor: AppColors.primaryGreen,
+                    padding: const EdgeInsets.only(top: 8, bottom: 8),
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    textStyle: context.medium14Primary.copyWith(fontSize: 13.5),
                   ),
+                  child: Text(t.forgotPassword),
                 ),
-                const SizedBox(height: 6),
-                Text(
-                  AppStrings.loginSubtitle,
-                  textAlign: TextAlign.center,
-                  style: AppStyles.body.copyWith(
-                    color: AppStyles.textSecondary,
-                    fontSize: 14,
-                    height: 1.3,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  AppStrings.emailAddress,
-                  style: AppStyles.label.copyWith(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                AuthTextField(
-                  controller: emailController,
-                  semanticLabel: AppStrings.emailAddress,
-                  hintText: AppStrings.emailHint,
-                  prefixIcon: Icons.mail_outline_rounded,
-                  iconColor: AppStyles.textSecondary,
-                  keyboardType: TextInputType.emailAddress,
-                  textInputAction: TextInputAction.next,
-                  autofillHints: const [AutofillHints.email],
-                  minHeight: 52,
-                  validator: validateEmail,
-                ),
-                const SizedBox(height: 14),
-                Text(
-                  AppStrings.password,
-                  style: AppStyles.label.copyWith(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                AuthTextField(
-                  controller: passwordController,
-                  semanticLabel: AppStrings.password,
-                  hintText: AppStrings.enterPasswordHint,
-                  prefixIcon: Icons.lock_outline_rounded,
-                  iconColor: AppStyles.textSecondary,
-                  isPassword: true,
-                  textInputAction: TextInputAction.done,
-                  autofillHints: const [AutofillHints.password],
-                  minHeight: 52,
-                  validator: (value) {
-                    if ((value ?? '').isEmpty) {
-                      return AppStrings.enterPassword;
-                    }
-                    return null;
-                  },
-                ),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () => context.push(Routes.resetPassword),
-                    style: TextButton.styleFrom(
-                      foregroundColor: AppStyles.primaryBlue,
-                      padding: const EdgeInsets.only(top: 6),
-                      minimumSize: Size.zero,
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      textStyle: const TextStyle(
-                        fontSize: 13.5,
-                        fontWeight: FontWeight.w500,
-                      ),
+              ),
+              24.verticalSpace,
+              AuthPrimaryButton(
+                label: t.logIn,
+                onPressed: signIn,
+                height: 54,
+                fontSize: 16,
+              ),
+              28.verticalSpace,
+              Center(
+                child: Wrap(
+                  alignment: WrapAlignment.center,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    Text(
+                      t.dontHaveAccount,
+                      style: context.regular14TextSub,
                     ),
-                    child: const Text(AppStrings.forgotPassword),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                AuthPrimaryButton(
-                  label: AppStrings.signIn,
-                  onPressed: signIn,
-                  height: 52,
-                  fontSize: 16,
-                ),
-                const SizedBox(height: 20),
-                Center(
-                  child: Wrap(
-                    alignment: WrapAlignment.center,
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
-                      Text(
-                        AppStrings.newToMedora,
-                        style: AppStyles.body.copyWith(
-                          color: AppStyles.textSecondary,
-                          fontSize: 14,
-                        ),
+                    TextButton(
+                      onPressed: () => const SignupRoute().push(context),
+                      style: TextButton.styleFrom(
+                        foregroundColor: AppColors.primaryGreen,
+                        padding: const EdgeInsets.only(left: 4),
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        textStyle: context.semiBold14Primary,
                       ),
-                      TextButton(
-                        onPressed: () => context.push(Routes.signup),
-                        style: TextButton.styleFrom(
-                          foregroundColor: AppStyles.primaryBlue,
-                          padding: const EdgeInsets.only(left: 6),
-                          minimumSize: Size.zero,
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          textStyle: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        child: const Text(AppStrings.createAnAccount),
-                      ),
-                    ],
-                  ),
+                      child: Text(t.joinUs),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
+}
 
-  String? validateEmail(String? value) {
-    final email = value?.trim() ?? '';
-    if (email.isEmpty) return AppStrings.enterEmailAddress;
-    if (!email.contains('@') || !email.contains('.')) {
-      return AppStrings.enterValidEmailAddress;
-    }
-    return null;
+class SocialLoginSection extends StatelessWidget {
+  const SocialLoginSection({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.t;
+    return Row(
+      children: [
+        Expanded(
+          child: SocialAuthButton(
+            label: t.google,
+            image: Assets.assetsDesignGoogleLogo,
+            onPressed: () {
+              const HomeRoute().go(context);
+            },
+          ),
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: SocialAuthButton(
+            label: t.facebook,
+            image: Assets.assetsDesignFacebookLogo,
+            onPressed: () {
+              const HomeRoute().go(context);
+            },
+          ),
+        ),
+      ],
+    );
   }
 }

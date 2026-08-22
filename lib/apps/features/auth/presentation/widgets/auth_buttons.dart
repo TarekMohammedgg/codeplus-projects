@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:medora/generated/app_strings.dart';
-import 'package:medora/generated/app_styles.dart';
+import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
+import 'package:doctor_hunt/generated/style_atoms.dart';
 
 class AuthPrimaryButton extends StatelessWidget {
   final String label;
@@ -14,8 +14,8 @@ class AuthPrimaryButton extends StatelessWidget {
     super.key,
     required this.label,
     required this.onPressed,
-    this.height = 64,
-    this.fontSize = 18,
+    this.height = 54,
+    this.fontSize = 16,
     this.icon,
   });
 
@@ -27,17 +27,13 @@ class AuthPrimaryButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppStyles.primaryBlue,
-          disabledBackgroundColor: AppStyles.disabled,
+          backgroundColor: AppColors.primaryGreen,
+          disabledBackgroundColor: AppColors.disabled,
           foregroundColor: Colors.white,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
           ),
-          textStyle: TextStyle(
-            color: Colors.white,
-            fontSize: fontSize,
-            fontWeight: FontWeight.w600,
-          ),
+          textStyle: context.semiBold16White.copyWith(fontSize: fontSize),
           elevation: 0,
         ),
         child: icon != null
@@ -56,81 +52,79 @@ class AuthPrimaryButton extends StatelessWidget {
   }
 }
 
-class GoogleAuthButton extends StatelessWidget {
+class SocialAuthButton extends StatelessWidget {
+  final String label;
+  final String image;
   final VoidCallback? onPressed;
 
-  const GoogleAuthButton({super.key, required this.onPressed});
+  const SocialAuthButton({
+    super.key,
+    required this.label,
+    required this.image,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onPressed,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          height: 54,
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppColors.outline, width: 1),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x0A000000),
+                blurRadius: 10,
+                offset: Offset(0, 3),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SocialMark(image: image),
+              const SizedBox(width: 10),
+              Text(
+                label,
+                style: context.medium16TextSub.copyWith(fontSize: 15),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class SocialMark extends StatelessWidget {
+  final String image;
+  final double size;
+
+  const SocialMark({
+    super.key,
+    required this.image,
+    this.size = 20,
+  });
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: double.infinity,
-      height: 64,
-      child: OutlinedButton(
-        onPressed: onPressed,
-        style: OutlinedButton.styleFrom(
-          foregroundColor: AppStyles.navy,
-          side: const BorderSide(color: AppStyles.primaryBlue, width: 1.35),
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(17)),
-          ),
-          textStyle: const TextStyle(
-            color: AppStyles.navy,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        child: const Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            GoogleMark(),
-            SizedBox(width: 18),
-            Text(AppStrings.continueWithGoogle),
-          ],
-        ),
+      width: size,
+      height: size,
+      child: Image.asset(
+        image,
+        width: size,
+        height: size,
+        fit: BoxFit.contain,
       ),
-    );
-  }
-}
-
-class GoogleMark extends StatelessWidget {
-  const GoogleMark({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Text(
-      'G',
-      style: TextStyle(
-        color: Color(0xFF4285F4),
-        fontSize: 31,
-        fontWeight: FontWeight.w700,
-        height: 1,
-      ),
-    );
-  }
-}
-
-class AuthDivider extends StatelessWidget {
-  const AuthDivider({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        const Expanded(child: Divider(color: AppStyles.outline)),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 18),
-          child: Text(
-            AppStrings.or,
-            style: AppStyles.body.copyWith(
-              color: AppStyles.textSecondary,
-              fontSize: 17,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-        const Expanded(child: Divider(color: AppStyles.outline)),
-      ],
     );
   }
 }
