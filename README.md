@@ -1,142 +1,62 @@
-<p align="center">
-  <img src="assets/code-plus-logo.png" alt="Code Plus Software House" width="180"/>
-</p>
+# Doctor Hunt
 
-<h1 align="center">Code Plus Software House</h1>
+Doctor Hunt is a Flutter UI demo for discovering doctors and exploring appointment screens. It currently uses local mock data, so authentication, booking, and backend persistence are not connected yet.
 
-<p align="center">
-  <strong>Flutter &amp; Dart Internship Assignments</strong>
-</p>
+## Current screens
 
-<p align="center">
-  A structured collection of hands-on Dart lessons completed during the<br/>
-  Code Plus Software House internship program.
-</p>
+- Onboarding with a page indicator and role selection
+- Login, sign-up, OTP, and password reset UI
+- Home dashboard with doctor categories and favorites
+- Doctor search, filtering, details, and local booking feedback
 
----
-
-## About
-
-This repository contains the internship assignment solutions for **Code Plus Software House**. Each lesson focuses on core Dart concepts that form the foundation for Flutter mobile development.
-
-| | |
-|---|---|
-| **Intern** | Tarek Mohammed |
-| **Company** | Code Plus Software House |
-| **Track** | Flutter / Dart |
-| **Language** | Dart |
-
----
-
-## Lessons
-
-| Lesson | File | Topics Covered |
-|:------:|------|----------------|
-| 01 | [`lesson-1.dart`](lesson-1.dart) | Variables, data types, `const` / `final`, nullable types, conditionals, string interpolation |
-| 02 | [`lesson-2.dart`](lesson-2.dart) | Anonymous functions, arrow functions (`=>`), higher-order functions, function parameters as values |
-
----
-
-## Lesson 01 — Student Data
-
-Demonstrates fundamental Dart syntax by modeling and printing a student profile.
-
-**Concepts practiced**
-- Primitive types: `String`, `int`, `double`, `bool`
-- Compile-time constants (`const`) and runtime constants (`final`)
-- Nullable types (`String?`)
-- Conditional logic (`if` / `else`)
-- String interpolation and console output
-
-**Sample output**
+## Project structure
 
 ```text
-Student Information
--------------------
-Id: ST2025
-Name: Tarek Mohammed
-Gender: Male
-Age: 23
-GPA: 3.1
-I graduated from Capital University
--------------------
-Contact Info
--------------------
-Email:tarekmohammedgg@gmail.com
-Phone: null
+lib/
+├── main.dart
+├── generated/
+│   ├── app_image.dart
+│   ├── generate_styles.dart
+│   └── style_atoms.dart
+└── apps/
+    ├── core/
+    │   ├── constants/
+    │   ├── extensions/
+    │   ├── router/
+    │   ├── theme/
+    │   └── widgets/
+    └── features/
+        ├── auth/
+        ├── doctors/
+        ├── home/
+        └── onboarding/
 ```
 
----
+Feature-specific models and mock data live under each feature's `data` folder. Screen-only widgets stay with their screen, while shared widgets are kept in `apps/core/widgets`.
 
-## Lesson 02 — Functions
+## Packages
 
-Explores Dart's first-class function support by declaring named, anonymous, and arrow-style functions, then passing them as arguments to higher-order functions.
+- [`go_router`](https://pub.dev/packages/go_router) for navigation
+- [`pinput`](https://pub.dev/packages/pinput) for OTP input
+- [`smooth_page_indicator`](https://pub.dev/packages/smooth_page_indicator) for onboarding progress
+- [`flutter_native_splash`](https://pub.dev/packages/flutter_native_splash) for the native splash screen
+- [`flutter_lints`](https://pub.dev/packages/flutter_lints) for analysis rules
 
-**Concepts practiced**
-- Function type annotations (e.g. `int Function(int)`)
-- Passing functions as parameters
-- Anonymous (lambda) functions: `() { ... }`
-- Arrow functions: `=>` shorthand for single-expression returns
-- Higher-order functions that accept function arguments
-
-**Sample output**
-
-```text
-Task 1 - Anonymous Function
---------------------------
-Hello Dart!
-Task 2 - Arrow Functions
-------------------------
-Square of 5 = 25
-Hello Tarek
-Is 8 even? true
-Task 3 - Higher Order Function
-------------------------------
-Addition
-Result: 15
-Subtraction
-Result: 5
-Multiplication
-Result: 50
-```
-
----
-
-## Getting Started
-
-### Prerequisites
-
-- [Dart SDK](https://dart.dev/get-dart) (3.x or later)
-- Optional: [Flutter SDK](https://docs.flutter.dev/get-started/install) if you plan to continue into Flutter lessons
-
-### Run a lesson
+## Setup
 
 ```bash
-dart run lesson-1.dart
-dart run lesson-2.dart
+flutter pub get
+flutter run
 ```
 
----
+Run the tests with:
 
-## Project Structure
-
-```text
-codeplus-projects/
-├── assets/
-│   └── code-plus-logo.png
-├── lesson-1.dart
-├── lesson-2.dart
-└── README.md
+```bash
+flutter test
 ```
 
----
+The style atom file is generated from its local script:
 
-## About Code Plus
-
-**Code Plus Software House** is a software development company focused on building modern digital products and mentoring aspiring developers through structured internship programs.
-
----
-
-<p align="center">
-  <sub>Internship assignments · Code Plus Software House</sub>
-</p>
+```bash
+dart run lib/generated/generate_styles.dart
+```
