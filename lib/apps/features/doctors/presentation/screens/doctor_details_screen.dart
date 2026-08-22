@@ -146,12 +146,7 @@ class DoctorProfileCard extends StatelessWidget {
                   width: 90,
                   height: 90,
                   child: doctor.image != null
-                      ? Image.asset(
-                          doctor.image!,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) =>
-                              const DoctorAvatarPlaceholder(circle: false),
-                        )
+                      ? Image.asset(doctor.image!, fit: BoxFit.cover)
                       : const DoctorAvatarPlaceholder(circle: false),
                 ),
               ),

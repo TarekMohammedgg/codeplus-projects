@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 abstract final class AppColors {
   // Brand & Accent Colors
   static const Color primary = primaryGreen;
-  static const Color primaryGreen = Color(0xFF0EBE7E);
+  static const Color primaryGreen = Color(0xff0EBE7E);
   static const Color primaryGreenDark = Color(0xFF07A86E);
   static const Color primaryLight = lightGreen;
   static const Color primaryDark = primaryGreenDark;
@@ -55,9 +55,7 @@ abstract final class AppColors {
 
 /// Application theme, text styles, and visual decorations.
 abstract final class AppTheme {
-  static const BorderRadius fieldRadius = BorderRadius.all(
-    Radius.circular(12),
-  );
+  static const BorderRadius fieldRadius = BorderRadius.all(Radius.circular(12));
   static const BorderRadius buttonRadius = BorderRadius.all(
     Radius.circular(12),
   );

@@ -43,7 +43,6 @@ class HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final t = context.t;
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
@@ -102,7 +101,6 @@ class SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final t = context.t;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -152,7 +150,6 @@ class LiveDoctorSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final t = context.t;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -184,7 +181,6 @@ class LiveDoctorCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final t = context.t;
 
     return Container(
       width: 116,

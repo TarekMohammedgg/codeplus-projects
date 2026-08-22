@@ -33,14 +33,12 @@ class LoginScreenState extends State<LoginScreen> {
   }
 
   void signIn() {
-    context.unfocus();
+    // context.unfocus();
     const HomeRoute().go(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    final t = context.t;
-
     return Scaffold(
       backgroundColor: AppColors.canvas,
       body: SingleChildScrollView(
@@ -105,10 +103,7 @@ class LoginScreenState extends State<LoginScreen> {
                   alignment: WrapAlignment.center,
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
-                    Text(
-                      t.dontHaveAccount,
-                      style: context.regular14TextSub,
-                    ),
+                    Text(t.dontHaveAccount, style: context.regular14TextSub),
                     TextButton(
                       onPressed: () => const SignupRoute().push(context),
                       style: TextButton.styleFrom(
@@ -136,7 +131,6 @@ class SocialLoginSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final t = context.t;
     return Row(
       children: [
         Expanded(

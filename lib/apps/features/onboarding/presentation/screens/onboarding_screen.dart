@@ -68,7 +68,7 @@ class OnboardingScreenState extends State<OnboardingScreen> {
             padding: const EdgeInsets.fromLTRB(32, 12, 32, 28),
             child: Row(
               children: [
-                TextButton(onPressed: onSkip, child: Text(context.t.skip)),
+                TextButton(onPressed: onSkip, child: Text(t.skip)),
                 const Spacer(),
                 IconButton(
                   onPressed: onNext,
