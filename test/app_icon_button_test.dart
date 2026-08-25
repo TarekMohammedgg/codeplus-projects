@@ -62,28 +62,25 @@ void main() {
     expect(tapped, isTrue);
   });
 
-  testWidgets('AppIconButton.back constructor sets default back icon and handles tap', (
-    WidgetTester tester,
-  ) async {
-    bool backTapped = false;
+  testWidgets(
+    'AppIconButton.back constructor sets default back icon and handles tap',
+    (WidgetTester tester) async {
+      bool backTapped = false;
 
-    await tester.pumpWidget(
-      buildTestApp(
-        Scaffold(
-          body: AppIconButton.back(
-            onTap: () => backTapped = true,
-          ),
+      await tester.pumpWidget(
+        buildTestApp(
+          Scaffold(body: AppIconButton.back(onTap: () => backTapped = true)),
         ),
-      ),
-    );
+      );
 
-    expect(find.byIcon(Icons.arrow_back_ios_new_rounded), findsOneWidget);
+      expect(find.byIcon(Icons.arrow_back_ios_new_rounded), findsOneWidget);
 
-    await tester.tap(find.byType(AppIconButton));
-    await tester.pump();
+      await tester.tap(find.byType(AppIconButton));
+      await tester.pump();
 
-    expect(backTapped, isTrue);
-  });
+      expect(backTapped, isTrue);
+    },
+  );
 
   testWidgets('AppIconButton supports custom styling, icon, and tooltip', (
     WidgetTester tester,
@@ -97,7 +94,7 @@ void main() {
             iconColor: Colors.white,
             width: 44,
             height: 44,
-            backgroundColor: AppColors.primaryGreen,
+            backgroundColor: AppColors.primary,
             tooltip: 'Settings Button',
             boxShadow: [],
           ),
@@ -118,7 +115,7 @@ void main() {
     expect(container.constraints?.minWidth, 44.0);
     expect(container.constraints?.minHeight, 44.0);
     final decoration = container.decoration as BoxDecoration;
-    expect(decoration.color, AppColors.primaryGreen);
+    expect(decoration.color, AppColors.primary);
     expect(decoration.boxShadow, isNull);
   });
 }

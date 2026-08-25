@@ -13,7 +13,7 @@ targets:
           locale_handling: true
           flutter_integration: true
           namespaces: false
-          translate_var: t
+          translate_var: tr
           enum_name: AppLocale
           class_name: Translations
           key_case: camel

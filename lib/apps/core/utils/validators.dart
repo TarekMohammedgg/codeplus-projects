@@ -1,32 +1,32 @@
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
 abstract final class AppValidators {
-  static String? validateEmail(String? value, Translations t) {
+  static String? validateEmail(String? value) {
     final email = value?.trim() ?? '';
-    if (email.isEmpty) return t.enterEmailAddress;
+    if (email.isEmpty) return tr.enterEmailAddress;
     if (!email.contains('@') || !email.contains('.')) {
-      return t.enterValidEmailAddress;
+      return tr.enterValidEmailAddress;
     }
     return null;
   }
 
-  static String? validatePassword(String? value, Translations t) {
+  static String? validatePassword(String? value) {
     if ((value ?? '').length < 8) {
-      return t.useAtLeast8Characters;
+      return tr.useAtLeast8Characters;
     }
     return null;
   }
 
-  static String? validateRequiredPassword(String? value, Translations t) {
+  static String? validateRequiredPassword(String? value) {
     if ((value ?? '').isEmpty) {
-      return t.enterPassword;
+      return tr.enterPassword;
     }
     return null;
   }
 
-  static String? validateName(String? value, Translations t) {
+  static String? validateName(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return t.enterFullName;
+      return tr.enterFullName;
     }
     return null;
   }

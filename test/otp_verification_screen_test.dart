@@ -8,18 +8,18 @@ void main() {
   testWidgets('OtpVerificationScreen renders all UI components properly', (
     WidgetTester tester,
   ) async {
-    final t = AppLocale.en.buildSync();
+    final tr = AppLocale.en.buildSync();
 
     await tester.pumpWidget(buildTestApp(const OtpVerificationScreen()));
 
-    expect(find.text(t.verifyYourNumber), findsOneWidget);
-    expect(find.textContaining(t.defaultPhoneNumber), findsOneWidget);
+    expect(find.text(tr.verifyYourNumber), findsOneWidget);
+    expect(find.textContaining(tr.defaultPhoneNumber), findsOneWidget);
 
     expect(find.byType(Pinput), findsOneWidget);
 
-    expect(find.text(t.resendTimerDefault), findsOneWidget);
-    expect(find.text(t.resendCode), findsOneWidget);
+    expect(find.text(tr.resendTimerDefault), findsOneWidget);
+    expect(find.text(tr.resendCode), findsOneWidget);
 
-    expect(find.text(t.continueText), findsOneWidget);
+    expect(find.text(tr.continueText), findsOneWidget);
   });
 }

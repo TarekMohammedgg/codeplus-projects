@@ -11,15 +11,14 @@ void main() {
   testWidgets('OnboardingScreen renders Doctor Hunt UI properly', (
     WidgetTester tester,
   ) async {
-    final t = AppLocale.en.buildSync();
-    final pages = onboardingPages(t);
+    final pages = onboardingPages();
 
     await tester.pumpWidget(buildTestApp(const OnboardingScreen()));
 
-    expect(find.text(t.skip), findsOneWidget);
+    expect(find.text(tr.skip), findsOneWidget);
 
-    expect(find.text(t.onboardingTitle1), findsOneWidget);
-    expect(find.text(t.onboardingSubtitle1), findsOneWidget);
+    expect(find.text(tr.onboardingTitle1), findsOneWidget);
+    expect(find.text(tr.onboardingSubtitle1), findsOneWidget);
     expect(find.byType(SmoothPageIndicator), findsOneWidget);
     expect(find.byType(SafeArea), findsNothing);
 

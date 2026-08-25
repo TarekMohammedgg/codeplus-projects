@@ -38,7 +38,7 @@ class LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.canvas,
+      backgroundColor: AppColors.background,
       body: SingleChildScrollView(
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         padding: const EdgeInsets.fromLTRB(24, 48, 24, 32),
@@ -48,49 +48,49 @@ class LoginScreenState extends State<LoginScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               28.verticalSpace,
-              AuthHeader(title: t.welcomeBack, subtitle: t.loginSubtitle),
+              AuthHeader(title: tr.welcomeBack, subtitle: tr.loginSubtitle),
               32.verticalSpace,
               const SocialLoginSection(),
               32.verticalSpace,
               AuthTextField(
                 controller: emailController,
-                hintText: t.emailHint,
+                hintText: tr.emailHint,
                 prefixIcon: Icons.mail_outline_rounded,
                 iconColor: AppColors.textSecondary,
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.next,
                 autofillHints: const [AutofillHints.email],
-                validator: (value) => AppValidators.validateEmail(value, t),
+                validator: (value) => AppValidators.validateEmail(value),
               ),
               18.verticalSpace,
               AuthTextField(
                 controller: passwordController,
-                hintText: t.enterPasswordHint,
+                hintText: tr.enterPasswordHint,
                 prefixIcon: Icons.lock_outline_rounded,
                 iconColor: AppColors.textSecondary,
                 isPassword: true,
                 textInputAction: TextInputAction.done,
                 autofillHints: const [AutofillHints.password],
                 validator: (value) =>
-                    AppValidators.validateRequiredPassword(value, t),
+                    AppValidators.validateRequiredPassword(value),
               ),
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
                   onPressed: () => ForgotPasswordBottomSheet.show(context),
                   style: TextButton.styleFrom(
-                    foregroundColor: AppColors.primaryGreen,
+                    foregroundColor: AppColors.primary,
                     padding: const EdgeInsets.only(top: 8, bottom: 8),
                     minimumSize: Size.zero,
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     textStyle: context.medium14Primary.copyWith(fontSize: 13.5),
                   ),
-                  child: Text(t.forgotPassword),
+                  child: Text(tr.forgotPassword),
                 ),
               ),
               24.verticalSpace,
               AuthPrimaryButton(
-                label: t.logIn,
+                label: tr.logIn,
                 onPressed: signIn,
                 height: 54,
                 fontSize: 16,
@@ -101,17 +101,20 @@ class LoginScreenState extends State<LoginScreen> {
                   alignment: WrapAlignment.center,
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
-                    Text(t.dontHaveAccount, style: context.regular14TextSub),
+                    Text(
+                      tr.dontHaveAccount,
+                      style: context.regular14TextSecondary,
+                    ),
                     TextButton(
                       onPressed: () => const SignupRoute().push(context),
                       style: TextButton.styleFrom(
-                        foregroundColor: AppColors.primaryGreen,
+                        foregroundColor: AppColors.primary,
                         padding: const EdgeInsets.only(left: 4),
                         minimumSize: Size.zero,
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         textStyle: context.semiBold14Primary,
                       ),
-                      child: Text(t.joinUs),
+                      child: Text(tr.joinUs),
                     ),
                   ],
                 ),
@@ -133,7 +136,7 @@ class SocialLoginSection extends StatelessWidget {
       children: [
         Expanded(
           child: SocialAuthButton(
-            label: t.google,
+            label: tr.google,
             image: Assets.assetsDesignGoogleLogo,
             onPressed: () {
               const HomeRoute().go(context);
@@ -143,7 +146,7 @@ class SocialLoginSection extends StatelessWidget {
         const SizedBox(width: 14),
         Expanded(
           child: SocialAuthButton(
-            label: t.facebook,
+            label: tr.facebook,
             image: Assets.assetsDesignFacebookLogo,
             onPressed: () {
               const HomeRoute().go(context);

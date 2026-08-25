@@ -162,6 +162,38 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get settings => 'الإعدادات';
 	@override String get language => 'اللغة';
 	@override String get profileUpdatedSuccess => 'تم تحديث الملف الشخصي بنجاح';
+	@override String get favouriteDoctors => 'الأطباء المفضلون';
+	@override String get favouriteDoctorsSubtitle => 'أطباؤك المفضلون والموثوقون لسهولة الوصول إليهم';
+	@override String get featureDoctor => 'أطباء مميزون';
+	@override String get selectTime => 'اختيار الموعد';
+	@override String get selectDate => 'اختر التاريخ';
+	@override String get today => 'اليوم';
+	@override String get dateOptionToday => 'اليوم، 23 فبراير';
+	@override String get dateOptionTomorrow => 'غداً، 24 فبراير';
+	@override String get dateOptionThu => 'الخميس، 25 فبراير';
+	@override String get dateOptionFri => 'الجمعة، 26 فبراير';
+	@override String get dateOptionSat => 'السبت، 27 فبراير';
+	@override String get dateOptionSun => 'الأحد، 28 فبراير';
+	@override String get noSlotsAvailable => 'لا توجد مواعيد متاحة';
+	@override String nextAvailabilityOn({required Object date}) => 'الموعد التالي المتاح في ${date}';
+	@override String get contactClinic => 'الاتصال بالعيادة';
+	@override String get contactingClinic => 'جارٍ الاتصال بالعيادة...';
+	@override String slotsAvailable({required Object count}) => '${count} مواعيد متاحة';
+	@override String slotsCount({required Object count}) => '${count} مواعيد';
+	@override String get afternoonSlots => 'فترة بعد الظهر';
+	@override String get eveningSlots => 'الفترة المسائية';
+	@override String get morningSlots => 'الفترة الصباحية';
+	@override String get reminder => 'تذكير';
+	@override String get reminderDescription => 'تذكيري قبل الموعد بـ 15 دقيقة';
+	@override String get bookAppointment => 'حجز الموعد';
+	@override String appointmentBookedSuccess({required Object name, required Object date, required Object time}) => 'تم حجز الموعد بنجاح مع ${name} في يوم ${date} الساعة ${time}';
+	@override String get viewDetails => 'عرض التفاصيل';
+	@override String get confirm => 'تأكيد';
+	@override String get thankYou => 'شكراً لك !';
+	@override String get appointmentSuccessful => 'تم حجز موعدك بنجاح';
+	@override String appointmentBookedWith({required Object name, required Object date, required Object time}) => 'لقد قمت بحجز موعد مع ${name} في ${date}، الساعة ${time}';
+	@override String get done => 'تم';
+	@override String get editYourAppointment => 'تعديل الموعد';
 }
 
 /// The flat map containing all translations for locale <ar>.
@@ -295,6 +327,38 @@ extension on TranslationsAr {
 			'settings' => 'الإعدادات',
 			'language' => 'اللغة',
 			'profileUpdatedSuccess' => 'تم تحديث الملف الشخصي بنجاح',
+			'favouriteDoctors' => 'الأطباء المفضلون',
+			'favouriteDoctorsSubtitle' => 'أطباؤك المفضلون والموثوقون لسهولة الوصول إليهم',
+			'featureDoctor' => 'أطباء مميزون',
+			'selectTime' => 'اختيار الموعد',
+			'selectDate' => 'اختر التاريخ',
+			'today' => 'اليوم',
+			'dateOptionToday' => 'اليوم، 23 فبراير',
+			'dateOptionTomorrow' => 'غداً، 24 فبراير',
+			'dateOptionThu' => 'الخميس، 25 فبراير',
+			'dateOptionFri' => 'الجمعة، 26 فبراير',
+			'dateOptionSat' => 'السبت، 27 فبراير',
+			'dateOptionSun' => 'الأحد، 28 فبراير',
+			'noSlotsAvailable' => 'لا توجد مواعيد متاحة',
+			'nextAvailabilityOn' => ({required Object date}) => 'الموعد التالي المتاح في ${date}',
+			'contactClinic' => 'الاتصال بالعيادة',
+			'contactingClinic' => 'جارٍ الاتصال بالعيادة...',
+			'slotsAvailable' => ({required Object count}) => '${count} مواعيد متاحة',
+			'slotsCount' => ({required Object count}) => '${count} مواعيد',
+			'afternoonSlots' => 'فترة بعد الظهر',
+			'eveningSlots' => 'الفترة المسائية',
+			'morningSlots' => 'الفترة الصباحية',
+			'reminder' => 'تذكير',
+			'reminderDescription' => 'تذكيري قبل الموعد بـ 15 دقيقة',
+			'bookAppointment' => 'حجز الموعد',
+			'appointmentBookedSuccess' => ({required Object name, required Object date, required Object time}) => 'تم حجز الموعد بنجاح مع ${name} في يوم ${date} الساعة ${time}',
+			'viewDetails' => 'عرض التفاصيل',
+			'confirm' => 'تأكيد',
+			'thankYou' => 'شكراً لك !',
+			'appointmentSuccessful' => 'تم حجز موعدك بنجاح',
+			'appointmentBookedWith' => ({required Object name, required Object date, required Object time}) => 'لقد قمت بحجز موعد مع ${name} في ${date}، الساعة ${time}',
+			'done' => 'تم',
+			'editYourAppointment' => 'تعديل الموعد',
 			_ => null,
 		};
 	}

@@ -6,13 +6,15 @@ import 'package:doctor_hunt/apps/features/auth/presentation/screens/otp_verifica
 import 'package:doctor_hunt/apps/features/auth/presentation/screens/reset_password_screen.dart';
 import 'package:doctor_hunt/apps/features/auth/presentation/screens/role_selection_screen.dart';
 import 'package:doctor_hunt/apps/features/auth/presentation/screens/signup_screen.dart';
-import 'package:doctor_hunt/apps/features/doctors/data/doctors_data.dart';
+import 'package:doctor_hunt/apps/core/data/doctors_data.dart';
 import 'package:doctor_hunt/apps/features/doctors/data/models/doctor_detail_args.dart';
+
 import 'package:doctor_hunt/apps/features/doctors/presentation/screens/doctor_details_screen.dart';
 import 'package:doctor_hunt/apps/features/doctors/presentation/screens/find_doctors_screen.dart';
+import 'package:doctor_hunt/apps/features/favourite_doctors/presentation/screens/favourite_doctors_screen.dart';
 import 'package:doctor_hunt/apps/features/home/presentation/screens/home_screen.dart';
 import 'package:doctor_hunt/apps/features/onboarding/presentation/screens/onboarding_screen.dart';
-import 'package:doctor_hunt/apps/features/settings/presentation/screens/settings_screen.dart';
+import 'package:doctor_hunt/apps/features/doctor_select_time/presentation/screens/doctor_select_time_screen.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
 part 'routes.g.dart';
@@ -55,9 +57,7 @@ class OtpVerificationRoute extends GoRouteData with $OtpVerificationRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return OtpVerificationScreen(
-      phoneNumber: $extra ?? context.t.defaultPhoneNumber,
-    );
+    return OtpVerificationScreen(phoneNumber: $extra ?? tr.defaultPhoneNumber);
   }
 }
 
@@ -109,18 +109,28 @@ class DoctorDetailsRoute extends GoRouteData with $DoctorDetailsRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return DoctorDetailsScreen(
-      doctor: $extra ?? defaultDoctorDetails(context.t),
-    );
+    return DoctorDetailsScreen(doctor: $extra ?? defaultDoctorDetails());
   }
 }
 
-@TypedGoRoute<SettingsRoute>(path: '/settings')
-class SettingsRoute extends GoRouteData with $SettingsRoute {
-  const SettingsRoute();
+@TypedGoRoute<FavouriteDoctorsRoute>(path: '/favourite-doctors')
+class FavouriteDoctorsRoute extends GoRouteData with $FavouriteDoctorsRoute {
+  const FavouriteDoctorsRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const SettingsScreen();
+    return const FavouriteDoctorsScreen();
+  }
+}
+
+@TypedGoRoute<SelectTimeRoute>(path: '/select-time')
+class SelectTimeRoute extends GoRouteData with $SelectTimeRoute {
+  const SelectTimeRoute([this.$extra]);
+
+  final DoctorDetailArgs? $extra;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return SelectTimeScreen(doctor: $extra ?? defaultDoctorDetails());
   }
 }

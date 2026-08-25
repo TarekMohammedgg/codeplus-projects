@@ -36,8 +36,8 @@ class AppIconButton extends StatelessWidget {
     this.iconSize = 16,
     this.iconColor,
     this.alignment = Alignment.center,
-  })  : child = null,
-        icon = Icons.arrow_back_ios_new_rounded;
+  }) : child = null,
+       icon = Icons.arrow_back_ios_new_rounded;
 
   final Widget? child;
   final IconData? icon;
@@ -59,7 +59,8 @@ class AppIconButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final effectiveBorderRadius = borderRadius ?? BorderRadius.circular(10);
     final effectiveBackgroundColor = backgroundColor ?? AppColors.surface;
-    final effectiveBoxShadow = boxShadow ??
+    final effectiveBoxShadow =
+        boxShadow ??
         const [
           BoxShadow(
             color: Color(0x0F000000),
@@ -68,7 +69,8 @@ class AppIconButton extends StatelessWidget {
           ),
         ];
 
-    final effectiveChild = child ??
+    final effectiveChild =
+        child ??
         (icon != null
             ? Icon(
                 icon,
@@ -97,24 +99,15 @@ class AppIconButton extends StatelessWidget {
           child: padding != null
               ? Padding(
                   padding: padding!,
-                  child: Align(
-                    alignment: alignment,
-                    child: effectiveChild,
-                  ),
+                  child: Align(alignment: alignment, child: effectiveChild),
                 )
-              : Align(
-                  alignment: alignment,
-                  child: effectiveChild,
-                ),
+              : Align(alignment: alignment, child: effectiveChild),
         ),
       ),
     );
 
     if (tooltip != null && tooltip!.isNotEmpty) {
-      content = Tooltip(
-        message: tooltip!,
-        child: content,
-      );
+      content = Tooltip(message: tooltip!, child: content);
     }
 
     return content;

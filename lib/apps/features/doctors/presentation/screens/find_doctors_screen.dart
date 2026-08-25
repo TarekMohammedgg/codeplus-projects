@@ -1,42 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_icon_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_search_bar.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_avatar_placeholder.dart';
-import 'package:doctor_hunt/apps/features/doctors/data/doctors_data.dart';
-import 'package:doctor_hunt/apps/features/doctors/data/models/doctor_detail_args.dart';
+import 'package:doctor_hunt/apps/core/data/doctors_data.dart';
 import 'package:doctor_hunt/apps/features/doctors/data/models/find_doctor_model.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
+
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
 class FindDoctorsScreen extends StatelessWidget {
   const FindDoctorsScreen({super.key});
 
   void onBookDoctor(BuildContext context, FindDoctorItem doctor) {
-    context.showSuccessSnackBar(context.t.bookingMessage(name: doctor.name));
+    SelectTimeRoute(doctor).push(context);
   }
 
   void onDoctorTap(BuildContext context, FindDoctorItem doctor) {
-    DoctorDetailsRoute(
-      DoctorDetailArgs(
-        id: doctor.id,
-        name: doctor.name,
-        specialty: doctor.specialty,
-        image: doctor.image,
-        isFavorite: doctor.isFavorite,
-        services: defaultServices(context.t),
-      ),
-    ).push(context);
+    DoctorDetailsRoute(doctor).push(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    final doctorsList = doctors(context.t);
+    final doctorsList = doctors();
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -97,7 +87,7 @@ class FindDoctorsTopBar extends StatelessWidget {
           ),
         ),
         16.horizontalSpace,
-        Text(context.t.findDoctors, style: context.bold18TextMain),
+        Text(tr.findDoctors, style: context.bold18TextMain),
       ],
     );
   }
@@ -117,8 +107,6 @@ class FindDoctorCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final t = context.t;
-
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -190,8 +178,8 @@ class FindDoctorCard extends StatelessWidget {
                       ),
                       4.verticalSpace,
                       Text(
-                        '${doctor.experienceYears} ${t.yearsExperienceSuffix}',
-                        style: context.regular12TextSub.copyWith(
+                        '${doctor.experienceYears} ${tr.yearsExperienceSuffix}',
+                        style: context.regular12TextSecondary.copyWith(
                           color: AppColors.textSecondary.withValues(alpha: 0.8),
                         ),
                       ),
@@ -201,23 +189,23 @@ class FindDoctorCard extends StatelessWidget {
                           const Icon(
                             Icons.circle,
                             size: 8,
-                            color: AppColors.primaryGreen,
+                            color: AppColors.primary,
                           ),
                           5.horizontalSpace,
                           Text(
                             '${doctor.ratingPercent}%',
-                            style: context.medium11TextSub,
+                            style: context.medium11TextSecondary,
                           ),
                           14.horizontalSpace,
                           const Icon(
                             Icons.circle,
                             size: 8,
-                            color: AppColors.primaryGreen,
+                            color: AppColors.primary,
                           ),
                           5.horizontalSpace,
                           Text(
-                            '${doctor.patientStoriesCount} ${t.patientStories}',
-                            style: context.medium11TextSub,
+                            '${doctor.patientStoriesCount} ${tr.patientStories}',
+                            style: context.medium11TextSecondary,
                           ),
                         ],
                       ),
@@ -235,7 +223,7 @@ class FindDoctorCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      t.nextAvailable,
+                      tr.nextAvailable,
                       style: context.semiBold14Primary.copyWith(fontSize: 13),
                     ),
                     3.verticalSpace,
@@ -248,7 +236,7 @@ class FindDoctorCard extends StatelessWidget {
                 ElevatedButton(
                   onPressed: onBookNow,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primaryGreen,
+                    backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
                     minimumSize: const Size(112, 38),
                     padding: const EdgeInsets.symmetric(
@@ -261,7 +249,7 @@ class FindDoctorCard extends StatelessWidget {
                     elevation: 0,
                   ),
                   child: Text(
-                    t.bookNow,
+                    tr.bookNow,
                     style: context.semiBold14White.copyWith(fontSize: 13),
                   ),
                 ),

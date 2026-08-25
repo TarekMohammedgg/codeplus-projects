@@ -29,7 +29,7 @@ class AuthBackButton extends StatelessWidget {
         size: 24,
       ),
       padding: EdgeInsets.zero,
-      tooltip: context.t.back,
+      tooltip: tr.back,
     );
 
     if (!circular) {

@@ -41,39 +41,46 @@ class OtpVerificationScreenState extends State<OtpVerificationScreen> {
   void resendCode() {
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(SnackBar(content: Text(context.t.codeSentAgain)));
+    ).showSnackBar(SnackBar(content: Text(tr.codeSentAgain)));
   }
 
   @override
   Widget build(BuildContext context) {
-    final t = context.t;
-
     final defaultPinTheme = PinTheme(
       width: 68,
-      height: 84,
-      textStyle: context.bold32TextMain,
+      height: 64,
+      textStyle: context.bold24TextMain,
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(color: AppColors.outline, width: 1.2),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x08000000),
+            blurRadius: 8,
+            offset: Offset(0, 3),
+          ),
+        ],
       ),
     );
 
     final focusedPinTheme = defaultPinTheme.copyWith(
-      decoration: defaultPinTheme.decoration?.copyWith(
-        border: Border.all(color: AppColors.primaryGreen, width: 1.8),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.primary, width: 1.8),
         boxShadow: const [
           BoxShadow(
-            color: Color(0x140EBE7E),
-            blurRadius: 8,
-            offset: Offset(0, 2),
+            color: AppColors.boxShadow,
+            blurRadius: 12,
+            offset: Offset(0, 4),
           ),
         ],
       ),
     );
 
     return Scaffold(
-      backgroundColor: AppColors.canvas,
+      backgroundColor: AppColors.background,
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(24, 48, 24, 32),
         child: Column(
@@ -87,7 +94,7 @@ class OtpVerificationScreenState extends State<OtpVerificationScreen> {
             const Center(child: OtpVerificationHeroIllustration(size: 160)),
             24.verticalSpace,
             Text(
-              t.verifyYourNumber,
+              tr.verifyYourNumber,
               textAlign: TextAlign.center,
               style: context.bold28TextMain.copyWith(
                 fontWeight: FontWeight.w800,
@@ -96,12 +103,12 @@ class OtpVerificationScreenState extends State<OtpVerificationScreen> {
             8.verticalSpace,
             Text.rich(
               TextSpan(
-                style: context.regular14TextSub.copyWith(
+                style: context.regular14TextSecondary.copyWith(
                   fontSize: 14.5,
                   height: 1.35,
                 ),
                 children: [
-                  TextSpan(text: t.otpSentTo),
+                  TextSpan(text: tr.otpSentTo),
                   TextSpan(
                     text: widget.phoneNumber,
                     style: context.bold14TextMain.copyWith(fontSize: 14.5),
@@ -123,7 +130,7 @@ class OtpVerificationScreenState extends State<OtpVerificationScreen> {
                 cursor: Container(
                   width: 2,
                   height: 28,
-                  color: AppColors.primaryGreen,
+                  color: AppColors.primary,
                 ),
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 onCompleted: (pin) => verifyOtp(),
@@ -139,10 +146,7 @@ class OtpVerificationScreenState extends State<OtpVerificationScreen> {
                   size: 20,
                 ),
                 8.horizontalSpace,
-                Text(
-                  t.resendTimerDefault,
-                  style: context.bold16TextMain,
-                ),
+                Text(tr.resendTimerDefault, style: context.bold16TextMain),
               ],
             ),
             14.verticalSpace,
@@ -157,19 +161,19 @@ class OtpVerificationScreenState extends State<OtpVerificationScreen> {
               child: TextButton(
                 onPressed: resendCode,
                 style: TextButton.styleFrom(
-                  foregroundColor: AppColors.primaryGreen,
+                  foregroundColor: AppColors.primary,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
                     vertical: 8,
                   ),
                   textStyle: context.bold16Primary.copyWith(fontSize: 15),
                 ),
-                child: Text(t.resendCode),
+                child: Text(tr.resendCode),
               ),
             ),
             32.verticalSpace,
             AuthPrimaryButton(
-              label: t.continueText,
+              label: tr.continueText,
               onPressed: verifyOtp,
               height: 54,
               fontSize: 16,
@@ -192,10 +196,10 @@ class OtpVerificationHeroIllustration extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: AppColors.softMint,
+        color: AppColors.primaryLight,
         shape: BoxShape.circle,
         border: Border.all(
-          color: AppColors.primaryGreen.withValues(alpha: 0.3),
+          color: AppColors.primary.withValues(alpha: 0.3),
           width: 2,
         ),
       ),
@@ -203,7 +207,7 @@ class OtpVerificationHeroIllustration extends StatelessWidget {
         child: Icon(
           Icons.mark_email_read_outlined,
           size: size * 0.5,
-          color: AppColors.primaryGreen,
+          color: AppColors.primary,
         ),
       ),
     );

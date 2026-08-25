@@ -13,7 +13,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// Returns the current translations of the given [context].
 	///
 	/// Usage:
-	/// final t = Translations.of(context);
+	/// final tr = Translations.of(context);
 	static Translations of(BuildContext context) => InheritedLocaleData.of<AppLocale, Translations>(context).translations;
 
 	/// You can call this constructor and build your own translation instance of this locale.
@@ -409,6 +409,102 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// en: 'Profile updated successfully'
 	String get profileUpdatedSuccess => 'Profile updated successfully';
+
+	/// en: 'Favourite Doctors'
+	String get favouriteDoctors => 'Favourite Doctors';
+
+	/// en: 'Your saved and trusted medical specialists'
+	String get favouriteDoctorsSubtitle => 'Your saved and trusted medical specialists';
+
+	/// en: 'Feature Doctor'
+	String get featureDoctor => 'Feature Doctor';
+
+	/// en: 'Select Time'
+	String get selectTime => 'Select Time';
+
+	/// en: 'Select Date'
+	String get selectDate => 'Select Date';
+
+	/// en: 'Today'
+	String get today => 'Today';
+
+	/// en: 'Today, 23 Feb'
+	String get dateOptionToday => 'Today, 23 Feb';
+
+	/// en: 'Tomorrow, 24 Feb'
+	String get dateOptionTomorrow => 'Tomorrow, 24 Feb';
+
+	/// en: 'Thu, 25 Feb'
+	String get dateOptionThu => 'Thu, 25 Feb';
+
+	/// en: 'Fri, 26 Feb'
+	String get dateOptionFri => 'Fri, 26 Feb';
+
+	/// en: 'Sat, 27 Feb'
+	String get dateOptionSat => 'Sat, 27 Feb';
+
+	/// en: 'Sun, 28 Feb'
+	String get dateOptionSun => 'Sun, 28 Feb';
+
+	/// en: 'No slots available'
+	String get noSlotsAvailable => 'No slots available';
+
+	/// en: 'Next availability on $date'
+	String nextAvailabilityOn({required Object date}) => 'Next availability on ${date}';
+
+	/// en: 'Contact Clinic'
+	String get contactClinic => 'Contact Clinic';
+
+	/// en: 'Contacting clinic...'
+	String get contactingClinic => 'Contacting clinic...';
+
+	/// en: '$count slots available'
+	String slotsAvailable({required Object count}) => '${count} slots available';
+
+	/// en: '$count slots'
+	String slotsCount({required Object count}) => '${count} slots';
+
+	/// en: 'Afternoon'
+	String get afternoonSlots => 'Afternoon';
+
+	/// en: 'Evening'
+	String get eveningSlots => 'Evening';
+
+	/// en: 'Morning'
+	String get morningSlots => 'Morning';
+
+	/// en: 'Reminder'
+	String get reminder => 'Reminder';
+
+	/// en: 'Remind me 15 minutes before the appointment'
+	String get reminderDescription => 'Remind me 15 minutes before the appointment';
+
+	/// en: 'Book Appointment'
+	String get bookAppointment => 'Book Appointment';
+
+	/// en: 'Appointment booked successfully with $name on $date at $time'
+	String appointmentBookedSuccess({required Object name, required Object date, required Object time}) => 'Appointment booked successfully with ${name} on ${date} at ${time}';
+
+	/// en: 'View Details'
+	String get viewDetails => 'View Details';
+
+	/// en: 'Confirm'
+	String get confirm => 'Confirm';
+
+	/// en: 'Thank You !'
+	String get thankYou => 'Thank You !';
+
+	/// en: 'Your Appointment Successful'
+	String get appointmentSuccessful => 'Your Appointment Successful';
+
+	/// en: 'You booked an appointment with $name on $date, at $time'
+	String appointmentBookedWith({required Object name, required Object date, required Object time}) => 'You booked an appointment with ${name} on ${date}, at ${time}';
+
+	/// en: 'Done'
+	String get done => 'Done';
+
+	/// en: 'Edit your appointment'
+	String get editYourAppointment => 'Edit your appointment';
 }
 
 /// The flat map containing all translations for locale <en>.
@@ -542,6 +638,38 @@ extension on Translations {
 			'settings' => 'Settings',
 			'language' => 'Language',
 			'profileUpdatedSuccess' => 'Profile updated successfully',
+			'favouriteDoctors' => 'Favourite Doctors',
+			'favouriteDoctorsSubtitle' => 'Your saved and trusted medical specialists',
+			'featureDoctor' => 'Feature Doctor',
+			'selectTime' => 'Select Time',
+			'selectDate' => 'Select Date',
+			'today' => 'Today',
+			'dateOptionToday' => 'Today, 23 Feb',
+			'dateOptionTomorrow' => 'Tomorrow, 24 Feb',
+			'dateOptionThu' => 'Thu, 25 Feb',
+			'dateOptionFri' => 'Fri, 26 Feb',
+			'dateOptionSat' => 'Sat, 27 Feb',
+			'dateOptionSun' => 'Sun, 28 Feb',
+			'noSlotsAvailable' => 'No slots available',
+			'nextAvailabilityOn' => ({required Object date}) => 'Next availability on ${date}',
+			'contactClinic' => 'Contact Clinic',
+			'contactingClinic' => 'Contacting clinic...',
+			'slotsAvailable' => ({required Object count}) => '${count} slots available',
+			'slotsCount' => ({required Object count}) => '${count} slots',
+			'afternoonSlots' => 'Afternoon',
+			'eveningSlots' => 'Evening',
+			'morningSlots' => 'Morning',
+			'reminder' => 'Reminder',
+			'reminderDescription' => 'Remind me 15 minutes before the appointment',
+			'bookAppointment' => 'Book Appointment',
+			'appointmentBookedSuccess' => ({required Object name, required Object date, required Object time}) => 'Appointment booked successfully with ${name} on ${date} at ${time}',
+			'viewDetails' => 'View Details',
+			'confirm' => 'Confirm',
+			'thankYou' => 'Thank You !',
+			'appointmentSuccessful' => 'Your Appointment Successful',
+			'appointmentBookedWith' => ({required Object name, required Object date, required Object time}) => 'You booked an appointment with ${name} on ${date}, at ${time}',
+			'done' => 'Done',
+			'editYourAppointment' => 'Edit your appointment',
 			_ => null,
 		};
 	}

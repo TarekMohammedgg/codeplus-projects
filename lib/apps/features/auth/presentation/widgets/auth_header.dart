@@ -30,7 +30,7 @@ class AuthHeader extends StatelessWidget {
             textAlign: TextAlign.center,
             softWrap: true,
             maxLines: 2,
-            style: context.regular14TextSub.copyWith(height: 1.45),
+            style: context.regular14TextSecondary.copyWith(height: 1.45),
           ),
         ),
       ],

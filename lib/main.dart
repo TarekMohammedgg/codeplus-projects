@@ -16,11 +16,13 @@ class DoctorHuntApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locale = context.tr.$meta.locale;
     return MaterialApp.router(
-      title: context.t.appName,
+      key: ValueKey(locale),
+      title: tr.appName,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      locale: context.t.$meta.locale.flutterLocale,
+      locale: locale.flutterLocale,
       supportedLocales: AppLocaleUtils.supportedLocales,
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
       routerConfig: AppRouter.router,

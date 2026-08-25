@@ -5,6 +5,7 @@ import 'package:doctor_hunt/apps/core/widgets/app_icon_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_search_bar.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_avatar_placeholder.dart';
 import 'package:doctor_hunt/generated/app_image.dart';
+import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
 class AppHeaderSection extends StatelessWidget {
@@ -16,8 +17,8 @@ class AppHeaderSection extends StatelessWidget {
     this.leading,
     this.onBackTap,
     this.trailing,
-    this.showSettings = false,
-    this.onSettingsTap,
+    this.showLanguageToggle = false,
+    this.onLanguageToggle,
     this.showProfile = false,
     this.profileImage,
     this.onProfileTap,
@@ -41,8 +42,8 @@ class AppHeaderSection extends StatelessWidget {
   final Widget? leading;
   final VoidCallback? onBackTap;
   final Widget? trailing;
-  final bool showSettings;
-  final VoidCallback? onSettingsTap;
+  final bool showLanguageToggle;
+  final VoidCallback? onLanguageToggle;
   final bool showProfile;
   final String? profileImage;
   final VoidCallback? onProfileTap;
@@ -64,7 +65,7 @@ class AppHeaderSection extends StatelessWidget {
     final effectiveGradient =
         gradient ??
         const LinearGradient(
-          colors: [AppColors.primaryGreen, Color(0xFF07D9AD)],
+          colors: [AppColors.primary, Color(0xFF07D9AD)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         );
@@ -87,6 +88,13 @@ class AppHeaderSection extends StatelessWidget {
     final effectivePadding =
         padding ??
         const EdgeInsets.only(left: 24, right: 24, top: 60, bottom: 36);
+
+    final currentLocale = TranslationProvider.of(context).locale;
+    final isArabic = currentLocale == AppLocale.ar;
+    final targetLangLabel = isArabic ? 'EN' : 'ع';
+    final langIcon = isArabic
+        ? Icons.translate_rounded
+        : Icons.language_rounded;
 
     return Container(
       width: double.infinity,
@@ -147,23 +155,49 @@ class AppHeaderSection extends StatelessWidget {
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    if (showSettings || onSettingsTap != null)
-                      IconButton(
-                        onPressed: onSettingsTap,
-                        icon: const Icon(
-                          Icons.settings_rounded,
-                          color: Colors.white,
-                          size: 22,
-                        ),
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(
-                          minWidth: 40,
-                          minHeight: 40,
+                    if (showLanguageToggle || onLanguageToggle != null)
+                      Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap:
+                              onLanguageToggle ??
+                              () {
+                                final next = isArabic
+                                    ? AppLocale.en
+                                    : AppLocale.ar;
+                                LocaleSettings.setLocaleSync(next);
+                              },
+                          borderRadius: BorderRadius.circular(12),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(langIcon, color: Colors.white, size: 18),
+                                6.horizontalSpace,
+                                Text(
+                                  targetLangLabel,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
-                    if ((showSettings || onSettingsTap != null) &&
+                    if ((showLanguageToggle || onLanguageToggle != null) &&
                         (showProfile || profileImage != null))
-                      4.horizontalSpace,
+                      8.horizontalSpace,
                     if (showProfile || profileImage != null)
                       GestureDetector(
                         onTap: onProfileTap,
@@ -191,7 +225,7 @@ class AppHeaderSection extends StatelessWidget {
                                         (context, error, stackTrace) =>
                                             const DoctorAvatarPlaceholder(
                                               size: 48,
-                                              iconColor: AppColors.primaryGreen,
+                                              iconColor: AppColors.primary,
                                               backgroundColor: Color(
                                                 0xFFE8FBF6,
                                               ),
@@ -199,7 +233,7 @@ class AppHeaderSection extends StatelessWidget {
                                   )
                                 : const DoctorAvatarPlaceholder(
                                     size: 48,
-                                    iconColor: AppColors.primaryGreen,
+                                    iconColor: AppColors.primary,
                                     backgroundColor: Color(0xFFE8FBF6),
                                   ),
                           ),

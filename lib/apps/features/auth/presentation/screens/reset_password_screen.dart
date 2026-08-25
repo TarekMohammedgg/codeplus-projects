@@ -36,15 +36,13 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
     final isValid = formKey.currentState?.validate() ?? false;
     if (!isValid) return;
 
-    context.showSuccessSnackBar(context.t.passwordResetSuccess);
+    context.showSuccessSnackBar(tr.passwordResetSuccess);
   }
 
   @override
   Widget build(BuildContext context) {
-    final t = context.t;
-
     return Scaffold(
-      backgroundColor: AppColors.canvas,
+      backgroundColor: AppColors.background,
       body: SingleChildScrollView(
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         padding: const EdgeInsets.fromLTRB(24, 48, 24, 32),
@@ -65,37 +63,32 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
               const Center(child: ResetPasswordHeroIllustration(size: 110)),
               16.verticalSpace,
               Text(
-                t.resetYourPassword,
+                tr.resetYourPassword,
                 textAlign: TextAlign.center,
                 style: context.bold26TextMain,
               ),
               6.verticalSpace,
               Text(
-                t.resetPasswordSubtitle,
+                tr.resetPasswordSubtitle,
                 textAlign: TextAlign.center,
-                style: context.regular14TextSub.copyWith(
-                  height: 1.35,
-                ),
+                style: context.regular14TextSecondary.copyWith(height: 1.35),
               ),
               20.verticalSpace,
-              Text(
-                t.emailAddress,
-                style: context.semiBold14TextMain,
-              ),
+              Text(tr.emailAddress, style: context.semiBold14TextMain),
               6.verticalSpace,
               AuthTextField(
                 controller: emailController,
-                hintText: t.emailHint,
+                hintText: tr.emailHint,
                 prefixIcon: Icons.mail_outline_rounded,
                 iconColor: AppColors.textSecondary,
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.done,
                 autofillHints: const [AutofillHints.email],
-                validator: (value) => AppValidators.validateEmail(value, t),
+                validator: (value) => AppValidators.validateEmail(value),
               ),
               20.verticalSpace,
               AuthPrimaryButton(
-                label: t.sendResetLink,
+                label: tr.sendResetLink,
                 icon: Icons.send_rounded,
                 onPressed: sendResetLink,
                 height: 52,
@@ -108,8 +101,8 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     Text(
-                      t.rememberedPassword,
-                      style: context.regular14TextSub,
+                      tr.rememberedPassword,
+                      style: context.regular14TextSecondary,
                     ),
                     TextButton(
                       onPressed: () {
@@ -120,13 +113,13 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
                         }
                       },
                       style: TextButton.styleFrom(
-                        foregroundColor: AppColors.primaryGreen,
+                        foregroundColor: AppColors.primary,
                         padding: const EdgeInsets.only(left: 6),
                         minimumSize: Size.zero,
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         textStyle: context.semiBold14Primary,
                       ),
-                      child: Text(t.signIn),
+                      child: Text(tr.signIn),
                     ),
                   ],
                 ),
@@ -150,10 +143,10 @@ class ResetPasswordHeroIllustration extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: AppColors.softMint,
+        color: AppColors.primaryLight,
         shape: BoxShape.circle,
         border: Border.all(
-          color: AppColors.primaryGreen.withValues(alpha: 0.3),
+          color: AppColors.primary.withValues(alpha: 0.3),
           width: 2,
         ),
       ),
@@ -161,7 +154,7 @@ class ResetPasswordHeroIllustration extends StatelessWidget {
         child: Icon(
           Icons.lock_reset_rounded,
           size: size * 0.5,
-          color: AppColors.primaryGreen,
+          color: AppColors.primary,
         ),
       ),
     );

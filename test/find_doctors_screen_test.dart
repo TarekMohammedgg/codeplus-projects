@@ -16,10 +16,10 @@ void main() {
       tester.view.resetDevicePixelRatio();
     });
 
-    final t = AppLocale.en.buildSync();
+    final tr = AppLocale.en.buildSync();
     await tester.pumpWidget(buildTestApp(const FindDoctorsScreen()));
 
-    expect(find.text(t.searchDoctorHint), findsOneWidget);
+    expect(find.text(tr.searchDoctorHint), findsOneWidget);
     expect(find.text('Dr. Shruti Kedia'), findsOneWidget);
     expect(find.text('Dr. Fillerup Grab'), findsOneWidget);
   });

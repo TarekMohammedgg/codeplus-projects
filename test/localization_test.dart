@@ -18,6 +18,10 @@ void main() {
     expect(find.text('دكتور هانت'), findsOneWidget);
     expect(AppLocale.ar.buildSync().live, 'مباشر');
   });
+
+  tearDown(() {
+    LocaleSettings.setLocaleSync(AppLocale.en);
+  });
 }
 
 class TranslationProbe extends StatelessWidget {
@@ -25,6 +29,6 @@ class TranslationProbe extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(context.t.appName);
+    return Text(TranslationProvider.of(context).translations.appName);
   }
 }

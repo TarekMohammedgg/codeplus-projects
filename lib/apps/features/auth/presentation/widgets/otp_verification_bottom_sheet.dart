@@ -48,7 +48,6 @@ class OtpVerificationBottomSheetState
   @override
   Widget build(BuildContext context) {
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
-    final t = context.t;
 
     final defaultPinTheme = PinTheme(
       width: 60,
@@ -63,7 +62,7 @@ class OtpVerificationBottomSheetState
 
     final focusedPinTheme = defaultPinTheme.copyWith(
       decoration: defaultPinTheme.decoration?.copyWith(
-        border: Border.all(color: AppColors.primaryGreen, width: 1.6),
+        border: Border.all(color: AppColors.primary, width: 1.6),
       ),
     );
 
@@ -89,16 +88,13 @@ class OtpVerificationBottomSheetState
               ),
             ),
             24.verticalSpace,
-            Text(
-              t.otpCodeTitle,
-              style: context.bold24TextMain,
-            ),
+            Text(tr.otpCodeTitle, style: context.bold24TextMain),
             10.verticalSpace,
             Text(
               widget.email == null || widget.email!.isEmpty
-                  ? t.otpCodeDescription
-                  : '${t.otpCodeDescription} ${widget.email}',
-              style: context.regular14TextSub.copyWith(height: 1.4),
+                  ? tr.otpCodeDescription
+                  : '${tr.otpCodeDescription} ${widget.email}',
+              style: context.regular14TextSecondary.copyWith(height: 1.4),
             ),
             28.verticalSpace,
             Center(
@@ -113,7 +109,7 @@ class OtpVerificationBottomSheetState
                 cursor: Container(
                   width: 2,
                   height: 24,
-                  color: AppColors.primaryGreen,
+                  color: AppColors.primary,
                 ),
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 onCompleted: (pin) => onContinue(),
@@ -123,7 +119,7 @@ class OtpVerificationBottomSheetState
             ElevatedButton(
               onPressed: onContinue,
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryGreen,
+                backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
                 minimumSize: const Size.fromHeight(52),
                 shape: RoundedRectangleBorder(
@@ -131,10 +127,7 @@ class OtpVerificationBottomSheetState
                 ),
                 elevation: 0,
               ),
-              child: Text(
-                t.continueText,
-                style: context.semiBold16White,
-              ),
+              child: Text(tr.continueText, style: context.semiBold16White),
             ),
             8.verticalSpace,
           ],

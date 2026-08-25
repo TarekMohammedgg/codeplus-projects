@@ -78,8 +78,7 @@ class AppSearchBarState extends State<AppSearchBar> {
 
   @override
   Widget build(BuildContext context) {
-    final t = context.t;
-    final hint = widget.hintText ?? t.searchDoctorHint;
+    final hint = widget.hintText ?? tr.searchDoctorHint;
 
     // ==========================================
     // 1) الطريقة السابقة (Manual Container + TextField) - معطلة للتجربة
@@ -187,7 +186,7 @@ class AppSearchBarState extends State<AppSearchBar> {
         textInputAction: widget.textInputAction,
         hintText: hint,
         hintStyle: WidgetStatePropertyAll(
-          context.regular14TextSub.copyWith(
+          context.regular14TextSecondary.copyWith(
             color: AppColors.textSecondary.withValues(alpha: 0.7),
           ),
         ),

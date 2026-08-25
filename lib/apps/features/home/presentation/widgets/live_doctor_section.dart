@@ -20,7 +20,7 @@ class LiveDoctorSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SectionHeader(title: t.liveDoctor, onSeeAllPressed: onSeeAllPressed),
+        SectionHeader(title: tr.liveDoctor, onSeeAllPressed: onSeeAllPressed),
         14.verticalSpace,
         SizedBox(
           height: 156,
@@ -127,7 +127,7 @@ class LiveDoctorCard extends StatelessWidget {
                     ),
                     5.horizontalSpace,
                     Text(
-                      t.live,
+                      tr.live,
                       style: context.bold11White.copyWith(
                         fontSize: 10,
                         letterSpacing: 0.5,

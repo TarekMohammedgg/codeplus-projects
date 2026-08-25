@@ -21,7 +21,7 @@ class AuthTextField extends StatefulWidget {
     required this.controller,
     required this.prefixIcon,
     this.hintText,
-    this.iconColor = AppColors.primaryGreen,
+    this.iconColor = AppColors.primary,
     this.isPassword = false,
     this.keyboardType,
     this.textInputAction,
@@ -76,9 +76,7 @@ class AuthTextFieldState extends State<AuthTextField> {
                       ? Icons.visibility_outlined
                       : Icons.visibility_off_outlined,
                 ),
-                tooltip: obscureText
-                    ? context.t.showPassword
-                    : context.t.hidePassword,
+                tooltip: obscureText ? tr.showPassword : tr.hidePassword,
               )
             : null,
         contentPadding: const EdgeInsets.symmetric(

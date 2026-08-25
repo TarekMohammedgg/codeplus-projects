@@ -82,12 +82,12 @@ class NavItem extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: isSelected ? AppColors.primaryGreen : Colors.transparent,
+            color: isSelected ? AppColors.primary : Colors.transparent,
             shape: BoxShape.circle,
             boxShadow: isSelected
                 ? [
                     BoxShadow(
-                      color: AppColors.primaryGreen.withValues(alpha: 0.35),
+                      color: AppColors.primary.withValues(alpha: 0.35),
                       blurRadius: 10,
                       offset: const Offset(0, 3),
                     ),

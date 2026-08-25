@@ -43,10 +43,8 @@ class SignupScreenState extends State<SignupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final t = context.t;
-
     return Scaffold(
-      backgroundColor: AppColors.canvas,
+      backgroundColor: AppColors.background,
       body: SingleChildScrollView(
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         padding: const EdgeInsets.fromLTRB(24, 48, 24, 32),
@@ -57,44 +55,43 @@ class SignupScreenState extends State<SignupScreen> {
             children: [
               28.verticalSpace,
               AuthHeader(
-                title: t.createYourAccount,
-                subtitle: t.signupSubtitle,
+                title: tr.createYourAccount,
+                subtitle: tr.signupSubtitle,
               ),
               32.verticalSpace,
               SocialSignupSection(),
               32.verticalSpace,
               AuthTextField(
                 controller: nameController,
-                hintText: t.fullNameHint,
+                hintText: tr.fullNameHint,
                 prefixIcon: Icons.person_outline_rounded,
                 iconColor: AppColors.textSecondary,
                 keyboardType: TextInputType.name,
                 textInputAction: TextInputAction.next,
                 autofillHints: const [AutofillHints.name],
-                validator: (value) => AppValidators.validateName(value, t),
+                validator: (value) => AppValidators.validateName(value),
               ),
               18.verticalSpace,
               AuthTextField(
                 controller: emailController,
-                hintText: t.emailAddress,
+                hintText: tr.emailAddress,
                 prefixIcon: Icons.mail_outline_rounded,
                 iconColor: AppColors.textSecondary,
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.next,
                 autofillHints: const [AutofillHints.email],
-                validator: (value) => AppValidators.validateEmail(value, t),
+                validator: (value) => AppValidators.validateEmail(value),
               ),
               18.verticalSpace,
               AuthTextField(
                 controller: passwordController,
-                hintText: t.passwordHint,
+                hintText: tr.passwordHint,
                 prefixIcon: Icons.lock_outline_rounded,
                 iconColor: AppColors.textSecondary,
                 isPassword: true,
                 textInputAction: TextInputAction.done,
                 autofillHints: const [AutofillHints.newPassword],
-                validator: (value) =>
-                    AppValidators.validatePassword(value, t),
+                validator: (value) => AppValidators.validatePassword(value),
               ),
               8.verticalSpace,
               Row(
@@ -106,8 +103,8 @@ class SignupScreenState extends State<SignupScreen> {
                   ),
                   8.horizontalSpace,
                   Text(
-                    t.passwordLengthNotice,
-                    style: context.regular14TextSub.copyWith(
+                    tr.passwordLengthNotice,
+                    style: context.regular14TextSecondary.copyWith(
                       fontSize: 13,
                       height: 1.2,
                     ),
@@ -128,7 +125,7 @@ class SignupScreenState extends State<SignupScreen> {
                         setState(() => termsAccepted = value ?? false);
                       },
                       side: const BorderSide(
-                        color: AppColors.primaryGreen,
+                        color: AppColors.primary,
                         width: 1.5,
                       ),
                       shape: const RoundedRectangleBorder(
@@ -149,15 +146,19 @@ class SignupScreenState extends State<SignupScreen> {
                             height: 1.35,
                           ),
                           children: [
-                            TextSpan(text: t.agreeTermsPrefix),
+                            TextSpan(text: tr.agreeTermsPrefix),
                             TextSpan(
-                              text: t.termsOfService,
-                              style: context.semiBold14Primary.copyWith(fontSize: 13.5),
+                              text: tr.termsOfService,
+                              style: context.semiBold14Primary.copyWith(
+                                fontSize: 13.5,
+                              ),
                             ),
-                            TextSpan(text: t.andText),
+                            TextSpan(text: tr.andText),
                             TextSpan(
-                              text: t.privacyPolicy,
-                              style: context.semiBold14Primary.copyWith(fontSize: 13.5),
+                              text: tr.privacyPolicy,
+                              style: context.semiBold14Primary.copyWith(
+                                fontSize: 13.5,
+                              ),
                             ),
                           ],
                         ),
@@ -168,7 +169,7 @@ class SignupScreenState extends State<SignupScreen> {
               ),
               24.verticalSpace,
               AuthPrimaryButton(
-                label: t.createAccount,
+                label: tr.createAccount,
                 onPressed: createAccount,
                 height: 54,
                 fontSize: 16,
@@ -180,7 +181,7 @@ class SignupScreenState extends State<SignupScreen> {
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     Text(
-                      t.alreadyHaveAccount,
+                      tr.alreadyHaveAccount,
                       style: context.regular14TextMain,
                     ),
                     TextButton(
@@ -192,13 +193,13 @@ class SignupScreenState extends State<SignupScreen> {
                         }
                       },
                       style: TextButton.styleFrom(
-                        foregroundColor: AppColors.primaryGreen,
+                        foregroundColor: AppColors.primary,
                         padding: const EdgeInsets.only(left: 6),
                         minimumSize: Size.zero,
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         textStyle: context.semiBold14Primary,
                       ),
-                      child: Text(t.signIn),
+                      child: Text(tr.signIn),
                     ),
                   ],
                 ),
@@ -216,13 +217,11 @@ class SocialSignupSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final t = context.t;
-
     return Row(
       children: [
         Expanded(
           child: SocialAuthButton(
-            label: t.google,
+            label: tr.google,
             image: Assets.assetsDesignGoogleLogo,
             onPressed: () => OtpVerificationBottomSheet.show(context),
           ),
@@ -230,7 +229,7 @@ class SocialSignupSection extends StatelessWidget {
         14.horizontalSpace,
         Expanded(
           child: SocialAuthButton(
-            label: t.facebook,
+            label: tr.facebook,
             image: Assets.assetsDesignFacebookLogo,
             onPressed: () => OtpVerificationBottomSheet.show(context),
           ),

@@ -40,6 +40,17 @@ class HomeScreenState extends State<HomeScreen> {
     setState(() {
       selectedNavIndex = index;
     });
+    if (index == 1) {
+      try {
+        const FavouriteDoctorsRoute().push(context).then((_) {
+          if (mounted) {
+            setState(() {
+              selectedNavIndex = 0;
+            });
+          }
+        });
+      } catch (_) {}
+    }
   }
 
   void openFindDoctors() {
@@ -52,15 +63,15 @@ class HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.canvas,
+      backgroundColor: AppColors.background,
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
             child: AppHeaderSection(
-              greeting: t.hiSteven,
-              title: t.findYourDoctor,
+              greeting: tr.hiSteven,
+              title: tr.findYourDoctor,
               searchController: searchController,
-              onSettingsTap: () => const SettingsRoute().push(context),
+              showLanguageToggle: true,
               profileImage: Assets.assetsDummyProfileImage,
             ),
           ),
@@ -68,7 +79,7 @@ class HomeScreenState extends State<HomeScreen> {
             child: Padding(
               padding: const EdgeInsets.only(top: 24),
               child: LiveDoctorSection(
-                liveDoctors: liveDoctors(t),
+                liveDoctors: liveDoctors(),
                 onSeeAllPressed: openFindDoctors,
               ),
             ),
@@ -77,7 +88,7 @@ class HomeScreenState extends State<HomeScreen> {
             child: Padding(
               padding: const EdgeInsets.only(top: 24),
               child: DoctorCategorySection(
-                categories: categories(t),
+                categories: categories(),
                 onCategoryTap: (_) => openFindDoctors(),
               ),
             ),
@@ -86,7 +97,7 @@ class HomeScreenState extends State<HomeScreen> {
             child: Padding(
               padding: const EdgeInsets.only(top: 24),
               child: PopularDoctorSection(
-                doctors: popularDoctors(t),
+                doctors: popularDoctors(),
                 onSeeAllPressed: openFindDoctors,
               ),
             ),
@@ -95,7 +106,7 @@ class HomeScreenState extends State<HomeScreen> {
             child: Padding(
               padding: const EdgeInsets.only(top: 24, bottom: 32),
               child: FeaturedDoctorSection(
-                doctors: featuredDoctors(t),
+                doctors: featuredDoctors(),
                 onSeeAllPressed: openFindDoctors,
               ),
             ),

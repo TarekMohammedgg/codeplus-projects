@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
-import 'package:doctor_hunt/apps/features/doctors/data/doctors_data.dart';
-import 'package:doctor_hunt/apps/features/doctors/data/models/doctor_detail_args.dart';
 import 'package:doctor_hunt/apps/features/home/data/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/features/home/presentation/widgets/section_header.dart';
+
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
@@ -21,13 +20,11 @@ class FeaturedDoctorSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final t = context.t;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SectionHeader(
-          title: t.featuredDoctor,
+          title: tr.featuredDoctor,
           onSeeAllPressed: onSeeAllPressed,
         ),
         14.verticalSpace,
@@ -42,18 +39,7 @@ class FeaturedDoctorSection extends StatelessWidget {
               final doctor = doctors[index];
               return FeaturedDoctorCard(
                 doctor: doctor,
-                onTap: () => DoctorDetailsRoute(
-                  DoctorDetailArgs(
-                    id: doctor.id,
-                    name: doctor.name,
-                    specialty: doctor.specialty,
-                    image: doctor.image,
-                    rating: doctor.rating,
-                    hourlyRate: doctor.hourlyRate,
-                    isFavorite: doctor.isFavorite,
-                    services: defaultServices(t),
-                  ),
-                ).push(context),
+                onTap: () => DoctorDetailsRoute(doctor).push(context),
               );
             },
           ),
@@ -71,8 +57,6 @@ class FeaturedDoctorCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final t = context.t;
-
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -151,13 +135,13 @@ class FeaturedDoctorCard extends StatelessWidget {
               doctor.specialty,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: context.regular11TextSub.copyWith(
+              style: context.regular11TextSecondary.copyWith(
                 color: AppColors.textSecondary.withValues(alpha: 0.8),
               ),
             ),
             6.verticalSpace,
             Text(
-              '\$${doctor.hourlyRate.toStringAsFixed(2)}${t.perHour}',
+              '\$${doctor.hourlyRate.toStringAsFixed(2)}${tr.perHour}',
               style: context.bold12Primary,
             ),
           ],

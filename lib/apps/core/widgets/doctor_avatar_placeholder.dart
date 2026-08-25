@@ -5,7 +5,7 @@ class DoctorAvatarPlaceholder extends StatelessWidget {
   const DoctorAvatarPlaceholder({
     super.key,
     this.size = 48,
-    this.iconColor = AppColors.primaryGreen,
+    this.iconColor = AppColors.primary,
     this.backgroundColor = const Color(0xFFE8FBF6),
     this.circle = true,
     this.iconSize,
@@ -30,7 +30,7 @@ class DoctorAvatarPlaceholder extends StatelessWidget {
       child: Center(
         child: Icon(
           Icons.person_rounded,
-          color: iconColor ?? AppColors.primaryGreen,
+          color: iconColor ?? AppColors.primary,
           size: iconSize ?? (size * 0.5),
         ),
       ),

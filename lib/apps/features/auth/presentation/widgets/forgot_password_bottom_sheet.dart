@@ -75,11 +75,11 @@ class ForgotPasswordBottomSheetState extends State<ForgotPasswordBottomSheet> {
                   ),
                 ),
                 24.verticalSpace,
-                Text(t.forgotPassword, style: context.bold24TextMain),
+                Text(tr.forgotPassword, style: context.bold24TextMain),
                 10.verticalSpace,
                 Text(
-                  t.forgotPasswordSubtitle,
-                  style: context.regular14TextSub.copyWith(height: 1.4),
+                  tr.forgotPasswordSubtitle,
+                  style: context.regular14TextSecondary.copyWith(height: 1.4),
                 ),
                 24.verticalSpace,
                 TextFormField(
@@ -87,10 +87,10 @@ class ForgotPasswordBottomSheetState extends State<ForgotPasswordBottomSheet> {
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.done,
                   autofillHints: const [AutofillHints.email],
-                  validator: (value) => AppValidators.validateEmail(value, t),
+                  validator: (value) => AppValidators.validateEmail(value),
                   decoration: InputDecoration(
-                    hintText: t.emailAddress,
-                    hintStyle: context.regular14TextSub.copyWith(
+                    hintText: tr.emailAddress,
+                    hintStyle: context.regular14TextSecondary.copyWith(
                       color: AppColors.textSecondary.withValues(alpha: 0.7),
                     ),
                     contentPadding: const EdgeInsets.symmetric(
@@ -108,7 +108,7 @@ class ForgotPasswordBottomSheetState extends State<ForgotPasswordBottomSheet> {
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: const BorderSide(
-                        color: AppColors.primaryGreen,
+                        color: AppColors.primary,
                         width: 1.5,
                       ),
                     ),
@@ -118,7 +118,7 @@ class ForgotPasswordBottomSheetState extends State<ForgotPasswordBottomSheet> {
                 ElevatedButton(
                   onPressed: onContinue,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primaryGreen,
+                    backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
                     minimumSize: const Size.fromHeight(52),
                     shape: RoundedRectangleBorder(
@@ -126,7 +126,7 @@ class ForgotPasswordBottomSheetState extends State<ForgotPasswordBottomSheet> {
                     ),
                     elevation: 0,
                   ),
-                  child: Text(t.continueText, style: context.semiBold16White),
+                  child: Text(tr.continueText, style: context.semiBold16White),
                 ),
                 8.verticalSpace,
               ],

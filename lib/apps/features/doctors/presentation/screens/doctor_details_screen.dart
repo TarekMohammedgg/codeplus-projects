@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:go_router/go_router.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
+import 'package:doctor_hunt/apps/core/data/doctors_data.dart';
 import 'package:doctor_hunt/apps/features/doctors/data/models/doctor_detail_args.dart';
+
 import 'package:doctor_hunt/apps/core/widgets/app_icon_button.dart';
-import 'package:doctor_hunt/apps/core/widgets/doctor_avatar_placeholder.dart';
-import 'package:doctor_hunt/generated/app_image.dart';
+import 'package:doctor_hunt/apps/core/widgets/doctor_profile_card.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
@@ -19,10 +22,8 @@ class DoctorDetailsScreen extends StatelessWidget {
     const FindDoctorsRoute().push(context);
   }
 
-  void showBookingMessage(BuildContext context) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(context.t.bookingComingSoon)));
+  void openSelectTime(BuildContext context) {
+    SelectTimeRoute(doctor).push(context);
   }
 
   @override
@@ -43,7 +44,7 @@ class DoctorDetailsScreen extends StatelessWidget {
                   20.verticalSpace,
                   DoctorProfileCard(
                     doctor: doctor,
-                    onBookNow: () => showBookingMessage(context),
+                    onBookNow: () => openSelectTime(context),
                   ),
                   24.verticalSpace,
                   DoctorStatsRow(
@@ -54,7 +55,7 @@ class DoctorDetailsScreen extends StatelessWidget {
                   24.verticalSpace,
                   DoctorServicesSection(services: doctor.services),
                   24.verticalSpace,
-                  const DoctorLocationMap(),
+                  DoctorLocationMap(location: doctor.location),
                   24.verticalSpace,
                 ],
               ),
@@ -78,8 +79,6 @@ class DoctorDetailsAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final t = context.t;
-
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 48, 24, 16),
       child: Row(
@@ -93,7 +92,7 @@ class DoctorDetailsAppBar extends StatelessWidget {
               color: AppColors.textSecondary,
             ),
           ),
-          Text(t.doctorDetails, style: context.bold18TextMain),
+          Text(tr.doctorDetails, style: context.bold18TextMain),
           AppIconButton(
             onTap: onSearch,
             child: const Icon(
@@ -104,150 +103,6 @@ class DoctorDetailsAppBar extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-class DoctorProfileCard extends StatelessWidget {
-  const DoctorProfileCard({
-    super.key,
-    required this.doctor,
-    required this.onBookNow,
-  });
-
-  final DoctorDetailArgs doctor;
-  final VoidCallback onBookNow;
-
-  @override
-  Widget build(BuildContext context) {
-    final t = context.t;
-
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0C000000),
-            blurRadius: 16,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: SizedBox(
-                  width: 90,
-                  height: 90,
-                  child: doctor.image != null
-                      ? Image.asset(doctor.image!, fit: BoxFit.cover)
-                      : const DoctorAvatarPlaceholder(circle: false),
-                ),
-              ),
-              16.horizontalSpace,
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            doctor.name,
-                            style: context.bold18TextMain.copyWith(
-                              fontSize: 17,
-                              height: 1.2,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 4),
-                          child: Icon(
-                            doctor.isFavorite
-                                ? Icons.favorite_rounded
-                                : Icons.favorite_border_rounded,
-                            color: doctor.isFavorite
-                                ? const Color(0xFFFF003A)
-                                : AppColors.disabled,
-                            size: 22,
-                          ),
-                        ),
-                      ],
-                    ),
-                    4.verticalSpace,
-                    Text(
-                      doctor.specialty,
-                      style: context.regular14TextSub.copyWith(
-                        fontSize: 13,
-                        color: AppColors.textSecondary.withValues(alpha: 0.8),
-                      ),
-                    ),
-                    8.verticalSpace,
-                    DoctorStarRating(rating: doctor.rating),
-                    8.verticalSpace,
-                    Text(
-                      '\$${doctor.hourlyRate.toStringAsFixed(2)}${t.perHour}',
-                      style: context.bold16Primary.copyWith(fontSize: 15),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          16.verticalSpace,
-          SizedBox(
-            width: double.infinity,
-            height: 48,
-            child: ElevatedButton(
-              onPressed: onBookNow,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryGreen,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                elevation: 0,
-              ),
-              child: Text(
-                t.bookNow,
-                style: context.semiBold16White.copyWith(fontSize: 15),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class DoctorStarRating extends StatelessWidget {
-  const DoctorStarRating({super.key, required this.rating});
-
-  final double rating;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: List.generate(5, (index) {
-        final filled = index < rating.floor();
-        final halfFilled = !filled && index < rating;
-        return Icon(
-          filled
-              ? Icons.star_rounded
-              : halfFilled
-              ? Icons.star_half_rounded
-              : Icons.star_border_rounded,
-          color: const Color(0xFFFFB800),
-          size: 18,
-        );
-      }),
     );
   }
 }
@@ -266,8 +121,6 @@ class DoctorStatsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final t = context.t;
-
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16),
       decoration: BoxDecoration(
@@ -285,7 +138,7 @@ class DoctorStatsRow extends StatelessWidget {
         child: Row(
           children: [
             Expanded(
-              child: DoctorStatItem(count: runningCount, label: t.statRunning),
+              child: DoctorStatItem(count: runningCount, label: tr.statRunning),
             ),
             const VerticalDivider(
               width: 1,
@@ -293,7 +146,7 @@ class DoctorStatsRow extends StatelessWidget {
               color: AppColors.outline,
             ),
             Expanded(
-              child: DoctorStatItem(count: ongoingCount, label: t.statOngoing),
+              child: DoctorStatItem(count: ongoingCount, label: tr.statOngoing),
             ),
             const VerticalDivider(
               width: 1,
@@ -301,7 +154,7 @@ class DoctorStatsRow extends StatelessWidget {
               color: AppColors.outline,
             ),
             Expanded(
-              child: DoctorStatItem(count: patientCount, label: t.statPatient),
+              child: DoctorStatItem(count: patientCount, label: tr.statPatient),
             ),
           ],
         ),
@@ -325,7 +178,7 @@ class DoctorStatItem extends StatelessWidget {
         4.verticalSpace,
         Text(
           label,
-          style: context.regular14TextSub.copyWith(
+          style: context.regular14TextSecondary.copyWith(
             fontSize: 13,
             color: AppColors.textSecondary.withValues(alpha: 0.8),
           ),
@@ -345,7 +198,7 @@ class DoctorServicesSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(t.services, style: context.bold18TextMain),
+        Text(tr.services, style: context.bold18TextMain),
         16.verticalSpace,
         ...List.generate(services.length, (index) {
           return Padding(
@@ -357,7 +210,7 @@ class DoctorServicesSection extends StatelessWidget {
                   width: 24,
                   height: 24,
                   decoration: BoxDecoration(
-                    color: AppColors.primaryGreen.withValues(alpha: 0.12),
+                    color: AppColors.primary.withValues(alpha: 0.12),
                     shape: BoxShape.circle,
                   ),
                   child: Center(
@@ -368,7 +221,7 @@ class DoctorServicesSection extends StatelessWidget {
                 Expanded(
                   child: Text(
                     services[index],
-                    style: context.regular14TextSub.copyWith(
+                    style: context.regular14TextSecondary.copyWith(
                       color: AppColors.textSecondary.withValues(alpha: 0.9),
                       height: 1.5,
                     ),
@@ -384,28 +237,61 @@ class DoctorServicesSection extends StatelessWidget {
 }
 
 class DoctorLocationMap extends StatelessWidget {
-  const DoctorLocationMap({super.key});
+  const DoctorLocationMap({super.key, this.location});
+
+  final LatLng? location;
 
   @override
   Widget build(BuildContext context) {
+    final targetLocation = location ?? defaultDoctorLocation;
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(16),
-      child: Image.asset(
-        Assets.assetsDummyMap,
+      child: Container(
         height: 180,
         width: double.infinity,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) => Container(
-          height: 180,
-          width: double.infinity,
-          color: const Color(0xFFE2EAF0),
-          child: const Center(
-            child: Icon(
-              Icons.map_rounded,
-              size: 40,
-              color: AppColors.primaryGreen,
+        color: const Color(0xFFE2EAF0),
+        child: FlutterMap(
+          options: MapOptions(
+            initialCenter: targetLocation,
+            initialZoom: 14.0,
+            interactionOptions: const InteractionOptions(
+              flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
             ),
           ),
+          children: [
+            TileLayer(
+              urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+              userAgentPackageName: 'doctor_hunt',
+            ),
+            MarkerLayer(
+              markers: [
+                Marker(
+                  point: targetLocation,
+                  width: 44,
+                  height: 44,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primary.withValues(alpha: 0.35),
+                          blurRadius: 10,
+                          spreadRadius: 2,
+                        ),
+                      ],
+                    ),
+                    child: const Icon(
+                      Icons.location_on_rounded,
+                      color: Colors.white,
+                      size: 24,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

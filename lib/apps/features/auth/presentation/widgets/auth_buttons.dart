@@ -27,7 +27,7 @@ class AuthPrimaryButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primaryGreen,
+          backgroundColor: AppColors.primary,
           disabledBackgroundColor: AppColors.disabled,
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
@@ -94,7 +94,7 @@ class SocialAuthButton extends StatelessWidget {
               const SizedBox(width: 10),
               Text(
                 label,
-                style: context.medium16TextSub.copyWith(fontSize: 15),
+                style: context.medium16TextSecondary.copyWith(fontSize: 15),
               ),
             ],
           ),
@@ -108,23 +108,14 @@ class SocialMark extends StatelessWidget {
   final String image;
   final double size;
 
-  const SocialMark({
-    super.key,
-    required this.image,
-    this.size = 20,
-  });
+  const SocialMark({super.key, required this.image, this.size = 20});
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: size,
       height: size,
-      child: Image.asset(
-        image,
-        width: size,
-        height: size,
-        fit: BoxFit.contain,
-      ),
+      child: Image.asset(image, width: size, height: size, fit: BoxFit.contain),
     );
   }
 }

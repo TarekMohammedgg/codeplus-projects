@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_header_section.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_search_bar.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_avatar_placeholder.dart';
+import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'test_app.dart';
 
 void main() {
@@ -47,28 +48,57 @@ void main() {
     expect(backTapped, isTrue);
   });
 
-  testWidgets('AppHeaderSection renders settings and handles onSettingsTap', (
-    WidgetTester tester,
-  ) async {
-    bool settingsTapped = false;
+  testWidgets(
+    'AppHeaderSection renders language toggle and handles onLanguageToggle',
+    (WidgetTester tester) async {
+      bool languageToggled = false;
 
-    await tester.pumpWidget(
-      buildTestApp(
-        Scaffold(
-          body: AppHeaderSection(
-            title: 'Home',
-            onSettingsTap: () => settingsTapped = true,
+      await tester.pumpWidget(
+        buildTestApp(
+          Scaffold(
+            body: AppHeaderSection(
+              title: 'Home',
+              onLanguageToggle: () => languageToggled = true,
+            ),
           ),
         ),
-      ),
-    );
+      );
 
-    expect(find.byIcon(Icons.settings_rounded), findsOneWidget);
-    await tester.tap(find.byIcon(Icons.settings_rounded));
-    await tester.pump();
+      expect(find.byIcon(Icons.language_rounded), findsOneWidget);
+      expect(find.text('ع'), findsOneWidget);
+      await tester.tap(find.byIcon(Icons.language_rounded));
+      await tester.pump();
 
-    expect(settingsTapped, isTrue);
-  });
+      expect(languageToggled, isTrue);
+    },
+  );
+
+  testWidgets(
+    'AppHeaderSection default language toggle alternates icon and character',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        buildTestApp(
+          const Scaffold(
+            body: AppHeaderSection(title: 'Home', showLanguageToggle: true),
+          ),
+        ),
+      );
+
+      expect(find.byIcon(Icons.language_rounded), findsOneWidget);
+      expect(find.text('ع'), findsOneWidget);
+      expect(LocaleSettings.currentLocale, AppLocale.en);
+
+      await tester.tap(find.byIcon(Icons.language_rounded));
+      await tester.pumpAndSettle();
+
+      expect(LocaleSettings.currentLocale, AppLocale.ar);
+      expect(find.byIcon(Icons.translate_rounded), findsOneWidget);
+      expect(find.text('EN'), findsOneWidget);
+
+      // Reset
+      LocaleSettings.setLocaleSync(AppLocale.en);
+    },
+  );
 
   testWidgets('AppHeaderSection renders custom trailing and bottom widgets', (
     WidgetTester tester,

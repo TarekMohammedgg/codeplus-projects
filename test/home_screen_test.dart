@@ -9,7 +9,7 @@ void main() {
   testWidgets('HomeScreen renders Doctor Hunt home UI elements properly', (
     WidgetTester tester,
   ) async {
-    final t = AppLocale.en.buildSync();
+    final tr = AppLocale.en.buildSync();
     tester.view.physicalSize = const Size(1080, 2400);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(() {
@@ -19,14 +19,14 @@ void main() {
 
     await tester.pumpWidget(buildTestApp(const HomeScreen()));
 
-    expect(find.text(t.hiSteven), findsOneWidget);
-    expect(find.text(t.findYourDoctor), findsOneWidget);
+    expect(find.text(tr.hiSteven), findsOneWidget);
+    expect(find.text(tr.findYourDoctor), findsOneWidget);
 
-    expect(find.text(t.searchDoctorHint), findsOneWidget);
+    expect(find.text(tr.searchDoctorHint), findsOneWidget);
 
-    expect(find.text(t.liveDoctor), findsOneWidget);
-    expect(find.text(t.popularDoctor), findsOneWidget);
-    expect(find.text(t.featuredDoctor), findsOneWidget);
+    expect(find.text(tr.liveDoctor), findsOneWidget);
+    expect(find.text(tr.popularDoctor), findsOneWidget);
+    expect(find.text(tr.featuredDoctor), findsOneWidget);
 
     expect(find.byType(DoctorCategorySection), findsOneWidget);
     expect(find.byType(DoctorCategoryCard), findsWidgets);
@@ -42,7 +42,7 @@ void main() {
 
     expect(find.byType(HomeBottomNavigationBar), findsOneWidget);
     expect(find.byIcon(Icons.home_rounded), findsOneWidget);
-    expect(find.byIcon(Icons.settings_rounded), findsOneWidget);
+    expect(find.byIcon(Icons.language_rounded), findsOneWidget);
     expect(find.byIcon(Icons.menu_book_rounded), findsOneWidget);
     expect(find.byIcon(Icons.chat_bubble_rounded), findsOneWidget);
   });
@@ -198,6 +198,40 @@ void main() {
 
       expect(find.byIcon(Icons.favorite_rounded), findsWidgets);
       expect(find.byIcon(Icons.favorite_border_rounded), findsWidgets);
+    },
+  );
+
+  testWidgets(
+    'HomeScreen language toggle toggles locale between English and Arabic',
+    (WidgetTester tester) async {
+      tester.view.physicalSize = const Size(1080, 2400);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+        LocaleSettings.setLocaleSync(AppLocale.en);
+      });
+
+      await tester.pumpWidget(buildTestApp(const HomeScreen()));
+
+      expect(
+        find.text(AppLocale.en.buildSync().findYourDoctor),
+        findsOneWidget,
+      );
+      expect(find.byIcon(Icons.language_rounded), findsOneWidget);
+      expect(find.text('ع'), findsOneWidget);
+      expect(LocaleSettings.currentLocale, AppLocale.en);
+
+      await tester.tap(find.byIcon(Icons.language_rounded));
+      await tester.pumpAndSettle();
+
+      expect(LocaleSettings.currentLocale, AppLocale.ar);
+      expect(
+        find.text(AppLocale.ar.buildSync().findYourDoctor),
+        findsOneWidget,
+      );
+      expect(find.byIcon(Icons.translate_rounded), findsOneWidget);
+      expect(find.text('EN'), findsOneWidget);
     },
   );
 }

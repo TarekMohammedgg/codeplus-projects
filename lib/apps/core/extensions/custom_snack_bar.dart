@@ -30,8 +30,8 @@ extension CustomSnackBarExtension on BuildContext {
         Icons.warning_amber_rounded,
       ),
       SnackBarStatus.info => (
-        AppColors.primaryGreen,
-        AppColors.softMint,
+        AppColors.primary,
+        AppColors.primaryLight,
         Icons.info_outline_rounded,
       ),
     };

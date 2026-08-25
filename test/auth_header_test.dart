@@ -9,15 +9,15 @@ void main() {
   testWidgets('Login and signup headers use matching typography', (
     WidgetTester tester,
   ) async {
-    final t = AppLocale.en.buildSync();
+    final tr = AppLocale.en.buildSync();
 
     await tester.pumpWidget(buildTestApp(const LoginScreen()));
-    final loginTitle = tester.widget<Text>(find.text(t.welcomeBack));
-    final loginSubtitle = tester.widget<Text>(find.text(t.loginSubtitle));
+    final loginTitle = tester.widget<Text>(find.text(tr.welcomeBack));
+    final loginSubtitle = tester.widget<Text>(find.text(tr.loginSubtitle));
 
     await tester.pumpWidget(buildTestApp(const SignupScreen()));
-    final signupTitle = tester.widget<Text>(find.text(t.createYourAccount));
-    final signupSubtitle = tester.widget<Text>(find.text(t.signupSubtitle));
+    final signupTitle = tester.widget<Text>(find.text(tr.createYourAccount));
+    final signupSubtitle = tester.widget<Text>(find.text(tr.signupSubtitle));
 
     expect(signupTitle.style, loginTitle.style);
     expect(signupSubtitle.style, loginSubtitle.style);

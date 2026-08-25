@@ -23,10 +23,8 @@ class RoleSelectionScreenState extends State<RoleSelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final t = context.t;
-
     return Scaffold(
-      backgroundColor: AppColors.canvas,
+      backgroundColor: AppColors.background,
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(24, 48, 24, 32),
         child: Column(
@@ -42,15 +40,15 @@ class RoleSelectionScreenState extends State<RoleSelectionScreen> {
             ),
             const SizedBox(height: 36),
             Text(
-              t.roleSelectionTitle,
+              tr.roleSelectionTitle,
               textAlign: TextAlign.center,
               style: context.bold24TextMain,
             ),
             const SizedBox(height: 8),
             Text(
-              t.roleSelectionSubtitle,
+              tr.roleSelectionSubtitle,
               textAlign: TextAlign.center,
-              style: context.regular14TextSub.copyWith(
+              style: context.regular14TextSecondary.copyWith(
                 fontSize: 13.5,
                 height: 1.4,
               ),
@@ -59,8 +57,8 @@ class RoleSelectionScreenState extends State<RoleSelectionScreen> {
             buildRoleCard(
               isSelected: selectedRole == UserRole.patient,
               icon: Icons.person_rounded,
-              title: t.patientRoleTitle,
-              description: t.patientRoleDescription,
+              title: tr.patientRoleTitle,
+              description: tr.patientRoleDescription,
               onTap: () {
                 setState(() => selectedRole = UserRole.patient);
               },
@@ -69,8 +67,8 @@ class RoleSelectionScreenState extends State<RoleSelectionScreen> {
             buildRoleCard(
               isSelected: selectedRole == UserRole.admin,
               icon: Icons.grid_view_rounded,
-              title: t.adminRoleTitle,
-              description: t.adminRoleDescription,
+              title: tr.adminRoleTitle,
+              description: tr.adminRoleDescription,
               onTap: () {
                 setState(() => selectedRole = UserRole.admin);
               },
@@ -82,17 +80,14 @@ class RoleSelectionScreenState extends State<RoleSelectionScreen> {
                 child: ElevatedButton(
                   onPressed: onContinue,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primaryGreen,
+                    backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14),
                     ),
                     elevation: 0,
                   ),
-                  child: Text(
-                    t.continueText,
-                    style: context.semiBold16White,
-                  ),
+                  child: Text(tr.continueText, style: context.semiBold16White),
                 ),
               ),
             ),
@@ -120,9 +115,7 @@ class RoleSelectionScreenState extends State<RoleSelectionScreen> {
             color: AppColors.surface,
             borderRadius: BorderRadius.circular(18),
             border: Border.all(
-              color: isSelected
-                  ? AppColors.primaryGreen
-                  : const Color(0xFFE5E9EB),
+              color: isSelected ? AppColors.primary : const Color(0xFFE5E9EB),
               width: isSelected ? 1.8 : 1.2,
             ),
             boxShadow: isSelected
@@ -149,14 +142,14 @@ class RoleSelectionScreenState extends State<RoleSelectionScreen> {
                 height: 46,
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? AppColors.softMint
+                      ? AppColors.primaryLight
                       : const Color(0xFFF1F4F6),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   icon,
                   color: isSelected
-                      ? AppColors.primaryGreen
+                      ? AppColors.primary
                       : const Color(0xFF8A94A6),
                   size: 24,
                 ),
@@ -176,7 +169,7 @@ class RoleSelectionScreenState extends State<RoleSelectionScreen> {
                     const SizedBox(height: 6),
                     Text(
                       description,
-                      style: context.regular14TextSub.copyWith(
+                      style: context.regular14TextSecondary.copyWith(
                         fontSize: 13,
                         height: 1.35,
                       ),
@@ -190,7 +183,7 @@ class RoleSelectionScreenState extends State<RoleSelectionScreen> {
                   height: 22,
                   margin: const EdgeInsets.only(left: 8, top: 2),
                   decoration: const BoxDecoration(
-                    color: AppColors.primaryGreen,
+                    color: AppColors.primary,
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(

@@ -27,6 +27,8 @@ class Assets {
   static const String assetsDesignSplashLogoAndroid12 =
       "assets/design/splash_logo_android12.png";
 
+  static const String assetsDesignThanks = "assets/design/thanks.png";
+
   static const String assetsDesignTopHover = "assets/design/top_hover.png";
 
   static const String assetsDummyBody = "assets/dummy/body.png";
@@ -65,4 +67,8 @@ class Assets {
 
   static const String assetsDummyProfileImage =
       "assets/dummy/profile_image.png";
+
+  static const String assetsTranslationAr = "assets/translation/ar.json";
+
+  static const String assetsTranslationEn = "assets/translation/en.json";
 }

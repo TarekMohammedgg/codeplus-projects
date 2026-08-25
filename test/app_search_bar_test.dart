@@ -8,11 +8,11 @@ void main() {
   testWidgets('AppSearchBar renders with default hint and prefix icon', (
     WidgetTester tester,
   ) async {
-    final t = AppLocale.en.buildSync();
+    final tr = AppLocale.en.buildSync();
 
     await tester.pumpWidget(buildTestApp(const Scaffold(body: AppSearchBar())));
 
-    expect(find.text(t.searchDoctorHint), findsOneWidget);
+    expect(find.text(tr.searchDoctorHint), findsOneWidget);
     expect(find.byIcon(Icons.search_rounded), findsOneWidget);
   });
 

@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
-import 'package:doctor_hunt/apps/features/doctors/data/doctors_data.dart';
-import 'package:doctor_hunt/apps/features/doctors/data/models/doctor_detail_args.dart';
 import 'package:doctor_hunt/apps/features/home/data/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/features/home/presentation/widgets/section_header.dart';
+
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
@@ -21,13 +20,11 @@ class PopularDoctorSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final t = context.t;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SectionHeader(
-          title: t.popularDoctor,
+          title: tr.popularDoctor,
           onSeeAllPressed:
               onSeeAllPressed ?? () => const FindDoctorsRoute().push(context),
         ),
@@ -43,17 +40,7 @@ class PopularDoctorSection extends StatelessWidget {
               final doctor = doctors[index];
               return PopularDoctorCard(
                 doctor: doctor,
-                onTap: () => DoctorDetailsRoute(
-                  DoctorDetailArgs(
-                    id: doctor.id,
-                    name: doctor.name,
-                    specialty: doctor.specialty,
-                    image: doctor.image,
-                    rating: doctor.rating,
-                    isFavorite: doctor.isFavorite,
-                    services: defaultServices(t),
-                  ),
-                ).push(context),
+                onTap: () => DoctorDetailsRoute(doctor).push(context),
               );
             },
           ),
@@ -71,8 +58,6 @@ class PopularDoctorCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final t = context.t;
-
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -165,7 +150,7 @@ class PopularDoctorCard extends StatelessWidget {
                     doctor.specialty,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: context.regular12TextSub.copyWith(
+                    style: context.regular12TextSecondary.copyWith(
                       color: AppColors.textSecondary.withValues(alpha: 0.8),
                     ),
                   ),
@@ -185,10 +170,10 @@ class PopularDoctorCard extends StatelessWidget {
                       6.horizontalSpace,
                       Flexible(
                         child: Text(
-                          '(${doctor.reviewsCount} ${t.reviews})',
+                          '(${doctor.reviewsCount} ${tr.reviews})',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: context.regular11TextSub.copyWith(
+                          style: context.regular11TextSecondary.copyWith(
                             color: AppColors.textSecondary.withValues(
                               alpha: 0.7,
                             ),

@@ -2,33 +2,23 @@ import 'package:flutter/material.dart';
 
 /// Centralized color palette for the Doctor Hunt application.
 abstract final class AppColors {
-  // Brand & Accent Colors
-  static const Color primary = primaryGreen;
-  static const Color primaryGreen = Color(0xff0EBE7E);
-  static const Color primaryGreenDark = Color(0xFF07A86E);
-  static const Color primaryLight = lightGreen;
-  static const Color primaryDark = primaryGreenDark;
-  static const Color secondary = teal;
-  static const Color secondaryLight = softTeal;
-  static const Color secondaryDark = teal;
-  static const Color teal = Color(0xFF07D9AD);
-  static const Color mint = Color(0xFF07D9AD);
-  static const Color softMint = Color(0xFFE8FBF6);
-  static const Color softTeal = Color(0xFFE8FBF6);
-  static const Color lightGreen = Color(0xFFE8FBF6);
+  // Brand Colors
+  static const Color primary = Color(0xff0EBE7E);
+  static const Color primaryDark = Color(0xFF07A86E);
+  static const Color primaryLight = Color(0xFFE8FBF6);
+
+  // Secondary Colors
+  static const Color secondary = Color(0xFF07D9AD);
 
   // Background & Surface Colors
-  static const Color canvas = Color(0xFFFFFFFF);
-  static const Color background = canvas;
+  static const Color background = Color(0xFFFFFFFF);
   static const Color surface = Color(0xFFFFFFFF);
 
-  // Neutral & Border Colors
+  // Text Colors
   static const Color textMain = Color(0xFF333333);
-  static const Color textSub = textSecondary;
-  static const Color textPlaceholder = disabled;
-  static const Color textBorders = outline;
   static const Color textSecondary = Color(0xFF677294);
-  static const Color textDark = Color(0xFF333333);
+
+  // Borders & Disabled
   static const Color outline = Color(0xFFE5E7EB);
   static const Color disabled = Color(0xFFC9D5E8);
 
@@ -37,8 +27,6 @@ abstract final class AppColors {
   static const Color successLight = Color(0xFFE8FBF6);
   static const Color error = Color(0xFFFF4848);
   static const Color errorLight = Color(0xFFFFEBEE);
-  static const Color danger = error;
-  static const Color dangerLight = errorLight;
   static const Color warning = Color(0xFFF57C00);
   static const Color warningLight = Color(0xFFFFF3E0);
 
@@ -97,7 +85,7 @@ abstract final class AppTheme {
   );
 
   static const TextStyle action = TextStyle(
-    color: AppColors.primaryGreen,
+    color: AppColors.primary,
     fontSize: 15,
     fontWeight: FontWeight.w600,
     height: 1.25,
@@ -113,11 +101,11 @@ abstract final class AppTheme {
   /// The base Material theme for all Doctor Hunt screens.
   static ThemeData get lightTheme {
     final colorScheme = ColorScheme.fromSeed(
-      seedColor: AppColors.primaryGreen,
+      seedColor: AppColors.primary,
       brightness: Brightness.light,
-      primary: AppColors.primaryGreen,
+      primary: AppColors.primary,
       onPrimary: Colors.white,
-      secondary: AppColors.teal,
+      secondary: AppColors.secondary,
       onSecondary: AppColors.textMain,
       surface: AppColors.surface,
       onSurface: AppColors.textMain,
@@ -127,7 +115,7 @@ abstract final class AppTheme {
     return ThemeData(
       useMaterial3: true,
       colorScheme: colorScheme,
-      scaffoldBackgroundColor: AppColors.canvas,
+      scaffoldBackgroundColor: AppColors.background,
       fontFamily: 'Rubik',
       textTheme: const TextTheme(
         displaySmall: display,
@@ -159,10 +147,7 @@ abstract final class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: fieldRadius,
-          borderSide: const BorderSide(
-            color: AppColors.primaryGreen,
-            width: 1.5,
-          ),
+          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: fieldRadius,
@@ -171,7 +156,7 @@ abstract final class AppTheme {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primaryGreen,
+          backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
           minimumSize: const Size.fromHeight(54),
           padding: const EdgeInsets.symmetric(horizontal: 20),

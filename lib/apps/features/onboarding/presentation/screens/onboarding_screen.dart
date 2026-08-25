@@ -30,7 +30,7 @@ class OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   void onNext() {
-    if (currentIndex == onboardingPages(context.t).length - 1) {
+    if (currentIndex == onboardingPages().length - 1) {
       const LoginRoute().go(context);
       return;
     }
@@ -43,10 +43,10 @@ class OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final pages = onboardingPages(context.t);
+    final pages = onboardingPages();
 
     return Scaffold(
-      backgroundColor: AppColors.canvas,
+      backgroundColor: AppColors.background,
       body: Column(
         children: [
           Expanded(
@@ -68,14 +68,14 @@ class OnboardingScreenState extends State<OnboardingScreen> {
             padding: const EdgeInsets.fromLTRB(32, 12, 32, 28),
             child: Row(
               children: [
-                TextButton(onPressed: onSkip, child: Text(t.skip)),
+                TextButton(onPressed: onSkip, child: Text(tr.skip)),
                 const Spacer(),
                 IconButton(
                   onPressed: onNext,
                   icon: const Icon(Icons.arrow_forward_rounded),
                   color: Colors.white,
                   style: IconButton.styleFrom(
-                    backgroundColor: AppColors.primaryGreen,
+                    backgroundColor: AppColors.primary,
                     fixedSize: const Size(58, 58),
                     elevation: 0,
                     shadowColor: Colors.transparent,
@@ -143,7 +143,7 @@ class OnboardingDetailPage extends StatelessWidget {
                     radius: 4,
 
                     dotColor: AppColors.disabled,
-                    activeDotColor: AppColors.primaryGreen,
+                    activeDotColor: AppColors.primary,
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -158,7 +158,7 @@ class OnboardingDetailPage extends StatelessWidget {
                   child: Text(
                     page.subtitle,
                     textAlign: TextAlign.center,
-                    style: context.regular14TextSub,
+                    style: context.regular14TextSecondary,
                   ),
                 ),
               ],

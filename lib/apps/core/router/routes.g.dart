@@ -16,7 +16,8 @@ List<RouteBase> get $appRoutes => [
   $homeRoute,
   $findDoctorsRoute,
   $doctorDetailsRoute,
-  $settingsRoute,
+  $favouriteDoctorsRoute,
+  $selectTimeRoute,
 ];
 
 RouteBase get $onboardingRoute => GoRouteData.$route(
@@ -267,17 +268,18 @@ mixin $DoctorDetailsRoute on GoRouteData {
       context.replace(location, extra: _self.$extra);
 }
 
-RouteBase get $settingsRoute => GoRouteData.$route(
-  path: '/settings',
+RouteBase get $favouriteDoctorsRoute => GoRouteData.$route(
+  path: '/favourite-doctors',
   hasOverriddenOnExit: false,
-  factory: $SettingsRoute._fromState,
+  factory: $FavouriteDoctorsRoute._fromState,
 );
 
-mixin $SettingsRoute on GoRouteData {
-  static SettingsRoute _fromState(GoRouterState state) => const SettingsRoute();
+mixin $FavouriteDoctorsRoute on GoRouteData {
+  static FavouriteDoctorsRoute _fromState(GoRouterState state) =>
+      const FavouriteDoctorsRoute();
 
   @override
-  String get location => GoRouteData.$location('/settings');
+  String get location => GoRouteData.$location('/favourite-doctors');
 
   @override
   void go(BuildContext context) => context.go(location);
@@ -291,4 +293,35 @@ mixin $SettingsRoute on GoRouteData {
 
   @override
   void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $selectTimeRoute => GoRouteData.$route(
+  path: '/select-time',
+  hasOverriddenOnExit: false,
+  factory: $SelectTimeRoute._fromState,
+);
+
+mixin $SelectTimeRoute on GoRouteData {
+  static SelectTimeRoute _fromState(GoRouterState state) =>
+      SelectTimeRoute(state.extra as DoctorDetailArgs?);
+
+  SelectTimeRoute get _self => this as SelectTimeRoute;
+
+  @override
+  String get location => GoRouteData.$location('/select-time');
+
+  @override
+  void go(BuildContext context) => context.go(location, extra: _self.$extra);
+
+  @override
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: _self.$extra);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: _self.$extra);
+
+  @override
+  void replace(BuildContext context) =>
+      context.replace(location, extra: _self.$extra);
 }
