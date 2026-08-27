@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/features/doctor_select_time/data/models/time_slot_model.dart';
+import 'package:easy_date_timeline/easy_date_timeline.dart';
+import 'package:flutter/material.dart';
 
 class DateSelectorList extends StatelessWidget {
   const DateSelectorList({
@@ -17,40 +17,49 @@ class DateSelectorList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final selectedOption = dateOptions.firstWhere(
+      (option) => option.id == selectedOptionId,
+      orElse: () => dateOptions.first,
+    );
     final borderRadius = BorderRadius.circular(8);
 
-    return SizedBox(
-      height: 62,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        clipBehavior: Clip.none,
-        itemCount: dateOptions.length,
-        separatorBuilder: (_, __) => 12.horizontalSpace,
-        itemBuilder: (context, index) {
-          final option = dateOptions[index];
-          final isSelected = option.id == selectedOptionId;
+    return EasyInfiniteDateTimeLine(
+      firstDate: dateOptions.first.date,
+      focusDate: selectedOption.date,
+      lastDate: dateOptions.last.date,
+      showTimelineHeader: false,
+      dayProps: const EasyDayProps(width: 152, height: 62),
+      timeLineProps: const EasyTimeLineProps(hPadding: 0, separatorPadding: 12),
+      onDateChange: (date) {
+        final option = dateOptions.firstWhere(
+          (option) => DateUtils.isSameDay(option.date, date),
+        );
+        onSelectOption?.call(option);
+      },
+      itemBuilder: (context, date, isSelected, onTap) {
+        final option = dateOptions.firstWhere(
+          (option) => DateUtils.isSameDay(option.date, date),
+        );
 
-          return Material(
-            color: isSelected ? AppColors.primary : AppColors.surface,
+        return Material(
+          color: isSelected ? AppColors.primary : AppColors.surface,
+          borderRadius: borderRadius,
+          child: InkWell(
+            onTap: onTap,
             borderRadius: borderRadius,
-            elevation: 0,
-            child: InkWell(
-              onTap: onSelectOption != null
-                  ? () => onSelectOption!(option)
-                  : null,
-              borderRadius: borderRadius,
-              child: Container(
-                width: 152,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                decoration: BoxDecoration(
-                  borderRadius: borderRadius,
-                  border: Border.all(
-                    color: isSelected
-                        ? AppColors.primary
-                        : const Color(0xFFE8E8E8),
-                    width: 1,
-                  ),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                borderRadius: borderRadius,
+                border: Border.all(
+                  color: isSelected
+                      ? AppColors.primary
+                      : const Color(0xFFE8E8E8),
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 8,
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -67,7 +76,7 @@ class DateSelectorList extends StatelessWidget {
                             : const Color(0xFF222B45),
                       ),
                     ),
-                    4.verticalSpace,
+                    const SizedBox(height: 4),
                     Text(
                       option.hasSlots
                           ? '${option.slotsCount} slots available'
@@ -76,7 +85,6 @@ class DateSelectorList extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: 10,
-                        fontWeight: FontWeight.w400,
                         color: isSelected
                             ? Colors.white.withValues(alpha: 0.9)
                             : const Color(0xFF677294),
@@ -86,9 +94,9 @@ class DateSelectorList extends StatelessWidget {
                 ),
               ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

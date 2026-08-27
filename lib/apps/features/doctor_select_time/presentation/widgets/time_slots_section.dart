@@ -1,8 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/features/doctor_select_time/data/models/time_slot_model.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:time_slot/time_slot.dart';
 
 class TimeSlotsSection extends StatelessWidget {
   const TimeSlotsSection({
@@ -22,64 +24,53 @@ class TimeSlotsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     if (slots.isEmpty) return const SizedBox.shrink();
 
+    final slotDates = slots.map(_toDateTime).toList();
+    final selectedDates = slots
+        .where((slot) => slot.id == selectedSlotId)
+        .map(_toDateTime)
+        .toList();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(title, style: context.bold16TextMain),
         12.verticalSpace,
-        Wrap(
-          spacing: 12,
-          runSpacing: 12,
-          children: slots
-              .map(
-                (slot) => _SlotChip(
-                  slot: slot,
-                  isSelected: slot.id == selectedSlotId,
-                  onTap: onSelectSlot != null
-                      ? () => onSelectSlot!(slot.id)
-                      : null,
-                ),
-              )
-              .toList(),
+        DefaultTextStyle(
+          style: const TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: AppColors.primary,
+          ),
+          child: TimesSlotGridViewFromList(
+            key: ValueKey(slots.first.id),
+            initTime: selectedDates,
+            listDates: slotDates,
+            crossAxisCount: 4,
+            displayType: DisplayType.ungrouping,
+            selectedColor: AppColors.primary,
+            unSelectedColor: AppColors.primary.withValues(alpha: 0.08),
+            mainAxisSpacing: 12,
+            crossAxisSpacing: 12,
+            childAspectRatio: 2.4,
+            borderRadius: BorderRadius.circular(6),
+            onChange: (selectedDates) {
+              if (selectedDates.isEmpty || onSelectSlot == null) return;
+
+              final selectedDate = selectedDates.first;
+              final selectedSlot = slots.firstWhere((slot) {
+                final slotDate = _toDateTime(slot);
+                return slotDate.hour == selectedDate.hour &&
+                    slotDate.minute == selectedDate.minute;
+              });
+              onSelectSlot!(selectedSlot.id);
+            },
+          ),
         ),
       ],
     );
   }
-}
 
-// ── Private widget ────────────────────────────────────────────────────────────
-
-class _SlotChip extends StatelessWidget {
-  const _SlotChip({required this.slot, required this.isSelected, this.onTap});
-
-  final TimeSlotItem slot;
-  final bool isSelected;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final borderRadius = BorderRadius.circular(6);
-
-    return Material(
-      color: isSelected
-          ? AppColors.primary
-          : AppColors.primary.withValues(alpha: 0.08),
-      borderRadius: borderRadius,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: borderRadius,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-          child: Text(
-            slot.time,
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: isSelected ? Colors.white : AppColors.primary,
-            ),
-          ),
-        ),
-      ),
-    );
+  DateTime _toDateTime(TimeSlotItem slot) {
+    return DateFormat('h:mm a', 'en').parse(slot.time);
   }
 }

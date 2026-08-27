@@ -57,13 +57,12 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
     final currentIndex = dateOptions.indexWhere((d) => d.id == currentId);
     final safeIndex = currentIndex == -1 ? 0 : currentIndex;
 
-    for (int i = safeIndex + 1; i < dateOptions.length; i++) {
-      if (dateOptions[i].hasSlots) return dateOptions[i];
-    }
-    for (int i = 0; i < safeIndex; i++) {
-      if (dateOptions[i].hasSlots) return dateOptions[i];
-    }
-    return dateOptions[safeIndex];
+    return dateOptions
+        .skip(safeIndex + 1)
+        .firstWhere(
+          (option) => option.hasSlots,
+          orElse: () => dateOptions[safeIndex],
+        );
   }
 
   String _formatNextAvailabilityDate(DateOptionItem nextOption) {
@@ -73,8 +72,6 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
     return nextOption.dayLabel;
   }
 
-  /// Resolves which slot is currently selected, falling back to the first
-  /// available slot if the previously selected one no longer exists.
   TimeSlotItem? _resolveSelectedSlot(List<TimeSlotItem> allSlots) {
     if (allSlots.isEmpty) return null;
 

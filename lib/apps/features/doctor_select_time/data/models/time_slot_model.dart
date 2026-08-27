@@ -12,12 +12,14 @@ class TimeSlotItem {
 
 class DateOptionItem {
   final String id;
+  final DateTime date;
   final String dayLabel;
   final List<TimeSlotItem> afternoonSlots;
   final List<TimeSlotItem> eveningSlots;
 
   const DateOptionItem({
     required this.id,
+    required this.date,
     required this.dayLabel,
     this.afternoonSlots = const [],
     this.eveningSlots = const [],

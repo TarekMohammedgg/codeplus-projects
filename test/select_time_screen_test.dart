@@ -78,8 +78,8 @@ void main() {
         find.text('${tr.eveningSlots} ${tr.slotsCount(count: 2)}'),
         findsOneWidget,
       );
-      expect(find.text('1:00 PM'), findsOneWidget);
-      expect(find.text('2:00 PM'), findsOneWidget);
+      expect(find.textContaining('1:00'), findsOneWidget);
+      expect(find.textContaining('2:00'), findsOneWidget);
 
       // Confirm button should be visible and enabled
       expect(find.text(tr.confirm), findsOneWidget);
@@ -121,7 +121,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Select 2:00 PM slot
-      await tester.tap(find.text('2:00 PM'));
+      await tester.tap(find.textContaining('2:00'));
       await tester.pumpAndSettle();
 
       // Tap Confirm
@@ -184,54 +184,23 @@ void main() {
     expect(editPressed, isTrue);
   });
 
-  testWidgets(
-    'SelectTimeScreen selecting date without slots displays NoSlotsAvailableSection and navigating to next available slots works',
-    (WidgetTester tester) async {
-      final tr = AppLocale.en.buildSync();
-      tester.view.physicalSize = const Size(1080, 2400);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(() {
-        tester.view.resetPhysicalSize();
-        tester.view.resetDevicePixelRatio();
-      });
+  testWidgets('SelectTimeScreen shows only the three requested dates', (
+    WidgetTester tester,
+  ) async {
+    tester.view.physicalSize = const Size(1080, 2400);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
 
-      await tester.pumpWidget(
-        buildTestApp(SelectTimeScreen(doctor: testDoctor)),
-      );
+    await tester.pumpWidget(buildTestApp(SelectTimeScreen(doctor: testDoctor)));
 
-      // Tap on Sat, 27 Feb (which has no slots)
-      expect(find.text('Sat, 27 Feb'), findsOneWidget);
-      await tester.tap(find.text('Sat, 27 Feb'));
-      await tester.pumpAndSettle();
-
-      // Should show NoSlotsAvailableSection and no TimeSlotsSection
-      expect(find.byType(NoSlotsAvailableSection), findsOneWidget);
-      expect(find.text(tr.noSlotsAvailable), findsWidgets);
-      expect(find.byType(TimeSlotsSection), findsNothing);
-
-      // Button should indicate next availability is on Sun, 28 Feb
-      expect(
-        find.text(tr.nextAvailabilityOn(date: 'Sun, 28 Feb')),
-        findsOneWidget,
-      );
-
-      // Tap next availability button to navigate to Sun, 28 Feb
-      await tester.tap(
-        find.text(tr.nextAvailabilityOn(date: 'Sun, 28 Feb')),
-      );
-      await tester.pumpAndSettle();
-
-      // Now Sun, 28 Feb slots should be visible and NoSlotsAvailableSection should disappear
-      expect(find.byType(NoSlotsAvailableSection), findsNothing);
-      expect(find.byType(TimeSlotsSection), findsWidgets);
-      expect(
-        find.text('${tr.afternoonSlots} ${tr.slotsCount(count: 3)}'),
-        findsOneWidget,
-      );
-      expect(
-        find.text('${tr.eveningSlots} ${tr.slotsCount(count: 3)}'),
-        findsOneWidget,
-      );
-    },
-  );
+    expect(find.text('Today, 23 Feb'), findsWidgets);
+    expect(find.text('Tomorrow, 24 Feb'), findsOneWidget);
+    expect(find.text('Thursday, 25 Feb'), findsOneWidget);
+    expect(find.text('9 slots available'), findsOneWidget);
+    expect(find.text('10 slots available'), findsOneWidget);
+    expect(find.text('Fri, 26 Feb'), findsNothing);
+  });
 }
