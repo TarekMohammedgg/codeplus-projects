@@ -15,6 +15,8 @@ import 'package:doctor_hunt/apps/features/favourite_doctors/presentation/screens
 import 'package:doctor_hunt/apps/features/home/presentation/screens/home_screen.dart';
 import 'package:doctor_hunt/apps/features/onboarding/presentation/screens/onboarding_screen.dart';
 import 'package:doctor_hunt/apps/features/doctor_select_time/presentation/screens/doctor_select_time_screen.dart';
+import 'package:doctor_hunt/apps/features/profile/data/models/user_profile_model.dart';
+import 'package:doctor_hunt/apps/features/profile/presentation/screens/profile_screen.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
 part 'routes.g.dart';
@@ -132,5 +134,17 @@ class SelectTimeRoute extends GoRouteData with $SelectTimeRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return SelectTimeScreen(doctor: $extra ?? defaultDoctorDetails());
+  }
+}
+
+@TypedGoRoute<ProfileRoute>(path: '/profile')
+class ProfileRoute extends GoRouteData with $ProfileRoute {
+  const ProfileRoute([this.$extra]);
+
+  final UserProfileModel? $extra;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return ProfileScreen(profile: $extra);
   }
 }

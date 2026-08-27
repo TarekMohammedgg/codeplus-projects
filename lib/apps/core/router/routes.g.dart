@@ -18,6 +18,7 @@ List<RouteBase> get $appRoutes => [
   $doctorDetailsRoute,
   $favouriteDoctorsRoute,
   $selectTimeRoute,
+  $profileRoute,
 ];
 
 RouteBase get $onboardingRoute => GoRouteData.$route(
@@ -245,7 +246,7 @@ RouteBase get $doctorDetailsRoute => GoRouteData.$route(
 
 mixin $DoctorDetailsRoute on GoRouteData {
   static DoctorDetailsRoute _fromState(GoRouterState state) =>
-      DoctorDetailsRoute(state.extra as DoctorDetailArgs?);
+      DoctorDetailsRoute(state.extra as DoctorModel?);
 
   DoctorDetailsRoute get _self => this as DoctorDetailsRoute;
 
@@ -303,12 +304,43 @@ RouteBase get $selectTimeRoute => GoRouteData.$route(
 
 mixin $SelectTimeRoute on GoRouteData {
   static SelectTimeRoute _fromState(GoRouterState state) =>
-      SelectTimeRoute(state.extra as DoctorDetailArgs?);
+      SelectTimeRoute(state.extra as DoctorModel?);
 
   SelectTimeRoute get _self => this as SelectTimeRoute;
 
   @override
   String get location => GoRouteData.$location('/select-time');
+
+  @override
+  void go(BuildContext context) => context.go(location, extra: _self.$extra);
+
+  @override
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: _self.$extra);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: _self.$extra);
+
+  @override
+  void replace(BuildContext context) =>
+      context.replace(location, extra: _self.$extra);
+}
+
+RouteBase get $profileRoute => GoRouteData.$route(
+  path: '/profile',
+  hasOverriddenOnExit: false,
+  factory: $ProfileRoute._fromState,
+);
+
+mixin $ProfileRoute on GoRouteData {
+  static ProfileRoute _fromState(GoRouterState state) =>
+      ProfileRoute(state.extra as UserProfileModel?);
+
+  ProfileRoute get _self => this as ProfileRoute;
+
+  @override
+  String get location => GoRouteData.$location('/profile');
 
   @override
   void go(BuildContext context) => context.go(location, extra: _self.$extra);
