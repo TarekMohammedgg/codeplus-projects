@@ -5,8 +5,16 @@ import 'apps/core/router/app_router.dart';
 import 'apps/core/theme/app_theme.dart';
 import 'generated/i18n/translations.g.dart';
 
-void main() {
+import 'package:firebase_core/firebase_core.dart';
+import 'apps/features/auth/data/service/auth_service.dart';
+import 'firebase_options.dart';
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await AuthService.initialize();
+
   LocaleSettings.useDeviceLocale();
   runApp(TranslationProvider(child: const DoctorHuntApp()));
 }

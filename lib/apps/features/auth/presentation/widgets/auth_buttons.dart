@@ -9,6 +9,7 @@ class AuthPrimaryButton extends StatelessWidget {
   final double height;
   final double fontSize;
   final IconData? icon;
+  final bool isLoading;
 
   const AuthPrimaryButton({
     super.key,
@@ -17,6 +18,7 @@ class AuthPrimaryButton extends StatelessWidget {
     this.height = 54,
     this.fontSize = 16,
     this.icon,
+    this.isLoading = false,
   });
 
   @override
@@ -25,10 +27,10 @@ class AuthPrimaryButton extends StatelessWidget {
       width: double.infinity,
       height: height,
       child: ElevatedButton(
-        onPressed: onPressed,
+        onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
-          disabledBackgroundColor: AppColors.disabled,
+          disabledBackgroundColor: AppColors.primary.withValues(alpha: 0.6),
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -36,7 +38,16 @@ class AuthPrimaryButton extends StatelessWidget {
           textStyle: context.semiBold16White.copyWith(fontSize: fontSize),
           elevation: 0,
         ),
-        child: icon != null
+        child: isLoading
+            ? const SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2.5,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              )
+            : icon != null
             ? Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
@@ -56,12 +67,14 @@ class SocialAuthButton extends StatelessWidget {
   final String label;
   final String image;
   final VoidCallback? onPressed;
+  final bool isLoading;
 
   const SocialAuthButton({
     super.key,
     required this.label,
     required this.image,
     required this.onPressed,
+    this.isLoading = false,
   });
 
   @override
@@ -69,7 +82,7 @@ class SocialAuthButton extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: onPressed,
+        onTap: isLoading ? null : onPressed,
         borderRadius: BorderRadius.circular(12),
         child: Container(
           height: 54,
@@ -86,18 +99,33 @@ class SocialAuthButton extends StatelessWidget {
               ),
             ],
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SocialMark(image: image),
-              const SizedBox(width: 10),
-              Text(
-                label,
-                style: context.medium16TextSecondary.copyWith(fontSize: 15),
-              ),
-            ],
-          ),
+          child: isLoading
+              ? const Center(
+                  child: SizedBox(
+                    width: 22,
+                    height: 22,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        AppColors.primary,
+                      ),
+                    ),
+                  ),
+                )
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SocialMark(image: image),
+                    const SizedBox(width: 10),
+                    Text(
+                      label,
+                      style: context.medium16TextSecondary.copyWith(
+                        fontSize: 15,
+                      ),
+                    ),
+                  ],
+                ),
         ),
       ),
     );

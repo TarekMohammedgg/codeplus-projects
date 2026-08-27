@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
+import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
@@ -6,6 +8,7 @@ import 'package:doctor_hunt/apps/core/utils/validators.dart';
 import 'package:doctor_hunt/generated/app_image.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
+import '../../data/service/auth_service.dart';
 import '../widgets/auth_buttons.dart';
 import '../widgets/auth_header.dart';
 import '../widgets/auth_text_field.dart';
@@ -22,6 +25,10 @@ class LoginScreenState extends State<LoginScreen> {
   final formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final _authService = AuthService();
+
+  bool _isLoading = false;
+  bool _isGoogleLoading = false;
 
   @override
   void dispose() {
@@ -30,13 +37,51 @@ class LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void signIn() {
-    // context.unfocus();
-    const HomeRoute().go(context);
+  Future<void> signIn() async {
+    if (!formKey.currentState!.validate()) return;
+    FocusScope.of(context).unfocus();
+
+    setState(() => _isLoading = true);
+    try {
+      await _authService.signInWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+      if (!mounted) return;
+      const HomeRoute().go(context);
+    } catch (e) {
+      if (!mounted) return;
+      context.showErrorSnackBar(AppException.from(e).message);
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  Future<void> signInWithGoogle() async {
+    FocusScope.of(context).unfocus();
+    setState(() => _isGoogleLoading = true);
+    try {
+      final credential = await _authService.signInWithGoogle();
+      if (!mounted) return;
+      if (credential != null) {
+        const HomeRoute().go(context);
+      }
+    } catch (e) {
+      if (!mounted) return;
+      context.showErrorSnackBar(AppException.from(e).message);
+    } finally {
+      if (mounted) {
+        setState(() => _isGoogleLoading = false);
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final isAnyLoading = _isLoading || _isGoogleLoading;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SingleChildScrollView(
@@ -50,7 +95,10 @@ class LoginScreenState extends State<LoginScreen> {
               28.verticalSpace,
               AuthHeader(title: tr.welcomeBack, subtitle: tr.loginSubtitle),
               32.verticalSpace,
-              const SocialLoginSection(),
+              SocialLoginSection(
+                isLoading: _isGoogleLoading,
+                onPressed: isAnyLoading ? null : signInWithGoogle,
+              ),
               32.verticalSpace,
               AuthTextField(
                 controller: emailController,
@@ -77,7 +125,9 @@ class LoginScreenState extends State<LoginScreen> {
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
-                  onPressed: () => ForgotPasswordBottomSheet.show(context),
+                  onPressed: isAnyLoading
+                      ? null
+                      : () => ForgotPasswordBottomSheet.show(context),
                   style: TextButton.styleFrom(
                     foregroundColor: AppColors.primary,
                     padding: const EdgeInsets.only(top: 8, bottom: 8),
@@ -91,7 +141,8 @@ class LoginScreenState extends State<LoginScreen> {
               24.verticalSpace,
               AuthPrimaryButton(
                 label: tr.logIn,
-                onPressed: signIn,
+                isLoading: _isLoading,
+                onPressed: isAnyLoading ? null : signIn,
                 height: 54,
                 fontSize: 16,
               ),
@@ -106,7 +157,9 @@ class LoginScreenState extends State<LoginScreen> {
                       style: context.regular14TextSecondary,
                     ),
                     TextButton(
-                      onPressed: () => const SignupRoute().push(context),
+                      onPressed: isAnyLoading
+                          ? null
+                          : () => const SignupRoute().push(context),
                       style: TextButton.styleFrom(
                         foregroundColor: AppColors.primary,
                         padding: const EdgeInsets.only(left: 4),
@@ -128,32 +181,18 @@ class LoginScreenState extends State<LoginScreen> {
 }
 
 class SocialLoginSection extends StatelessWidget {
-  const SocialLoginSection({super.key});
+  final bool isLoading;
+  final VoidCallback? onPressed;
+
+  const SocialLoginSection({super.key, this.isLoading = false, this.onPressed});
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: SocialAuthButton(
-            label: tr.google,
-            image: Assets.assetsDesignGoogleLogo,
-            onPressed: () {
-              const HomeRoute().go(context);
-            },
-          ),
-        ),
-        const SizedBox(width: 14),
-        Expanded(
-          child: SocialAuthButton(
-            label: tr.facebook,
-            image: Assets.assetsDesignFacebookLogo,
-            onPressed: () {
-              const HomeRoute().go(context);
-            },
-          ),
-        ),
-      ],
+    return SocialAuthButton(
+      label: tr.google,
+      image: Assets.assetsDesignGoogleLogo,
+      isLoading: isLoading,
+      onPressed: onPressed,
     );
   }
 }

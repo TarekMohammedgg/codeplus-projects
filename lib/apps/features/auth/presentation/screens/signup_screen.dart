@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:doctor_hunt/apps/core/extensions/context_extensions.dart';
+import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
+import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
@@ -9,10 +10,10 @@ import 'package:doctor_hunt/apps/core/utils/validators.dart';
 import 'package:doctor_hunt/generated/app_image.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
+import '../../data/service/auth_service.dart';
 import '../widgets/auth_buttons.dart';
 import '../widgets/auth_header.dart';
 import '../widgets/auth_text_field.dart';
-import '../widgets/otp_verification_bottom_sheet.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -26,7 +27,11 @@ class SignupScreenState extends State<SignupScreen> {
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final _authService = AuthService();
+
   bool termsAccepted = false;
+  bool _isLoading = false;
+  bool _isGoogleLoading = false;
 
   @override
   void dispose() {
@@ -36,13 +41,59 @@ class SignupScreenState extends State<SignupScreen> {
     super.dispose();
   }
 
-  void createAccount() {
-    context.unfocus();
-    OtpVerificationBottomSheet.show(context);
+  Future<void> createAccount() async {
+    if (!formKey.currentState!.validate()) return;
+    if (!termsAccepted) {
+      context.showWarningSnackBar(
+        'يرجى الموافقة على شروط الخدمة وسياسة الخصوصية للمتابعة.',
+      );
+      return;
+    }
+    FocusScope.of(context).unfocus();
+
+    setState(() => _isLoading = true);
+    try {
+      await _authService.signUpWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text,
+        name: nameController.text,
+      );
+      if (!mounted) return;
+      context.showSuccessSnackBar('تم إنشاء الحساب بنجاح!');
+      const HomeRoute().go(context);
+    } catch (e) {
+      if (!mounted) return;
+      context.showErrorSnackBar(AppException.from(e).message);
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  Future<void> signInWithGoogle() async {
+    FocusScope.of(context).unfocus();
+    setState(() => _isGoogleLoading = true);
+    try {
+      final credential = await _authService.signInWithGoogle();
+      if (!mounted) return;
+      if (credential != null) {
+        const HomeRoute().go(context);
+      }
+    } catch (e) {
+      if (!mounted) return;
+      context.showErrorSnackBar(AppException.from(e).message);
+    } finally {
+      if (mounted) {
+        setState(() => _isGoogleLoading = false);
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final isAnyLoading = _isLoading || _isGoogleLoading;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SingleChildScrollView(
@@ -59,7 +110,10 @@ class SignupScreenState extends State<SignupScreen> {
                 subtitle: tr.signupSubtitle,
               ),
               32.verticalSpace,
-              SocialSignupSection(),
+              SocialSignupSection(
+                isLoading: _isGoogleLoading,
+                onPressed: isAnyLoading ? null : signInWithGoogle,
+              ),
               32.verticalSpace,
               AuthTextField(
                 controller: nameController,
@@ -121,9 +175,11 @@ class SignupScreenState extends State<SignupScreen> {
                     child: Checkbox(
                       key: const Key('terms-checkbox'),
                       value: termsAccepted,
-                      onChanged: (value) {
-                        setState(() => termsAccepted = value ?? false);
-                      },
+                      onChanged: isAnyLoading
+                          ? null
+                          : (value) {
+                              setState(() => termsAccepted = value ?? false);
+                            },
                       side: const BorderSide(
                         color: AppColors.primary,
                         width: 1.5,
@@ -170,7 +226,8 @@ class SignupScreenState extends State<SignupScreen> {
               24.verticalSpace,
               AuthPrimaryButton(
                 label: tr.createAccount,
-                onPressed: createAccount,
+                isLoading: _isLoading,
+                onPressed: isAnyLoading ? null : createAccount,
                 height: 54,
                 fontSize: 16,
               ),
@@ -185,13 +242,15 @@ class SignupScreenState extends State<SignupScreen> {
                       style: context.regular14TextMain,
                     ),
                     TextButton(
-                      onPressed: () {
-                        if (context.canPop()) {
-                          context.pop();
-                        } else {
-                          const LoginRoute().go(context);
-                        }
-                      },
+                      onPressed: isAnyLoading
+                          ? null
+                          : () {
+                              if (context.canPop()) {
+                                context.pop();
+                              } else {
+                                const LoginRoute().go(context);
+                              }
+                            },
                       style: TextButton.styleFrom(
                         foregroundColor: AppColors.primary,
                         padding: const EdgeInsets.only(left: 6),
@@ -213,28 +272,22 @@ class SignupScreenState extends State<SignupScreen> {
 }
 
 class SocialSignupSection extends StatelessWidget {
-  const SocialSignupSection({super.key});
+  final bool isLoading;
+  final VoidCallback? onPressed;
+
+  const SocialSignupSection({
+    super.key,
+    this.isLoading = false,
+    this.onPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: SocialAuthButton(
-            label: tr.google,
-            image: Assets.assetsDesignGoogleLogo,
-            onPressed: () => OtpVerificationBottomSheet.show(context),
-          ),
-        ),
-        14.horizontalSpace,
-        Expanded(
-          child: SocialAuthButton(
-            label: tr.facebook,
-            image: Assets.assetsDesignFacebookLogo,
-            onPressed: () => OtpVerificationBottomSheet.show(context),
-          ),
-        ),
-      ],
+    return SocialAuthButton(
+      label: tr.google,
+      image: Assets.assetsDesignGoogleLogo,
+      isLoading: isLoading,
+      onPressed: onPressed,
     );
   }
 }

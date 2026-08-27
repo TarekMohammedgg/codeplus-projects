@@ -22,6 +22,11 @@ dependencies:
   latlong2: ^0.10.1
   intl: ^0.20.2
   easy_date_timeline: ^2.0.9
+  time_slot: ^1.0.2
+  firebase_core: ^4.14.0
+  firebase_auth: ^6.6.0
+  google_sign_in: ^7.2.0
+  cached_network_image: ^3.4.1
 
 dev_dependencies:
   flutter_test:
@@ -31,6 +36,9 @@ dev_dependencies:
   slang_build_runner: ^4.19.0
   flutter_native_splash: ^2.4.8
   flutter_lints: ^6.0.0
+
+dependency_overrides:
+  intl: ^0.20.2
 
 flutter:
   uses-material-design: true
