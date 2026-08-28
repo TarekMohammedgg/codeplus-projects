@@ -53,9 +53,7 @@ class LoginScreenState extends State<LoginScreen> {
       if (!mounted) return;
       context.showErrorSnackBar(AppException.from(e).message);
     } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -65,16 +63,12 @@ class LoginScreenState extends State<LoginScreen> {
     try {
       final credential = await _authService.signInWithGoogle();
       if (!mounted) return;
-      if (credential != null) {
-        const HomeRoute().go(context);
-      }
+      if (credential != null) const HomeRoute().go(context);
     } catch (e) {
       if (!mounted) return;
       context.showErrorSnackBar(AppException.from(e).message);
     } finally {
-      if (mounted) {
-        setState(() => _isGoogleLoading = false);
-      }
+      if (mounted) setState(() => _isGoogleLoading = false);
     }
   }
 
@@ -95,7 +89,9 @@ class LoginScreenState extends State<LoginScreen> {
               28.verticalSpace,
               AuthHeader(title: tr.welcomeBack, subtitle: tr.loginSubtitle),
               32.verticalSpace,
-              SocialLoginSection(
+              SocialAuthButton(
+                label: tr.google,
+                image: Assets.assetsDesignGoogleLogo,
                 isLoading: _isGoogleLoading,
                 onPressed: isAnyLoading ? null : signInWithGoogle,
               ),
@@ -119,25 +115,9 @@ class LoginScreenState extends State<LoginScreen> {
                 isPassword: true,
                 textInputAction: TextInputAction.done,
                 autofillHints: const [AutofillHints.password],
-                validator: (value) =>
-                    AppValidators.validateRequiredPassword(value),
+                validator: (value) => AppValidators.validateRequiredPassword(value),
               ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: isAnyLoading
-                      ? null
-                      : () => ForgotPasswordBottomSheet.show(context),
-                  style: TextButton.styleFrom(
-                    foregroundColor: AppColors.primary,
-                    padding: const EdgeInsets.only(top: 8, bottom: 8),
-                    minimumSize: Size.zero,
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    textStyle: context.medium14Primary.copyWith(fontSize: 13.5),
-                  ),
-                  child: Text(tr.forgotPassword),
-                ),
-              ),
+              _ForgotPasswordButton(disabled: isAnyLoading),
               24.verticalSpace,
               AuthPrimaryButton(
                 label: tr.logIn,
@@ -147,31 +127,7 @@ class LoginScreenState extends State<LoginScreen> {
                 fontSize: 16,
               ),
               28.verticalSpace,
-              Center(
-                child: Wrap(
-                  alignment: WrapAlignment.center,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    Text(
-                      tr.dontHaveAccount,
-                      style: context.regular14TextSecondary,
-                    ),
-                    TextButton(
-                      onPressed: isAnyLoading
-                          ? null
-                          : () => const SignupRoute().push(context),
-                      style: TextButton.styleFrom(
-                        foregroundColor: AppColors.primary,
-                        padding: const EdgeInsets.only(left: 4),
-                        minimumSize: Size.zero,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        textStyle: context.semiBold14Primary,
-                      ),
-                      child: Text(tr.joinUs),
-                    ),
-                  ],
-                ),
-              ),
+              _SignUpFooter(disabled: isAnyLoading),
             ],
           ),
         ),
@@ -180,19 +136,56 @@ class LoginScreenState extends State<LoginScreen> {
   }
 }
 
-class SocialLoginSection extends StatelessWidget {
-  final bool isLoading;
-  final VoidCallback? onPressed;
+class _ForgotPasswordButton extends StatelessWidget {
+  final bool disabled;
 
-  const SocialLoginSection({super.key, this.isLoading = false, this.onPressed});
+  const _ForgotPasswordButton({this.disabled = false});
 
   @override
   Widget build(BuildContext context) {
-    return SocialAuthButton(
-      label: tr.google,
-      image: Assets.assetsDesignGoogleLogo,
-      isLoading: isLoading,
-      onPressed: onPressed,
+    return Align(
+      alignment: Alignment.centerRight,
+      child: TextButton(
+        onPressed: disabled ? null : () => ForgotPasswordBottomSheet.show(context),
+        style: TextButton.styleFrom(
+          foregroundColor: AppColors.primary,
+          padding: const EdgeInsets.only(top: 8, bottom: 8),
+          minimumSize: Size.zero,
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          textStyle: context.medium14Primary.copyWith(fontSize: 13.5),
+        ),
+        child: Text(tr.forgotPassword),
+      ),
+    );
+  }
+}
+
+class _SignUpFooter extends StatelessWidget {
+  final bool disabled;
+
+  const _SignUpFooter({this.disabled = false});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Wrap(
+        alignment: WrapAlignment.center,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: [
+          Text(tr.dontHaveAccount, style: context.regular14TextSecondary),
+          TextButton(
+            onPressed: disabled ? null : () => const SignupRoute().push(context),
+            style: TextButton.styleFrom(
+              foregroundColor: AppColors.primary,
+              padding: const EdgeInsets.only(left: 4),
+              minimumSize: Size.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              textStyle: context.semiBold14Primary,
+            ),
+            child: Text(tr.joinUs),
+          ),
+        ],
+      ),
     );
   }
 }

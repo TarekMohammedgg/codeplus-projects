@@ -45,7 +45,7 @@ class SignupScreenState extends State<SignupScreen> {
     if (!formKey.currentState!.validate()) return;
     if (!termsAccepted) {
       context.showWarningSnackBar(
-        'يرجى الموافقة على شروط الخدمة وسياسة الخصوصية للمتابعة.',
+        '???? ???????? ??? ???? ?????? ?????? ???????? ????????.',
       );
       return;
     }
@@ -59,15 +59,13 @@ class SignupScreenState extends State<SignupScreen> {
         name: nameController.text,
       );
       if (!mounted) return;
-      context.showSuccessSnackBar('تم إنشاء الحساب بنجاح!');
+      context.showSuccessSnackBar('?? ????? ?????? ?????!');
       const RoleSelectionRoute().go(context);
     } catch (e) {
       if (!mounted) return;
       context.showErrorSnackBar(AppException.from(e).message);
     } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -77,16 +75,12 @@ class SignupScreenState extends State<SignupScreen> {
     try {
       final credential = await _authService.signInWithGoogle();
       if (!mounted) return;
-      if (credential != null) {
-        const HomeRoute().go(context);
-      }
+      if (credential != null) const HomeRoute().go(context);
     } catch (e) {
       if (!mounted) return;
       context.showErrorSnackBar(AppException.from(e).message);
     } finally {
-      if (mounted) {
-        setState(() => _isGoogleLoading = false);
-      }
+      if (mounted) setState(() => _isGoogleLoading = false);
     }
   }
 
@@ -110,7 +104,9 @@ class SignupScreenState extends State<SignupScreen> {
                 subtitle: tr.signupSubtitle,
               ),
               32.verticalSpace,
-              SocialSignupSection(
+              SocialAuthButton(
+                label: tr.google,
+                image: Assets.assetsDesignGoogleLogo,
                 isLoading: _isGoogleLoading,
                 onPressed: isAnyLoading ? null : signInWithGoogle,
               ),
@@ -148,80 +144,12 @@ class SignupScreenState extends State<SignupScreen> {
                 validator: (value) => AppValidators.validatePassword(value),
               ),
               8.verticalSpace,
-              Row(
-                children: [
-                  const Icon(
-                    Icons.verified_user_outlined,
-                    color: AppColors.success,
-                    size: 18,
-                  ),
-                  8.horizontalSpace,
-                  Text(
-                    tr.passwordLengthNotice,
-                    style: context.regular14TextSecondary.copyWith(
-                      fontSize: 13,
-                      height: 1.2,
-                    ),
-                  ),
-                ],
-              ),
+              const _PasswordHintRow(),
               20.verticalSpace,
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: Checkbox(
-                      key: const Key('terms-checkbox'),
-                      value: termsAccepted,
-                      onChanged: isAnyLoading
-                          ? null
-                          : (value) {
-                              setState(() => termsAccepted = value ?? false);
-                            },
-                      side: const BorderSide(
-                        color: AppColors.primary,
-                        width: 1.5,
-                      ),
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(4)),
-                      ),
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      visualDensity: VisualDensity.compact,
-                    ),
-                  ),
-                  10.horizontalSpace,
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 2),
-                      child: Text.rich(
-                        TextSpan(
-                          style: context.regular14TextMain.copyWith(
-                            fontSize: 13.5,
-                            height: 1.35,
-                          ),
-                          children: [
-                            TextSpan(text: tr.agreeTermsPrefix),
-                            TextSpan(
-                              text: tr.termsOfService,
-                              style: context.semiBold14Primary.copyWith(
-                                fontSize: 13.5,
-                              ),
-                            ),
-                            TextSpan(text: tr.andText),
-                            TextSpan(
-                              text: tr.privacyPolicy,
-                              style: context.semiBold14Primary.copyWith(
-                                fontSize: 13.5,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+              _TermsCheckbox(
+                value: termsAccepted,
+                disabled: isAnyLoading,
+                onChanged: (value) => setState(() => termsAccepted = value ?? false),
               ),
               24.verticalSpace,
               AuthPrimaryButton(
@@ -232,37 +160,7 @@ class SignupScreenState extends State<SignupScreen> {
                 fontSize: 16,
               ),
               28.verticalSpace,
-              Center(
-                child: Wrap(
-                  alignment: WrapAlignment.center,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    Text(
-                      tr.alreadyHaveAccount,
-                      style: context.regular14TextMain,
-                    ),
-                    TextButton(
-                      onPressed: isAnyLoading
-                          ? null
-                          : () {
-                              if (context.canPop()) {
-                                context.pop();
-                              } else {
-                                const LoginRoute().go(context);
-                              }
-                            },
-                      style: TextButton.styleFrom(
-                        foregroundColor: AppColors.primary,
-                        padding: const EdgeInsets.only(left: 6),
-                        minimumSize: Size.zero,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        textStyle: context.semiBold14Primary,
-                      ),
-                      child: Text(tr.signIn),
-                    ),
-                  ],
-                ),
-              ),
+              _LoginFooter(disabled: isAnyLoading),
             ],
           ),
         ),
@@ -271,23 +169,121 @@ class SignupScreenState extends State<SignupScreen> {
   }
 }
 
-class SocialSignupSection extends StatelessWidget {
-  final bool isLoading;
-  final VoidCallback? onPressed;
+class _PasswordHintRow extends StatelessWidget {
+  const _PasswordHintRow();
 
-  const SocialSignupSection({
-    super.key,
-    this.isLoading = false,
-    this.onPressed,
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        const Icon(
+          Icons.verified_user_outlined,
+          color: AppColors.success,
+          size: 18,
+        ),
+        8.horizontalSpace,
+        Text(
+          tr.passwordLengthNotice,
+          style: context.regular14TextSecondary.copyWith(fontSize: 13, height: 1.2),
+        ),
+      ],
+    );
+  }
+}
+
+class _TermsCheckbox extends StatelessWidget {
+  final bool value;
+  final bool disabled;
+  final ValueChanged<bool?> onChanged;
+
+  const _TermsCheckbox({
+    required this.value,
+    required this.onChanged,
+    this.disabled = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    return SocialAuthButton(
-      label: tr.google,
-      image: Assets.assetsDesignGoogleLogo,
-      isLoading: isLoading,
-      onPressed: onPressed,
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 24,
+          height: 24,
+          child: Checkbox(
+            key: const Key('terms-checkbox'),
+            value: value,
+            onChanged: disabled ? null : onChanged,
+            side: const BorderSide(color: AppColors.primary, width: 1.5),
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(4)),
+            ),
+            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            visualDensity: VisualDensity.compact,
+          ),
+        ),
+        10.horizontalSpace,
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 2),
+            child: Text.rich(
+              TextSpan(
+                style: context.regular14TextMain.copyWith(fontSize: 13.5, height: 1.35),
+                children: [
+                  TextSpan(text: tr.agreeTermsPrefix),
+                  TextSpan(
+                    text: tr.termsOfService,
+                    style: context.semiBold14Primary.copyWith(fontSize: 13.5),
+                  ),
+                  TextSpan(text: tr.andText),
+                  TextSpan(
+                    text: tr.privacyPolicy,
+                    style: context.semiBold14Primary.copyWith(fontSize: 13.5),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _LoginFooter extends StatelessWidget {
+  final bool disabled;
+
+  const _LoginFooter({this.disabled = false});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Wrap(
+        alignment: WrapAlignment.center,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: [
+          Text(tr.alreadyHaveAccount, style: context.regular14TextMain),
+          TextButton(
+            onPressed: disabled
+                ? null
+                : () {
+                    if (context.canPop()) {
+                      context.pop();
+                    } else {
+                      const LoginRoute().go(context);
+                    }
+                  },
+            style: TextButton.styleFrom(
+              foregroundColor: AppColors.primary,
+              padding: const EdgeInsets.only(left: 6),
+              minimumSize: Size.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              textStyle: context.semiBold14Primary,
+            ),
+            child: Text(tr.signIn),
+          ),
+        ],
+      ),
     );
   }
 }
