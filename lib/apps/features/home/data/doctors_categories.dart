@@ -1,14 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:doctor_hunt/apps/core/data/doctors_data.dart' as central_data;
-
 import 'package:doctor_hunt/apps/features/home/data/models/doctor_model.dart';
-
 import 'package:doctor_hunt/generated/app_image.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
-
-List<DoctorModel> liveDoctors() {
-  return central_data.liveDoctors();
-}
 
 List<DoctorCategoryItem> categories() {
   return [
@@ -59,12 +52,4 @@ List<DoctorCategoryItem> categories() {
       secondaryColor: const Color(0xFFE7FAF6),
     ),
   ];
-}
-
-List<DoctorModel> popularDoctors() {
-  return central_data.popularDoctors();
-}
-
-List<DoctorModel> featuredDoctors() {
-  return central_data.featuredDoctors();
 }

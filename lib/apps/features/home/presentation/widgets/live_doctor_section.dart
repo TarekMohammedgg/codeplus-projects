@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
-import 'package:doctor_hunt/apps/features/home/data/models/doctor_model.dart';
+import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
+import 'package:doctor_hunt/apps/core/widgets/doctor_image.dart';
 import 'package:doctor_hunt/apps/features/home/presentation/widgets/section_header.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
@@ -12,7 +13,7 @@ class LiveDoctorSection extends StatelessWidget {
     required this.onSeeAllPressed,
   });
 
-  final List<LiveDoctorItem> liveDoctors;
+  final List<DoctorModel> liveDoctors;
   final VoidCallback onSeeAllPressed;
 
   @override
@@ -43,7 +44,7 @@ class LiveDoctorSection extends StatelessWidget {
 class LiveDoctorCard extends StatelessWidget {
   const LiveDoctorCard({super.key, required this.doctor});
 
-  final LiveDoctorItem doctor;
+  final DoctorModel doctor;
 
   @override
   Widget build(BuildContext context) {
@@ -64,20 +65,12 @@ class LiveDoctorCard extends StatelessWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            if (doctor.image != null)
-              Positioned.fill(
-                child: Image.asset(
-                  doctor.image!,
-                  width: double.infinity,
-                  height: double.infinity,
-                  fit: BoxFit.cover,
-                ),
-              )
-            else
-              Positioned.fill(
-                child: Container(
-                  width: double.infinity,
-                  height: double.infinity,
+            Positioned.fill(
+              child: DoctorImage(
+                imageUrl: doctor.imageUrl,
+                width: double.infinity,
+                height: double.infinity,
+                fallback: DecoratedBox(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
@@ -90,6 +83,7 @@ class LiveDoctorCard extends StatelessWidget {
                   ),
                 ),
               ),
+            ),
 
             Positioned.fill(
               child: Container(

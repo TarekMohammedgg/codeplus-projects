@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
+import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
-import 'package:doctor_hunt/apps/features/home/data/models/doctor_model.dart';
+import 'package:doctor_hunt/apps/core/widgets/doctor_image.dart';
 import 'package:doctor_hunt/apps/features/home/presentation/widgets/section_header.dart';
 
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
@@ -15,7 +16,7 @@ class FeaturedDoctorSection extends StatelessWidget {
     required this.onSeeAllPressed,
   });
 
-  final List<FeaturedDoctorItem> doctors;
+  final List<DoctorModel> doctors;
   final VoidCallback onSeeAllPressed;
 
   @override
@@ -52,7 +53,7 @@ class FeaturedDoctorSection extends StatelessWidget {
 class FeaturedDoctorCard extends StatelessWidget {
   const FeaturedDoctorCard({super.key, required this.doctor, this.onTap});
 
-  final FeaturedDoctorItem doctor;
+  final DoctorModel doctor;
   final VoidCallback? onTap;
 
   @override
@@ -113,14 +114,12 @@ class FeaturedDoctorCard extends StatelessWidget {
                 color: doctor.accentColor.withValues(alpha: 0.15),
               ),
               child: ClipOval(
-                child: doctor.image != null
-                    ? Image.asset(
-                        doctor.image!,
-                        width: 54,
-                        height: 54,
-                        fit: BoxFit.cover,
-                      )
-                    : const SizedBox(),
+                child: DoctorImage(
+                  imageUrl: doctor.imageUrl,
+                  width: 54,
+                  height: 54,
+                  fallback: const SizedBox.expand(),
+                ),
               ),
             ),
             8.verticalSpace,

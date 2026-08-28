@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
+import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
-import 'package:doctor_hunt/apps/features/home/data/models/doctor_model.dart';
+import 'package:doctor_hunt/apps/core/widgets/doctor_image.dart';
 import 'package:doctor_hunt/apps/features/home/presentation/widgets/section_header.dart';
 
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
@@ -15,7 +16,7 @@ class PopularDoctorSection extends StatelessWidget {
     this.onSeeAllPressed,
   });
 
-  final List<PopularDoctorItem> doctors;
+  final List<DoctorModel> doctors;
   final VoidCallback? onSeeAllPressed;
 
   @override
@@ -53,7 +54,7 @@ class PopularDoctorSection extends StatelessWidget {
 class PopularDoctorCard extends StatelessWidget {
   const PopularDoctorCard({super.key, required this.doctor, this.onTap});
 
-  final PopularDoctorItem doctor;
+  final DoctorModel doctor;
   final VoidCallback? onTap;
 
   @override
@@ -94,15 +95,13 @@ class PopularDoctorCard extends StatelessWidget {
                       topLeft: Radius.circular(16),
                       topRight: Radius.circular(16),
                     ),
-                    child: doctor.image != null
-                        ? Image.asset(
-                            doctor.image!,
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                            height: 125,
-                            alignment: Alignment.topCenter,
-                          )
-                        : const SizedBox(),
+                    child: DoctorImage(
+                      imageUrl: doctor.imageUrl,
+                      width: double.infinity,
+                      height: 125,
+                      alignment: Alignment.topCenter,
+                      fallback: const SizedBox.expand(),
+                    ),
                   ),
                 ),
                 Positioned(
