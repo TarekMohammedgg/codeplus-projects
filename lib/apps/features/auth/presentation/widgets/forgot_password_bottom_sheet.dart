@@ -50,7 +50,7 @@ class ForgotPasswordBottomSheetState extends State<ForgotPasswordBottomSheet> {
     setState(() => _isLoading = true);
 
     try {
-      await _authService.sendPasswordResetEmail(email: email);
+      await _authService.forgetpassword(email: email);
       if (!mounted) return;
       nav.pop();
       context.showSuccessSnackBar(tr.passwordResetSuccess);

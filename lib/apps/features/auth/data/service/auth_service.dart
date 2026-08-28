@@ -8,25 +8,18 @@ class AuthService {
   static const String serverClientId =
       '618475193124-juj451gbe5ms155fpgalq5qj8r1v8a1g.apps.googleusercontent.com';
 
-  final FirebaseAuth? _customAuth;
+  final FirebaseAuth? _auth;
 
-  AuthService({FirebaseAuth? auth}) : _customAuth = auth;
-
-  FirebaseAuth get _auth => _customAuth ?? FirebaseAuth.instance;
+  AuthService({FirebaseAuth? auth}) : _auth = auth ?? FirebaseAuth.instance;
+  static Future<void> initialize() async {
+    await GoogleSignIn.instance.initialize(serverClientId: serverClientId);
+  }
 
   User? get currentUser {
     try {
-      return _auth.currentUser;
+      return _auth!.currentUser;
     } catch (_) {
       return null;
-    }
-  }
-
-  Stream<User?> get authStateChanges {
-    try {
-      return _auth.authStateChanges();
-    } catch (_) {
-      return const Stream.empty();
     }
   }
 
@@ -44,12 +37,8 @@ class AuthService {
     return tr.hiSteven;
   }
 
-  static Future<void> initialize() async {
-    await GoogleSignIn.instance.initialize(serverClientId: serverClientId);
-  }
-
   Future<void> signOut() async {
-    await Future.wait([_auth.signOut(), GoogleSignIn.instance.signOut()]);
+    await Future.wait([_auth!.signOut(), GoogleSignIn.instance.signOut()]);
   }
 
   Future<UserCredential> signUpWithEmailAndPassword({
@@ -57,7 +46,7 @@ class AuthService {
     required String password,
     String? name,
   }) async {
-    final userCredential = await _auth.createUserWithEmailAndPassword(
+    final userCredential = await _auth!.createUserWithEmailAndPassword(
       email: email.trim(),
       password: password,
     );
@@ -74,7 +63,7 @@ class AuthService {
     required String email,
     required String password,
   }) {
-    return _auth.signInWithEmailAndPassword(
+    return _auth!.signInWithEmailAndPassword(
       email: email.trim(),
       password: password,
     );
@@ -87,7 +76,7 @@ class AuthService {
         idToken: googleUser.authentication.idToken,
       );
 
-      return await _auth.signInWithCredential(credential);
+      return await _auth!.signInWithCredential(credential);
     } on GoogleSignInException catch (e) {
       if (e.code == GoogleSignInExceptionCode.canceled) {
         return null;
@@ -96,9 +85,9 @@ class AuthService {
     }
   }
 
-  Future<void> sendPasswordResetEmail({required String email}) async {
+  Future<void> forgetpassword({required String email}) async {
     try {
-      await _auth.sendPasswordResetEmail(email: email.trim());
+      await _auth!.sendPasswordResetEmail(email: email.trim());
     } on FirebaseAuthException catch (e) {
       throw AppException.fromFirebaseAuth(e);
     } catch (e) {

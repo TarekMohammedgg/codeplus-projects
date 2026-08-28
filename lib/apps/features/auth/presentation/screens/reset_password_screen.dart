@@ -42,9 +42,7 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
     setState(() => _isLoading = true);
     try {
-      await _authService.sendPasswordResetEmail(
-        email: emailController.text.trim(),
-      );
+      await _authService.forgetpassword(email: emailController.text.trim());
       if (!mounted) return;
       context.showSuccessSnackBar(tr.passwordResetSuccess);
       if (context.canPop()) {
