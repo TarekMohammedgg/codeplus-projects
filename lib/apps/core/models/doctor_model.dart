@@ -3,36 +3,6 @@ import 'package:latlong2/latlong.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
 class DoctorModel {
-  final String id;
-  final String name;
-  final String specialty;
-  final String? imageUrl;
-  String? get image => imageUrl;
-  final Color accentColor;
-  final double rating;
-  final int ratingPercent;
-  final int reviewsCount;
-  final int patientStoriesCount;
-  final int experienceYears;
-  final double hourlyRate;
-  final String nextAvailableTime;
-  final List<String> services;
-  final LatLng? location;
-  final int runningCount;
-  final int ongoingCount;
-  final int patientCount;
-
-  // Filter props / flags
-  final bool isFavorite;
-  final bool isFeatured;
-  final bool isPopular;
-  final bool isLive;
-  final bool isActive;
-  final int liveOrder;
-  final int popularOrder;
-  final int featuredOrder;
-  final String? category;
-
   const DoctorModel({
     required this.id,
     required this.name,
@@ -52,38 +22,48 @@ class DoctorModel {
     this.ongoingCount = 500,
     this.patientCount = 700,
     this.isFavorite = false,
-    this.isFeatured = false,
-    this.isPopular = false,
-    this.isLive = false,
     this.isActive = true,
-    this.liveOrder = _lastOrder,
-    this.popularOrder = _lastOrder,
-    this.featuredOrder = _lastOrder,
+    this.isLive = false,
+    this.isPopular = false,
+    this.isFeatured = false,
+    this.liveOrder = 9999,
+    this.popularOrder = 9999,
+    this.featuredOrder = 9999,
     this.category,
   });
 
-  static const _lastOrder = 0x7fffffff;
+  final String id;
+  final String name;
+  final String specialty;
+  final String? imageUrl;
+  final Color accentColor;
+  final double rating;
+  final int ratingPercent;
+  final int reviewsCount;
+  final int patientStoriesCount;
+  final int experienceYears;
+  final double hourlyRate;
+  final String nextAvailableTime;
+  final List<String> services;
+  final LatLng? location;
+  final int runningCount;
+  final int ongoingCount;
+  final int patientCount;
+  final bool isFavorite;
+  final bool isActive;
+  final bool isLive;
+  final bool isPopular;
+  final bool isFeatured;
+  final int liveOrder;
+  final int popularOrder;
+  final int featuredOrder;
+  final String? category;
 
   factory DoctorModel.fromFirestore(String id, Map<String, dynamic> data) {
-    final locationData = data['location'];
-    LatLng? location;
-    if (locationData is Map<String, dynamic>) {
-      final lat = (locationData['latitude'] as num?)?.toDouble();
-      final lng = (locationData['longitude'] as num?)?.toDouble();
-      if (lat != null && lng != null) {
-        location = LatLng(lat, lng);
-      }
-    }
-
-    final rawServices = data['serviceKeys'] ?? data['services'];
-    final services = rawServices is List
-        ? rawServices.map((e) => e.toString()).toList()
-        : const <String>[];
-
     return DoctorModel(
       id: id,
-      name: _requiredString(data, 'name', id),
-      specialty: _localizedSpecialty(_requiredString(data, 'specialtyKey', id)),
+      name: _require(data, 'name', id),
+      specialty: _localizedSpecialty(_require(data, 'specialtyKey', id)),
       imageUrl: data['imageUrl'] as String?,
       accentColor: _colorFromHex(data['accentColorHex'] as String?),
       rating: (data['rating'] as num?)?.toDouble() ?? 4.5,
@@ -92,21 +72,21 @@ class DoctorModel {
       patientStoriesCount: (data['patientStoriesCount'] as num?)?.toInt() ?? 50,
       experienceYears: (data['experienceYears'] as num?)?.toInt() ?? 5,
       hourlyRate: (data['hourlyRate'] as num?)?.toDouble() ?? 28.0,
-      nextAvailableTime: (data['nextAvailableAt'] as String?) ?? '',
-      services: services,
-      location: location,
+      nextAvailableTime: data['nextAvailableAt'] as String? ?? '',
+      services: _parseServices(data),
+      location: _parseLocation(data['location']),
       runningCount: (data['runningCount'] as num?)?.toInt() ?? 100,
       ongoingCount: (data['ongoingCount'] as num?)?.toInt() ?? 500,
       patientCount: (data['patientCount'] as num?)?.toInt() ?? 700,
-      isActive: data['isActive'] as bool? ?? true,
       isFavorite: data['isFavorite'] as bool? ?? false,
+      isActive: data['isActive'] as bool? ?? true,
+      isLive: data['isLive'] as bool? ?? false,
       isPopular: data['isPopular'] as bool? ?? false,
       isFeatured: data['isFeatured'] as bool? ?? false,
-      isLive: data['isLive'] as bool? ?? false,
+      liveOrder: (data['liveOrder'] as num?)?.toInt() ?? 9999,
+      popularOrder: (data['popularOrder'] as num?)?.toInt() ?? 9999,
+      featuredOrder: (data['featuredOrder'] as num?)?.toInt() ?? 9999,
       category: data['category'] as String?,
-      liveOrder: (data['liveOrder'] as num?)?.toInt() ?? _lastOrder,
-      popularOrder: (data['popularOrder'] as num?)?.toInt() ?? _lastOrder,
-      featuredOrder: (data['featuredOrder'] as num?)?.toInt() ?? _lastOrder,
     );
   }
 
@@ -129,10 +109,10 @@ class DoctorModel {
     int? ongoingCount,
     int? patientCount,
     bool? isFavorite,
-    bool? isFeatured,
-    bool? isPopular,
-    bool? isLive,
     bool? isActive,
+    bool? isLive,
+    bool? isPopular,
+    bool? isFeatured,
     int? liveOrder,
     int? popularOrder,
     int? featuredOrder,
@@ -157,10 +137,10 @@ class DoctorModel {
       ongoingCount: ongoingCount ?? this.ongoingCount,
       patientCount: patientCount ?? this.patientCount,
       isFavorite: isFavorite ?? this.isFavorite,
-      isFeatured: isFeatured ?? this.isFeatured,
-      isPopular: isPopular ?? this.isPopular,
-      isLive: isLive ?? this.isLive,
       isActive: isActive ?? this.isActive,
+      isLive: isLive ?? this.isLive,
+      isPopular: isPopular ?? this.isPopular,
+      isFeatured: isFeatured ?? this.isFeatured,
       liveOrder: liveOrder ?? this.liveOrder,
       popularOrder: popularOrder ?? this.popularOrder,
       featuredOrder: featuredOrder ?? this.featuredOrder,
@@ -169,31 +149,34 @@ class DoctorModel {
   }
 }
 
-String _requiredString(
-  Map<String, dynamic> data,
-  String field,
-  String doctorId,
-) {
+String _require(Map<String, dynamic> data, String field, String id) {
   final value = data[field];
-  if (value is String && value.trim().isNotEmpty) {
-    return value.trim();
-  }
-  throw FormatException('Doctor $doctorId is missing $field.');
+  if (value is String && value.trim().isNotEmpty) return value.trim();
+  throw FormatException('Doctor $id is missing required field: $field');
 }
 
-Color _colorFromHex(String? value) {
-  final hex = value?.replaceFirst('#', '');
-  if (hex == null) {
-    return const Color(0xFF0EBE7E);
-  }
+List<String> _parseServices(Map<String, dynamic> data) {
+  final raw = data['serviceKeys'] ?? data['services'];
+  return raw is List ? raw.map((e) => e.toString()).toList() : const [];
+}
 
-  final colorValue = switch (hex.length) {
-    6 => int.tryParse('FF$hex', radix: 16),
-    8 => int.tryParse(hex, radix: 16),
+LatLng? _parseLocation(dynamic locationData) {
+  if (locationData is! Map<String, dynamic>) return null;
+  final lat = (locationData['latitude'] as num?)?.toDouble();
+  final lng = (locationData['longitude'] as num?)?.toDouble();
+  if (lat == null || lng == null) return null;
+  return LatLng(lat, lng);
+}
+
+Color _colorFromHex(String? hex) {
+  final cleaned = hex?.replaceFirst('#', '');
+  if (cleaned == null) return const Color(0xFF0EBE7E);
+  final value = switch (cleaned.length) {
+    6 => int.tryParse('FF$cleaned', radix: 16),
+    8 => int.tryParse(cleaned, radix: 16),
     _ => null,
   };
-
-  return colorValue == null ? const Color(0xFF0EBE7E) : Color(colorValue);
+  return value != null ? Color(value) : const Color(0xFF0EBE7E);
 }
 
 String _localizedSpecialty(String key) {

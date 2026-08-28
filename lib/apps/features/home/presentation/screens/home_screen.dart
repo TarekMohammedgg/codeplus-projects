@@ -134,40 +134,10 @@ class HomeScreenState extends State<HomeScreen> {
                       (a, b) => a.featuredOrder.compareTo(b.featuredOrder),
                     );
 
-                return Column(
-                  children: [
-                    if (liveDoctors.isNotEmpty) ...[
-                      const SizedBox(height: 24),
-                      LiveDoctorSection(
-                        liveDoctors: liveDoctors,
-                        onSeeAllPressed: () =>
-                            const FindDoctorsRoute().push(context),
-                      ),
-                    ],
-                    const SizedBox(height: 24),
-                    DoctorCategorySection(
-                      categories: categories(),
-                      onCategoryTap: (_) =>
-                          const FindDoctorsRoute().push(context),
-                    ),
-                    if (popularDoctors.isNotEmpty) ...[
-                      const SizedBox(height: 24),
-                      PopularDoctorSection(
-                        doctors: popularDoctors,
-                        onSeeAllPressed: () =>
-                            const FindDoctorsRoute().push(context),
-                      ),
-                    ],
-                    if (featuredDoctors.isNotEmpty) ...[
-                      const SizedBox(height: 24),
-                      FeaturedDoctorSection(
-                        doctors: featuredDoctors,
-                        onSeeAllPressed: () =>
-                            const FindDoctorsRoute().push(context),
-                      ),
-                      const SizedBox(height: 32),
-                    ],
-                  ],
+                return DoctorsData(
+                  liveDoctors: liveDoctors,
+                  popularDoctors: popularDoctors,
+                  featuredDoctors: featuredDoctors,
                 );
               },
             ),
@@ -178,6 +148,54 @@ class HomeScreenState extends State<HomeScreen> {
         currentIndex: selectedNavIndex,
         onTap: _onNavTap,
       ),
+    );
+  }
+}
+
+class DoctorsData extends StatelessWidget {
+  const DoctorsData({
+    super.key,
+    required this.liveDoctors,
+    required this.popularDoctors,
+    required this.featuredDoctors,
+  });
+
+  final List<DoctorModel> liveDoctors;
+  final List<DoctorModel> popularDoctors;
+  final List<DoctorModel> featuredDoctors;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        if (liveDoctors.isNotEmpty) ...[
+          const SizedBox(height: 24),
+          LiveDoctorSection(
+            liveDoctors: liveDoctors,
+            onSeeAllPressed: () => const FindDoctorsRoute().push(context),
+          ),
+        ],
+        const SizedBox(height: 24),
+        DoctorCategorySection(
+          categories: categories(),
+          onCategoryTap: (_) => const FindDoctorsRoute().push(context),
+        ),
+        if (popularDoctors.isNotEmpty) ...[
+          const SizedBox(height: 24),
+          PopularDoctorSection(
+            doctors: popularDoctors,
+            onSeeAllPressed: () => const FindDoctorsRoute().push(context),
+          ),
+        ],
+        if (featuredDoctors.isNotEmpty) ...[
+          const SizedBox(height: 24),
+          FeaturedDoctorSection(
+            doctors: featuredDoctors,
+            onSeeAllPressed: () => const FindDoctorsRoute().push(context),
+          ),
+          const SizedBox(height: 32),
+        ],
+      ],
     );
   }
 }

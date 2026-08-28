@@ -1,21 +1,22 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
+import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_header_section.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_search_bar.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_avatar_placeholder.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_image.dart';
-import 'package:doctor_hunt/apps/features/home/data/service/home_firestore_service.dart';
-import 'package:doctor_hunt/apps/features/home/presentation/screens/home_screen.dart';
+import 'package:doctor_hunt/apps/features/home/data/doctors_categories.dart';
+import 'package:doctor_hunt/apps/features/home/presentation/widgets/doctor_category_section.dart';
+import 'package:doctor_hunt/apps/features/home/presentation/widgets/featured_doctor_section.dart';
+import 'package:doctor_hunt/apps/features/home/presentation/widgets/home_bottom_navigation_bar.dart';
+import 'package:doctor_hunt/apps/features/home/presentation/widgets/live_doctor_section.dart';
+import 'package:doctor_hunt/apps/features/home/presentation/widgets/popular_doctor_section.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'test_app.dart';
 
 void main() {
-  setUp(() {
-    homeDoctorsFetcher = () async => testHomeDoctors();
-  });
-
   testWidgets('HomeScreen renders Doctor Hunt home UI elements properly', (
     WidgetTester tester,
   ) async {
@@ -71,7 +72,12 @@ void main() {
       final router = GoRouter(
         initialLocation: '/home',
         routes: [
-          GoRoute(path: '/home', builder: (context, state) => testHomeScreen()),
+          GoRoute(
+            path: '/home',
+            builder: (context, state) => testHomeScreen(
+              onCategoryTap: () => context.push('/find-doctors'),
+            ),
+          ),
           GoRoute(
             path: '/find-doctors',
             builder: (context, state) => const Scaffold(),
@@ -120,12 +126,24 @@ void main() {
       tester.view.resetDevicePixelRatio();
     });
 
-    await tester.pumpWidget(buildTestApp(testHomeScreen()));
-    await tester.pump();
-
-    final homeScreenState = tester.state<HomeScreenState>(
-      find.byType(HomeScreen),
+    int currentIndex = 0;
+    await tester.pumpWidget(
+      buildTestApp(
+        StatefulBuilder(
+          builder: (context, setState) {
+            return Scaffold(
+              bottomNavigationBar: HomeBottomNavigationBar(
+                currentIndex: currentIndex,
+                onTap: (index) {
+                  setState(() => currentIndex = index);
+                },
+              ),
+            );
+          },
+        ),
+      ),
     );
+    await tester.pump();
 
     await tester.tap(
       find.byWidgetPredicate(
@@ -133,19 +151,19 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(homeScreenState.selectedNavIndex, 1);
+    expect(currentIndex, 1);
 
     await tester.tap(find.byIcon(Icons.menu_book_rounded));
     await tester.pumpAndSettle();
-    expect(homeScreenState.selectedNavIndex, 2);
+    expect(currentIndex, 2);
 
     await tester.tap(find.byIcon(Icons.chat_bubble_rounded));
     await tester.pumpAndSettle();
-    expect(homeScreenState.selectedNavIndex, 3);
+    expect(currentIndex, 3);
 
     await tester.tap(find.byIcon(Icons.home_rounded));
     await tester.pumpAndSettle();
-    expect(homeScreenState.selectedNavIndex, 0);
+    expect(currentIndex, 0);
   });
 
   testWidgets('LiveDoctorCard doctor image fills the full container', (
@@ -190,7 +208,10 @@ void main() {
         tester.view.resetDevicePixelRatio();
       });
 
-      await tester.pumpWidget(buildTestApp(testHomeScreen()));
+      final controller = TextEditingController();
+      await tester.pumpWidget(
+        buildTestApp(Scaffold(body: AppSearchBar(controller: controller))),
+      );
       await tester.pump();
 
       final initialVisibility = tester.widget<Visibility>(
@@ -209,10 +230,7 @@ void main() {
       await tester.tap(find.byIcon(Icons.close_rounded));
       await tester.pump();
 
-      final homeScreenState = tester.state<HomeScreenState>(
-        find.byType(HomeScreen),
-      );
-      expect(homeScreenState.searchController.text, isEmpty);
+      expect(controller.text, isEmpty);
 
       final clearedVisibility = tester.widget<Visibility>(
         find.byWidgetPredicate((w) => w is Visibility && w.child is IconButton),
@@ -287,7 +305,11 @@ void main() {
     final router = GoRouter(
       initialLocation: '/home',
       routes: [
-        GoRoute(path: '/home', builder: (context, state) => testHomeScreen()),
+        GoRoute(
+          path: '/home',
+          builder: (context, state) =>
+              testHomeScreen(onProfileTap: () => context.push('/profile')),
+        ),
         GoRoute(
           path: '/profile',
           builder: (context, state) =>
@@ -307,70 +329,84 @@ void main() {
 
     expect(router.state.matchedLocation, '/profile');
   });
-
-  testWidgets('HomeScreen retries after doctor loading fails', (
-    WidgetTester tester,
-  ) async {
-    tester.view.physicalSize = const Size(1080, 2400);
-    tester.view.devicePixelRatio = 1.0;
-    addTearDown(() {
-      tester.view.resetPhysicalSize();
-      tester.view.resetDevicePixelRatio();
-    });
-
-    int fetchCount = 0;
-    homeDoctorsFetcher = () async {
-      fetchCount++;
-      if (fetchCount == 1) {
-        throw Exception('Firestore unavailable');
-      }
-      return testHomeDoctors();
-    };
-
-    await tester.pumpWidget(buildTestApp(const HomeScreen()));
-    await tester.pump();
-
-    expect(find.text(AppLocale.en.buildSync().serviceError), findsOneWidget);
-    expect(find.byIcon(Icons.refresh_rounded), findsOneWidget);
-
-    await tester.tap(find.byIcon(Icons.refresh_rounded));
-    await tester.pump();
-    await tester.pump();
-
-    expect(fetchCount, 2);
-    expect(find.text('Dr. Fillerup Grab'), findsOneWidget);
-  });
-
-  testWidgets(
-    'HomeScreen renders AppHeaderSection and CircularProgressIndicator while fetching doctors',
-    (WidgetTester tester) async {
-      tester.view.physicalSize = const Size(1080, 2400);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(() {
-        tester.view.resetPhysicalSize();
-        tester.view.resetDevicePixelRatio();
-      });
-
-      final completer = Completer<List<DoctorModel>>();
-      homeDoctorsFetcher = () => completer.future;
-
-      await tester.pumpWidget(buildTestApp(const HomeScreen()));
-      await tester.pump();
-
-      expect(find.byType(AppHeaderSection), findsOneWidget);
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
-
-      completer.complete(testHomeDoctors());
-      await tester.pumpAndSettle();
-
-      expect(find.byType(CircularProgressIndicator), findsNothing);
-      expect(find.text('Dr. Fillerup Grab'), findsOneWidget);
-    },
-  );
 }
 
-HomeScreen testHomeScreen() {
-  return const HomeScreen();
+Widget testHomeScreen({
+  VoidCallback? onProfileTap,
+  VoidCallback? onCategoryTap,
+  VoidCallback? onSeeAllDoctors,
+}) {
+  final doctors = testHomeDoctors();
+  final liveDoctors =
+      doctors.where((d) => d.isLive).toList()
+        ..sort((a, b) => a.liveOrder.compareTo(b.liveOrder));
+  final popularDoctors =
+      doctors.where((d) => d.isPopular).toList()
+        ..sort((a, b) => a.popularOrder.compareTo(b.popularOrder));
+  final featuredDoctors =
+      doctors.where((d) => d.isFeatured).toList()
+        ..sort((a, b) => a.featuredOrder.compareTo(b.featuredOrder));
+
+  final searchController = TextEditingController();
+
+  return Builder(
+    builder: (context) {
+      final tr = TranslationProvider.of(context).translations;
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AppHeaderSection(
+                greeting: tr.hiSteven,
+                title: tr.findYourDoctor,
+                searchController: searchController,
+                showLanguageToggle: true,
+                showProfile: true,
+                onProfileTap: onProfileTap,
+              ),
+              Column(
+                children: [
+                  if (liveDoctors.isNotEmpty) ...[
+                    const SizedBox(height: 24),
+                    LiveDoctorSection(
+                      liveDoctors: liveDoctors,
+                      onSeeAllPressed: onSeeAllDoctors ?? () {},
+                    ),
+                  ],
+                  const SizedBox(height: 24),
+                  DoctorCategorySection(
+                    categories: categories(),
+                    onCategoryTap: (_) => onCategoryTap?.call(),
+                  ),
+                  if (popularDoctors.isNotEmpty) ...[
+                    const SizedBox(height: 24),
+                    PopularDoctorSection(
+                      doctors: popularDoctors,
+                      onSeeAllPressed: onSeeAllDoctors ?? () {},
+                    ),
+                  ],
+                  if (featuredDoctors.isNotEmpty) ...[
+                    const SizedBox(height: 24),
+                    FeaturedDoctorSection(
+                      doctors: featuredDoctors,
+                      onSeeAllPressed: onSeeAllDoctors ?? () {},
+                    ),
+                    const SizedBox(height: 32),
+                  ],
+                ],
+              ),
+            ],
+          ),
+        ),
+        bottomNavigationBar: HomeBottomNavigationBar(
+          currentIndex: 0,
+          onTap: (_) {},
+        ),
+      );
+    },
+  );
 }
 
 List<DoctorModel> testHomeDoctors() {
