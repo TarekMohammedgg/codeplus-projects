@@ -28,7 +28,6 @@ class HomeScreenState extends State<HomeScreen> {
   final _authService = AuthService();
   late Future<List<DoctorModel>> _doctorsFuture;
   int selectedNavIndex = 0;
-  bool _forceSkeletonLoading = false;
 
   @override
   void initState() {
@@ -59,29 +58,6 @@ class HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: _forceSkeletonLoading
-            ? AppColors.error
-            : AppColors.primary,
-        icon: Icon(
-          _forceSkeletonLoading
-              ? Icons.visibility_off_rounded
-              : Icons.auto_awesome_rounded,
-          color: Colors.white,
-        ),
-        label: Text(
-          _forceSkeletonLoading ? 'إيقاف الـ Skeleton' : 'تجربة الـ Skeleton',
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-        onPressed: () {
-          setState(() {
-            _forceSkeletonLoading = !_forceSkeletonLoading;
-          });
-        },
-      ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -98,8 +74,7 @@ class HomeScreenState extends State<HomeScreen> {
             FutureBuilder<List<DoctorModel>>(
               future: _doctorsFuture,
               builder: (context, snapshot) {
-                if (_forceSkeletonLoading ||
-                    snapshot.connectionState == ConnectionState.waiting) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
                   return const DoctorsLoading();
                 }
 
