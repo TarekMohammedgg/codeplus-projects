@@ -71,7 +71,7 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get welcomeBack => 'مرحبًا بعودتك';
 	@override String get loginSubtitle => 'احجز مع أفضل طبيب لصحتك\nوعش حياتك بكل سعادة';
 	@override String get forgotPassword => 'نسيت كلمة المرور';
-	@override String get forgotPasswordSubtitle => 'أدخل بريدك الإلكتروني وسنرسل لك رمزًا من 4 أرقام للتحقق من حسابك.';
+	@override String get forgotPasswordSubtitle => 'أدخل بريدك الإلكتروني وسنرسل لك رابطًا لإعادة تعيين كلمة المرور.';
 	@override String get dontHaveAccount => 'ليس لديك حساب؟ ';
 	@override String get joinUs => 'انضم إلينا';
 	@override String get createYourAccount => 'انضم إلينا وابدأ البحث';
@@ -83,13 +83,13 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get privacyPolicy => 'سياسة الخصوصية';
 	@override String get alreadyHaveAccount => 'لديك حساب بالفعل؟';
 	@override String get verifyYourNumber => 'تحقق من رقمك';
-	@override String get otpSentTo => 'أرسلنا رمزًا من 4 أرقام إلى ';
+	@override String get otpSentTo => 'أرسلنا رمزًا من 6 أرقام إلى ';
 	@override String get defaultPhoneNumber => '+20 10 1234 5678';
-	@override String get resendTimerDefault => '0:42';
+	@override String get resendTimerDefault => '0:60';
 	@override String get resendCode => 'إعادة إرسال الرمز';
 	@override String get codeSentAgain => 'تم إرسال رمز جديد.';
-	@override String get otpCodeTitle => 'أدخل الرمز المكون من 4 أرقام';
-	@override String get otpCodeDescription => 'أدخل الرمز المكون من 4 أرقام الذي وصلك على بريدك الإلكتروني.';
+	@override String get otpCodeTitle => 'أدخل الرمز المكون من 6 أرقام';
+	@override String get otpCodeDescription => 'أدخل الرمز المكون من 6 أرقام الذي وصلك على هاتفك.';
 	@override String get resetYourPassword => 'إعادة تعيين كلمة المرور';
 	@override String get resetPasswordSubtitle => 'أدخل بريدك الإلكتروني وسنرسل لك\nرابطًا آمنًا لإعادة التعيين.';
 	@override String get sendResetLink => 'إرسال رابط إعادة التعيين';
@@ -162,6 +162,7 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get settings => 'الإعدادات';
 	@override String get language => 'اللغة';
 	@override String get profileUpdatedSuccess => 'تم تحديث الملف الشخصي بنجاح';
+	@override String get logOut => 'تسجيل الخروج';
 	@override String get favouriteDoctors => 'الأطباء المفضلون';
 	@override String get favouriteDoctorsSubtitle => 'أطباؤك المفضلون والموثوقون لسهولة الوصول إليهم';
 	@override String get featureDoctor => 'أطباء مميزون';
@@ -194,6 +195,29 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String appointmentBookedWith({required Object name, required Object date, required Object time}) => 'لقد قمت بحجز موعد مع ${name} في ${date}، الساعة ${time}';
 	@override String get done => 'تم';
 	@override String get editYourAppointment => 'تعديل الموعد';
+	@override String get userNotFoundError => 'هذا البريد الإلكتروني غير مسجل لدينا، يرجى التأكد من صحة البريد أو إنشاء حساب جديد.';
+	@override String get wrongPasswordError => 'بيانات تسجيل الدخول غير صحيحة، يرجى المحاولة مرة أخرى.';
+	@override String get emailAlreadyInUseError => 'هذا البريد الإلكتروني مستخدم بالفعل بحساب آخر.';
+	@override String get invalidEmailError => 'البريد الإلكتروني غير صالح.';
+	@override String get weakPasswordError => 'كلمة المرور ضعيفة جدًا، يرجى اختيار كلمة مرور أقوى.';
+	@override String get userDisabledError => 'تم تعطيل هذا الحساب، يرجى التواصل مع الدعم.';
+	@override String get tooManyRequestsError => 'تم حظر المحاولات مؤقتًا لكثرة الطلبات، يرجى المحاولة لاحقًا.';
+	@override String get networkRequestFailedError => 'تعذر الاتصال بالشبكة، يرجى التحقق من اتصالك بالإنترنت.';
+	@override String get accountExistsWithDifferentCredentialError => 'يوجد حساب مسجل بالفعل ببيانات اعتماد مختلفة.';
+	@override String get operationNotAllowedError => 'طريقة تسجيل الدخول هذه غير مفعلة حاليًا.';
+	@override String get invalidVerificationCodeError => 'رمز التحقق (OTP) غير صحيح، يرجى المحاولة مرة أخرى.';
+	@override String get invalidVerificationIdError => 'معرف التحقق غير صالح، يرجى إعادة إرسال الرمز.';
+	@override String get sessionExpiredError => 'انتهت صلاحية رمز التحقق، يرجى طلب رمز جديد.';
+	@override String get invalidPhoneNumberError => 'رقم الهاتف غير صالح، يرجى التأكد من كتابة الرقم مع رمز الدولة (مثال: +20...).';
+	@override String get quotaExceededError => 'تم تجاوز الحد المسموح لإرسال الرسائل، يرجى المحاولة لاحقًا.';
+	@override String get captchaCheckFailedError => 'فشل التحقق الأمني (reCAPTCHA)، يرجى المحاولة لاحقاً.';
+	@override String get serviceError => 'حدث خطأ في الخدمة، يرجى المحاولة لاحقاً.';
+	@override String get unexpectedError => 'حدث خطأ غير متوقع، يرجى المحاولة مرة أخرى.';
+	@override String get googleSignInConfigError => 'خطأ في إعدادات Google Sign-In، يرجى التأكد من الـ SHA-1 و serverClientId.';
+	@override String get googleSignInInterruptedError => 'تمت مقاطعة عملية تسجيل الدخول، يرجى المحاولة ثانية.';
+	@override String get googleSignInFailedError => 'فشل تسجيل الدخول عبر Google.';
+	@override String get enterSixDigitOtp => 'يرجى إدخال رمز التحقق المكون من 6 أرقام.';
+	@override String get phoneVerifiedSuccess => 'تم تأكيد رقم الهاتف بنجاح!';
 }
 
 /// The flat map containing all translations for locale <ar>.
@@ -236,7 +260,7 @@ extension on TranslationsAr {
 			'welcomeBack' => 'مرحبًا بعودتك',
 			'loginSubtitle' => 'احجز مع أفضل طبيب لصحتك\nوعش حياتك بكل سعادة',
 			'forgotPassword' => 'نسيت كلمة المرور',
-			'forgotPasswordSubtitle' => 'أدخل بريدك الإلكتروني وسنرسل لك رمزًا من 4 أرقام للتحقق من حسابك.',
+			'forgotPasswordSubtitle' => 'أدخل بريدك الإلكتروني وسنرسل لك رابطًا لإعادة تعيين كلمة المرور.',
 			'dontHaveAccount' => 'ليس لديك حساب؟ ',
 			'joinUs' => 'انضم إلينا',
 			'createYourAccount' => 'انضم إلينا وابدأ البحث',
@@ -248,13 +272,13 @@ extension on TranslationsAr {
 			'privacyPolicy' => 'سياسة الخصوصية',
 			'alreadyHaveAccount' => 'لديك حساب بالفعل؟',
 			'verifyYourNumber' => 'تحقق من رقمك',
-			'otpSentTo' => 'أرسلنا رمزًا من 4 أرقام إلى ',
+			'otpSentTo' => 'أرسلنا رمزًا من 6 أرقام إلى ',
 			'defaultPhoneNumber' => '+20 10 1234 5678',
-			'resendTimerDefault' => '0:42',
+			'resendTimerDefault' => '0:60',
 			'resendCode' => 'إعادة إرسال الرمز',
 			'codeSentAgain' => 'تم إرسال رمز جديد.',
-			'otpCodeTitle' => 'أدخل الرمز المكون من 4 أرقام',
-			'otpCodeDescription' => 'أدخل الرمز المكون من 4 أرقام الذي وصلك على بريدك الإلكتروني.',
+			'otpCodeTitle' => 'أدخل الرمز المكون من 6 أرقام',
+			'otpCodeDescription' => 'أدخل الرمز المكون من 6 أرقام الذي وصلك على هاتفك.',
 			'resetYourPassword' => 'إعادة تعيين كلمة المرور',
 			'resetPasswordSubtitle' => 'أدخل بريدك الإلكتروني وسنرسل لك\nرابطًا آمنًا لإعادة التعيين.',
 			'sendResetLink' => 'إرسال رابط إعادة التعيين',
@@ -327,6 +351,7 @@ extension on TranslationsAr {
 			'settings' => 'الإعدادات',
 			'language' => 'اللغة',
 			'profileUpdatedSuccess' => 'تم تحديث الملف الشخصي بنجاح',
+			'logOut' => 'تسجيل الخروج',
 			'favouriteDoctors' => 'الأطباء المفضلون',
 			'favouriteDoctorsSubtitle' => 'أطباؤك المفضلون والموثوقون لسهولة الوصول إليهم',
 			'featureDoctor' => 'أطباء مميزون',
@@ -359,6 +384,29 @@ extension on TranslationsAr {
 			'appointmentBookedWith' => ({required Object name, required Object date, required Object time}) => 'لقد قمت بحجز موعد مع ${name} في ${date}، الساعة ${time}',
 			'done' => 'تم',
 			'editYourAppointment' => 'تعديل الموعد',
+			'userNotFoundError' => 'هذا البريد الإلكتروني غير مسجل لدينا، يرجى التأكد من صحة البريد أو إنشاء حساب جديد.',
+			'wrongPasswordError' => 'بيانات تسجيل الدخول غير صحيحة، يرجى المحاولة مرة أخرى.',
+			'emailAlreadyInUseError' => 'هذا البريد الإلكتروني مستخدم بالفعل بحساب آخر.',
+			'invalidEmailError' => 'البريد الإلكتروني غير صالح.',
+			'weakPasswordError' => 'كلمة المرور ضعيفة جدًا، يرجى اختيار كلمة مرور أقوى.',
+			'userDisabledError' => 'تم تعطيل هذا الحساب، يرجى التواصل مع الدعم.',
+			'tooManyRequestsError' => 'تم حظر المحاولات مؤقتًا لكثرة الطلبات، يرجى المحاولة لاحقًا.',
+			'networkRequestFailedError' => 'تعذر الاتصال بالشبكة، يرجى التحقق من اتصالك بالإنترنت.',
+			'accountExistsWithDifferentCredentialError' => 'يوجد حساب مسجل بالفعل ببيانات اعتماد مختلفة.',
+			'operationNotAllowedError' => 'طريقة تسجيل الدخول هذه غير مفعلة حاليًا.',
+			'invalidVerificationCodeError' => 'رمز التحقق (OTP) غير صحيح، يرجى المحاولة مرة أخرى.',
+			'invalidVerificationIdError' => 'معرف التحقق غير صالح، يرجى إعادة إرسال الرمز.',
+			'sessionExpiredError' => 'انتهت صلاحية رمز التحقق، يرجى طلب رمز جديد.',
+			'invalidPhoneNumberError' => 'رقم الهاتف غير صالح، يرجى التأكد من كتابة الرقم مع رمز الدولة (مثال: +20...).',
+			'quotaExceededError' => 'تم تجاوز الحد المسموح لإرسال الرسائل، يرجى المحاولة لاحقًا.',
+			'captchaCheckFailedError' => 'فشل التحقق الأمني (reCAPTCHA)، يرجى المحاولة لاحقاً.',
+			'serviceError' => 'حدث خطأ في الخدمة، يرجى المحاولة لاحقاً.',
+			'unexpectedError' => 'حدث خطأ غير متوقع، يرجى المحاولة مرة أخرى.',
+			'googleSignInConfigError' => 'خطأ في إعدادات Google Sign-In، يرجى التأكد من الـ SHA-1 و serverClientId.',
+			'googleSignInInterruptedError' => 'تمت مقاطعة عملية تسجيل الدخول، يرجى المحاولة ثانية.',
+			'googleSignInFailedError' => 'فشل تسجيل الدخول عبر Google.',
+			'enterSixDigitOtp' => 'يرجى إدخال رمز التحقق المكون من 6 أرقام.',
+			'phoneVerifiedSuccess' => 'تم تأكيد رقم الهاتف بنجاح!',
 			_ => null,
 		};
 	}

@@ -137,8 +137,8 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'Forgot password'
 	String get forgotPassword => 'Forgot password';
 
-	/// en: 'Enter your email and we will send a 4-digit code to verify your account.'
-	String get forgotPasswordSubtitle => 'Enter your email and we will send a 4-digit code to verify your account.';
+	/// en: 'Enter your email and we will send you a link to reset your password.'
+	String get forgotPasswordSubtitle => 'Enter your email and we will send you a link to reset your password.';
 
 	/// en: 'Don’t have an account? '
 	String get dontHaveAccount => 'Don’t have an account? ';
@@ -173,14 +173,14 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'Verify your number'
 	String get verifyYourNumber => 'Verify your number';
 
-	/// en: 'We sent a 4-digit code to '
-	String get otpSentTo => 'We sent a 4-digit code to ';
+	/// en: 'We sent a 6-digit code to '
+	String get otpSentTo => 'We sent a 6-digit code to ';
 
 	/// en: '+20 10 1234 5678'
 	String get defaultPhoneNumber => '+20 10 1234 5678';
 
-	/// en: '0:42'
-	String get resendTimerDefault => '0:42';
+	/// en: '0:60'
+	String get resendTimerDefault => '0:60';
 
 	/// en: 'Resend code'
 	String get resendCode => 'Resend code';
@@ -188,11 +188,11 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'A new code was sent.'
 	String get codeSentAgain => 'A new code was sent.';
 
-	/// en: 'Enter 4 Digits Code'
-	String get otpCodeTitle => 'Enter 4 Digits Code';
+	/// en: 'Enter 6 Digits Code'
+	String get otpCodeTitle => 'Enter 6 Digits Code';
 
-	/// en: 'Enter the 4 digits code that you received on your email.'
-	String get otpCodeDescription => 'Enter the 4 digits code that you received on your email.';
+	/// en: 'Enter the 6 digits code that you received on your phone.'
+	String get otpCodeDescription => 'Enter the 6 digits code that you received on your phone.';
 
 	/// en: 'Reset your password'
 	String get resetYourPassword => 'Reset your password';
@@ -410,6 +410,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'Profile updated successfully'
 	String get profileUpdatedSuccess => 'Profile updated successfully';
 
+	/// en: 'Log Out'
+	String get logOut => 'Log Out';
+
 	/// en: 'Favourite Doctors'
 	String get favouriteDoctors => 'Favourite Doctors';
 
@@ -505,6 +508,75 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// en: 'Edit your appointment'
 	String get editYourAppointment => 'Edit your appointment';
+
+	/// en: 'No user found with this email. Please check the email or create a new account.'
+	String get userNotFoundError => 'No user found with this email. Please check the email or create a new account.';
+
+	/// en: 'Invalid login credentials. Please try again.'
+	String get wrongPasswordError => 'Invalid login credentials. Please try again.';
+
+	/// en: 'This email is already in use by another account.'
+	String get emailAlreadyInUseError => 'This email is already in use by another account.';
+
+	/// en: 'Invalid email address.'
+	String get invalidEmailError => 'Invalid email address.';
+
+	/// en: 'The password is too weak. Please choose a stronger password.'
+	String get weakPasswordError => 'The password is too weak. Please choose a stronger password.';
+
+	/// en: 'This user account has been disabled. Please contact support.'
+	String get userDisabledError => 'This user account has been disabled. Please contact support.';
+
+	/// en: 'Too many attempts. Access temporarily disabled. Please try again later.'
+	String get tooManyRequestsError => 'Too many attempts. Access temporarily disabled. Please try again later.';
+
+	/// en: 'Network connection failed. Please check your internet connection.'
+	String get networkRequestFailedError => 'Network connection failed. Please check your internet connection.';
+
+	/// en: 'An account already exists with the same email but different sign-in credentials.'
+	String get accountExistsWithDifferentCredentialError => 'An account already exists with the same email but different sign-in credentials.';
+
+	/// en: 'This sign-in method is not enabled.'
+	String get operationNotAllowedError => 'This sign-in method is not enabled.';
+
+	/// en: 'Invalid verification code (OTP). Please try again.'
+	String get invalidVerificationCodeError => 'Invalid verification code (OTP). Please try again.';
+
+	/// en: 'Invalid verification ID. Please resend the code.'
+	String get invalidVerificationIdError => 'Invalid verification ID. Please resend the code.';
+
+	/// en: 'The verification code has expired. Please request a new code.'
+	String get sessionExpiredError => 'The verification code has expired. Please request a new code.';
+
+	/// en: 'Invalid phone number. Please include the country code (e.g., +20...).'
+	String get invalidPhoneNumberError => 'Invalid phone number. Please include the country code (e.g., +20...).';
+
+	/// en: 'SMS quota exceeded. Please try again later.'
+	String get quotaExceededError => 'SMS quota exceeded. Please try again later.';
+
+	/// en: 'reCAPTCHA security check failed. Please try again.'
+	String get captchaCheckFailedError => 'reCAPTCHA security check failed. Please try again.';
+
+	/// en: 'A service error occurred. Please try again later.'
+	String get serviceError => 'A service error occurred. Please try again later.';
+
+	/// en: 'An unexpected error occurred. Please try again.'
+	String get unexpectedError => 'An unexpected error occurred. Please try again.';
+
+	/// en: 'Google Sign-In configuration error. Please check SHA-1 and serverClientId.'
+	String get googleSignInConfigError => 'Google Sign-In configuration error. Please check SHA-1 and serverClientId.';
+
+	/// en: 'Sign-in was interrupted. Please try again.'
+	String get googleSignInInterruptedError => 'Sign-in was interrupted. Please try again.';
+
+	/// en: 'Google sign-in failed.'
+	String get googleSignInFailedError => 'Google sign-in failed.';
+
+	/// en: 'Please enter the 6-digit verification code.'
+	String get enterSixDigitOtp => 'Please enter the 6-digit verification code.';
+
+	/// en: 'Phone number verified successfully!'
+	String get phoneVerifiedSuccess => 'Phone number verified successfully!';
 }
 
 /// The flat map containing all translations for locale <en>.
@@ -547,7 +619,7 @@ extension on Translations {
 			'welcomeBack' => 'Welcome Back',
 			'loginSubtitle' => 'Appoint the best doctor for your health and\nlive your life with full of happiness',
 			'forgotPassword' => 'Forgot password',
-			'forgotPasswordSubtitle' => 'Enter your email and we will send a 4-digit code to verify your account.',
+			'forgotPasswordSubtitle' => 'Enter your email and we will send you a link to reset your password.',
 			'dontHaveAccount' => 'Don’t have an account? ',
 			'joinUs' => 'Join us',
 			'createYourAccount' => 'Join us to start your search',
@@ -559,13 +631,13 @@ extension on Translations {
 			'privacyPolicy' => 'Privacy Policy',
 			'alreadyHaveAccount' => 'Already have an account?',
 			'verifyYourNumber' => 'Verify your number',
-			'otpSentTo' => 'We sent a 4-digit code to ',
+			'otpSentTo' => 'We sent a 6-digit code to ',
 			'defaultPhoneNumber' => '+20 10 1234 5678',
-			'resendTimerDefault' => '0:42',
+			'resendTimerDefault' => '0:60',
 			'resendCode' => 'Resend code',
 			'codeSentAgain' => 'A new code was sent.',
-			'otpCodeTitle' => 'Enter 4 Digits Code',
-			'otpCodeDescription' => 'Enter the 4 digits code that you received on your email.',
+			'otpCodeTitle' => 'Enter 6 Digits Code',
+			'otpCodeDescription' => 'Enter the 6 digits code that you received on your phone.',
 			'resetYourPassword' => 'Reset your password',
 			'resetPasswordSubtitle' => 'Enter your email and we\'ll send you a\nsecure link to reset it.',
 			'sendResetLink' => 'Send reset link',
@@ -638,6 +710,7 @@ extension on Translations {
 			'settings' => 'Settings',
 			'language' => 'Language',
 			'profileUpdatedSuccess' => 'Profile updated successfully',
+			'logOut' => 'Log Out',
 			'favouriteDoctors' => 'Favourite Doctors',
 			'favouriteDoctorsSubtitle' => 'Your saved and trusted medical specialists',
 			'featureDoctor' => 'Feature Doctor',
@@ -670,6 +743,29 @@ extension on Translations {
 			'appointmentBookedWith' => ({required Object name, required Object date, required Object time}) => 'You booked an appointment with ${name} on ${date}, at ${time}',
 			'done' => 'Done',
 			'editYourAppointment' => 'Edit your appointment',
+			'userNotFoundError' => 'No user found with this email. Please check the email or create a new account.',
+			'wrongPasswordError' => 'Invalid login credentials. Please try again.',
+			'emailAlreadyInUseError' => 'This email is already in use by another account.',
+			'invalidEmailError' => 'Invalid email address.',
+			'weakPasswordError' => 'The password is too weak. Please choose a stronger password.',
+			'userDisabledError' => 'This user account has been disabled. Please contact support.',
+			'tooManyRequestsError' => 'Too many attempts. Access temporarily disabled. Please try again later.',
+			'networkRequestFailedError' => 'Network connection failed. Please check your internet connection.',
+			'accountExistsWithDifferentCredentialError' => 'An account already exists with the same email but different sign-in credentials.',
+			'operationNotAllowedError' => 'This sign-in method is not enabled.',
+			'invalidVerificationCodeError' => 'Invalid verification code (OTP). Please try again.',
+			'invalidVerificationIdError' => 'Invalid verification ID. Please resend the code.',
+			'sessionExpiredError' => 'The verification code has expired. Please request a new code.',
+			'invalidPhoneNumberError' => 'Invalid phone number. Please include the country code (e.g., +20...).',
+			'quotaExceededError' => 'SMS quota exceeded. Please try again later.',
+			'captchaCheckFailedError' => 'reCAPTCHA security check failed. Please try again.',
+			'serviceError' => 'A service error occurred. Please try again later.',
+			'unexpectedError' => 'An unexpected error occurred. Please try again.',
+			'googleSignInConfigError' => 'Google Sign-In configuration error. Please check SHA-1 and serverClientId.',
+			'googleSignInInterruptedError' => 'Sign-in was interrupted. Please try again.',
+			'googleSignInFailedError' => 'Google sign-in failed.',
+			'enterSixDigitOtp' => 'Please enter the 6-digit verification code.',
+			'phoneVerifiedSuccess' => 'Phone number verified successfully!',
 			_ => null,
 		};
 	}

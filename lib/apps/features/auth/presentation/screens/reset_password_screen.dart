@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/apps/core/extensions/context_extensions.dart';
 import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
@@ -10,6 +11,7 @@ import 'package:doctor_hunt/apps/core/utils/validators.dart';
 import 'package:doctor_hunt/generated/app_image.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
+import '../../data/service/auth_service.dart';
 import '../widgets/auth_back_button.dart';
 import '../widgets/auth_buttons.dart';
 import '../widgets/auth_text_field.dart';
@@ -24,6 +26,8 @@ class ResetPasswordScreen extends StatefulWidget {
 class ResetPasswordScreenState extends State<ResetPasswordScreen> {
   final formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
+  final _authService = AuthService();
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -31,12 +35,31 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
     super.dispose();
   }
 
-  void sendResetLink() {
+  Future<void> sendResetLink() async {
     context.unfocus();
     final isValid = formKey.currentState?.validate() ?? false;
     if (!isValid) return;
 
-    context.showSuccessSnackBar(tr.passwordResetSuccess);
+    setState(() => _isLoading = true);
+    try {
+      await _authService.sendPasswordResetEmail(
+        email: emailController.text.trim(),
+      );
+      if (!mounted) return;
+      context.showSuccessSnackBar(tr.passwordResetSuccess);
+      if (context.canPop()) {
+        context.pop();
+      } else {
+        const LoginRoute().go(context);
+      }
+    } catch (e) {
+      if (!mounted) return;
+      context.showErrorSnackBar(AppException.from(e).message);
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
   }
 
   @override
@@ -90,7 +113,8 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
               AuthPrimaryButton(
                 label: tr.sendResetLink,
                 icon: Icons.send_rounded,
-                onPressed: sendResetLink,
+                isLoading: _isLoading,
+                onPressed: _isLoading ? null : sendResetLink,
                 height: 52,
                 fontSize: 16,
               ),

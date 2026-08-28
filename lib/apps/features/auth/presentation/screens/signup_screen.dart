@@ -60,7 +60,7 @@ class SignupScreenState extends State<SignupScreen> {
       );
       if (!mounted) return;
       context.showSuccessSnackBar('تم إنشاء الحساب بنجاح!');
-      const HomeRoute().go(context);
+      const RoleSelectionRoute().go(context);
     } catch (e) {
       if (!mounted) return;
       context.showErrorSnackBar(AppException.from(e).message);

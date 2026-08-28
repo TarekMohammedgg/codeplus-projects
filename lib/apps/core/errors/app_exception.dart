@@ -1,5 +1,6 @@
-﻿import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
 class AppException implements Exception {
   final String message;
@@ -31,40 +32,50 @@ class AppException implements Exception {
     }
     if (error is FirebaseException) {
       return AppException(
-        message: error.message ?? 'حدث خطأ في الخدمة، يرجى المحاولة لاحقاً.',
+        message: error.message ?? tr.serviceError,
         code: error.code,
       );
     }
-    return const AppException(
-      message: 'حدث خطأ غير متوقع، يرجى المحاولة مرة أخرى.',
-    );
+    return AppException(message: tr.unexpectedError);
   }
 
   static String _mapFirebaseAuthError(String code, [String? defaultMessage]) {
     switch (code) {
       case 'user-not-found':
-        return 'الحساب غير موجود، يرجى التأكد من البريد الإلكتروني.';
+        return tr.userNotFoundError;
       case 'wrong-password':
       case 'invalid-credential':
-        return 'بيانات تسجيل الدخول غير صحيحة، يرجى المحاولة مرة أخرى.';
+        return tr.wrongPasswordError;
       case 'email-already-in-use':
-        return 'هذا البريد الإلكتروني مستخدم بالفعل بحساب آخر.';
+        return tr.emailAlreadyInUseError;
       case 'invalid-email':
-        return 'البريد الإلكتروني غير صالح.';
+        return tr.invalidEmailError;
       case 'weak-password':
-        return 'كلمة المرور ضعيفة جدًا، يرجى اختيار كلمة مرور أقوى.';
+        return tr.weakPasswordError;
       case 'user-disabled':
-        return 'تم تعطيل هذا الحساب، يرجى التواصل مع الدعم.';
+        return tr.userDisabledError;
       case 'too-many-requests':
-        return 'تم حظر المحاولات مؤقتًا لكثرة الطلبات، يرجى المحاولة لاحقًا.';
+        return tr.tooManyRequestsError;
       case 'network-request-failed':
-        return 'تعذر الاتصال بالشبكة، يرجى التحقق من اتصالك بالإنترنت.';
+        return tr.networkRequestFailedError;
       case 'account-exists-with-different-credential':
-        return 'يوجد حساب مسجل بالفعل ببيانات اعتماد مختلفة.';
+        return tr.accountExistsWithDifferentCredentialError;
       case 'operation-not-allowed':
-        return 'طريقة تسجيل الدخول هذه غير مفعلة حاليًا.';
+        return tr.operationNotAllowedError;
+      case 'invalid-verification-code':
+        return tr.invalidVerificationCodeError;
+      case 'invalid-verification-id':
+        return tr.invalidVerificationIdError;
+      case 'session-expired':
+        return tr.sessionExpiredError;
+      case 'invalid-phone-number':
+        return tr.invalidPhoneNumberError;
+      case 'quota-exceeded':
+        return tr.quotaExceededError;
+      case 'captcha-check-failed':
+        return tr.captchaCheckFailedError;
       default:
-        return defaultMessage ?? 'حدث خطأ غير متوقع، يرجى المحاولة مرة أخرى.';
+        return defaultMessage ?? tr.unexpectedError;
     }
   }
 
@@ -74,11 +85,11 @@ class AppException implements Exception {
   ]) {
     switch (code) {
       case GoogleSignInExceptionCode.clientConfigurationError:
-        return 'خطأ في إعدادات Google Sign-In، يرجى التأكد من الـ SHA-1 و serverClientId.';
+        return tr.googleSignInConfigError;
       case GoogleSignInExceptionCode.interrupted:
-        return 'تمت مقاطعة عملية تسجيل الدخول، يرجى المحاولة ثانية.';
+        return tr.googleSignInInterruptedError;
       default:
-        return description ?? 'فشل تسجيل الدخول عبر Google.';
+        return description ?? tr.googleSignInFailedError;
     }
   }
 

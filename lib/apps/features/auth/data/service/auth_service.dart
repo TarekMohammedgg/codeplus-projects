@@ -1,6 +1,8 @@
+import 'package:flutter/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
+import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
 class AuthService {
   static const String serverClientId =
@@ -26,6 +28,20 @@ class AuthService {
     } catch (_) {
       return const Stream.empty();
     }
+  }
+
+  String getUserGreeting(BuildContext context) {
+    final user = currentUser;
+    final rawName = user?.displayName?.trim();
+    final name = (rawName != null && rawName.isNotEmpty)
+        ? rawName.split(' ').first
+        : user?.email?.split('@').firstOrNull;
+
+    final isArabic = TranslationProvider.of(context).locale == AppLocale.ar;
+    if (name != null && name.isNotEmpty) {
+      return isArabic ? 'مرحبًا $name 👋' : 'Hi $name 👋';
+    }
+    return tr.hiSteven;
   }
 
   static Future<void> initialize() async {
@@ -77,6 +93,16 @@ class AuthService {
         return null;
       }
       throw AppException.fromGoogleSignIn(e);
+    }
+  }
+
+  Future<void> sendPasswordResetEmail({required String email}) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email.trim());
+    } on FirebaseAuthException catch (e) {
+      throw AppException.fromFirebaseAuth(e);
+    } catch (e) {
+      throw AppException.from(e);
     }
   }
 }

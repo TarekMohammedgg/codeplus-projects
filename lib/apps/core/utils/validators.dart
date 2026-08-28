@@ -1,3 +1,4 @@
+import 'package:doctor_hunt/apps/core/utils/phone_utils.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
 abstract final class AppValidators {
@@ -27,6 +28,17 @@ abstract final class AppValidators {
   static String? validateName(String? value) {
     if (value == null || value.trim().isEmpty) {
       return tr.enterFullName;
+    }
+    return null;
+  }
+
+  static String? validatePhone(String? value) {
+    final phone = value?.trim() ?? '';
+    if (phone.isEmpty) {
+      return 'يرجى إدخال رقم الهاتف';
+    }
+    if (!PhoneUtils.isValidPhone(phone)) {
+      return 'يرجى إدخال رقم هاتف صحيح (مثال: 01012345678)';
     }
     return null;
   }
