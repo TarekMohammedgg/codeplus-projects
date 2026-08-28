@@ -7,45 +7,45 @@ import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/utils/validators.dart';
+import 'package:doctor_hunt/apps/features/auth/data/service/auth_service.dart';
+import 'package:doctor_hunt/apps/features/auth/presentation/widgets/auth_buttons.dart';
+import 'package:doctor_hunt/apps/features/auth/presentation/widgets/auth_header.dart';
+import 'package:doctor_hunt/apps/features/auth/presentation/widgets/auth_text_field.dart';
 import 'package:doctor_hunt/generated/app_image.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
-import '../../data/service/auth_service.dart';
-import '../widgets/auth_buttons.dart';
-import '../widgets/auth_header.dart';
-import '../widgets/auth_text_field.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
 
   @override
-  State<SignupScreen> createState() => SignupScreenState();
+  State<SignupScreen> createState() => _SignupScreenState();
 }
 
-class SignupScreenState extends State<SignupScreen> {
-  final formKey = GlobalKey<FormState>();
-  final nameController = TextEditingController();
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+class _SignupScreenState extends State<SignupScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
   final _authService = AuthService();
 
-  bool termsAccepted = false;
+  bool _termsAccepted = false;
   bool _isLoading = false;
   bool _isGoogleLoading = false;
 
   @override
   void dispose() {
-    nameController.dispose();
-    emailController.dispose();
-    passwordController.dispose();
+    _nameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
-  Future<void> createAccount() async {
-    if (!formKey.currentState!.validate()) return;
-    if (!termsAccepted) {
+  Future<void> _createAccount() async {
+    if (!_formKey.currentState!.validate()) return;
+    if (!_termsAccepted) {
       context.showWarningSnackBar(
-        '???? ???????? ??? ???? ?????? ?????? ???????? ????????.',
+        'يرجى الموافقة على شروط الخدمة وسياسة الخصوصية للمتابعة.',
       );
       return;
     }
@@ -54,12 +54,12 @@ class SignupScreenState extends State<SignupScreen> {
     setState(() => _isLoading = true);
     try {
       await _authService.signUpWithEmailAndPassword(
-        email: emailController.text,
-        password: passwordController.text,
-        name: nameController.text,
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+        name: _nameController.text.trim(),
       );
       if (!mounted) return;
-      context.showSuccessSnackBar('?? ????? ?????? ?????!');
+      context.showSuccessSnackBar('تم إنشاء الحساب بنجاح!');
       const RoleSelectionRoute().go(context);
     } catch (e) {
       if (!mounted) return;
@@ -69,7 +69,7 @@ class SignupScreenState extends State<SignupScreen> {
     }
   }
 
-  Future<void> signInWithGoogle() async {
+  Future<void> _signInWithGoogle() async {
     FocusScope.of(context).unfocus();
     setState(() => _isGoogleLoading = true);
     try {
@@ -94,7 +94,7 @@ class SignupScreenState extends State<SignupScreen> {
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         padding: const EdgeInsets.fromLTRB(24, 48, 24, 32),
         child: Form(
-          key: formKey,
+          key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -108,11 +108,11 @@ class SignupScreenState extends State<SignupScreen> {
                 label: tr.google,
                 image: Assets.assetsDesignGoogleLogo,
                 isLoading: _isGoogleLoading,
-                onPressed: isAnyLoading ? null : signInWithGoogle,
+                onPressed: isAnyLoading ? null : _signInWithGoogle,
               ),
               32.verticalSpace,
               AuthTextField(
-                controller: nameController,
+                controller: _nameController,
                 hintText: tr.fullNameHint,
                 prefixIcon: Icons.person_outline_rounded,
                 iconColor: AppColors.textSecondary,
@@ -123,7 +123,7 @@ class SignupScreenState extends State<SignupScreen> {
               ),
               18.verticalSpace,
               AuthTextField(
-                controller: emailController,
+                controller: _emailController,
                 hintText: tr.emailAddress,
                 prefixIcon: Icons.mail_outline_rounded,
                 iconColor: AppColors.textSecondary,
@@ -134,7 +134,7 @@ class SignupScreenState extends State<SignupScreen> {
               ),
               18.verticalSpace,
               AuthTextField(
-                controller: passwordController,
+                controller: _passwordController,
                 hintText: tr.passwordHint,
                 prefixIcon: Icons.lock_outline_rounded,
                 iconColor: AppColors.textSecondary,
@@ -147,15 +147,16 @@ class SignupScreenState extends State<SignupScreen> {
               const _PasswordHintRow(),
               20.verticalSpace,
               _TermsCheckbox(
-                value: termsAccepted,
+                value: _termsAccepted,
                 disabled: isAnyLoading,
-                onChanged: (value) => setState(() => termsAccepted = value ?? false),
+                onChanged: (value) =>
+                    setState(() => _termsAccepted = value ?? false),
               ),
               24.verticalSpace,
               AuthPrimaryButton(
                 label: tr.createAccount,
                 isLoading: _isLoading,
-                onPressed: isAnyLoading ? null : createAccount,
+                onPressed: isAnyLoading ? null : _createAccount,
                 height: 54,
                 fontSize: 16,
               ),
@@ -184,7 +185,10 @@ class _PasswordHintRow extends StatelessWidget {
         8.horizontalSpace,
         Text(
           tr.passwordLengthNotice,
-          style: context.regular14TextSecondary.copyWith(fontSize: 13, height: 1.2),
+          style: context.regular14TextSecondary.copyWith(
+            fontSize: 13,
+            height: 1.2,
+          ),
         ),
       ],
     );
@@ -207,28 +211,26 @@ class _TermsCheckbox extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(
-          width: 24,
-          height: 24,
-          child: Checkbox(
-            key: const Key('terms-checkbox'),
-            value: value,
-            onChanged: disabled ? null : onChanged,
-            side: const BorderSide(color: AppColors.primary, width: 1.5),
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(4)),
-            ),
-            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            visualDensity: VisualDensity.compact,
+        Checkbox(
+          value: value,
+          onChanged: disabled ? null : onChanged,
+          side: const BorderSide(color: AppColors.primary, width: 1.5),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(4)),
           ),
+          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          visualDensity: VisualDensity.compact,
         ),
-        10.horizontalSpace,
+        8.horizontalSpace,
         Expanded(
           child: Padding(
             padding: const EdgeInsets.only(top: 2),
             child: Text.rich(
               TextSpan(
-                style: context.regular14TextMain.copyWith(fontSize: 13.5, height: 1.35),
+                style: context.regular14TextMain.copyWith(
+                  fontSize: 13.5,
+                  height: 1.35,
+                ),
                 children: [
                   TextSpan(text: tr.agreeTermsPrefix),
                   TextSpan(

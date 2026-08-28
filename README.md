@@ -2,84 +2,155 @@
 
 [![Flutter](https://img.shields.io/badge/Flutter-3.x-blue.svg?logo=flutter)](https://flutter.dev)
 [![Dart](https://img.shields.io/badge/Dart-3.12+-0175C2.svg?logo=dart)](https://dart.dev)
+[![Firebase](https://img.shields.io/badge/Firebase-Auth%20%7C%20Firestore-FFA611.svg?logo=firebase)](https://firebase.google.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS%20%7C%20Web%20%7C%20Desktop-lightgrey.svg)]()
 
-**Doctor Hunt** is a modern, responsive healthcare and medical appointment discovery application built with Flutter. It provides an intuitive, polished user interface for exploring doctor profiles, discovering specialties, scheduling appointments, and managing user preferences with full internationalization support.
-
-> [!NOTE]
-> Currently, the application uses structured local mock data and is designed as a modular, production-ready frontend template ready for backend and API integration.
+**Doctor Hunt** is a modern, feature-rich healthcare and medical appointment booking application built with Flutter. It delivers an intuitive, high-performance cross-platform experience for discovering doctors, exploring medical specialties, scheduling appointment time slots, managing favorite specialists, and managing user profiles — with seamless Firebase backend integration and compile-time type-safe internationalization (English & Arabic with full RTL support).
 
 ---
 
-## ✨ Features & Screens
+## ✨ Features & Modules
 
-- 🚀 **Onboarding & Role Selection**: Interactive multi-step onboarding with smooth page indicators and role selection (Patient / Healthcare Provider).
-- 🔐 **Authentication Flow**:
-  - Email and password sign-in & registration with robust client-side validation.
-  - Interactive OTP verification modal bottom sheets and screens with PIN inputs (`pinput`).
-  - Forgot password & reset password workflows.
-- 🏠 **Home Dashboard**:
-  - Live search bar and promotional health banners.
-  - Doctor specialty categories (Cardiology, Dental, Ophthalmology, General Medicine).
-  - Popular doctors carousel with ratings, reviews, and dynamic favorite toggling.
-- 👨‍⚕️ **Doctor Discovery & Profile**:
-  - Doctor listing with search, filtering, and availability tags.
-  - Detailed doctor profiles with biographies, patient reviews, and instant appointment booking feedback.
-- 🌐 **Internationalization (i18n) & RTL Support**:
-  - Full English and Arabic language support powered by `slang`.
-  - Automatic RTL (Right-to-Left) and LTR layout direction adaptation.
-  - Dedicated settings screen for real-time language switching without app restarts.
+### 🚀 Onboarding & Role Selection
+- Interactive multi-step onboarding carousel with rich medical illustrations and animated page indicators (`smooth_page_indicator`).
+- Role selection gateway tailored for Patients and Healthcare Providers.
+
+### 🔐 Authentication & Account Security (Firebase + Google Sign-In)
+- **Email & Password Authentication**: Full sign-up and sign-in workflows with real-time validation and error handling via `FirebaseAuth`.
+- **Google Sign-In**: One-tap social sign-in integration with `google_sign_in` and credential exchange.
+- **Password Reset**: Automated password recovery via Firebase Auth email dispatch.
+- **OTP Verification**: Secure PIN entry interfaces and modal bottom sheets powered by `pinput`.
+- **Personalized User Greeting**: Context-aware user greeting ("Hi [Name] 👋" / "مرحبًا [Name] 👋") adapting dynamically to user profile and active locale.
+
+### 🏠 Home & Medical Dashboard
+- **Dynamic Doctor Feeds**: Cloud Firestore data fetching with graceful fallback to structured local mock data.
+- **Specialty Categories**: Quick navigation across medical specialties (Cardiology, Dental, Ophthalmology, General Medicine, and more).
+- **Popular & Featured Specialists**: Horizontal carousels showcasing doctor ratings, patient review counts, hourly rates, and real-time favorite toggling.
+- **Live Doctors Section**: Highlighted cards for currently active and available specialists.
+- **Global Search Surface**: Integrated search bar for instantaneous doctor queries.
+
+### 👨‍⚕️ Doctor Discovery & Details
+- **Doctor Catalog**: Searchable doctor directory with specialty filtering, rating indicators, and availability status.
+- **Detailed Specialist Profile**: Comprehensive view featuring doctor biography, key metrics (patients served, years of experience, rating, reviews), clinic location, and direct booking actions.
+- **Network Image Caching**: Smooth image rendering with memory caching via `cached_network_image` and custom fallback avatar placeholders (`DoctorAvatarPlaceholder`).
+
+### 📅 Appointment Scheduling & Slot Selection (`doctor_select_time`)
+- **Interactive Date Selection**: Date selection timeline with weekday indicators.
+- **Time Slot Picker**: Categorized slot availability partitioned into **Afternoon** and **Evening** consultation sessions (`time_slot`).
+- **Availability Fallback**: Smart detection for fully-booked days with instant navigation to the next available date or direct clinic contact action.
+- **Booking Confirmation**: Custom modal feedback dialog (`ThankYouDialog`) summarizing doctor name, selected date, and time slot.
+
+### ❤️ Favourite / Saved Doctors (`favourite_doctors`)
+- Dedicated favorites screen displaying bookmarked doctors.
+- Quick booking shortcuts directly from favorite cards.
+- Interactive favorite toggle synchronization.
+
+### 👤 User Profile & Settings (`profile`)
+- User profile overview with customizable profile avatar.
+- Structured personal information cards (Email, Phone, Date of Birth, Gender).
+- Emergency contact details and medical information sections.
+
+### 🌐 Internationalization (i18n) & RTL Support
+- Type-safe, compile-time translation generation powered by `slang`.
+- Full bidirectional support for **English (LTR)** and **Arabic (RTL)** with layout mirroring.
+- Seamless in-app locale switching without requiring application restarts.
 
 ---
 
 ## 📁 Project Structure
 
-The project follows a **Feature-First Architecture** ensuring clear separation of concerns, scalability, and maintainability:
+The project follows a scalable **Feature-First Architecture** with a strictly separated shared core:
 
 ```text
 lib/
-├── main.dart                      # App entry point & localization provider setup
-├── generated/                     # Generated code (i18n, assets, and design tokens)
-│   ├── app_image.dart             # Strongly-typed asset references
-│   ├── generate_styles.dart       # Design system atom generator script
-│   ├── style_atoms.dart           # Atomic style definitions
-│   └── i18n/                      # Slang generated translation classes
+├── main.dart                           # App entry point & Firebase/Slang initialization
+├── firebase_options.dart               # Generated Firebase configuration
+├── generated/                          # Generated code (assets, tokens, i18n)
+│   ├── app_image.dart                  # Strongly-typed asset references
+│   ├── generate_styles.dart            # Design system atom generator script
+│   ├── style_atoms.dart                # Atomic typography and style definitions
+│   └── i18n/                           # Slang generated translation classes
 │       ├── translations.g.dart
 │       ├── translations_en.g.dart
 │       └── translations_ar.g.dart
 └── apps/
-    ├── core/                      # Shared core module
-    │   ├── constants/             # Global app constants
-    │   ├── extensions/            # BuildContext, num, and UI utility extensions
-    │   ├── router/                # Type-safe GoRouter configuration & routes
-    │   ├── theme/                 # AppTheme, colors, and typography definitions
-    │   ├── utils/                 # Form validators and helper utilities
-    │   └── widgets/               # Reusable shared UI widgets (Header, Search, Buttons)
-    └── features/                  # Feature modules (Feature-Driven)
-        ├── auth/                  # Authentication screens, widgets, and state
-        ├── doctors/               # Doctor search, list, details, and models
-        ├── home/                  # Home dashboard, banners, and categories
-        ├── onboarding/            # Onboarding carousel and role selection
-        └── settings/              # App settings and locale switcher
+    ├── core/                           # Shared core module
+    │   ├── constants/                  # Global app constants
+    │   ├── data/                       # Core doctor data & image URLs
+    │   │   ├── doctor_image_urls.dart
+    │   │   └── doctors_data.dart
+    │   ├── errors/                     # Unified AppException handling
+    │   │   └── app_exception.dart
+    │   ├── extensions/                 # BuildContext, num, and SnackBar extensions
+    │   │   ├── context_extensions.dart
+    │   │   ├── custom_snack_bar.dart
+    │   │   └── num_extensions.dart
+    │   ├── models/                     # Shared domain models
+    │   │   └── doctor_model.dart
+    │   ├── router/                     # Type-safe GoRouter configuration
+    │   │   ├── app_router.dart
+    │   │   ├── routes.dart
+    │   │   └── routes.g.dart
+    │   ├── theme/                      # AppTheme, color palette, and styles
+    │   │   └── app_theme.dart
+    │   ├── utils/                      # Form validators & phone utilities
+    │   │   ├── phone_utils.dart
+    │   │   └── validators.dart
+    │   └── widgets/                    # Reusable shared UI components
+    │       ├── app_header_section.dart
+    │       ├── app_icon_button.dart
+    │       ├── app_search_bar.dart
+    │       ├── doctor_avatar_placeholder.dart
+    │       ├── doctor_image.dart
+    │       ├── doctor_profile_card.dart
+    │       ├── featured_doctor_section.dart
+    │       └── section_header.dart
+    └── features/                       # Feature modules (Feature-Driven)
+        ├── auth/                       # Authentication (Login, Signup, OTP, Reset Password)
+        │   ├── data/                   # Auth service (Firebase/Google) & UserRole model
+        │   └── presentation/           # Auth screens & specialized widgets
+        ├── doctor_select_time/         # Appointment date & time slot selection
+        │   ├── data/                   # Date options and time slot data models
+        │   └── presentation/           # SelectTimeScreen, date selector & slot widgets
+        ├── doctors/                    # Doctor search and doctor details screens
+        │   └── presentation/           # FindDoctorsScreen & DoctorDetailsScreen
+        ├── favourite_doctors/          # Saved/bookmarked doctors feature
+        │   └── presentation/           # FavouriteDoctorsScreen & FavouriteDoctorCard
+        ├── home/                       # Home dashboard, banners, and categories
+        │   ├── data/                   # Categories data & Firestore home service
+        │   └── presentation/           # HomeScreen & dashboard modular widgets
+        ├── onboarding/                 # Onboarding carousel & role selection
+        │   ├── data/                   # Onboarding items & models
+        │   └── presentation/           # OnboardingScreen
+        └── profile/                    # User profile screen & personal info
+            ├── data/                   # UserProfileModel & default profile data
+            └── presentation/           # ProfileScreen & profile widgets
 ```
-
-- **Feature-Driven**: Feature-specific models, mock data, and private widgets reside within each feature folder.
-- **Core Separation**: Global utilities, design tokens, extensions, and shared components live in `apps/core/`.
 
 ---
 
 ## 📦 Packages & Dependencies
 
-| Package | Purpose |
-| :--- | :--- |
-| [`go_router`](https://pub.dev/packages/go_router) | Declarative, type-safe routing and deep-linking |
-| [`go_router_builder`](https://pub.dev/packages/go_router_builder) | Code generation for type-safe route definitions |
-| [`slang`](https://pub.dev/packages/slang) & [`slang_flutter`](https://pub.dev/packages/slang_flutter) | Type-safe, compile-time internationalization (i18n) |
-| [`pinput`](https://pub.dev/packages/pinput) | Custom PIN and OTP verification input field |
-| [`smooth_page_indicator`](https://pub.dev/packages/smooth_page_indicator) | Animated page indicators for onboarding flows |
-| [`flutter_native_splash`](https://pub.dev/packages/flutter_native_splash) | Native splash screen configuration across platforms |
-| [`flutter_lints`](https://pub.dev/packages/flutter_lints) | Recommended static analysis lint rules |
+| Category | Package | Purpose |
+| :--- | :--- | :--- |
+| **Routing & Navigation** | [`go_router`](https://pub.dev/packages/go_router) | Declarative, type-safe routing and deep linking |
+| | [`go_router_builder`](https://pub.dev/packages/go_router_builder) | Code generation for compile-time typed routes |
+| **Backend & Auth** | [`firebase_core`](https://pub.dev/packages/firebase_core) | Firebase initialization across platforms |
+| | [`firebase_auth`](https://pub.dev/packages/firebase_auth) | User authentication, session management & password reset |
+| | [`google_sign_in`](https://pub.dev/packages/google_sign_in) | Google OAuth social login integration |
+| | [`cloud_firestore`](https://pub.dev/packages/cloud_firestore) | Real-time cloud database for doctor catalogs |
+| **Internationalization** | [`slang`](https://pub.dev/packages/slang) & [`slang_flutter`](https://pub.dev/packages/slang_flutter) | Type-safe, compile-time i18n with RTL support |
+| | [`intl`](https://pub.dev/packages/intl) | Internationalization and date/number formatting |
+| **UI Components** | [`pinput`](https://pub.dev/packages/pinput) | Customized PIN and OTP verification input field |
+| | [`smooth_page_indicator`](https://pub.dev/packages/smooth_page_indicator) | Animated page indicators for onboarding flows |
+| | [`easy_date_timeline`](https://pub.dev/packages/easy_date_timeline) | Interactive horizontal date timeline picker |
+| | [`time_slot`](https://pub.dev/packages/time_slot) | Grid and card time slot selector |
+| | [`cached_network_image`](https://pub.dev/packages/cached_network_image) | High-performance remote image caching with placeholders |
+| **Maps & Location** | [`flutter_map`](https://pub.dev/packages/flutter_map) | Interactive OpenStreetMap rendering |
+| | [`latlong2`](https://pub.dev/packages/latlong2) | Lightweight latitude/longitude coordinate utility |
+| **Branding & Quality** | [`flutter_native_splash`](https://pub.dev/packages/flutter_native_splash) | Native splash screen configuration |
+| | [`flutter_lints`](https://pub.dev/packages/flutter_lints) | Recommended static analysis lint rules |
 
 ---
 
@@ -90,6 +161,7 @@ lib/
 - [Flutter SDK](https://docs.flutter.dev/get-started/install) (`^3.12.2` or later)
 - [Dart SDK](https://dart.dev/get-dart)
 - An IDE (VS Code, Android Studio, or IntelliJ IDEA) with Flutter and Dart plugins
+- [Firebase CLI](https://firebase.google.com/docs/cli) *(optional, for custom Firebase configuration)*
 
 ### Installation
 
@@ -111,21 +183,21 @@ lib/
 
 ---
 
-## ⚙️ Code Generation
+## ⚙️ Code Generation & Tooling
 
-This project leverages code generators for type-safe routing, localization, and design system tokens.
+This project leverages code generators for type-safe routing, localization, and design tokens:
 
 - **Run all build runners (Routing & i18n)**:
   ```bash
   dart run build_runner build -d
   ```
 
-- **Watch mode during development**:
+- **Watch mode during active development**:
   ```bash
   dart run build_runner watch -d
   ```
 
-- **Generate style atoms**:
+- **Generate style atom tokens**:
   ```bash
   dart run lib/generated/generate_styles.dart
   ```
@@ -134,9 +206,9 @@ This project leverages code generators for type-safe routing, localization, and 
 
 ## 🧪 Testing & Quality Assurance
 
-The codebase maintains a comprehensive test suite covering widgets, routing, authentication, home screen, and localization:
+The codebase contains a comprehensive unit and widget test suite covering routing, authentication, home dashboard, appointment selection, favorite doctors, user profile, and internationalization:
 
-- **Run all automated tests**:
+- **Run automated test suite**:
   ```bash
   flutter test
   ```
@@ -150,16 +222,19 @@ The codebase maintains a comprehensive test suite covering widgets, routing, aut
 
 ## 📱 Running the Application
 
-Launch the app on your connected device or emulator:
+Launch Doctor Hunt on your connected emulator, simulator, or physical device:
 
 ```bash
-# Debug mode
+# Run in debug mode (default target)
 flutter run
 
-# Run on a specific device/platform (e.g. Chrome, Android, iOS, Windows)
+# Run on a specific device or browser
 flutter run -d chrome
 flutter run -d android
+flutter run -d ios
 flutter run -d windows
+flutter run -d macos
+flutter run -d linux
 ```
 
 ---

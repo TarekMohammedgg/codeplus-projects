@@ -1,3 +1,9 @@
+import 'package:doctor_hunt/apps/features/auth/data/service/auth_service.dart';
+import 'package:doctor_hunt/apps/features/auth/presentation/widgets/auth_buttons.dart';
+import 'package:doctor_hunt/apps/features/auth/presentation/widgets/auth_header.dart';
+import 'package:doctor_hunt/apps/features/auth/presentation/widgets/auth_text_field.dart'
+    show AuthTextField;
+import 'package:doctor_hunt/apps/features/auth/presentation/widgets/forgot_password_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
@@ -8,11 +14,6 @@ import 'package:doctor_hunt/apps/core/utils/validators.dart';
 import 'package:doctor_hunt/generated/app_image.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
-import '../../data/service/auth_service.dart';
-import '../widgets/auth_buttons.dart';
-import '../widgets/auth_header.dart';
-import '../widgets/auth_text_field.dart';
-import '../widgets/forgot_password_bottom_sheet.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -115,7 +116,8 @@ class LoginScreenState extends State<LoginScreen> {
                 isPassword: true,
                 textInputAction: TextInputAction.done,
                 autofillHints: const [AutofillHints.password],
-                validator: (value) => AppValidators.validateRequiredPassword(value),
+                validator: (value) =>
+                    AppValidators.validateRequiredPassword(value),
               ),
               _ForgotPasswordButton(disabled: isAnyLoading),
               24.verticalSpace,
@@ -146,7 +148,9 @@ class _ForgotPasswordButton extends StatelessWidget {
     return Align(
       alignment: Alignment.centerRight,
       child: TextButton(
-        onPressed: disabled ? null : () => ForgotPasswordBottomSheet.show(context),
+        onPressed: disabled
+            ? null
+            : () => ForgotPasswordBottomSheet.show(context),
         style: TextButton.styleFrom(
           foregroundColor: AppColors.primary,
           padding: const EdgeInsets.only(top: 8, bottom: 8),
@@ -174,7 +178,9 @@ class _SignUpFooter extends StatelessWidget {
         children: [
           Text(tr.dontHaveAccount, style: context.regular14TextSecondary),
           TextButton(
-            onPressed: disabled ? null : () => const SignupRoute().push(context),
+            onPressed: disabled
+                ? null
+                : () => const SignupRoute().push(context),
             style: TextButton.styleFrom(
               foregroundColor: AppColors.primary,
               padding: const EdgeInsets.only(left: 4),

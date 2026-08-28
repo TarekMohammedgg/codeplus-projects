@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
-import 'package:doctor_hunt/generated/i18n/translations.g.dart';
-import 'package:doctor_hunt/generated/style_atoms.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_text_field.dart';
 
-class AuthTextField extends StatefulWidget {
+/// Auth-specific convenience wrapper around [AppTextField].
+class AuthTextField extends StatelessWidget {
   final TextEditingController controller;
   final String? hintText;
   final IconData prefixIcon;
@@ -31,60 +31,18 @@ class AuthTextField extends StatefulWidget {
   });
 
   @override
-  State<AuthTextField> createState() => AuthTextFieldState();
-}
-
-class AuthTextFieldState extends State<AuthTextField> {
-  late bool obscureText = widget.isPassword;
-
-  @override
-  void didUpdateWidget(covariant AuthTextField oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.isPassword != widget.isPassword) {
-      obscureText = widget.isPassword;
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      controller: widget.controller,
-      obscureText: obscureText,
-      keyboardType: widget.keyboardType,
-      textInputAction: widget.textInputAction,
-      autofillHints: widget.autofillHints,
-      validator: widget.validator,
-      onChanged: widget.onChanged,
-      autocorrect: !widget.isPassword,
-      enableSuggestions: !widget.isPassword,
-      style: context.regular16TextMain.copyWith(height: 1.25),
-      decoration: InputDecoration(
-        hintText: widget.hintText,
-        hintStyle: context.regular16TextMain.copyWith(
-          color: AppColors.textMain.withValues(alpha: 0.9),
-          height: 1.25,
-        ),
-        prefixIcon: Icon(widget.prefixIcon, color: widget.iconColor),
-        suffixIcon: widget.isPassword
-            ? IconButton(
-                onPressed: () {
-                  setState(() => obscureText = !obscureText);
-                },
-                color: AppColors.textSecondary,
-                icon: Icon(
-                  obscureText
-                      ? Icons.visibility_outlined
-                      : Icons.visibility_off_outlined,
-                ),
-                tooltip: obscureText ? tr.showPassword : tr.hidePassword,
-              )
-            : null,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 16,
-        ),
-        errorMaxLines: 2,
-      ),
+    return AppTextField(
+      controller: controller,
+      hintText: hintText,
+      prefixIcon: prefixIcon,
+      prefixIconColor: iconColor,
+      isPassword: isPassword,
+      keyboardType: keyboardType,
+      textInputAction: textInputAction,
+      autofillHints: autofillHints,
+      validator: validator,
+      onChanged: onChanged,
     );
   }
 }

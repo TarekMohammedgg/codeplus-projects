@@ -8,6 +8,7 @@ import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/utils/validators.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_text_field.dart';
 import '../../data/service/auth_service.dart';
 
 class ForgotPasswordBottomSheet extends StatefulWidget {
@@ -104,38 +105,14 @@ class ForgotPasswordBottomSheetState extends State<ForgotPasswordBottomSheet> {
                     style: context.regular14TextSecondary.copyWith(height: 1.4),
                   ),
                   24.verticalSpace,
-                  TextFormField(
+                  AppTextField(
                     controller: emailController,
+                    hintText: tr.emailAddress,
                     keyboardType: TextInputType.emailAddress,
                     textInputAction: TextInputAction.done,
                     autofillHints: const [AutofillHints.email],
                     validator: (value) => AppValidators.validateEmail(value),
                     onFieldSubmitted: (_) => onContinue(),
-                    decoration: InputDecoration(
-                      hintText: tr.emailAddress,
-                      hintStyle: context.regular14TextSecondary.copyWith(
-                        color: AppColors.textSecondary.withValues(alpha: 0.7),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 18,
-                        vertical: 16,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: AppColors.outline),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: AppColors.outline),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
-                          color: AppColors.primary,
-                          width: 1.5,
-                        ),
-                      ),
-                    ),
                   ),
                   24.verticalSpace,
                   ElevatedButton(
