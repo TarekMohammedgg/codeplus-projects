@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_header_section.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_avatar_placeholder.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_image.dart';
 import 'package:doctor_hunt/apps/features/home/data/service/home_firestore_service.dart';
@@ -341,7 +342,7 @@ void main() {
   });
 
   testWidgets(
-    'HomeScreen renders HomeHeaderSliver and HomeLoadingSliver while fetching doctors',
+    'HomeScreen renders AppHeaderSection and CircularProgressIndicator while fetching doctors',
     (WidgetTester tester) async {
       tester.view.physicalSize = const Size(1080, 2400);
       tester.view.devicePixelRatio = 1.0;
@@ -356,15 +357,14 @@ void main() {
       await tester.pumpWidget(buildTestApp(const HomeScreen()));
       await tester.pump();
 
-      expect(find.byType(HomeHeaderSliver), findsOneWidget);
-      expect(find.byType(HomeLoadingSliver), findsOneWidget);
+      expect(find.byType(AppHeaderSection), findsOneWidget);
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
       completer.complete(testHomeDoctors());
       await tester.pumpAndSettle();
 
-      expect(find.byType(HomeLoadingSliver), findsNothing);
-      expect(find.byType(HomeDoctorSectionsSliver), findsOneWidget);
+      expect(find.byType(CircularProgressIndicator), findsNothing);
+      expect(find.text('Dr. Fillerup Grab'), findsOneWidget);
     },
   );
 }

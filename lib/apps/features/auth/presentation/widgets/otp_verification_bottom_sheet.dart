@@ -13,23 +13,16 @@ import 'package:doctor_hunt/generated/style_atoms.dart';
 class OtpVerificationBottomSheet extends StatefulWidget {
   final String? phoneNumber;
 
-  const OtpVerificationBottomSheet({
-    super.key,
-    this.phoneNumber,
-  });
+  const OtpVerificationBottomSheet({super.key, this.phoneNumber});
 
-  static Future<T?> show<T>(
-    BuildContext context, {
-    String? phoneNumber,
-  }) {
+  static Future<T?> show<T>(BuildContext context, {String? phoneNumber}) {
     return showModalBottomSheet<T>(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
       backgroundColor: Colors.transparent,
-      builder: (modalContext) => OtpVerificationBottomSheet(
-        phoneNumber: phoneNumber,
-      ),
+      builder: (modalContext) =>
+          OtpVerificationBottomSheet(phoneNumber: phoneNumber),
     );
   }
 

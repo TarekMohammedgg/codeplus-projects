@@ -2,19 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_header_section.dart';
+import 'package:doctor_hunt/apps/features/auth/data/service/auth_service.dart';
+import 'package:doctor_hunt/apps/features/home/data/doctors_categories.dart';
 import 'package:doctor_hunt/apps/features/home/data/service/home_firestore_service.dart';
+import 'package:doctor_hunt/apps/features/home/presentation/widgets/doctor_category_section.dart';
+import 'package:doctor_hunt/apps/features/home/presentation/widgets/featured_doctor_section.dart';
 import 'package:doctor_hunt/apps/features/home/presentation/widgets/home_bottom_navigation_bar.dart';
-import 'package:doctor_hunt/apps/features/home/presentation/widgets/home_doctor_sections_sliver.dart';
-import 'package:doctor_hunt/apps/features/home/presentation/widgets/home_header_sliver.dart';
-import 'package:doctor_hunt/apps/features/home/presentation/widgets/home_state_slivers.dart';
+import 'package:doctor_hunt/apps/features/home/presentation/widgets/live_doctor_section.dart';
+import 'package:doctor_hunt/apps/features/home/presentation/widgets/popular_doctor_section.dart';
+import 'package:doctor_hunt/generated/i18n/translations.g.dart';
+import 'package:doctor_hunt/generated/style_atoms.dart';
 
-// Export widgets for clean consumption and tests
+// Export section widgets for clean consumption and tests
 export 'package:doctor_hunt/apps/features/home/presentation/widgets/doctor_category_section.dart';
 export 'package:doctor_hunt/apps/features/home/presentation/widgets/featured_doctor_section.dart';
 export 'package:doctor_hunt/apps/features/home/presentation/widgets/home_bottom_navigation_bar.dart';
-export 'package:doctor_hunt/apps/features/home/presentation/widgets/home_doctor_sections_sliver.dart';
-export 'package:doctor_hunt/apps/features/home/presentation/widgets/home_header_sliver.dart';
-export 'package:doctor_hunt/apps/features/home/presentation/widgets/home_state_slivers.dart';
 export 'package:doctor_hunt/apps/features/home/presentation/widgets/live_doctor_section.dart';
 export 'package:doctor_hunt/apps/features/home/presentation/widgets/popular_doctor_section.dart';
 export 'package:doctor_hunt/apps/features/home/presentation/widgets/section_header.dart';
@@ -28,6 +31,7 @@ class HomeScreen extends StatefulWidget {
 
 class HomeScreenState extends State<HomeScreen> {
   final searchController = TextEditingController();
+  final _authService = AuthService();
   late Future<List<DoctorModel>> _doctorsFuture;
   int selectedNavIndex = 0;
 
@@ -43,86 +47,163 @@ class HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  void selectNav(int index) {
-    setState(() {
-      selectedNavIndex = index;
-    });
+  void _onNavTap(int index) {
+    setState(() => selectedNavIndex = index);
     if (index == 1) {
       try {
         const FavouriteDoctorsRoute().push(context).then((_) {
-          if (mounted) {
-            setState(() {
-              selectedNavIndex = 0;
-            });
-          }
+          if (mounted) setState(() => selectedNavIndex = 0);
         });
       } catch (_) {}
     }
   }
 
-  void openFindDoctors() {
-    searchController.clear();
-    FocusManager.instance.primaryFocus?.unfocus();
-    const FindDoctorsRoute().push(context);
-  }
-
-  void openProfile() {
-    const ProfileRoute().push(context);
-  }
-
-  void retryLoadingDoctors() {
-    setState(() {
-      _doctorsFuture = fetchHomeDoctors();
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    final user = _authService.currentUser;
+
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: FutureBuilder<List<DoctorModel>>(
-        future: _doctorsFuture,
-        builder: (context, snapshot) {
-          return CustomScrollView(
-            slivers: [
-              HomeHeaderSliver(
-                searchController: searchController,
-                onProfileTap: openProfile,
-              ),
-              ..._buildDoctorSlivers(snapshot),
-            ],
-          );
-        },
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AppHeaderSection(
+              greeting: _authService.getUserGreeting(context),
+              title: tr.findYourDoctor,
+              searchController: searchController,
+              showLanguageToggle: true,
+              showProfile: true,
+              profileImage: user?.photoURL,
+              onProfileTap: () => const ProfileRoute().push(context),
+            ),
+            FutureBuilder<List<DoctorModel>>(
+              future: _doctorsFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return DoctorsLoading();
+                }
+
+                if (snapshot.hasError) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 32,
+                    ),
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            tr.serviceError,
+                            textAlign: TextAlign.center,
+                            style: context.semiBold16TextMain,
+                          ),
+                          const SizedBox(height: 12),
+                          IconButton(
+                            onPressed: () {
+                              setState(() {
+                                _doctorsFuture = fetchHomeDoctors();
+                              });
+                            },
+                            icon: const Icon(
+                              Icons.refresh_rounded,
+                              size: 28,
+                              color: AppColors.primary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+
+                final doctors = snapshot.data ?? [];
+                if (doctors.isEmpty) {
+                  return DoctorsIsEmpty();
+                }
+
+                final liveDoctors = doctors.where((d) => d.isLive).toList()
+                  ..sort((a, b) => a.liveOrder.compareTo(b.liveOrder));
+                final popularDoctors =
+                    doctors.where((d) => d.isPopular).toList()..sort(
+                      (a, b) => a.popularOrder.compareTo(b.popularOrder),
+                    );
+                final featuredDoctors =
+                    doctors.where((d) => d.isFeatured).toList()..sort(
+                      (a, b) => a.featuredOrder.compareTo(b.featuredOrder),
+                    );
+
+                return Column(
+                  children: [
+                    if (liveDoctors.isNotEmpty) ...[
+                      const SizedBox(height: 24),
+                      LiveDoctorSection(
+                        liveDoctors: liveDoctors,
+                        onSeeAllPressed: () =>
+                            const FindDoctorsRoute().push(context),
+                      ),
+                    ],
+                    const SizedBox(height: 24),
+                    DoctorCategorySection(
+                      categories: categories(),
+                      onCategoryTap: (_) =>
+                          const FindDoctorsRoute().push(context),
+                    ),
+                    if (popularDoctors.isNotEmpty) ...[
+                      const SizedBox(height: 24),
+                      PopularDoctorSection(
+                        doctors: popularDoctors,
+                        onSeeAllPressed: () =>
+                            const FindDoctorsRoute().push(context),
+                      ),
+                    ],
+                    if (featuredDoctors.isNotEmpty) ...[
+                      const SizedBox(height: 24),
+                      FeaturedDoctorSection(
+                        doctors: featuredDoctors,
+                        onSeeAllPressed: () =>
+                            const FindDoctorsRoute().push(context),
+                      ),
+                      const SizedBox(height: 32),
+                    ],
+                  ],
+                );
+              },
+            ),
+          ],
+        ),
       ),
       bottomNavigationBar: HomeBottomNavigationBar(
         currentIndex: selectedNavIndex,
-        onTap: selectNav,
+        onTap: _onNavTap,
       ),
     );
   }
+}
 
-  List<Widget> _buildDoctorSlivers(AsyncSnapshot<List<DoctorModel>> snapshot) {
-    if (snapshot.connectionState == ConnectionState.waiting) {
-      return const [HomeLoadingSliver()];
-    }
+class DoctorsLoading extends StatelessWidget {
+  const DoctorsLoading({super.key});
 
-    if (snapshot.hasError) {
-      return [HomeErrorSliver(onRetry: retryLoadingDoctors)];
-    }
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: 48),
+      child: Center(child: CircularProgressIndicator(color: AppColors.primary)),
+    );
+  }
+}
 
-    final doctors = snapshot.data ?? const [];
-    if (doctors.isEmpty) {
-      return [
-        const HomeEmptySliver(),
-        HomeCategoriesSliver(onCategoryTap: openFindDoctors),
-      ];
-    }
+class DoctorsIsEmpty extends StatelessWidget {
+  const DoctorsIsEmpty({super.key});
 
-    return [
-      HomeDoctorSectionsSliver(
-        doctors: doctors,
-        onSeeAllDoctors: openFindDoctors,
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+      child: Center(
+        child: Text(tr.noDoctorsFound, style: context.regular14TextSecondary),
       ),
-    ];
+    );
   }
 }
