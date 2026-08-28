@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/features/home/data/models/doctor_model.dart';
 
@@ -57,23 +58,27 @@ class DoctorCategoryCard extends StatelessWidget {
           width: 54,
           height: 54,
           child: Center(
-            child: category.image != null
-                ? Image.asset(
-                    category.image!,
-                    width: 26,
-                    height: 26,
-                    color: category.primaryColor,
-                    errorBuilder: (context, error, stackTrace) => Icon(
+            child: Skeleton.replace(
+              width: 26,
+              height: 26,
+              child: category.image != null
+                  ? Image.asset(
+                      category.image!,
+                      width: 26,
+                      height: 26,
+                      color: category.primaryColor,
+                      errorBuilder: (context, error, stackTrace) => Icon(
+                        category.icon ?? Icons.category_rounded,
+                        color: category.primaryColor,
+                        size: 26,
+                      ),
+                    )
+                  : Icon(
                       category.icon ?? Icons.category_rounded,
                       color: category.primaryColor,
                       size: 26,
                     ),
-                  )
-                : Icon(
-                    category.icon ?? Icons.category_rounded,
-                    color: category.primaryColor,
-                    size: 26,
-                  ),
+            ),
           ),
         ),
       ),

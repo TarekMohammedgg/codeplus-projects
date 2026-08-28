@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
+import 'package:skeletonizer/skeletonizer.dart';
+import 'package:doctor_hunt/apps/features/home/data/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_header_section.dart';
 import 'package:doctor_hunt/apps/features/auth/data/service/auth_service.dart';
 import 'package:doctor_hunt/apps/features/home/data/doctors_categories.dart';
+import 'package:doctor_hunt/apps/features/home/data/skeleton_dummy_data.dart';
 import 'package:doctor_hunt/apps/features/home/data/service/home_firestore_service.dart';
 import 'package:doctor_hunt/apps/features/home/presentation/widgets/doctor_category_section.dart';
 import 'package:doctor_hunt/apps/features/home/presentation/widgets/featured_doctor_section.dart';
@@ -13,14 +15,6 @@ import 'package:doctor_hunt/apps/features/home/presentation/widgets/live_doctor_
 import 'package:doctor_hunt/apps/features/home/presentation/widgets/popular_doctor_section.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
-
-// Export section widgets for clean consumption and tests
-export 'package:doctor_hunt/apps/features/home/presentation/widgets/doctor_category_section.dart';
-export 'package:doctor_hunt/apps/features/home/presentation/widgets/featured_doctor_section.dart';
-export 'package:doctor_hunt/apps/features/home/presentation/widgets/home_bottom_navigation_bar.dart';
-export 'package:doctor_hunt/apps/features/home/presentation/widgets/live_doctor_section.dart';
-export 'package:doctor_hunt/apps/features/home/presentation/widgets/popular_doctor_section.dart';
-export 'package:doctor_hunt/apps/features/home/presentation/widgets/section_header.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -34,6 +28,7 @@ class HomeScreenState extends State<HomeScreen> {
   final _authService = AuthService();
   late Future<List<DoctorModel>> _doctorsFuture;
   int selectedNavIndex = 0;
+  bool _forceSkeletonLoading = false;
 
   @override
   void initState() {
@@ -64,6 +59,29 @@ class HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: _forceSkeletonLoading
+            ? AppColors.error
+            : AppColors.primary,
+        icon: Icon(
+          _forceSkeletonLoading
+              ? Icons.visibility_off_rounded
+              : Icons.auto_awesome_rounded,
+          color: Colors.white,
+        ),
+        label: Text(
+          _forceSkeletonLoading ? 'إيقاف الـ Skeleton' : 'تجربة الـ Skeleton',
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        onPressed: () {
+          setState(() {
+            _forceSkeletonLoading = !_forceSkeletonLoading;
+          });
+        },
+      ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -80,8 +98,9 @@ class HomeScreenState extends State<HomeScreen> {
             FutureBuilder<List<DoctorModel>>(
               future: _doctorsFuture,
               builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return DoctorsLoading();
+                if (_forceSkeletonLoading ||
+                    snapshot.connectionState == ConnectionState.waiting) {
+                  return const DoctorsLoading();
                 }
 
                 if (snapshot.hasError) {
@@ -158,11 +177,13 @@ class DoctorsData extends StatelessWidget {
     required this.liveDoctors,
     required this.popularDoctors,
     required this.featuredDoctors,
+    this.categoriesList,
   });
 
   final List<DoctorModel> liveDoctors;
   final List<DoctorModel> popularDoctors;
   final List<DoctorModel> featuredDoctors;
+  final List<DoctorCategoryItem>? categoriesList;
 
   @override
   Widget build(BuildContext context) {
@@ -177,7 +198,7 @@ class DoctorsData extends StatelessWidget {
         ],
         const SizedBox(height: 24),
         DoctorCategorySection(
-          categories: categories(),
+          categories: categoriesList ?? categories(),
           onCategoryTap: (_) => const FindDoctorsRoute().push(context),
         ),
         if (popularDoctors.isNotEmpty) ...[
@@ -205,9 +226,20 @@ class DoctorsLoading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.symmetric(vertical: 48),
-      child: Center(child: CircularProgressIndicator(color: AppColors.primary)),
+    return const Skeletonizer(
+      enabled: true,
+      effect: ShimmerEffect(
+        baseColor: Color(0xFFD6D9DE),
+        highlightColor: Color(0xFFF5F6F8),
+        duration: Duration(milliseconds: 1400),
+      ),
+      containersColor: Color(0xFFE4E7EB),
+      child: DoctorsData(
+        liveDoctors: dummySkeletonDoctors,
+        popularDoctors: dummySkeletonDoctors,
+        featuredDoctors: dummySkeletonDoctors,
+        categoriesList: dummySkeletonCategories,
+      ),
     );
   }
 }
