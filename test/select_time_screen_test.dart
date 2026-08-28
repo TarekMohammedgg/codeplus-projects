@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:doctor_hunt/apps/features/doctors/data/models/doctor_detail_args.dart';
+import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/features/doctor_select_time/presentation/screens/doctor_select_time_screen.dart';
 import 'package:doctor_hunt/apps/features/doctor_select_time/presentation/widgets/date_selector_list.dart';
 import 'package:doctor_hunt/apps/features/doctor_select_time/presentation/widgets/no_slots_available_section.dart';
@@ -10,7 +10,7 @@ import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'test_app.dart';
 
 void main() {
-  final testDoctor = DoctorDetailArgs(
+  final testDoctor = DoctorModel(
     id: 'test_doc_1',
     name: 'Dr. Test Specialist',
     specialty: 'Cardiologist',

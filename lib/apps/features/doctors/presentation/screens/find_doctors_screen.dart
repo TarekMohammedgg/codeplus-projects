@@ -7,8 +7,9 @@ import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_icon_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_search_bar.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_avatar_placeholder.dart';
+import 'package:doctor_hunt/apps/core/widgets/doctor_image.dart';
 import 'package:doctor_hunt/apps/core/data/doctors_data.dart';
-import 'package:doctor_hunt/apps/features/doctors/data/models/find_doctor_model.dart';
+import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
 import 'package:doctor_hunt/generated/style_atoms.dart';
@@ -16,11 +17,11 @@ import 'package:doctor_hunt/generated/style_atoms.dart';
 class FindDoctorsScreen extends StatelessWidget {
   const FindDoctorsScreen({super.key});
 
-  void onBookDoctor(BuildContext context, FindDoctorItem doctor) {
+  void onBookDoctor(BuildContext context, DoctorModel doctor) {
     SelectTimeRoute(doctor).push(context);
   }
 
-  void onDoctorTap(BuildContext context, FindDoctorItem doctor) {
+  void onDoctorTap(BuildContext context, DoctorModel doctor) {
     DoctorDetailsRoute(doctor).push(context);
   }
 
@@ -101,7 +102,7 @@ class FindDoctorCard extends StatelessWidget {
     this.onTap,
   });
 
-  final FindDoctorItem doctor;
+  final DoctorModel doctor;
   final VoidCallback onBookNow;
   final VoidCallback? onTap;
 
@@ -130,19 +131,15 @@ class FindDoctorCard extends StatelessWidget {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10),
-                  child: doctor.image != null
-                      ? Image.asset(
-                          doctor.image!,
-                          width: 90,
-                          height: 90,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) =>
-                              const DoctorAvatarPlaceholder(
-                                size: 90,
-                                circle: false,
-                              ),
-                        )
-                      : const DoctorAvatarPlaceholder(size: 90, circle: false),
+                  child: DoctorImage(
+                    imageUrl: doctor.imageUrl,
+                    width: 90,
+                    height: 90,
+                    fallback: const DoctorAvatarPlaceholder(
+                      size: 90,
+                      circle: false,
+                    ),
+                  ),
                 ),
                 14.horizontalSpace,
                 Expanded(

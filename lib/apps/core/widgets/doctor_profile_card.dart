@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_avatar_placeholder.dart';
-import 'package:doctor_hunt/apps/features/doctors/data/models/doctor_detail_args.dart';
+import 'package:doctor_hunt/apps/core/widgets/doctor_image.dart';
+import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
@@ -14,7 +15,7 @@ class DoctorProfileCard extends StatelessWidget {
     this.onFavoriteToggle,
   });
 
-  final DoctorDetailArgs doctor;
+  final DoctorModel doctor;
   final VoidCallback? onBookNow;
   final VoidCallback? onFavoriteToggle;
 
@@ -43,14 +44,10 @@ class DoctorProfileCard extends StatelessWidget {
                 child: SizedBox(
                   width: 90,
                   height: 90,
-                  child: doctor.image != null
-                      ? Image.asset(
-                          doctor.image!,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, _, _) =>
-                              const DoctorAvatarPlaceholder(circle: false),
-                        )
-                      : const DoctorAvatarPlaceholder(circle: false),
+                  child: DoctorImage(
+                    imageUrl: doctor.imageUrl,
+                    fallback: const DoctorAvatarPlaceholder(circle: false),
+                  ),
                 ),
               ),
               16.horizontalSpace,

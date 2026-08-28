@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_avatar_placeholder.dart';
-import 'package:doctor_hunt/apps/features/favourite_doctors/data/models/favourite_doctor_model.dart';
+import 'package:doctor_hunt/apps/core/widgets/doctor_image.dart';
+import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
 class FavouriteDoctorCard extends StatelessWidget {
@@ -13,7 +14,7 @@ class FavouriteDoctorCard extends StatelessWidget {
     this.onFavoriteToggle,
   });
 
-  final FavouriteDoctorItem doctor;
+  final DoctorModel doctor;
   final VoidCallback onTap;
   final VoidCallback? onFavoriteToggle;
 
@@ -53,7 +54,7 @@ class FavouriteDoctorCard extends StatelessWidget {
               ),
             ),
             2.verticalSpace,
-            _DoctorAvatar(image: doctor.image),
+            _DoctorAvatar(imageUrl: doctor.imageUrl),
             8.verticalSpace,
             Text(
               doctor.name,
@@ -83,9 +84,9 @@ class FavouriteDoctorCard extends StatelessWidget {
 }
 
 class _DoctorAvatar extends StatelessWidget {
-  const _DoctorAvatar({this.image});
+  const _DoctorAvatar({this.imageUrl});
 
-  final String? image;
+  final String? imageUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -93,14 +94,10 @@ class _DoctorAvatar extends StatelessWidget {
       child: SizedBox(
         width: 70,
         height: 70,
-        child: image != null
-            ? Image.asset(
-                image!,
-                fit: BoxFit.cover,
-                errorBuilder: (_, _, _) =>
-                    const DoctorAvatarPlaceholder(size: 70),
-              )
-            : const DoctorAvatarPlaceholder(size: 70),
+        child: DoctorImage(
+          imageUrl: imageUrl,
+          fallback: const DoctorAvatarPlaceholder(size: 70),
+        ),
       ),
     );
   }

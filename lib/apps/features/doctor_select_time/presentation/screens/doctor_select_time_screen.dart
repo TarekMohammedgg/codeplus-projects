@@ -5,7 +5,7 @@ import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_icon_button.dart';
-import 'package:doctor_hunt/apps/features/doctors/data/models/doctor_detail_args.dart';
+import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/features/doctor_select_time/data/models/time_slot_model.dart';
 import 'package:doctor_hunt/apps/features/doctor_select_time/data/select_time_data.dart';
 import 'package:doctor_hunt/apps/features/doctor_select_time/presentation/widgets/date_selector_list.dart';
@@ -19,7 +19,7 @@ import 'package:doctor_hunt/generated/style_atoms.dart';
 class SelectTimeScreen extends StatefulWidget {
   const SelectTimeScreen({super.key, required this.doctor});
 
-  final DoctorDetailArgs doctor;
+  final DoctorModel doctor;
 
   @override
   State<SelectTimeScreen> createState() => _SelectTimeScreenState();

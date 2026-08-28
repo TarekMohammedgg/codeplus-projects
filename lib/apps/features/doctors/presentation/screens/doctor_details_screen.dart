@@ -6,7 +6,7 @@ import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/data/doctors_data.dart';
-import 'package:doctor_hunt/apps/features/doctors/data/models/doctor_detail_args.dart';
+import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 
 import 'package:doctor_hunt/apps/core/widgets/app_icon_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_profile_card.dart';
@@ -16,7 +16,7 @@ import 'package:doctor_hunt/generated/style_atoms.dart';
 class DoctorDetailsScreen extends StatelessWidget {
   const DoctorDetailsScreen({super.key, required this.doctor});
 
-  final DoctorDetailArgs doctor;
+  final DoctorModel doctor;
 
   void openFindDoctors(BuildContext context) {
     const FindDoctorsRoute().push(context);

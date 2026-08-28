@@ -7,7 +7,7 @@ import 'package:doctor_hunt/apps/features/auth/presentation/screens/reset_passwo
 import 'package:doctor_hunt/apps/features/auth/presentation/screens/role_selection_screen.dart';
 import 'package:doctor_hunt/apps/features/auth/presentation/screens/signup_screen.dart';
 import 'package:doctor_hunt/apps/core/data/doctors_data.dart';
-import 'package:doctor_hunt/apps/features/doctors/data/models/doctor_detail_args.dart';
+import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 
 import 'package:doctor_hunt/apps/features/doctors/presentation/screens/doctor_details_screen.dart';
 import 'package:doctor_hunt/apps/features/doctors/presentation/screens/find_doctors_screen.dart';
@@ -107,7 +107,7 @@ class FindDoctorsRoute extends GoRouteData with $FindDoctorsRoute {
 class DoctorDetailsRoute extends GoRouteData with $DoctorDetailsRoute {
   const DoctorDetailsRoute([this.$extra]);
 
-  final DoctorDetailArgs? $extra;
+  final DoctorModel? $extra;
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
@@ -129,7 +129,7 @@ class FavouriteDoctorsRoute extends GoRouteData with $FavouriteDoctorsRoute {
 class SelectTimeRoute extends GoRouteData with $SelectTimeRoute {
   const SelectTimeRoute([this.$extra]);
 
-  final DoctorDetailArgs? $extra;
+  final DoctorModel? $extra;
 
   @override
   Widget build(BuildContext context, GoRouterState state) {

@@ -4,9 +4,9 @@ import 'package:doctor_hunt/apps/core/data/doctors_data.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
+import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_icon_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_search_bar.dart';
-import 'package:doctor_hunt/apps/features/favourite_doctors/data/models/favourite_doctor_model.dart';
 import 'package:doctor_hunt/apps/features/favourite_doctors/presentation/widgets/favourite_doctor_card.dart';
 import 'package:doctor_hunt/apps/features/home/presentation/widgets/featured_doctor_section.dart';
 import 'package:doctor_hunt/apps/features/home/presentation/widgets/home_bottom_navigation_bar.dart';
@@ -16,7 +16,7 @@ import 'package:doctor_hunt/generated/style_atoms.dart';
 class FavouriteDoctorsScreen extends StatelessWidget {
   const FavouriteDoctorsScreen({super.key});
 
-  void _openDoctorDetails(BuildContext context, FavouriteDoctorItem doctor) {
+  void _openDoctorDetails(BuildContext context, DoctorModel doctor) {
     DoctorDetailsRoute(doctor).push(context);
   }
 
