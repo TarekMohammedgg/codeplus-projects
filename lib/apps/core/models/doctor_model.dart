@@ -3,12 +3,14 @@ import 'package:latlong2/latlong.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
 class DoctorModel {
+  static const defaultAccentColor = Color(0xFF0EBE7E);
+
   const DoctorModel({
     required this.id,
     required this.name,
     required this.specialty,
     this.imageUrl,
-    this.accentColor = const Color(0xFF0EBE7E),
+    this.accentColor = defaultAccentColor,
     this.rating = 4.5,
     this.ratingPercent = 85,
     this.reviewsCount = 100,
@@ -32,32 +34,45 @@ class DoctorModel {
     this.category,
   });
 
+  // Core & Identification
   final String id;
   final String name;
   final String specialty;
   final String? imageUrl;
+  final String? category;
+
+  // Visual
   final Color accentColor;
+
+  // Ratings & Metrics
   final double rating;
   final int ratingPercent;
   final int reviewsCount;
   final int patientStoriesCount;
   final int experienceYears;
   final double hourlyRate;
+
+  // Availability & Location
   final String nextAvailableTime;
   final List<String> services;
   final LatLng? location;
+
+  // Practice Statistics
   final int runningCount;
   final int ongoingCount;
   final int patientCount;
+
+  // Status Flags
   final bool isFavorite;
   final bool isActive;
   final bool isLive;
   final bool isPopular;
   final bool isFeatured;
+
+  // Section Ordering
   final int liveOrder;
   final int popularOrder;
   final int featuredOrder;
-  final String? category;
 
   factory DoctorModel.fromFirestore(String id, Map<String, dynamic> data) {
     return DoctorModel(
@@ -65,27 +80,27 @@ class DoctorModel {
       name: _require(data, 'name', id),
       specialty: _localizedSpecialty(_require(data, 'specialtyKey', id)),
       imageUrl: data['imageUrl'] as String?,
-      accentColor: _colorFromHex(data['accentColorHex'] as String?),
-      rating: (data['rating'] as num?)?.toDouble() ?? 4.5,
-      ratingPercent: (data['ratingPercent'] as num?)?.toInt() ?? 85,
-      reviewsCount: (data['reviewsCount'] as num?)?.toInt() ?? 100,
-      patientStoriesCount: (data['patientStoriesCount'] as num?)?.toInt() ?? 50,
-      experienceYears: (data['experienceYears'] as num?)?.toInt() ?? 5,
-      hourlyRate: (data['hourlyRate'] as num?)?.toDouble() ?? 28.0,
+      accentColor: _colorFromHex(data['accentColorHex']),
+      rating: _toDouble(data['rating'], 4.5),
+      ratingPercent: _toInt(data['ratingPercent'], 85),
+      reviewsCount: _toInt(data['reviewsCount'], 100),
+      patientStoriesCount: _toInt(data['patientStoriesCount'], 50),
+      experienceYears: _toInt(data['experienceYears'], 5),
+      hourlyRate: _toDouble(data['hourlyRate'], 28.0),
       nextAvailableTime: data['nextAvailableAt'] as String? ?? '',
       services: _parseServices(data),
       location: _parseLocation(data['location']),
-      runningCount: (data['runningCount'] as num?)?.toInt() ?? 100,
-      ongoingCount: (data['ongoingCount'] as num?)?.toInt() ?? 500,
-      patientCount: (data['patientCount'] as num?)?.toInt() ?? 700,
+      runningCount: _toInt(data['runningCount'], 100),
+      ongoingCount: _toInt(data['ongoingCount'], 500),
+      patientCount: _toInt(data['patientCount'], 700),
       isFavorite: data['isFavorite'] as bool? ?? false,
       isActive: data['isActive'] as bool? ?? true,
       isLive: data['isLive'] as bool? ?? false,
       isPopular: data['isPopular'] as bool? ?? false,
       isFeatured: data['isFeatured'] as bool? ?? false,
-      liveOrder: (data['liveOrder'] as num?)?.toInt() ?? 9999,
-      popularOrder: (data['popularOrder'] as num?)?.toInt() ?? 9999,
-      featuredOrder: (data['featuredOrder'] as num?)?.toInt() ?? 9999,
+      liveOrder: _toInt(data['liveOrder'], 9999),
+      popularOrder: _toInt(data['popularOrder'], 9999),
+      featuredOrder: _toInt(data['featuredOrder'], 9999),
       category: data['category'] as String?,
     );
   }
@@ -149,11 +164,20 @@ class DoctorModel {
   }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Firestore Parsing Helpers
+// ─────────────────────────────────────────────────────────────────────────────
+
 String _require(Map<String, dynamic> data, String field, String id) {
   final value = data[field];
   if (value is String && value.trim().isNotEmpty) return value.trim();
   throw FormatException('Doctor $id is missing required field: $field');
 }
+
+int _toInt(dynamic value, int fallback) => (value as num?)?.toInt() ?? fallback;
+
+double _toDouble(dynamic value, double fallback) =>
+    (value as num?)?.toDouble() ?? fallback;
 
 List<String> _parseServices(Map<String, dynamic> data) {
   final raw = data['serviceKeys'] ?? data['services'];
@@ -164,19 +188,18 @@ LatLng? _parseLocation(dynamic locationData) {
   if (locationData is! Map<String, dynamic>) return null;
   final lat = (locationData['latitude'] as num?)?.toDouble();
   final lng = (locationData['longitude'] as num?)?.toDouble();
-  if (lat == null || lng == null) return null;
-  return LatLng(lat, lng);
+  return (lat != null && lng != null) ? LatLng(lat, lng) : null;
 }
 
-Color _colorFromHex(String? hex) {
-  final cleaned = hex?.replaceFirst('#', '');
-  if (cleaned == null) return const Color(0xFF0EBE7E);
+Color _colorFromHex(dynamic hex) {
+  if (hex is! String) return DoctorModel.defaultAccentColor;
+  final cleaned = hex.replaceFirst('#', '');
   final value = switch (cleaned.length) {
     6 => int.tryParse('FF$cleaned', radix: 16),
     8 => int.tryParse(cleaned, radix: 16),
     _ => null,
   };
-  return value != null ? Color(value) : const Color(0xFF0EBE7E);
+  return value != null ? Color(value) : DoctorModel.defaultAccentColor;
 }
 
 String _localizedSpecialty(String key) {
