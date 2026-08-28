@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:doctor_hunt/apps/core/widgets/app_text_field.dart';
-import 'package:doctor_hunt/apps/features/auth/presentation/widgets/auth_text_field.dart';
 import 'test_app.dart';
 
 void main() {
@@ -134,32 +133,5 @@ void main() {
       await tester.testTextInput.receiveAction(TextInputAction.done);
       expect(submittedValue, 'Hello World');
     });
-  });
-
-  group('AuthTextField delegation', () {
-    testWidgets(
-      'renders properly with prefix icon and delegates to AppTextField',
-      (WidgetTester tester) async {
-        final controller = TextEditingController();
-
-        await tester.pumpWidget(
-          buildTestApp(
-            Scaffold(
-              body: AuthTextField(
-                controller: controller,
-                prefixIcon: Icons.lock_outline,
-                hintText: 'Auth Password',
-                isPassword: true,
-              ),
-            ),
-          ),
-        );
-
-        expect(find.byType(AppTextField), findsOneWidget);
-        expect(find.byIcon(Icons.lock_outline), findsOneWidget);
-        expect(find.text('Auth Password'), findsOneWidget);
-        expect(find.byIcon(Icons.visibility_outlined), findsOneWidget);
-      },
-    );
   });
 }

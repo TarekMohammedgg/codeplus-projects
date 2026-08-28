@@ -1,8 +1,8 @@
+import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_text_field.dart';
 import 'package:doctor_hunt/apps/features/auth/data/service/auth_service.dart';
 import 'package:doctor_hunt/apps/features/auth/presentation/widgets/auth_buttons.dart';
 import 'package:doctor_hunt/apps/features/auth/presentation/widgets/auth_header.dart';
-import 'package:doctor_hunt/apps/features/auth/presentation/widgets/auth_text_field.dart'
-    show AuthTextField;
 import 'package:doctor_hunt/apps/features/auth/presentation/widgets/forgot_password_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
@@ -97,22 +97,20 @@ class LoginScreenState extends State<LoginScreen> {
                 onPressed: isAnyLoading ? null : signInWithGoogle,
               ),
               32.verticalSpace,
-              AuthTextField(
+              AppTextField(
                 controller: emailController,
                 hintText: tr.emailHint,
                 prefixIcon: Icons.mail_outline_rounded,
-                iconColor: AppColors.textSecondary,
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.next,
                 autofillHints: const [AutofillHints.email],
                 validator: (value) => AppValidators.validateEmail(value),
               ),
               18.verticalSpace,
-              AuthTextField(
+              AppTextField(
                 controller: passwordController,
                 hintText: tr.enterPasswordHint,
                 prefixIcon: Icons.lock_outline_rounded,
-                iconColor: AppColors.textSecondary,
                 isPassword: true,
                 textInputAction: TextInputAction.done,
                 autofillHints: const [AutofillHints.password],
@@ -121,7 +119,7 @@ class LoginScreenState extends State<LoginScreen> {
               ),
               _ForgotPasswordButton(disabled: isAnyLoading),
               24.verticalSpace,
-              AuthPrimaryButton(
+              AppPrimaryButton(
                 label: tr.logIn,
                 isLoading: _isLoading,
                 onPressed: isAnyLoading ? null : signIn,

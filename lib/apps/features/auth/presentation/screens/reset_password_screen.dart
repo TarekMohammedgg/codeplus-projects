@@ -11,10 +11,10 @@ import 'package:doctor_hunt/apps/core/utils/validators.dart';
 import 'package:doctor_hunt/generated/app_image.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_text_field.dart';
 import '../../data/service/auth_service.dart';
 import '../widgets/auth_back_button.dart';
-import '../widgets/auth_buttons.dart';
-import '../widgets/auth_text_field.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   const ResetPasswordScreen({super.key});
@@ -97,18 +97,17 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
               20.verticalSpace,
               Text(tr.emailAddress, style: context.semiBold14TextMain),
               6.verticalSpace,
-              AuthTextField(
+              AppTextField(
                 controller: emailController,
                 hintText: tr.emailHint,
                 prefixIcon: Icons.mail_outline_rounded,
-                iconColor: AppColors.textSecondary,
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.done,
                 autofillHints: const [AutofillHints.email],
                 validator: (value) => AppValidators.validateEmail(value),
               ),
               20.verticalSpace,
-              AuthPrimaryButton(
+              AppPrimaryButton(
                 label: tr.sendResetLink,
                 icon: Icons.send_rounded,
                 isLoading: _isLoading,

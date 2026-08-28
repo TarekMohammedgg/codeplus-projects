@@ -8,6 +8,7 @@ import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/utils/validators.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_text_field.dart';
 import '../../data/service/auth_service.dart';
 
@@ -115,29 +116,11 @@ class ForgotPasswordBottomSheetState extends State<ForgotPasswordBottomSheet> {
                     onFieldSubmitted: (_) => onContinue(),
                   ),
                   24.verticalSpace,
-                  ElevatedButton(
-                    onPressed: _isLoading ? null : onContinue,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: Colors.white,
-                      minimumSize: const Size.fromHeight(52),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      elevation: 0,
-                    ),
-                    child: _isLoading
-                        ? const SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2.2,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                Colors.white,
-                              ),
-                            ),
-                          )
-                        : Text(tr.continueText, style: context.semiBold16White),
+                  AppPrimaryButton(
+                    label: tr.continueText,
+                    isLoading: _isLoading,
+                    onPressed: onContinue,
+                    height: 52,
                   ),
                   8.verticalSpace,
                 ],

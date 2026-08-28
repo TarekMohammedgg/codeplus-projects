@@ -10,8 +10,8 @@ import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/utils/phone_utils.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import '../widgets/auth_back_button.dart';
-import '../widgets/auth_buttons.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
   final String phoneNumber;
@@ -238,7 +238,7 @@ class OtpVerificationScreenState extends State<OtpVerificationScreen> {
               ),
             ),
             32.verticalSpace,
-            AuthPrimaryButton(
+            AppPrimaryButton(
               label: tr.continueText,
               isLoading: _isVerifying,
               onPressed: (_isVerifying || _isSendingCode) ? null : verifyOtp,

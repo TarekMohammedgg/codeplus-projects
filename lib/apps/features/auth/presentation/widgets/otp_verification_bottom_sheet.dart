@@ -7,6 +7,7 @@ import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/utils/phone_utils.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
@@ -131,18 +132,10 @@ class OtpVerificationBottomSheetState
                   ),
                 ),
                 32.verticalSpace,
-                ElevatedButton(
+                AppPrimaryButton(
+                  label: tr.continueText,
                   onPressed: onContinue,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: Colors.white,
-                    minimumSize: const Size.fromHeight(52),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: Text(tr.continueText, style: context.semiBold16White),
+                  height: 52,
                 ),
                 8.verticalSpace,
               ],

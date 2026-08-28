@@ -3,66 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
-class AuthPrimaryButton extends StatelessWidget {
-  final String label;
-  final VoidCallback? onPressed;
-  final double height;
-  final double fontSize;
-  final IconData? icon;
-  final bool isLoading;
-
-  const AuthPrimaryButton({
-    super.key,
-    required this.label,
-    required this.onPressed,
-    this.height = 54,
-    this.fontSize = 16,
-    this.icon,
-    this.isLoading = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      height: height,
-      child: ElevatedButton(
-        onPressed: isLoading ? null : onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          disabledBackgroundColor: AppColors.primary.withValues(alpha: 0.6),
-          foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          textStyle: context.semiBold16White.copyWith(fontSize: fontSize),
-          elevation: 0,
-        ),
-        child: isLoading
-            ? const SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2.5,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                ),
-              )
-            : icon != null
-            ? Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(icon, size: fontSize + 3, color: Colors.white),
-                  const SizedBox(width: 8),
-                  Text(label),
-                ],
-              )
-            : Text(label),
-      ),
-    );
-  }
-}
-
 class SocialAuthButton extends StatelessWidget {
   final String label;
   final String image;

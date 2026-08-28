@@ -7,10 +7,11 @@ import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/utils/validators.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_text_field.dart';
 import 'package:doctor_hunt/apps/features/auth/data/service/auth_service.dart';
 import 'package:doctor_hunt/apps/features/auth/presentation/widgets/auth_buttons.dart';
 import 'package:doctor_hunt/apps/features/auth/presentation/widgets/auth_header.dart';
-import 'package:doctor_hunt/apps/features/auth/presentation/widgets/auth_text_field.dart';
 import 'package:doctor_hunt/generated/app_image.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
@@ -111,33 +112,30 @@ class _SignupScreenState extends State<SignupScreen> {
                 onPressed: isAnyLoading ? null : _signInWithGoogle,
               ),
               32.verticalSpace,
-              AuthTextField(
+              AppTextField(
                 controller: _nameController,
                 hintText: tr.fullNameHint,
                 prefixIcon: Icons.person_outline_rounded,
-                iconColor: AppColors.textSecondary,
                 keyboardType: TextInputType.name,
                 textInputAction: TextInputAction.next,
                 autofillHints: const [AutofillHints.name],
                 validator: (value) => AppValidators.validateName(value),
               ),
               18.verticalSpace,
-              AuthTextField(
+              AppTextField(
                 controller: _emailController,
                 hintText: tr.emailAddress,
                 prefixIcon: Icons.mail_outline_rounded,
-                iconColor: AppColors.textSecondary,
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.next,
                 autofillHints: const [AutofillHints.email],
                 validator: (value) => AppValidators.validateEmail(value),
               ),
               18.verticalSpace,
-              AuthTextField(
+              AppTextField(
                 controller: _passwordController,
                 hintText: tr.passwordHint,
                 prefixIcon: Icons.lock_outline_rounded,
-                iconColor: AppColors.textSecondary,
                 isPassword: true,
                 textInputAction: TextInputAction.done,
                 autofillHints: const [AutofillHints.newPassword],
@@ -153,7 +151,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     setState(() => _termsAccepted = value ?? false),
               ),
               24.verticalSpace,
-              AuthPrimaryButton(
+              AppPrimaryButton(
                 label: tr.createAccount,
                 isLoading: _isLoading,
                 onPressed: isAnyLoading ? null : _createAccount,

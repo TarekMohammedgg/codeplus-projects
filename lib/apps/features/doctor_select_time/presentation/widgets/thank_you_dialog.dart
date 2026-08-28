@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/generated/app_image.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
@@ -82,18 +83,15 @@ class ThankYouDialog extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             28.verticalSpace,
-            SizedBox(
-              width: double.infinity,
+            AppPrimaryButton(
+              label: tr.done,
+              onPressed:
+                  onDone ??
+                  () {
+                    Navigator.of(context).pop();
+                    const HomeRoute().go(context);
+                  },
               height: 52,
-              child: ElevatedButton(
-                onPressed:
-                    onDone ??
-                    () {
-                      Navigator.of(context).pop();
-                      const HomeRoute().go(context);
-                    },
-                child: Text(tr.done, style: context.bold16White),
-              ),
             ),
             14.verticalSpace,
             TextButton(
