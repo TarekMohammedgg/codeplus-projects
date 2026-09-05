@@ -77,8 +77,7 @@ lib/
 └── apps/
     ├── core/                           # Shared core module
     │   ├── constants/                  # Global app constants
-    │   ├── data/                       # Core doctor data & image URLs
-    │   │   ├── doctor_image_urls.dart
+    │   ├── data/                       # Core doctor data
     │   │   └── doctors_data.dart
     │   ├── errors/                     # Unified AppException handling
     │   │   └── app_exception.dart
@@ -92,6 +91,8 @@ lib/
     │   │   ├── app_router.dart
     │   │   ├── routes.dart
     │   │   └── routes.g.dart
+    │   ├── services/                   # Core shared services (Supabase)
+    │   │   └── supabase_service.dart
     │   ├── theme/                      # AppTheme, color palette, and styles
     │   │   └── app_theme.dart
     │   ├── utils/                      # Form validators & phone utilities
