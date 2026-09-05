@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:doctor_hunt/apps/features/auth/presentation/screens/admin_login_screen.dart';
 import 'package:doctor_hunt/apps/features/auth/presentation/screens/login_screen.dart';
 import 'package:doctor_hunt/apps/features/auth/presentation/screens/otp_verification_screen.dart';
 import 'package:doctor_hunt/apps/features/auth/presentation/screens/reset_password_screen.dart';
 import 'package:doctor_hunt/apps/features/auth/presentation/screens/role_selection_screen.dart';
 import 'package:doctor_hunt/apps/features/auth/presentation/screens/signup_screen.dart';
 import 'package:doctor_hunt/apps/features/admin/presentation/screens/admin_doctors_screen.dart';
-import 'package:doctor_hunt/apps/features/admin/presentation/screens/admin_login_screen.dart';
 import 'package:doctor_hunt/apps/features/admin/presentation/screens/admin_settings_screen.dart';
 import 'package:doctor_hunt/apps/features/admin/presentation/screens/create_doctor_screen.dart';
 import 'package:doctor_hunt/apps/features/admin/data/models/admin_doctor_model.dart';
-import 'package:doctor_hunt/apps/core/data/doctors_data.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 
 import 'package:doctor_hunt/apps/features/doctors/presentation/screens/doctor_details_screen.dart';
@@ -158,7 +157,7 @@ class DoctorDetailsRoute extends GoRouteData with $DoctorDetailsRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return DoctorDetailsScreen(doctor: $extra ?? defaultDoctorDetails());
+    return DoctorDetailsScreen(doctor: $extra ?? DoctorModel.placeholder());
   }
 }
 
@@ -180,7 +179,7 @@ class SelectTimeRoute extends GoRouteData with $SelectTimeRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return SelectTimeScreen(doctor: $extra ?? defaultDoctorDetails());
+    return SelectTimeScreen(doctor: $extra ?? DoctorModel.placeholder());
   }
 }
 

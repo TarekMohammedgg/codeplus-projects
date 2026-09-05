@@ -221,6 +221,12 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'Find doctors, book appointments, and manage your medical records.'
 	String get patientRoleDescription => 'Find doctors, book appointments, and manage your medical records.';
 
+	/// en: 'Doctor'
+	String get doctorRoleTitle => 'Doctor';
+
+	/// en: 'Manage appointments and consult with patients.'
+	String get doctorRoleDescription => 'Manage appointments and consult with patients.';
+
 	/// en: 'Admin'
 	String get adminRoleTitle => 'Admin';
 
@@ -331,6 +337,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// en: 'Booking is not available yet.'
 	String get bookingComingSoon => 'Booking is not available yet.';
+
+	/// en: 'Coming Soon'
+	String get comingSoon => 'Coming Soon';
 
 	/// en: 'Booking appointment with $name...'
 	String bookingMessage({required Object name}) => 'Booking appointment with ${name}...';
@@ -577,6 +586,138 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// en: 'Phone number verified successfully!'
 	String get phoneVerifiedSuccess => 'Phone number verified successfully!';
+
+	/// en: 'Welcome Back!'
+	String get adminLoginTitle => 'Welcome Back!';
+
+	/// en: 'Login to your admin account'
+	String get adminLoginSubtitle => 'Login to your admin account';
+
+	/// en: 'admin@doctorhunt.com'
+	String get adminEmailHint => 'admin@doctorhunt.com';
+
+	/// en: 'Secure admin access only'
+	String get secureAdminAccessOnly => 'Secure admin access only';
+
+	/// en: 'Doctors'
+	String get doctorsTitle => 'Doctors';
+
+	/// en: 'Total Doctors'
+	String get totalDoctors => 'Total Doctors';
+
+	/// en: 'Active'
+	String get activeLabel => 'Active';
+
+	/// en: 'Inactive'
+	String get inactiveLabel => 'Inactive';
+
+	/// en: 'Add Doctor'
+	String get addDoctor => 'Add Doctor';
+
+	/// en: 'Search doctors...'
+	String get searchAdminDoctorsHint => 'Search doctors...';
+
+	/// en: 'No doctors yet. Tap Add Doctor to create one.'
+	String get noDoctorsYet => 'No doctors yet. Tap Add Doctor to create one.';
+
+	/// en: 'Create Doctor'
+	String get createDoctorTitle => 'Create Doctor';
+
+	/// en: 'Doctor Name'
+	String get doctorNameLabel => 'Doctor Name';
+
+	/// en: 'Enter doctor name'
+	String get doctorNameHint => 'Enter doctor name';
+
+	/// en: 'Specialty'
+	String get specialtyLabel => 'Specialty';
+
+	/// en: 'Select specialty'
+	String get selectSpecialtyHint => 'Select specialty';
+
+	/// en: 'Doctor Image'
+	String get doctorImageLabel => 'Doctor Image';
+
+	/// en: 'Upload doctor image'
+	String get uploadDoctorImageTitle => 'Upload doctor image';
+
+	/// en: 'Tap to pick an image'
+	String get tapToPickImage => 'Tap to pick an image';
+
+	/// en: 'Create Doctor'
+	String get createDoctorButton => 'Create Doctor';
+
+	/// en: 'Doctor created successfully'
+	String get doctorCreatedSuccess => 'Doctor created successfully';
+
+	/// en: 'Please enter the doctor's name'
+	String get enterDoctorName => 'Please enter the doctor\'s name';
+
+	/// en: 'Please select a specialty'
+	String get selectSpecialtyError => 'Please select a specialty';
+
+	/// en: 'Failed to pick image. Please try again.'
+	String get pickImageError => 'Failed to pick image. Please try again.';
+
+	/// en: 'Failed to upload image. Please try again.'
+	String get uploadImageError => 'Failed to upload image. Please try again.';
+
+	/// en: 'Cardiologist'
+	String get specialtyCardiologist => 'Cardiologist';
+
+	/// en: 'Orthopedic'
+	String get specialtyOrthopedic => 'Orthopedic';
+
+	/// en: 'Dentist'
+	String get specialtyDentist => 'Dentist';
+
+	/// en: 'Pediatrician'
+	String get specialtyPediatrician => 'Pediatrician';
+
+	/// en: 'Dermatologist'
+	String get specialtyDermatologist => 'Dermatologist';
+
+	/// en: 'Neurologist'
+	String get specialtyNeurologist => 'Neurologist';
+
+	/// en: 'Eye Specialist'
+	String get specialtyEyeSpecialist => 'Eye Specialist';
+
+	/// en: 'Medicine Specialist'
+	String get specialtyMedicineSpecialist => 'Medicine Specialist';
+
+	/// en: 'General Surgeon'
+	String get specialtyGeneralSurgeon => 'General Surgeon';
+
+	/// en: 'Edit'
+	String get edit => 'Edit';
+
+	/// en: 'Delete'
+	String get delete => 'Delete';
+
+	/// en: 'Cancel'
+	String get cancel => 'Cancel';
+
+	/// en: 'Edit Doctor'
+	String get editDoctorTitle => 'Edit Doctor';
+
+	/// en: 'Update Doctor'
+	String get updateDoctorButton => 'Update Doctor';
+
+	/// en: 'Doctor updated successfully'
+	String get doctorUpdatedSuccess => 'Doctor updated successfully';
+
+	/// en: 'Delete Doctor'
+	String get deleteDoctorTitle => 'Delete Doctor';
+
+	/// en: 'Are you sure you want to delete this doctor?'
+	String get deleteDoctorConfirm => 'Are you sure you want to delete this doctor?';
+
+	/// en: 'Doctor deleted successfully'
+	String get doctorDeletedSuccess => 'Doctor deleted successfully';
+
+	/// en: 'Change image'
+	String get changeImage => 'Change image';
 }
 
 /// The flat map containing all translations for locale <en>.
@@ -647,6 +788,8 @@ extension on Translations {
 			'roleSelectionSubtitle' => 'The selected role determines the experience and\navailable features.',
 			'patientRoleTitle' => 'Patient',
 			'patientRoleDescription' => 'Find doctors, book appointments, and manage your medical records.',
+			'doctorRoleTitle' => 'Doctor',
+			'doctorRoleDescription' => 'Manage appointments and consult with patients.',
 			'adminRoleTitle' => 'Admin',
 			'adminRoleDescription' => 'Manage doctors, appointments, users, and the platform.',
 			'enterFullName' => 'Enter your full name',
@@ -684,6 +827,7 @@ extension on Translations {
 			'bookNow' => 'Book Now',
 			'noDoctorsFound' => 'No doctors found',
 			'bookingComingSoon' => 'Booking is not available yet.',
+			'comingSoon' => 'Coming Soon',
 			'bookingMessage' => ({required Object name}) => 'Booking appointment with ${name}...',
 			'tomorrow' => 'tomorrow',
 			'liveCardiologist' => 'Cardiologist',
@@ -766,6 +910,50 @@ extension on Translations {
 			'googleSignInFailedError' => 'Google sign-in failed.',
 			'enterSixDigitOtp' => 'Please enter the 6-digit verification code.',
 			'phoneVerifiedSuccess' => 'Phone number verified successfully!',
+			'adminLoginTitle' => 'Welcome Back!',
+			'adminLoginSubtitle' => 'Login to your admin account',
+			'adminEmailHint' => 'admin@doctorhunt.com',
+			'secureAdminAccessOnly' => 'Secure admin access only',
+			'doctorsTitle' => 'Doctors',
+			'totalDoctors' => 'Total Doctors',
+			'activeLabel' => 'Active',
+			'inactiveLabel' => 'Inactive',
+			'addDoctor' => 'Add Doctor',
+			'searchAdminDoctorsHint' => 'Search doctors...',
+			'noDoctorsYet' => 'No doctors yet. Tap Add Doctor to create one.',
+			'createDoctorTitle' => 'Create Doctor',
+			'doctorNameLabel' => 'Doctor Name',
+			'doctorNameHint' => 'Enter doctor name',
+			'specialtyLabel' => 'Specialty',
+			'selectSpecialtyHint' => 'Select specialty',
+			'doctorImageLabel' => 'Doctor Image',
+			'uploadDoctorImageTitle' => 'Upload doctor image',
+			'tapToPickImage' => 'Tap to pick an image',
+			'createDoctorButton' => 'Create Doctor',
+			'doctorCreatedSuccess' => 'Doctor created successfully',
+			'enterDoctorName' => 'Please enter the doctor\'s name',
+			'selectSpecialtyError' => 'Please select a specialty',
+			'pickImageError' => 'Failed to pick image. Please try again.',
+			'uploadImageError' => 'Failed to upload image. Please try again.',
+			'specialtyCardiologist' => 'Cardiologist',
+			'specialtyOrthopedic' => 'Orthopedic',
+			'specialtyDentist' => 'Dentist',
+			'specialtyPediatrician' => 'Pediatrician',
+			'specialtyDermatologist' => 'Dermatologist',
+			'specialtyNeurologist' => 'Neurologist',
+			'specialtyEyeSpecialist' => 'Eye Specialist',
+			'specialtyMedicineSpecialist' => 'Medicine Specialist',
+			'specialtyGeneralSurgeon' => 'General Surgeon',
+			'edit' => 'Edit',
+			'delete' => 'Delete',
+			'cancel' => 'Cancel',
+			'editDoctorTitle' => 'Edit Doctor',
+			'updateDoctorButton' => 'Update Doctor',
+			'doctorUpdatedSuccess' => 'Doctor updated successfully',
+			'deleteDoctorTitle' => 'Delete Doctor',
+			'deleteDoctorConfirm' => 'Are you sure you want to delete this doctor?',
+			'doctorDeletedSuccess' => 'Doctor deleted successfully',
+			'changeImage' => 'Change image',
 			_ => null,
 		};
 	}

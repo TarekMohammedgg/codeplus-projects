@@ -8,14 +8,38 @@ import 'package:doctor_hunt/apps/core/widgets/app_icon_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_search_bar.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_avatar_placeholder.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_image.dart';
-import 'package:doctor_hunt/apps/core/data/doctors_data.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
+import 'package:doctor_hunt/apps/core/services/doctor_service.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
-class FindDoctorsScreen extends StatelessWidget {
-  const FindDoctorsScreen({super.key});
+class FindDoctorsScreen extends StatefulWidget {
+  const FindDoctorsScreen({
+    super.key,
+    this.doctorService,
+    this.initialDoctors,
+  });
+
+  final DoctorService? doctorService;
+  final List<DoctorModel>? initialDoctors;
+
+  @override
+  State<FindDoctorsScreen> createState() => _FindDoctorsScreenState();
+}
+
+class _FindDoctorsScreenState extends State<FindDoctorsScreen> {
+  late final DoctorService _doctorService;
+  late Future<List<DoctorModel>> _doctorsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _doctorService = widget.doctorService ?? DoctorService();
+    _doctorsFuture = widget.initialDoctors != null
+        ? Future.value(widget.initialDoctors!)
+        : _doctorService.fetchDoctors();
+  }
 
   void onBookDoctor(BuildContext context, DoctorModel doctor) {
     SelectTimeRoute(doctor).push(context);
@@ -27,8 +51,6 @@ class FindDoctorsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final doctorsList = doctors();
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
@@ -45,21 +67,42 @@ class FindDoctorsScreen extends StatelessWidget {
           ),
           16.verticalSpace,
           Expanded(
-            child: ListView.separated(
-              padding: const EdgeInsets.only(
-                left: 24,
-                right: 24,
-                top: 6,
-                bottom: 32,
-              ),
-              itemCount: doctorsList.length,
-              separatorBuilder: (context, index) => 14.verticalSpace,
-              itemBuilder: (context, index) {
-                final doctor = doctorsList[index];
-                return FindDoctorCard(
-                  doctor: doctor,
-                  onBookNow: () => onBookDoctor(context, doctor),
-                  onTap: () => onDoctorTap(context, doctor),
+            child: FutureBuilder<List<DoctorModel>>(
+              future: _doctorsFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(color: AppColors.primary),
+                  );
+                }
+
+                final doctorsList = snapshot.data ?? [];
+                if (doctorsList.isEmpty) {
+                  return Center(
+                    child: Text(
+                      tr.noDoctorsFound,
+                      style: context.semiBold16TextMain,
+                    ),
+                  );
+                }
+
+                return ListView.separated(
+                  padding: const EdgeInsets.only(
+                    left: 24,
+                    right: 24,
+                    top: 6,
+                    bottom: 32,
+                  ),
+                  itemCount: doctorsList.length,
+                  separatorBuilder: (context, index) => 14.verticalSpace,
+                  itemBuilder: (context, index) {
+                    final doctor = doctorsList[index];
+                    return FindDoctorCard(
+                      doctor: doctor,
+                      onBookNow: () => onBookDoctor(context, doctor),
+                      onTap: () => onDoctorTap(context, doctor),
+                    );
+                  },
                 );
               },
             ),

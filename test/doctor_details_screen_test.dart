@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:doctor_hunt/apps/core/data/doctors_data.dart';
-
+import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/features/doctors/presentation/screens/doctor_details_screen.dart';
 import 'test_app.dart';
 
@@ -18,7 +17,7 @@ void main() {
       tester.view.resetDevicePixelRatio();
     });
 
-    final doctor = defaultDoctorDetails();
+    final doctor = DoctorModel.placeholder();
 
     await tester.pumpWidget(buildTestApp(DoctorDetailsScreen(doctor: doctor)));
 

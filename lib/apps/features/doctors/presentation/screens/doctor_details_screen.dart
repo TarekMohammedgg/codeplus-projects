@@ -5,7 +5,6 @@ import 'package:latlong2/latlong.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
-import 'package:doctor_hunt/apps/core/data/doctors_data.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 
 import 'package:doctor_hunt/apps/core/widgets/app_icon_button.dart';
@@ -243,7 +242,7 @@ class DoctorLocationMap extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final targetLocation = location ?? defaultDoctorLocation;
+    final targetLocation = location ?? DoctorModel.defaultLocation;
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(16),

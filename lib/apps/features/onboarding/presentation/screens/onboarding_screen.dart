@@ -26,12 +26,12 @@ class OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   void onSkip() {
-    const LoginRoute().go(context);
+    const RoleSelectionRoute().go(context);
   }
 
   void onNext() {
     if (currentIndex == onboardingPages().length - 1) {
-      const LoginRoute().go(context);
+      const RoleSelectionRoute().go(context);
       return;
     }
 

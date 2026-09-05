@@ -7,7 +7,7 @@ import 'package:doctor_hunt/apps/core/widgets/app_header_section.dart';
 import 'package:doctor_hunt/apps/features/auth/data/service/auth_service.dart';
 import 'package:doctor_hunt/apps/features/home/data/doctors_categories.dart';
 import 'package:doctor_hunt/apps/features/home/data/skeleton_dummy_data.dart';
-import 'package:doctor_hunt/apps/features/home/data/service/home_firestore_service.dart';
+import 'package:doctor_hunt/apps/core/services/doctor_service.dart';
 import 'package:doctor_hunt/apps/features/home/presentation/widgets/doctor_category_section.dart';
 import 'package:doctor_hunt/apps/features/home/presentation/widgets/featured_doctor_section.dart';
 import 'package:doctor_hunt/apps/features/home/presentation/widgets/home_bottom_navigation_bar.dart';
@@ -20,19 +20,20 @@ class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => HomeScreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> {
   final searchController = TextEditingController();
   final _authService = AuthService();
+  final _doctorService = DoctorService();
   late Future<List<DoctorModel>> _doctorsFuture;
   int selectedNavIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    _doctorsFuture = fetchHomeDoctors();
+    _doctorsFuture = _doctorService.fetchHomeDoctors();
   }
 
   @override
@@ -45,8 +46,10 @@ class HomeScreenState extends State<HomeScreen> {
     setState(() => selectedNavIndex = index);
     if (index == 1) {
       try {
-        const FavouriteDoctorsRoute().push(context).then((_) {
-          if (mounted) setState(() => selectedNavIndex = 0);
+        const FavouriteDoctorsRoute().push<int>(context).then((selected) {
+          if (mounted) {
+            setState(() => selectedNavIndex = selected ?? 0);
+          }
         });
       } catch (_) {}
     }
@@ -58,86 +61,92 @@ class HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            AppHeaderSection(
-              greeting: _authService.getUserGreeting(context),
-              title: tr.findYourDoctor,
-              searchController: searchController,
-              showLanguageToggle: true,
-              showProfile: true,
-              profileImage: user?.photoURL,
-              onProfileTap: () => const ProfileRoute().push(context),
-            ),
-            FutureBuilder<List<DoctorModel>>(
-              future: _doctorsFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const DoctorsLoading();
-                }
+      body: (selectedNavIndex == 2 || selectedNavIndex == 3)
+          ? const ComingSoonView()
+          : SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AppHeaderSection(
+                    greeting: _authService.getUserGreeting(context),
+                    title: tr.findYourDoctor,
+                    searchController: searchController,
+                    showLanguageToggle: true,
+                    showProfile: true,
+                    profileImage: user?.photoURL,
+                    onProfileTap: () => const ProfileRoute().push(context),
+                  ),
+                  FutureBuilder<List<DoctorModel>>(
+                    future: _doctorsFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const DoctorsLoading();
+                      }
 
-                if (snapshot.hasError) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 32,
-                    ),
-                    child: Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            tr.serviceError,
-                            textAlign: TextAlign.center,
-                            style: context.semiBold16TextMain,
+                      if (snapshot.hasError) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 32,
                           ),
-                          const SizedBox(height: 12),
-                          IconButton(
-                            onPressed: () {
-                              setState(() {
-                                _doctorsFuture = fetchHomeDoctors();
-                              });
-                            },
-                            icon: const Icon(
-                              Icons.refresh_rounded,
-                              size: 28,
-                              color: AppColors.primary,
+                          child: Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  tr.serviceError,
+                                  textAlign: TextAlign.center,
+                                  style: context.semiBold16TextMain,
+                                ),
+                                const SizedBox(height: 12),
+                                IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      _doctorsFuture = DoctorService()
+                                          .fetchHomeDoctors();
+                                    });
+                                  },
+                                  icon: const Icon(
+                                    Icons.refresh_rounded,
+                                    size: 28,
+                                    color: AppColors.primary,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                  );
-                }
+                        );
+                      }
 
-                final doctors = snapshot.data ?? [];
-                if (doctors.isEmpty) {
-                  return DoctorsIsEmpty();
-                }
+                      final doctors = snapshot.data ?? [];
+                      if (doctors.isEmpty) {
+                        return DoctorsIsEmpty();
+                      }
 
-                final liveDoctors = doctors.where((d) => d.isLive).toList()
-                  ..sort((a, b) => a.liveOrder.compareTo(b.liveOrder));
-                final popularDoctors =
-                    doctors.where((d) => d.isPopular).toList()..sort(
-                      (a, b) => a.popularOrder.compareTo(b.popularOrder),
-                    );
-                final featuredDoctors =
-                    doctors.where((d) => d.isFeatured).toList()..sort(
-                      (a, b) => a.featuredOrder.compareTo(b.featuredOrder),
-                    );
+                      final liveDoctors =
+                          doctors.where((d) => d.isLive).toList()..sort(
+                            (a, b) => a.liveOrder.compareTo(b.liveOrder),
+                          );
+                      final popularDoctors =
+                          doctors.where((d) => d.isPopular).toList()..sort(
+                            (a, b) => a.popularOrder.compareTo(b.popularOrder),
+                          );
+                      final featuredDoctors =
+                          doctors.where((d) => d.isFeatured).toList()..sort(
+                            (a, b) =>
+                                a.featuredOrder.compareTo(b.featuredOrder),
+                          );
 
-                return DoctorsData(
-                  liveDoctors: liveDoctors,
-                  popularDoctors: popularDoctors,
-                  featuredDoctors: featuredDoctors,
-                );
-              },
+                      return DoctorsData(
+                        liveDoctors: liveDoctors,
+                        popularDoctors: popularDoctors,
+                        featuredDoctors: featuredDoctors,
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
-      ),
       bottomNavigationBar: HomeBottomNavigationBar(
         currentIndex: selectedNavIndex,
         onTap: _onNavTap,
@@ -228,6 +237,22 @@ class DoctorsIsEmpty extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
       child: Center(
         child: Text(tr.noDoctorsFound, style: context.regular14TextSecondary),
+      ),
+    );
+  }
+}
+
+class ComingSoonView extends StatelessWidget {
+  const ComingSoonView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox.expand(
+      child: ColoredBox(
+        color: AppColors.white,
+        child: Center(
+          child: Text(tr.comingSoon, style: context.semiBold18TextMain),
+        ),
       ),
     );
   }

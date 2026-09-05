@@ -10,14 +10,23 @@ class AuthService {
 
   final FirebaseAuth? _auth;
 
-  AuthService({FirebaseAuth? auth}) : _auth = auth ?? FirebaseAuth.instance;
+  AuthService({FirebaseAuth? auth}) : _auth = auth ?? _safeAuth();
+
+  static FirebaseAuth? _safeAuth() {
+    try {
+      return FirebaseAuth.instance;
+    } catch (_) {
+      return null;
+    }
+  }
+
   static Future<void> initialize() async {
     await GoogleSignIn.instance.initialize(serverClientId: serverClientId);
   }
 
   User? get currentUser {
     try {
-      return _auth!.currentUser;
+      return _auth?.currentUser;
     } catch (_) {
       return null;
     }

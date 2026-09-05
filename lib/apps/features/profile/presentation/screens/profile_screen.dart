@@ -27,7 +27,7 @@ class ProfileScreen extends StatelessWidget {
   Future<void> _onLogOut(BuildContext context) async {
     await AuthService().signOut();
     if (context.mounted) {
-      const LoginRoute().go(context);
+      const RoleSelectionRoute().go(context);
     }
   }
 

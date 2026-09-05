@@ -1,1 +1,1 @@
-enum UserRole { patient, admin }
+enum UserRole { patient, doctor, admin }
