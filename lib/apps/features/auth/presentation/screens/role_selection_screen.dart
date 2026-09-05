@@ -18,7 +18,13 @@ class RoleSelectionScreenState extends State<RoleSelectionScreen> {
   UserRole selectedRole = UserRole.patient;
 
   void onContinue() {
-    const LoginRoute().go(context);
+    switch (selectedRole) {
+      case UserRole.admin:
+        const AdminLoginRoute().go(context);
+      case UserRole.patient:
+      case UserRole.doctor:
+        const LoginRoute().go(context);
+    }
   }
 
   @override
@@ -61,6 +67,16 @@ class RoleSelectionScreenState extends State<RoleSelectionScreen> {
               description: tr.patientRoleDescription,
               onTap: () {
                 setState(() => selectedRole = UserRole.patient);
+              },
+            ),
+            const SizedBox(height: 16),
+            buildRoleCard(
+              isSelected: selectedRole == UserRole.doctor,
+              icon: Icons.medical_services_rounded,
+              title: tr.doctorRoleTitle,
+              description: tr.doctorRoleDescription,
+              onTap: () {
+                setState(() => selectedRole = UserRole.doctor);
               },
             ),
             const SizedBox(height: 16),

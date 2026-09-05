@@ -85,7 +85,7 @@ class OtpVerificationScreenState extends State<OtpVerificationScreen> {
     if (!mounted) return;
     setState(() => _isVerifying = false);
     context.showSuccessSnackBar('تم تأكيد رقم الهاتف بنجاح!');
-    const RoleSelectionRoute().push(context);
+    const HomeRoute().push(context);
   }
 
   void resendCode() {

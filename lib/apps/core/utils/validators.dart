@@ -32,6 +32,20 @@ abstract final class AppValidators {
     return null;
   }
 
+  static String? validateDoctorName(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return tr.enterDoctorName;
+    }
+    return null;
+  }
+
+  static String? validateSpecialty(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return tr.selectSpecialtyError;
+    }
+    return null;
+  }
+
   static String? validatePhone(String? value) {
     final phone = value?.trim() ?? '';
     if (phone.isEmpty) {

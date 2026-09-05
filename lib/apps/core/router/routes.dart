@@ -6,6 +6,11 @@ import 'package:doctor_hunt/apps/features/auth/presentation/screens/otp_verifica
 import 'package:doctor_hunt/apps/features/auth/presentation/screens/reset_password_screen.dart';
 import 'package:doctor_hunt/apps/features/auth/presentation/screens/role_selection_screen.dart';
 import 'package:doctor_hunt/apps/features/auth/presentation/screens/signup_screen.dart';
+import 'package:doctor_hunt/apps/features/admin/presentation/screens/admin_doctors_screen.dart';
+import 'package:doctor_hunt/apps/features/admin/presentation/screens/admin_login_screen.dart';
+import 'package:doctor_hunt/apps/features/admin/presentation/screens/admin_settings_screen.dart';
+import 'package:doctor_hunt/apps/features/admin/presentation/screens/create_doctor_screen.dart';
+import 'package:doctor_hunt/apps/features/admin/data/models/admin_doctor_model.dart';
 import 'package:doctor_hunt/apps/core/data/doctors_data.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 
@@ -80,6 +85,48 @@ class RoleSelectionRoute extends GoRouteData with $RoleSelectionRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return const RoleSelectionScreen();
+  }
+}
+
+@TypedGoRoute<AdminLoginRoute>(path: '/admin-login')
+class AdminLoginRoute extends GoRouteData with $AdminLoginRoute {
+  const AdminLoginRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const AdminLoginScreen();
+  }
+}
+
+@TypedGoRoute<AdminDoctorsRoute>(path: '/admin/doctors')
+class AdminDoctorsRoute extends GoRouteData with $AdminDoctorsRoute {
+  const AdminDoctorsRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const AdminDoctorsScreen();
+  }
+}
+
+@TypedGoRoute<CreateDoctorRoute>(path: '/admin/doctors/create')
+class CreateDoctorRoute extends GoRouteData with $CreateDoctorRoute {
+  const CreateDoctorRoute([this.$extra]);
+
+  final AdminDoctorModel? $extra;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return CreateDoctorScreen(doctor: $extra);
+  }
+}
+
+@TypedGoRoute<AdminSettingsRoute>(path: '/admin/settings')
+class AdminSettingsRoute extends GoRouteData with $AdminSettingsRoute {
+  const AdminSettingsRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const AdminSettingsScreen();
   }
 }
 
