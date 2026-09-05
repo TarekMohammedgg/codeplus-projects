@@ -51,6 +51,13 @@
 - Structured personal information cards (Email, Phone, Date of Birth, Gender).
 - Emergency contact details and medical information sections.
 
+### 🛡️ Admin Portal & Doctor Management (`admin`)
+- **Admin Dashboard**: Real-time doctor overview with aggregate counters (total doctors, active specialists) and live search/filter by doctor name or specialty.
+- **Doctor Creation & Editing**: Create new specialists with full profile details, specialty categorization, and photo uploads, or update existing records.
+- **Cloud Media Storage**: Integrated gallery image selection (`image_picker`) and direct upload pipeline to Supabase Storage (`doctor-images` bucket).
+- **Real-Time Synchronization**: Live Cloud Firestore streams delivering updates instantaneously upon doctor creation, modification, or deletion, automatically organized with the latest modified doctors first.
+- **Admin Settings & Security**: Dedicated admin settings and role-based access control (`UserRole.admin`).
+
 ### 🌐 Internationalization (i18n) & RTL Support
 - Type-safe, compile-time translation generation powered by `slang`.
 - Full bidirectional support for **English (LTR)** and **Arabic (RTL)** with layout mirroring.
@@ -107,6 +114,9 @@ lib/
     │       ├── featured_doctor_section.dart
     │       └── section_header.dart
     └── features/                       # Feature modules (Feature-Driven)
+        ├── admin/                      # Admin portal (Doctor management, Create/Edit Doctor, Settings)
+        │   ├── data/                   # AdminDoctorModel, AdminDoctorService & specialty options
+        │   └── presentation/           # AdminDoctorsScreen, CreateDoctorScreen & admin widgets
         ├── auth/                       # Authentication (Login, Signup, OTP, Reset Password)
         │   ├── data/                   # Auth service (Firebase/Google) & UserRole model
         │   └── presentation/           # Auth screens & specialized widgets
@@ -140,13 +150,16 @@ lib/
 | | [`firebase_auth`](https://pub.dev/packages/firebase_auth) | User authentication, session management & password reset |
 | | [`google_sign_in`](https://pub.dev/packages/google_sign_in) | Google OAuth social login integration |
 | | [`cloud_firestore`](https://pub.dev/packages/cloud_firestore) | Real-time cloud database for doctor catalogs |
+| **Cloud Storage** | [`supabase_flutter`](https://pub.dev/packages/supabase_flutter) | Supabase Storage integration for doctor media assets |
+| **Media & Images** | [`image_picker`](https://pub.dev/packages/image_picker) | Multi-platform image selection from device gallery |
+| | [`cached_network_image`](https://pub.dev/packages/cached_network_image) | High-performance remote image caching with placeholders |
 | **Internationalization** | [`slang`](https://pub.dev/packages/slang) & [`slang_flutter`](https://pub.dev/packages/slang_flutter) | Type-safe, compile-time i18n with RTL support |
 | | [`intl`](https://pub.dev/packages/intl) | Internationalization and date/number formatting |
 | **UI Components** | [`pinput`](https://pub.dev/packages/pinput) | Customized PIN and OTP verification input field |
 | | [`smooth_page_indicator`](https://pub.dev/packages/smooth_page_indicator) | Animated page indicators for onboarding flows |
 | | [`easy_date_timeline`](https://pub.dev/packages/easy_date_timeline) | Interactive horizontal date timeline picker |
 | | [`time_slot`](https://pub.dev/packages/time_slot) | Grid and card time slot selector |
-| | [`cached_network_image`](https://pub.dev/packages/cached_network_image) | High-performance remote image caching with placeholders |
+| | [`skeletonizer`](https://pub.dev/packages/skeletonizer) | Shimmer loading skeleton overlays |
 | **Maps & Location** | [`flutter_map`](https://pub.dev/packages/flutter_map) | Interactive OpenStreetMap rendering |
 | | [`latlong2`](https://pub.dev/packages/latlong2) | Lightweight latitude/longitude coordinate utility |
 | **Branding & Quality** | [`flutter_native_splash`](https://pub.dev/packages/flutter_native_splash) | Native splash screen configuration |

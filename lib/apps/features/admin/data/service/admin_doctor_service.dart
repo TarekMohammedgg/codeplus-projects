@@ -2,22 +2,39 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doctor_hunt/apps/features/admin/data/models/admin_doctor_model.dart';
 
 class AdminDoctorService {
+  static final AdminDoctorService instance = AdminDoctorService();
+
+  final FirebaseFirestore? _firestore;
+
   AdminDoctorService({FirebaseFirestore? firestore})
-    : _customFirestore = firestore;
+    : _firestore = firestore ?? _safeFirestore();
 
-  final FirebaseFirestore? _customFirestore;
-  FirebaseFirestore get _firestore =>
-      _customFirestore ?? FirebaseFirestore.instance;
+  static FirebaseFirestore? _safeFirestore() {
+    try {
+      return FirebaseFirestore.instance;
+    } catch (_) {
+      return null;
+    }
+  }
 
-  CollectionReference<Map<String, dynamic>> get _doctors =>
-      _firestore.collection('doctors');
+  CollectionReference<Map<String, dynamic>>? get _doctors =>
+      _firestore?.collection('doctors');
 
   Stream<List<AdminDoctorModel>> streamDoctors() {
-    return _doctors.snapshots().map(
-      (snapshot) => snapshot.docs
+    final collection = _doctors;
+    if (collection == null) return const Stream.empty();
+
+    return collection.snapshots().map((snapshot) {
+      final doctors = snapshot.docs
           .map((doc) => AdminDoctorModel.fromFirestore(doc.id, doc.data()))
-          .toList(),
-    );
+          .toList();
+      doctors.sort((a, b) {
+        final aTime = a.lastModified ?? DateTime.now();
+        final bTime = b.lastModified ?? DateTime.now();
+        return bTime.compareTo(aTime);
+      });
+      return doctors;
+    });
   }
 
   Future<void> createDoctor({
@@ -25,15 +42,17 @@ class AdminDoctorService {
     required String specialty,
     required String specialtyKey,
     String? imageUrl,
-  }) {
-    return _doctors.add({
+  }) async {
+    final now = FieldValue.serverTimestamp();
+    await _doctors?.add({
       'name': name.trim(),
       'specialty': specialty,
       'specialtyKey': specialtyKey,
       'imageUrl': imageUrl,
       'isActive': true,
       'homeVisible': false,
-      'createdAt': FieldValue.serverTimestamp(),
+      'createdAt': now,
+      'updatedAt': now,
     });
   }
 
@@ -43,8 +62,8 @@ class AdminDoctorService {
     required String specialty,
     required String specialtyKey,
     String? imageUrl,
-  }) {
-    return _doctors.doc(id).update({
+  }) async {
+    await _doctors?.doc(id).update({
       'name': name.trim(),
       'specialty': specialty,
       'specialtyKey': specialtyKey,
@@ -53,7 +72,7 @@ class AdminDoctorService {
     });
   }
 
-  Future<void> deleteDoctor(String id) {
-    return _doctors.doc(id).delete();
+  Future<void> deleteDoctor(String id) async {
+    await _doctors?.doc(id).delete();
   }
 }

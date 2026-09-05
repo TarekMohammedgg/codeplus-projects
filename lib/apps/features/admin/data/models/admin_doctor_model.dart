@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class AdminDoctorModel {
   const AdminDoctorModel({
     required this.id,
@@ -6,6 +8,7 @@ class AdminDoctorModel {
     this.specialtyKey,
     this.imageUrl,
     this.isActive = true,
+    this.lastModified,
   });
 
   final String id;
@@ -14,8 +17,14 @@ class AdminDoctorModel {
   final String? specialtyKey;
   final String? imageUrl;
   final bool isActive;
+  final DateTime? lastModified;
 
   factory AdminDoctorModel.fromFirestore(String id, Map<String, dynamic> data) {
+    final rawTimestamp = data['updatedAt'] ?? data['createdAt'];
+    final lastModified = rawTimestamp is Timestamp
+        ? rawTimestamp.toDate()
+        : null;
+
     return AdminDoctorModel(
       id: id,
       name: (data['name'] as String?)?.trim() ?? '',
@@ -23,6 +32,7 @@ class AdminDoctorModel {
       specialtyKey: (data['specialtyKey'] as String?)?.trim(),
       imageUrl: (data['imageUrl'] as String?)?.trim(),
       isActive: data['isActive'] as bool? ?? true,
+      lastModified: lastModified,
     );
   }
 }
