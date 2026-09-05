@@ -28,7 +28,7 @@ This repository is organized into dedicated branches for each phase of the inter
 | Branch | Description | Tech Stack | Direct Link |
 | :--- | :--- | :--- | :--- |
 | **[`dart-lessons`](https://github.com/TarekMohammedgg/codeplus-projects/tree/dart-lessons)** | Core Dart programming fundamentals, OOP concepts, collections, and asynchronous tasks (Lessons 01–04). | Dart 3.x | [View Branch ↗](https://github.com/TarekMohammedgg/codeplus-projects/tree/dart-lessons) |
-| **[`doctor-hunt`](https://github.com/TarekMohammedgg/codeplus-projects/tree/doctor-hunt)** | Feature-First healthcare discovery & appointment mobile application with multi-language (EN/AR) support. | Flutter, GoRouter, Slang, Pinput | [View Branch ↗](https://github.com/TarekMohammedgg/codeplus-projects/tree/doctor-hunt) |
+| **[`doctor-hunt`](https://github.com/TarekMohammedgg/codeplus-projects/tree/doctor-hunt)** | Feature-First healthcare discovery, appointment booking & admin management application with Firebase backend and multi-language (EN/AR) support. | Flutter, Firebase (Auth & Firestore), Supabase Storage, GoRouter, Slang | [View Branch ↗](https://github.com/TarekMohammedgg/codeplus-projects/tree/doctor-hunt) |
 
 ### Quick Branch Switching
 
@@ -86,12 +86,15 @@ dart run lesson-4.dart
 The [`doctor-hunt`](https://github.com/TarekMohammedgg/codeplus-projects/tree/doctor-hunt) branch contains a production-ready Flutter UI for medical practitioner discovery and appointment management.
 
 ### Key Highlights & Features
-- 🚀 **Onboarding & Role Selection**: Interactive multi-step carousel with animated indicators and role selection (Patient / Doctor).
-- 🔐 **Authentication Workflows**: Sign-in, sign-up with client validation, OTP verification modal bottom sheets (`pinput`), and password resets.
-- 🏠 **Home Dashboard**: Search bar, promotional health banners, medical specialty categories, and popular doctors carousel with favorite toggles.
-- 👨‍⚕️ **Doctor Discovery & Profile**: Specialty search, category filtering, detailed doctor biographies, reviews, and appointment feedback.
+- 🚀 **Onboarding & Role Selection**: Interactive multi-step carousel with animated indicators and role selection (Patient / Doctor / Admin).
+- 🔐 **Authentication & Security**: Email/password sign-up & sign-in, Google one-tap social sign-in, OTP verification modal bottom sheets (`pinput`), and password resets via Firebase Auth.
+- 🛡️ **Admin Portal & Doctor Management**: Dedicated administrative suite featuring live doctor count metrics (total & active doctors), search/filter by specialty, doctor creation/editing, image uploads via Supabase Storage, and real-time Firestore synchronization organized by last modified.
+- 🏠 **Home Dashboard**: Real-time doctor catalog from Cloud Firestore, promotional banners, specialty categories, and popular/featured specialists carousel with favorite toggles.
+- 👨‍⚕️ **Doctor Discovery & Profile**: Searchable directory, category filters, detailed practitioner profiles, reviews, and appointment feedback.
+- 📅 **Appointment Scheduling**: Interactive date timeline, categorized time slot picker (Afternoon/Evening), and booking confirmation workflows.
+- ☁️ **Cloud Backend & Storage**: Cloud Firestore for live data feeds, Firebase Authentication for session management, and Supabase Storage for remote doctor media assets.
 - 🌐 **Full Internationalization (EN / AR)**: Multi-language support powered by `slang` with instant real-time locale switching and automatic RTL/LTR direction adjustments.
-- 🧪 **Test Suite**: Automated unit and widget tests covering routing, UI components, localization, and search (`flutter test`).
+- 🧪 **Test Suite**: Automated unit and widget tests covering routing, UI components, data services, localization, and search (`flutter test`).
 
 ### Running Doctor Hunt
 
