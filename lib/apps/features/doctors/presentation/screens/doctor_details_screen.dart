@@ -64,6 +64,23 @@ class DoctorDetailsScreen extends StatelessWidget {
       ),
     );
   }
+
+  // _buildState(BuildContext context , String count , label  ) {
+  //   return Column(
+  //     mainAxisSize: MainAxisSize.min,
+  //     children: [
+  //       Text(count.toString(), style: context.bold20TextMain),
+  //       4.verticalSpace,
+  //       Text(
+  //         label,
+  //         style: context.regular14TextSecondary.copyWith(
+  //           fontSize: 13,
+  //           color: AppColors.textSecondary.withValues(alpha: 0.8),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 }
 
 class DoctorDetailsAppBar extends StatelessWidget {

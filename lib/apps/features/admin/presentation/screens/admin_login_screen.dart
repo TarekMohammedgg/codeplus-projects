@@ -8,10 +8,10 @@ import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/utils/validators.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_text_field.dart';
-import 'package:doctor_hunt/apps/features/auth/data/service/auth_service.dart';
-import 'package:doctor_hunt/apps/features/auth/presentation/widgets/admin_login_widgets.dart';
-import 'package:doctor_hunt/apps/features/auth/presentation/widgets/auth_back_button.dart';
-import 'package:doctor_hunt/apps/features/auth/presentation/widgets/auth_header.dart';
+import 'package:doctor_hunt/apps/features/admin/presentation/widgets/admin_login_widgets.dart';
+import 'package:doctor_hunt/apps/features/common/auth/data/service/auth_service.dart';
+import 'package:doctor_hunt/apps/features/common/auth/presentation/widgets/auth_back_button.dart';
+import 'package:doctor_hunt/apps/features/common/auth/presentation/widgets/auth_header.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
@@ -47,6 +47,12 @@ class AdminLoginScreenState extends State<AdminLoginScreen> {
         email: emailController.text,
         password: passwordController.text,
       );
+      if (!await _authService.isCurrentUserAdmin()) {
+        await _authService.signOut();
+        if (!mounted) return;
+        context.showErrorSnackBar('هذا الحساب لا يملك صلاحيات الأدمن.');
+        return;
+      }
       if (!mounted) return;
       const AdminDoctorsRoute().go(context);
     } catch (e) {

@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pinput/pinput.dart';
-import 'package:doctor_hunt/apps/features/auth/presentation/screens/otp_verification_screen.dart';
+import 'package:doctor_hunt/apps/features/common/auth/presentation/screens/otp_verification_screen.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'test_app.dart';
 

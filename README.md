@@ -14,7 +14,7 @@
 
 ### 🚀 Onboarding & Role Selection
 - Interactive multi-step onboarding carousel with rich medical illustrations and animated page indicators (`smooth_page_indicator`).
-- Role selection gateway tailored for Patients and Healthcare Providers.
+- Role selection gateway tailored for Patients and Administrators.
 
 ### 🔐 Authentication & Account Security (Firebase + Google Sign-In)
 - **Email & Password Authentication**: Full sign-up and sign-in workflows with real-time validation and error handling via `FirebaseAuth`.
@@ -24,8 +24,8 @@
 - **Personalized User Greeting**: Context-aware user greeting ("Hi [Name] 👋" / "مرحبًا [Name] 👋") adapting dynamically to user profile and active locale.
 
 ### 🏠 Home & Medical Dashboard
-- **Dynamic Doctor Feeds**: Cloud Firestore data fetching with graceful fallback to structured local mock data.
-- **Specialty Categories**: Quick navigation across medical specialties (Cardiology, Dental, Ophthalmology, General Medicine, and more).
+- **Dynamic Doctor Feeds**: Active doctors and their image URLs are read from Cloud Firestore; the feed no longer depends on `homeVisible` or local doctor data.
+- **Specialty Categories**: Specialty documents are loaded from the Firestore `specialty` collection.
 - **Popular & Featured Specialists**: Horizontal carousels showcasing doctor ratings, patient review counts, hourly rates, and real-time favorite toggling.
 - **Live Doctors Section**: Highlighted cards for currently active and available specialists.
 - **Global Search Surface**: Integrated search bar for instantaneous doctor queries.
@@ -53,10 +53,11 @@
 
 ### 🛡️ Admin Portal & Doctor Management (`admin`)
 - **Admin Dashboard**: Real-time doctor overview with aggregate counters (total doctors, active specialists) and live search/filter by doctor name or specialty.
-- **Doctor Creation & Editing**: Create new specialists with full profile details, specialty categorization, and photo uploads, or update existing records.
-- **Cloud Media Storage**: Integrated gallery image selection (`image_picker`) and direct upload pipeline to Supabase Storage (`doctor-images` bucket).
+- **Doctor Creation & Editing**: Create or update bilingual doctor names, specialty references, professional profile fields, and doctor images.
+- **Stable Doctor IDs**: New doctor documents use `doc_<next number>`, calculated from the highest numeric doctor ID already present in Firestore.
+- **Cloud Media Storage**: The admin selects an image, uploads it through Cloudinary's unsigned upload preset, then stores only the returned `secure_url` in Firestore.
 - **Real-Time Synchronization**: Live Cloud Firestore streams delivering updates instantaneously upon doctor creation, modification, or deletion, automatically organized with the latest modified doctors first.
-- **Admin Settings & Security**: Dedicated admin settings and role-based access control (`UserRole.admin`).
+- **Admin Settings & Security**: Dedicated admin settings plus Firestore-enforced role and permission checks (`admin` and `patient`).
 
 ### 🌐 Internationalization (i18n) & RTL Support
 - Type-safe, compile-time translation generation powered by `slang`.
@@ -97,8 +98,7 @@ lib/
     │   │   ├── routes.dart
     │   │   └── routes.g.dart
     │   ├── services/                   # Core shared services
-    │   │   ├── doctor_service.dart
-    │   │   └── supabase_storage_service.dart
+    │   │   └── doctor_service.dart
     │   ├── theme/                      # AppTheme, color palette, and styles
     │   │   └── app_theme.dart
     │   ├── utils/                      # Form validators & phone utilities
@@ -115,7 +115,7 @@ lib/
     │       └── section_header.dart
     └── features/                       # Feature modules (Feature-Driven)
         ├── admin/                      # Admin portal (Doctor management, Create/Edit Doctor, Settings)
-        │   ├── data/                   # AdminDoctorModel, AdminDoctorService & specialty options
+        │   ├── data/                   # AdminDoctorModel and AdminDoctorService
         │   └── presentation/           # AdminDoctorsScreen, CreateDoctorScreen & admin widgets
         ├── auth/                       # Authentication (Login, Signup, OTP, Reset Password)
         │   ├── data/                   # Auth service (Firebase/Google) & UserRole model
@@ -128,8 +128,10 @@ lib/
         ├── favourite_doctors/          # Saved/bookmarked doctors feature
         │   └── presentation/           # FavouriteDoctorsScreen & FavouriteDoctorCard
         ├── home/                       # Home dashboard, banners, and categories
-        │   ├── data/                   # Categories data & Firestore home service
+        │   ├── data/                   # Firestore home service and presentation models
         │   └── presentation/           # HomeScreen & dashboard modular widgets
+        ├── specialty/                  # Firestore-backed bilingual specialty catalog
+        │   └── data/                   # SpecialtyModel and SpecialtyService
         ├── onboarding/                 # Onboarding carousel & role selection
         │   ├── data/                   # Onboarding items & models
         │   └── presentation/           # OnboardingScreen
@@ -150,8 +152,8 @@ lib/
 | | [`firebase_auth`](https://pub.dev/packages/firebase_auth) | User authentication, session management & password reset |
 | | [`google_sign_in`](https://pub.dev/packages/google_sign_in) | Google OAuth social login integration |
 | | [`cloud_firestore`](https://pub.dev/packages/cloud_firestore) | Real-time cloud database for doctor catalogs |
-| **Cloud Storage** | [`supabase_flutter`](https://pub.dev/packages/supabase_flutter) | Supabase Storage integration for doctor media assets |
-| **Media & Images** | [`image_picker`](https://pub.dev/packages/image_picker) | Multi-platform image selection from device gallery |
+| **Media & Images** | Cloudinary URL | Doctor image URLs stored in Firestore |
+| | [`image_picker`](https://pub.dev/packages/image_picker) + [`dio`](https://pub.dev/packages/dio) | Select and upload doctor images to Cloudinary |
 | | [`cached_network_image`](https://pub.dev/packages/cached_network_image) | High-performance remote image caching with placeholders |
 | **Internationalization** | [`slang`](https://pub.dev/packages/slang) & [`slang_flutter`](https://pub.dev/packages/slang_flutter) | Type-safe, compile-time i18n with RTL support |
 | | [`intl`](https://pub.dev/packages/intl) | Internationalization and date/number formatting |
@@ -193,6 +195,15 @@ lib/
    ```bash
    flutter pub get
    ```
+
+4. **Configure local environment**:
+   Copy `.env.example` to `.env`, then set the Firebase Google Sign-In client ID and a Cloudinary unsigned upload preset:
+   ```dotenv
+   SERVER_CLIENT_ID=your_server_client_id
+   CLOUDINARY_CLOUD_NAME=diexaortk
+   CLOUDINARY_UPLOAD_PRESET=your_unsigned_upload_preset
+   ```
+   The admin doctor flow uploads the selected image to Cloudinary first and writes only its returned URL to Firestore. Never put a Cloudinary API secret in the Flutter app.
 
 ---
 

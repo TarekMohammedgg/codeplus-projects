@@ -1,9 +1,9 @@
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_text_field.dart';
-import 'package:doctor_hunt/apps/features/auth/data/service/auth_service.dart';
-import 'package:doctor_hunt/apps/features/auth/presentation/widgets/auth_buttons.dart';
-import 'package:doctor_hunt/apps/features/auth/presentation/widgets/auth_header.dart';
-import 'package:doctor_hunt/apps/features/auth/presentation/widgets/forgot_password_bottom_sheet.dart';
+import 'package:doctor_hunt/apps/features/common/auth/data/service/auth_service.dart';
+import 'package:doctor_hunt/apps/features/common/auth/presentation/widgets/auth_buttons.dart';
+import 'package:doctor_hunt/apps/features/common/auth/presentation/widgets/auth_header.dart';
+import 'package:doctor_hunt/apps/features/common/auth/presentation/widgets/forgot_password_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_icon_button.dart';
@@ -224,27 +223,38 @@ class AppHeaderSection extends StatelessWidget {
                                 profileImage != null &&
                                     profileImage!.trim().isNotEmpty
                                 ? (profileImage!.startsWith('http')
-                                      ? CachedNetworkImage(
-                                          imageUrl: profileImage!,
+                                      ? Image.network(
+                                          profileImage!,
                                           width: 48,
                                           height: 48,
                                           fit: BoxFit.cover,
-                                          placeholder: (context, url) =>
-                                              const DoctorAvatarPlaceholder(
-                                                size: 48,
-                                                iconColor: AppColors.primary,
-                                                backgroundColor: Color(
-                                                  0xFFE8FBF6,
-                                                ),
-                                              ),
-                                          errorWidget: (context, url, error) =>
-                                              const DoctorAvatarPlaceholder(
-                                                size: 48,
-                                                iconColor: AppColors.primary,
-                                                backgroundColor: Color(
-                                                  0xFFE8FBF6,
-                                                ),
-                                              ),
+                                          loadingBuilder:
+                                              (
+                                                context,
+                                                child,
+                                                loadingProgress,
+                                              ) {
+                                                return loadingProgress == null
+                                                    ? child
+                                                    : const DoctorAvatarPlaceholder(
+                                                        size: 48,
+                                                        iconColor:
+                                                            AppColors.primary,
+                                                        backgroundColor: Color(
+                                                          0xFFE8FBF6,
+                                                        ),
+                                                      );
+                                              },
+                                          errorBuilder:
+                                              (context, error, stackTrace) =>
+                                                  const DoctorAvatarPlaceholder(
+                                                    size: 48,
+                                                    iconColor:
+                                                        AppColors.primary,
+                                                    backgroundColor: Color(
+                                                      0xFFE8FBF6,
+                                                    ),
+                                                  ),
                                         )
                                       : Image.asset(
                                           profileImage!,

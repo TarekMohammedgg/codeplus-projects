@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:doctor_hunt/apps/features/auth/presentation/screens/admin_login_screen.dart';
-import 'package:doctor_hunt/apps/features/auth/presentation/screens/login_screen.dart';
-import 'package:doctor_hunt/apps/features/auth/presentation/screens/otp_verification_screen.dart';
-import 'package:doctor_hunt/apps/features/auth/presentation/screens/reset_password_screen.dart';
-import 'package:doctor_hunt/apps/features/auth/presentation/screens/role_selection_screen.dart';
-import 'package:doctor_hunt/apps/features/auth/presentation/screens/signup_screen.dart';
+import 'package:doctor_hunt/apps/features/admin/presentation/screens/admin_login_screen.dart';
+import 'package:doctor_hunt/apps/features/common/auth/presentation/screens/login_screen.dart';
+import 'package:doctor_hunt/apps/features/common/auth/presentation/screens/otp_verification_screen.dart';
+import 'package:doctor_hunt/apps/features/common/auth/presentation/screens/reset_password_screen.dart';
+import 'package:doctor_hunt/apps/features/common/auth/presentation/screens/signup_screen.dart';
+import 'package:doctor_hunt/apps/features/role_selection/presentation/screens/role_selection_screen.dart';
 import 'package:doctor_hunt/apps/features/admin/presentation/screens/admin_doctors_screen.dart';
 import 'package:doctor_hunt/apps/features/admin/presentation/screens/admin_settings_screen.dart';
 import 'package:doctor_hunt/apps/features/admin/presentation/screens/create_doctor_screen.dart';
+import 'package:doctor_hunt/apps/features/admin/presentation/widgets/admin_access_guard.dart';
 import 'package:doctor_hunt/apps/features/admin/data/models/admin_doctor_model.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 
@@ -103,7 +104,10 @@ class AdminDoctorsRoute extends GoRouteData with $AdminDoctorsRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const AdminDoctorsScreen();
+    return const AdminAccessGuard(
+      permission: 'manageDoctors',
+      child: AdminDoctorsScreen(),
+    );
   }
 }
 
@@ -115,7 +119,10 @@ class CreateDoctorRoute extends GoRouteData with $CreateDoctorRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return CreateDoctorScreen(doctor: $extra);
+    return AdminAccessGuard(
+      permission: 'manageDoctors',
+      child: CreateDoctorScreen(doctor: $extra),
+    );
   }
 }
 
@@ -125,7 +132,7 @@ class AdminSettingsRoute extends GoRouteData with $AdminSettingsRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const AdminSettingsScreen();
+    return const AdminAccessGuard(child: AdminSettingsScreen());
   }
 }
 

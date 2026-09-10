@@ -201,6 +201,7 @@
   "doctorImageLabel": "Doctor Image",
   "uploadDoctorImageTitle": "Upload doctor image",
   "tapToPickImage": "Tap to pick an image",
+  "removeImage": "Remove selected image",
   "createDoctorButton": "Create Doctor",
   "doctorCreatedSuccess": "Doctor created successfully",
   "enterDoctorName": "Please enter the doctor's name",

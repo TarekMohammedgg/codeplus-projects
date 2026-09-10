@@ -1,12 +1,14 @@
 import 'package:flutter/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
 class AuthService {
-  static const String serverClientId =
-      '618475193124-juj451gbe5ms155fpgalq5qj8r1v8a1g.apps.googleusercontent.com';
+  static String get serverClientId =>
+      (dotenv.isInitialized ? dotenv.maybeGet('SERVER_CLIENT_ID') : null) ?? '';
 
   final FirebaseAuth? _auth;
 
@@ -21,7 +23,10 @@ class AuthService {
   }
 
   static Future<void> initialize() async {
-    await GoogleSignIn.instance.initialize(serverClientId: serverClientId);
+    final clientId = serverClientId;
+    await GoogleSignIn.instance.initialize(
+      serverClientId: clientId.isNotEmpty ? clientId : null,
+    );
   }
 
   User? get currentUser {
@@ -65,17 +70,23 @@ class AuthService {
       await userCredential.user?.reload();
     }
 
+    final user = userCredential.user;
+    if (user != null) await ensureUserProfile(user);
+
     return userCredential;
   }
 
   Future<UserCredential> signInWithEmailAndPassword({
     required String email,
     required String password,
-  }) {
-    return _auth!.signInWithEmailAndPassword(
+  }) async {
+    final credential = await _auth!.signInWithEmailAndPassword(
       email: email.trim(),
       password: password,
     );
+    final user = credential.user;
+    if (user != null) await ensureUserProfile(user);
+    return credential;
   }
 
   Future<UserCredential?> signInWithGoogle() async {
@@ -85,13 +96,65 @@ class AuthService {
         idToken: googleUser.authentication.idToken,
       );
 
-      return await _auth!.signInWithCredential(credential);
+      final result = await _auth!.signInWithCredential(credential);
+      final user = result.user;
+      if (user != null) await ensureUserProfile(user);
+      return result;
     } on GoogleSignInException catch (e) {
       if (e.code == GoogleSignInExceptionCode.canceled) {
         return null;
       }
       throw AppException.fromGoogleSignIn(e);
     }
+  }
+
+  Future<void> ensureUserProfile(User user) async {
+    final reference = FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid);
+    final snapshot = await reference.get();
+    final profile = {
+      'displayName': user.displayName?.trim() ?? '',
+      'email': user.email?.trim() ?? '',
+      'updatedAt': FieldValue.serverTimestamp(),
+    };
+
+    if (snapshot.exists) {
+      await reference.set(profile, SetOptions(merge: true));
+      return;
+    }
+
+    await reference.set({
+      ...profile,
+      'role': 'patient',
+      'permissions': <String, dynamic>{},
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  Future<bool> isCurrentUserAdmin() async {
+    final user = currentUser;
+    if (user == null) return false;
+    final snapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
+    return snapshot.data()?['role'] == 'admin';
+  }
+
+  Future<bool> hasAdminPermission(String permission) async {
+    final user = currentUser;
+    if (user == null) return false;
+
+    final snapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
+    final data = snapshot.data();
+    if (data?['role'] != 'admin') return false;
+
+    final permissions = data?['permissions'];
+    return permissions is Map && permissions[permission] == true;
   }
 
   Future<void> forgetpassword({required String email}) async {

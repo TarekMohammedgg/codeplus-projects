@@ -1,4 +1,4 @@
-import 'package:doctor_hunt/apps/features/auth/data/service/auth_service.dart';
+import 'package:doctor_hunt/apps/features/common/auth/data/service/auth_service.dart';
 import 'package:doctor_hunt/apps/features/profile/data/models/user_profile_model.dart';
 
 UserProfileModel defaultUserProfile() {

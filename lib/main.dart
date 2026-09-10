@@ -2,20 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'apps/core/router/app_router.dart';
-import 'apps/core/services/supabase_storage_service.dart';
 import 'apps/core/theme/app_theme.dart';
 import 'generated/i18n/translations.g.dart';
 
 import 'package:firebase_core/firebase_core.dart';
-import 'apps/features/auth/data/service/auth_service.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'apps/features/common/auth/data/service/auth_service.dart';
 import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  try {
+    await dotenv.load(fileName: '.env');
+  } catch (e) {
+    debugPrint('Failed to load .env file: $e');
+  }
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await AuthService.initialize();
-  await SupabaseStorageService.initialize();
 
   LocaleSettings.useDeviceLocale();
   runApp(TranslationProvider(child: const DoctorHuntApp()));

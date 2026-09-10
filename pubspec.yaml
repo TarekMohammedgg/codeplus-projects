@@ -26,11 +26,11 @@ dependencies:
   firebase_core: ^4.14.0
   firebase_auth: ^6.6.0
   google_sign_in: ^7.2.0
-  cached_network_image: ^3.4.1
   cloud_firestore: ^6.9.0
   skeletonizer: ^2.1.3
+  flutter_dotenv: ^6.0.1
+  dio: ^5.9.2
   image_picker: ^1.2.3
-  supabase_flutter: ^2.17.2
 
 dev_dependencies:
   flutter_test:
@@ -48,6 +48,7 @@ flutter:
   uses-material-design: true
 
   assets:
+    - .env
     - assets/
     - assets/design/
     - assets/dummy/

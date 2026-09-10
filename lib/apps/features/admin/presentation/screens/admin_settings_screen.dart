@@ -6,7 +6,7 @@ import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_header_section.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_avatar_placeholder.dart';
-import 'package:doctor_hunt/apps/features/auth/data/service/auth_service.dart';
+import 'package:doctor_hunt/apps/features/common/auth/data/service/auth_service.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 

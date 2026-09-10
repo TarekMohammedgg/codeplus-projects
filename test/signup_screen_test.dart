@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:doctor_hunt/apps/features/auth/presentation/screens/signup_screen.dart';
-import 'package:doctor_hunt/apps/features/auth/presentation/widgets/auth_buttons.dart';
+import 'package:doctor_hunt/apps/features/common/auth/presentation/screens/signup_screen.dart';
+import 'package:doctor_hunt/apps/features/common/auth/presentation/widgets/auth_buttons.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'test_app.dart';
 

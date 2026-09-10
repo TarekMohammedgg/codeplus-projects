@@ -644,6 +644,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'Tap to pick an image'
 	String get tapToPickImage => 'Tap to pick an image';
 
+	/// en: 'Remove selected image'
+	String get removeImage => 'Remove selected image';
+
 	/// en: 'Create Doctor'
 	String get createDoctorButton => 'Create Doctor';
 
@@ -929,6 +932,7 @@ extension on Translations {
 			'doctorImageLabel' => 'Doctor Image',
 			'uploadDoctorImageTitle' => 'Upload doctor image',
 			'tapToPickImage' => 'Tap to pick an image',
+			'removeImage' => 'Remove selected image',
 			'createDoctorButton' => 'Create Doctor',
 			'doctorCreatedSuccess' => 'Doctor created successfully',
 			'enterDoctorName' => 'Please enter the doctor\'s name',

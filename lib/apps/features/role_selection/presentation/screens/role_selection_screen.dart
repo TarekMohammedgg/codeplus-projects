@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
-import 'package:doctor_hunt/apps/features/auth/data/models/user_role.dart';
+import 'package:doctor_hunt/apps/features/role_selection/data/models/user_role.dart';
 import 'package:doctor_hunt/generated/app_image.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
@@ -22,7 +22,6 @@ class RoleSelectionScreenState extends State<RoleSelectionScreen> {
       case UserRole.admin:
         const AdminLoginRoute().go(context);
       case UserRole.patient:
-      case UserRole.doctor:
         const LoginRoute().go(context);
     }
   }
@@ -67,16 +66,6 @@ class RoleSelectionScreenState extends State<RoleSelectionScreen> {
               description: tr.patientRoleDescription,
               onTap: () {
                 setState(() => selectedRole = UserRole.patient);
-              },
-            ),
-            const SizedBox(height: 16),
-            buildRoleCard(
-              isSelected: selectedRole == UserRole.doctor,
-              icon: Icons.medical_services_rounded,
-              title: tr.doctorRoleTitle,
-              description: tr.doctorRoleDescription,
-              onTap: () {
-                setState(() => selectedRole = UserRole.doctor);
               },
             ),
             const SizedBox(height: 16),

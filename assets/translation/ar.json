@@ -201,6 +201,7 @@
   "doctorImageLabel": "صورة الطبيب",
   "uploadDoctorImageTitle": "رفع صورة الطبيب",
   "tapToPickImage": "اضغط لاختيار صورة",
+  "removeImage": "إزالة الصورة المحددة",
   "createDoctorButton": "إنشاء طبيب",
   "doctorCreatedSuccess": "تم إنشاء الطبيب بنجاح",
   "enterDoctorName": "يرجى إدخال اسم الطبيب",

@@ -240,6 +240,7 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get doctorImageLabel => 'صورة الطبيب';
 	@override String get uploadDoctorImageTitle => 'رفع صورة الطبيب';
 	@override String get tapToPickImage => 'اضغط لاختيار صورة';
+	@override String get removeImage => 'إزالة الصورة المحددة';
 	@override String get createDoctorButton => 'إنشاء طبيب';
 	@override String get doctorCreatedSuccess => 'تم إنشاء الطبيب بنجاح';
 	@override String get enterDoctorName => 'يرجى إدخال اسم الطبيب';
@@ -476,6 +477,7 @@ extension on TranslationsAr {
 			'doctorImageLabel' => 'صورة الطبيب',
 			'uploadDoctorImageTitle' => 'رفع صورة الطبيب',
 			'tapToPickImage' => 'اضغط لاختيار صورة',
+			'removeImage' => 'إزالة الصورة المحددة',
 			'createDoctorButton' => 'إنشاء طبيب',
 			'doctorCreatedSuccess' => 'تم إنشاء الطبيب بنجاح',
 			'enterDoctorName' => 'يرجى إدخال اسم الطبيب',
