@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_avatar_placeholder.dart';
 import 'package:flutter/material.dart';
 
@@ -44,15 +45,13 @@ class ProfileAvatar extends StatelessWidget {
       child: ClipOval(
         child: (url != null && url.isNotEmpty)
             ? (url.startsWith('http')
-                  ? Image.network(
-                      url,
+                  ? CachedNetworkImage(
+                      imageUrl: url,
                       width: size,
                       height: size,
                       fit: BoxFit.cover,
-                      loadingBuilder: (context, child, loadingProgress) {
-                        return loadingProgress == null ? child : placeholder;
-                      },
-                      errorBuilder: (_, _, _) => placeholder,
+                      placeholder: (_, _) => placeholder,
+                      errorWidget: (_, _, _) => placeholder,
                     )
                   : Image.asset(
                       url,

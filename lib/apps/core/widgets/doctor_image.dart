@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class DoctorImage extends StatelessWidget {
@@ -25,16 +26,14 @@ class DoctorImage extends StatelessWidget {
       return fallback;
     }
 
-    return Image.network(
-      url,
+    return CachedNetworkImage(
+      imageUrl: url,
       width: width,
       height: height,
       fit: fit,
       alignment: alignment,
-      loadingBuilder: (context, child, loadingProgress) {
-        return loadingProgress == null ? child : fallback;
-      },
-      errorBuilder: (_, _, _) => fallback,
+      placeholder: (_, _) => fallback,
+      errorWidget: (_, _, _) => fallback,
     );
   }
 }
