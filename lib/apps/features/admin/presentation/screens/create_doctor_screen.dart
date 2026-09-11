@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -13,8 +14,11 @@ import 'package:doctor_hunt/apps/core/widgets/app_header_section.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_text_field.dart';
 import 'package:doctor_hunt/apps/features/admin/data/models/admin_doctor_model.dart';
+import 'package:doctor_hunt/apps/features/admin/data/repositories/create_doctor_repository.dart';
 import 'package:doctor_hunt/apps/features/admin/data/service/admin_doctor_service.dart';
 import 'package:doctor_hunt/apps/features/admin/data/service/cloudinary_upload_service.dart';
+import 'package:doctor_hunt/apps/features/admin/presentation/cubit/create_doctor_cubit.dart';
+import 'package:doctor_hunt/apps/features/admin/presentation/cubit/create_doctor_state.dart';
 import 'package:doctor_hunt/apps/features/admin/presentation/widgets/create_doctor_widgets.dart';
 import 'package:doctor_hunt/apps/features/specialty/data/models/specialty_model.dart';
 import 'package:doctor_hunt/apps/features/specialty/data/service/specialty_service.dart';
@@ -22,9 +26,10 @@ import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
 class CreateDoctorScreen extends StatefulWidget {
-  const CreateDoctorScreen({super.key, this.doctor});
+  const CreateDoctorScreen({super.key, this.doctor, this.repository});
 
   final AdminDoctorModel? doctor;
+  final CreateDoctorRepository? repository;
 
   @override
   State<CreateDoctorScreen> createState() => CreateDoctorScreenState();
@@ -34,12 +39,9 @@ class CreateDoctorScreenState extends State<CreateDoctorScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameArController = TextEditingController();
   final _nameEnController = TextEditingController();
-  final _doctorService = AdminDoctorService();
-  final _specialtyService = SpecialtyService();
   final _imagePicker = ImagePicker();
-  final _cloudinaryService = CloudinaryUploadService();
+  late final CreateDoctorCubit _createDoctorCubit;
 
-  late final Future<List<SpecialtyModel>> _specialtiesFuture;
   SpecialtyModel? _specialty;
   XFile? _selectedImage;
   Uint8List? _selectedImageBytes;
@@ -52,23 +54,20 @@ class CreateDoctorScreenState extends State<CreateDoctorScreen> {
   @override
   void initState() {
     super.initState();
-    _specialtiesFuture = _specialtyService.fetchActiveSpecialties();
+    _createDoctorCubit = CreateDoctorCubit(
+      repository:
+          widget.repository ??
+          FirebaseCreateDoctorRepository(
+            doctorService: AdminDoctorService(),
+            specialtyService: SpecialtyService(),
+            uploadService: CloudinaryUploadService(),
+          ),
+    )..loadSpecialties();
     if (isEditing) {
       final doctor = widget.doctor!;
       _nameArController.text = doctor.nameAr ?? doctor.name;
       _nameEnController.text = doctor.nameEn ?? doctor.name;
       _imageUrl = doctor.imageUrl;
-      _specialtiesFuture.then((specialties) {
-        if (!mounted) return;
-        final specialtyId = doctor.specialtyId?.trim().toLowerCase();
-        setState(() {
-          _specialty = specialties.where((item) {
-            return (specialtyId != null && specialtyId == item.id) ||
-                item.localizedName.toLowerCase() ==
-                    doctor.specialty.toLowerCase();
-          }).firstOrNull;
-        });
-      });
     }
   }
 
@@ -76,6 +75,7 @@ class CreateDoctorScreenState extends State<CreateDoctorScreen> {
   void dispose() {
     _nameArController.dispose();
     _nameEnController.dispose();
+    _createDoctorCubit.close();
     super.dispose();
   }
 
@@ -121,7 +121,7 @@ class CreateDoctorScreenState extends State<CreateDoctorScreen> {
       if (_selectedImage != null) {
         setState(() => _isUploadingImage = true);
         try {
-          imageUrl = await _cloudinaryService.uploadImage(
+          imageUrl = await _createDoctorCubit.uploadImage(
             bytes: _selectedImageBytes!,
             fileName: _selectedImage!.name,
           );
@@ -135,7 +135,7 @@ class CreateDoctorScreenState extends State<CreateDoctorScreen> {
         }
       }
       if (isEditing) {
-        await _doctorService.updateDoctor(
+        await _createDoctorCubit.updateDoctor(
           id: widget.doctor!.id,
           fullNameAr: fullNameAr,
           fullNameEn: fullNameEn,
@@ -143,7 +143,7 @@ class CreateDoctorScreenState extends State<CreateDoctorScreen> {
           imageUrl: imageUrl,
         );
       } else {
-        await _doctorService.createDoctor(
+        await _createDoctorCubit.createDoctor(
           fullNameAr: fullNameAr,
           fullNameEn: fullNameEn,
           specialtyId: _specialty!.id,
@@ -171,110 +171,141 @@ class CreateDoctorScreenState extends State<CreateDoctorScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: Column(
-        children: [
-          AppHeaderSection(
-            title: isEditing ? tr.editDoctorTitle : tr.createDoctorTitle,
-            onBackTap: () => context.pop(),
-            showSearchBar: false,
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(20, 24, 20, 32),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text(
-                      '${tr.doctorNameLabel} (AR)',
-                      style: context.semiBold14TextMain,
-                    ),
-                    8.verticalSpace,
-                    AppTextField(
-                      controller: _nameArController,
-                      hintText: tr.doctorNameHint,
-                      prefixIcon: Icons.person_outline_rounded,
-                      textInputAction: TextInputAction.next,
-                      validator: AppValidators.validateDoctorName,
-                    ),
-                    20.verticalSpace,
-                    Text(
-                      '${tr.doctorNameLabel} (EN)',
-                      style: context.semiBold14TextMain,
-                    ),
-                    8.verticalSpace,
-                    AppTextField(
-                      controller: _nameEnController,
-                      hintText: tr.doctorNameHint,
-                      prefixIcon: Icons.person_outline_rounded,
-                      textInputAction: TextInputAction.next,
-                      validator: AppValidators.validateDoctorName,
-                    ),
-                    20.verticalSpace,
-                    Text(tr.specialtyLabel, style: context.semiBold14TextMain),
-                    8.verticalSpace,
-                    FutureBuilder<List<SpecialtyModel>>(
-                      future: _specialtiesFuture,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 18),
-                            child: Center(child: CircularProgressIndicator()),
-                          );
-                        }
-                        if (snapshot.hasError || snapshot.data!.isEmpty) {
-                          return Text(
-                            tr.serviceError,
-                            style: context.regular14TextSecondary,
-                          );
-                        }
-                        return SpecialtyDropdownField(
-                          specialties: snapshot.data!,
-                          value: _specialty,
-                          onChanged: (value) =>
-                              setState(() => _specialty = value),
-                          validator: (value) =>
-                              value == null ? tr.selectSpecialtyError : null,
-                        );
-                      },
-                    ),
-                    20.verticalSpace,
-                    Text(
-                      tr.doctorImageLabel,
-                      style: context.semiBold14TextMain,
-                    ),
-                    8.verticalSpace,
-                    DoctorImagePickerField(
-                      imageUrl: _imageUrl,
-                      selectedBytes: _selectedImageBytes,
-                      isUploading: _isUploadingImage,
-                      onPick: _pickImage,
-                      onClear: () => setState(() {
-                        _selectedImage = null;
-                        _selectedImageBytes = null;
-                      }),
-                    ),
-                    32.verticalSpace,
-                    AppPrimaryButton(
-                      label: isEditing
-                          ? tr.updateDoctorButton
-                          : tr.createDoctorButton,
-                      isLoading: _isSaving,
-                      onPressed: _isSaving ? null : _submit,
-                      height: 54,
-                      fontSize: 16,
-                    ),
-                  ],
+    return BlocProvider.value(
+      value: _createDoctorCubit,
+      child: BlocConsumer<CreateDoctorCubit, CreateDoctorState>(
+        listener: (context, state) {
+          switch (state) {
+            case CreateDoctorFailure(:final errorMessage):
+              context.showErrorSnackBar(errorMessage);
+            case CreateDoctorSuccess(:final specialties):
+              _selectEditingSpecialty(specialties);
+            default:
+              break;
+          }
+        },
+        builder: (context, state) {
+          return Scaffold(
+            backgroundColor: AppColors.background,
+            body: Column(
+              children: [
+                AppHeaderSection(
+                  title: isEditing ? tr.editDoctorTitle : tr.createDoctorTitle,
+                  onBackTap: () => context.pop(),
+                  showSearchBar: false,
                 ),
-              ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(20, 24, 20, 32),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(
+                            '${tr.doctorNameLabel} (AR)',
+                            style: context.semiBold14TextMain,
+                          ),
+                          8.verticalSpace,
+                          AppTextField(
+                            controller: _nameArController,
+                            hintText: tr.doctorNameHint,
+                            prefixIcon: Icons.person_outline_rounded,
+                            textInputAction: TextInputAction.next,
+                            validator: AppValidators.validateDoctorName,
+                          ),
+                          20.verticalSpace,
+                          Text(
+                            '${tr.doctorNameLabel} (EN)',
+                            style: context.semiBold14TextMain,
+                          ),
+                          8.verticalSpace,
+                          AppTextField(
+                            controller: _nameEnController,
+                            hintText: tr.doctorNameHint,
+                            prefixIcon: Icons.person_outline_rounded,
+                            textInputAction: TextInputAction.next,
+                            validator: AppValidators.validateDoctorName,
+                          ),
+                          20.verticalSpace,
+                          Text(
+                            tr.specialtyLabel,
+                            style: context.semiBold14TextMain,
+                          ),
+                          8.verticalSpace,
+                          _buildSpecialtyField(context, state),
+                          20.verticalSpace,
+                          Text(
+                            tr.doctorImageLabel,
+                            style: context.semiBold14TextMain,
+                          ),
+                          8.verticalSpace,
+                          DoctorImagePickerField(
+                            imageUrl: _imageUrl,
+                            selectedBytes: _selectedImageBytes,
+                            isUploading: _isUploadingImage,
+                            onPick: _pickImage,
+                            onClear: () => setState(() {
+                              _selectedImage = null;
+                              _selectedImageBytes = null;
+                            }),
+                          ),
+                          32.verticalSpace,
+                          AppPrimaryButton(
+                            label: isEditing
+                                ? tr.updateDoctorButton
+                                : tr.createDoctorButton,
+                            isLoading: _isSaving,
+                            onPressed: _isSaving ? null : _submit,
+                            height: 54,
+                            fontSize: 16,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
+          );
+        },
       ),
     );
+  }
+
+  Widget _buildSpecialtyField(BuildContext context, CreateDoctorState state) {
+    return switch (state) {
+      CreateDoctorInitial() || CreateDoctorLoading() => const Padding(
+        padding: EdgeInsets.symmetric(vertical: 18),
+        child: Center(child: CircularProgressIndicator()),
+      ),
+      CreateDoctorFailure() => Text(
+        tr.serviceError,
+        style: context.regular14TextSecondary,
+      ),
+      CreateDoctorSuccess(:final specialties) when specialties.isEmpty => Text(
+        tr.serviceError,
+        style: context.regular14TextSecondary,
+      ),
+      CreateDoctorSuccess(:final specialties) => SpecialtyDropdownField(
+        specialties: specialties,
+        value: _specialty,
+        onChanged: (value) => setState(() => _specialty = value),
+        validator: (value) => value == null ? tr.selectSpecialtyError : null,
+      ),
+    };
+  }
+
+  void _selectEditingSpecialty(List<SpecialtyModel> specialties) {
+    if (!isEditing || _specialty != null || !mounted) return;
+
+    final doctor = widget.doctor!;
+    final specialtyId = doctor.specialtyId?.trim().toLowerCase();
+    final selected = specialties.where((item) {
+      return (specialtyId != null && specialtyId == item.id) ||
+          item.localizedName.toLowerCase() == doctor.specialty.toLowerCase();
+    }).firstOrNull;
+
+    if (selected != null) setState(() => _specialty = selected);
   }
 }

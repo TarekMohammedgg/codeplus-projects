@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
@@ -8,27 +9,46 @@ import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_header_section.dart';
 import 'package:doctor_hunt/apps/features/admin/data/models/admin_doctor_model.dart';
 import 'package:doctor_hunt/apps/features/admin/data/service/admin_doctor_service.dart';
+import 'package:doctor_hunt/apps/features/admin/data/repositories/admin_doctors_repository.dart';
+import 'package:doctor_hunt/apps/features/admin/presentation/cubit/admin_doctors_cubit.dart';
+import 'package:doctor_hunt/apps/features/admin/presentation/cubit/admin_doctors_state.dart';
 import 'package:doctor_hunt/apps/features/admin/presentation/widgets/admin_doctors_widgets.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
 class AdminDoctorsScreen extends StatefulWidget {
-  const AdminDoctorsScreen({super.key});
+  const AdminDoctorsScreen({super.key, this.doctorService, this.repository});
+
+  final AdminDoctorService? doctorService;
+  final AdminDoctorsRepository? repository;
 
   @override
   State<AdminDoctorsScreen> createState() => AdminDoctorsScreenState();
 }
 
 class AdminDoctorsScreenState extends State<AdminDoctorsScreen> {
-  final _doctorService = AdminDoctorService();
   final _searchController = TextEditingController();
+  late final AdminDoctorsCubit _adminDoctorsCubit;
 
   int _selectedNavIndex = 0;
   String _query = '';
 
   @override
+  void initState() {
+    super.initState();
+    _adminDoctorsCubit = AdminDoctorsCubit(
+      repository:
+          widget.repository ??
+          FirebaseAdminDoctorsRepository(
+            doctorService: widget.doctorService ?? AdminDoctorService(),
+          ),
+    )..load();
+  }
+
+  @override
   void dispose() {
     _searchController.dispose();
+    _adminDoctorsCubit.close();
     super.dispose();
   }
 
@@ -82,7 +102,7 @@ class AdminDoctorsScreenState extends State<AdminDoctorsScreen> {
 
     if (confirmed == true && mounted) {
       try {
-        await _doctorService.deleteDoctor(doctor.id);
+        await _adminDoctorsCubit.deleteDoctor(doctor.id);
         if (!mounted) return;
         context.showSuccessSnackBar(tr.doctorDeletedSuccess);
       } catch (e) {
@@ -94,103 +114,101 @@ class AdminDoctorsScreenState extends State<AdminDoctorsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: Column(
-        children: [
-          AppHeaderSection(
-            title: tr.doctorsTitle,
-            leading: const Icon(Icons.menu_rounded, color: Colors.white),
-            trailing: const Icon(
-              Icons.notifications_none_rounded,
-              color: Colors.white,
-            ),
-            showSearchBar: true,
-            searchController: _searchController,
-            searchHintText: tr.searchAdminDoctorsHint,
-            onSearchChanged: (value) => setState(() => _query = value),
-          ),
-          Expanded(
-            child: StreamBuilder<List<AdminDoctorModel>>(
-              stream: _doctorService.streamDoctors(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                if (snapshot.hasError) {
-                  return Center(
-                    child: Text(
-                      tr.serviceError,
-                      style: context.semiBold16TextMain,
-                    ),
-                  );
-                }
-
-                final doctors = snapshot.data ?? [];
-                final filtered = _filter(doctors);
-                final activeCount = doctors
-                    .where((doctor) => doctor.isActive)
-                    .length;
-
-                return Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      AdminStatsRow(
-                        totalCount: doctors.length,
-                        activeCount: activeCount,
-                      ),
-                      16.verticalSpace,
-                      Expanded(
-                        child: filtered.isEmpty
-                            ? Center(
-                                child: Text(
-                                  doctors.isEmpty
-                                      ? tr.noDoctorsYet
-                                      : tr.noDoctorsFound,
-                                  textAlign: TextAlign.center,
-                                  style: context.regular14TextSecondary,
-                                ),
-                              )
-                            : ListView.separated(
-                                padding: const EdgeInsets.only(bottom: 88),
-                                itemCount: filtered.length,
-                                separatorBuilder: (_, _) => 12.verticalSpace,
-                                itemBuilder: (context, index) {
-                                  final doctor = filtered[index];
-                                  return AdminDoctorListTile(
-                                    doctor: doctor,
-                                    onEdit: () =>
-                                        CreateDoctorRoute(doctor).push(context),
-                                    onDelete: () =>
-                                        _confirmDeleteDoctor(doctor),
-                                  );
-                                },
-                              ),
-                      ),
-                    ],
+    return BlocProvider.value(
+      value: _adminDoctorsCubit,
+      child: BlocBuilder<AdminDoctorsCubit, AdminDoctorsState>(
+        builder: (context, state) {
+          return Scaffold(
+            backgroundColor: AppColors.background,
+            body: Column(
+              children: [
+                AppHeaderSection(
+                  title: tr.doctorsTitle,
+                  leading: const Icon(Icons.menu_rounded, color: Colors.white),
+                  trailing: const Icon(
+                    Icons.notifications_none_rounded,
+                    color: Colors.white,
                   ),
-                );
-              },
+                  showSearchBar: true,
+                  searchController: _searchController,
+                  searchHintText: tr.searchAdminDoctorsHint,
+                  onSearchChanged: (value) => setState(() => _query = value),
+                ),
+                Expanded(child: _buildDoctorsContent(context, state)),
+              ],
             ),
+            floatingActionButton: FloatingActionButton.extended(
+              onPressed: () => const CreateDoctorRoute().push(context),
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              icon: const Icon(Icons.add_rounded),
+              label: Text(
+                tr.addDoctor,
+                style: context.semiBold14Primary.copyWith(color: Colors.white),
+              ),
+            ),
+            bottomNavigationBar: AdminBottomNavigationBar(
+              currentIndex: _selectedNavIndex,
+              onTap: _onNavTap,
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildDoctorsContent(BuildContext context, AdminDoctorsState state) {
+    return switch (state) {
+      AdminDoctorsInitial() ||
+      AdminDoctorsLoading() => const Center(child: CircularProgressIndicator()),
+      AdminDoctorsFailure() => Center(
+        child: Text(tr.serviceError, style: context.semiBold16TextMain),
+      ),
+      AdminDoctorsSuccess(:final doctors) => _buildDoctorsList(
+        context,
+        doctors,
+      ),
+    };
+  }
+
+  Widget _buildDoctorsList(
+    BuildContext context,
+    List<AdminDoctorModel> doctors,
+  ) {
+    final filtered = _filter(doctors);
+    final activeCount = doctors.where((doctor) => doctor.isActive).length;
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          AdminStatsRow(totalCount: doctors.length, activeCount: activeCount),
+          16.verticalSpace,
+          Expanded(
+            child: filtered.isEmpty
+                ? Center(
+                    child: Text(
+                      doctors.isEmpty ? tr.noDoctorsYet : tr.noDoctorsFound,
+                      textAlign: TextAlign.center,
+                      style: context.regular14TextSecondary,
+                    ),
+                  )
+                : ListView.separated(
+                    padding: const EdgeInsets.only(bottom: 88),
+                    itemCount: filtered.length,
+                    separatorBuilder: (_, _) => 12.verticalSpace,
+                    itemBuilder: (context, index) {
+                      final doctor = filtered[index];
+                      return AdminDoctorListTile(
+                        doctor: doctor,
+                        onEdit: () => CreateDoctorRoute(doctor).push(context),
+                        onDelete: () => _confirmDeleteDoctor(doctor),
+                      );
+                    },
+                  ),
           ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => const CreateDoctorRoute().push(context),
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
-        icon: const Icon(Icons.add_rounded),
-        label: Text(
-          tr.addDoctor,
-          style: context.semiBold14Primary.copyWith(color: Colors.white),
-        ),
-      ),
-      bottomNavigationBar: AdminBottomNavigationBar(
-        currentIndex: _selectedNavIndex,
-        onTap: _onNavTap,
       ),
     );
   }
