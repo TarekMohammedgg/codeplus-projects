@@ -1,3 +1,4 @@
+import 'package:doctor_hunt/apps/features/onboarding/presentation/screens/onboarding_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -18,7 +19,6 @@ import 'package:doctor_hunt/apps/features/doctors/presentation/screens/doctor_de
 import 'package:doctor_hunt/apps/features/doctors/presentation/screens/find_doctors_screen.dart';
 import 'package:doctor_hunt/apps/features/favourite_doctors/presentation/screens/favourite_doctors_screen.dart';
 import 'package:doctor_hunt/apps/features/home/presentation/screens/home_screen.dart';
-import 'package:doctor_hunt/apps/features/onboarding/presentation/screens/onboarding_screen.dart';
 import 'package:doctor_hunt/apps/features/doctor_booking/presentation/screens/doctor_booking_screen.dart';
 import 'package:doctor_hunt/apps/features/profile/data/models/user_profile_model.dart';
 import 'package:doctor_hunt/apps/features/profile/presentation/screens/profile_screen.dart';
