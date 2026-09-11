@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:doctor_hunt/apps/features/home/data/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
@@ -12,7 +13,9 @@ import 'package:doctor_hunt/apps/features/home/data/repositories/home_repository
 import 'package:doctor_hunt/apps/features/home/presentation/cubit/home_cubit.dart';
 import 'package:doctor_hunt/apps/features/home/presentation/cubit/home_state.dart';
 import 'package:doctor_hunt/apps/features/home/presentation/widgets/doctor_category_section.dart';
+import 'package:doctor_hunt/apps/features/home/presentation/widgets/featured_doctor_section.dart';
 import 'package:doctor_hunt/apps/features/home/presentation/widgets/home_bottom_navigation_bar.dart';
+import 'package:doctor_hunt/apps/features/home/presentation/widgets/live_doctor_section.dart';
 import 'package:doctor_hunt/apps/features/home/presentation/widgets/popular_doctor_section.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
@@ -132,6 +135,13 @@ class DoctorsData extends StatelessWidget {
     return Column(
       children: [
         const SizedBox(height: 24),
+        if (doctors.isNotEmpty) ...[
+          LiveDoctorSection(
+            liveDoctors: doctors,
+            onSeeAllPressed: () => const FindDoctorsRoute().push(context),
+          ),
+          const SizedBox(height: 24),
+        ],
         DoctorCategorySection(
           categories: specialties
               .map(
@@ -152,6 +162,11 @@ class DoctorsData extends StatelessWidget {
             doctors: doctors,
             onSeeAllPressed: () => const FindDoctorsRoute().push(context),
           ),
+          const SizedBox(height: 24),
+          FeaturedDoctorSection(
+            doctors: doctors,
+            onSeeAllPressed: () => const FindDoctorsRoute().push(context),
+          ),
           const SizedBox(height: 32),
         ],
       ],
@@ -164,9 +179,93 @@ class DoctorsLoading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SizedBox(
-      height: 360,
-      child: Center(child: CircularProgressIndicator(color: AppColors.primary)),
+    return Skeletonizer(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 24),
+        child: Column(
+          children: [
+            _sectionTitleSkeleton(),
+            const SizedBox(height: 14),
+            SizedBox(
+              height: 156,
+              child: ListView.separated(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                scrollDirection: Axis.horizontal,
+                itemCount: 3,
+                separatorBuilder: (_, _) => const SizedBox(width: 14),
+                itemBuilder: (_, _) => Bone(
+                  width: 116,
+                  height: 156,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            SizedBox(
+              height: 54,
+              child: ListView.separated(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                scrollDirection: Axis.horizontal,
+                itemCount: 4,
+                separatorBuilder: (_, _) => const SizedBox(width: 14),
+                itemBuilder: (_, _) => Bone(
+                  width: 54,
+                  height: 54,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            _sectionTitleSkeleton(),
+            const SizedBox(height: 14),
+            SizedBox(
+              height: 240,
+              child: ListView.separated(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                scrollDirection: Axis.horizontal,
+                itemCount: 2,
+                separatorBuilder: (_, _) => const SizedBox(width: 14),
+                itemBuilder: (_, _) => Bone(
+                  width: 190,
+                  height: 240,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            _sectionTitleSkeleton(),
+            const SizedBox(height: 14),
+            SizedBox(
+              height: 195,
+              child: ListView.separated(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                scrollDirection: Axis.horizontal,
+                itemCount: 3,
+                separatorBuilder: (_, _) => const SizedBox(width: 14),
+                itemBuilder: (_, _) => Bone(
+                  width: 150,
+                  height: 195,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
+            ),
+            const SizedBox(height: 32),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _sectionTitleSkeleton() {
+    return const Padding(
+      padding: EdgeInsets.symmetric(horizontal: 24),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Bone.text(width: 130),
+          Bone.text(width: 48),
+        ],
+      ),
     );
   }
 }

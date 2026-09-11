@@ -41,7 +41,7 @@ void main() {
     );
     final cubit = FavouriteDoctorsCubit(
       repository: _FakeDoctorRepository(
-        favouriteDoctors: [favourite],
+        doctors: [favourite],
         featuredDoctors: [featured],
       ),
     );

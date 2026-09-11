@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
@@ -146,10 +147,47 @@ class _FavouriteDoctorsScreenState extends State<FavouriteDoctorsScreen> {
     switch (state) {
       case FavouriteDoctorsInitial():
       case FavouriteDoctorsLoading():
-        return const [
-          SliverFillRemaining(
-            hasScrollBody: false,
-            child: Center(child: CircularProgressIndicator()),
+        return [
+          SliverSkeletonizer(
+            child: SliverPadding(
+              padding: const EdgeInsets.fromLTRB(24, 20, 24, 24),
+              sliver: SliverGrid(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 16,
+                  crossAxisSpacing: 16,
+                  childAspectRatio: 0.70,
+                ),
+                delegate: SliverChildBuilderDelegate(
+                  (_, _) => DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: const Padding(
+                      padding: EdgeInsets.all(12),
+                      child: Column(
+                        children: [
+                          Align(
+                            alignment: AlignmentDirectional.topEnd,
+                            child: Bone.circle(size: 20),
+                          ),
+                          SizedBox(height: 10),
+                          Bone.circle(size: 70),
+                          SizedBox(height: 12),
+                          Bone.text(words: 2),
+                          SizedBox(height: 8),
+                          Bone.text(words: 2),
+                          SizedBox(height: 10),
+                          Bone.text(words: 1),
+                        ],
+                      ),
+                    ),
+                  ),
+                  childCount: 4,
+                ),
+              ),
+            ),
           ),
         ];
       case FavouriteDoctorsFailure():
@@ -198,13 +236,18 @@ class _FavouriteDoctorsScreenState extends State<FavouriteDoctorsScreen> {
               crossAxisSpacing: 16,
               childAspectRatio: 0.70,
             ),
-            delegate: SliverChildBuilderDelegate((context, index) {
-              final doctor = favouriteDoctors[index];
-              return FavouriteDoctorCard(
-                doctor: doctor,
-                onTap: () => _openDoctorDetails(context, doctor),
-              );
-            }, childCount: favouriteDoctors.length),
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                final doctor = favouriteDoctors[index];
+                return FavouriteDoctorCard(
+                  doctor: doctor,
+                  onTap: () => _openDoctorDetails(context, doctor),
+                );
+              },
+              childCount: favouriteDoctors.length > 4
+                  ? 4
+                  : favouriteDoctors.length,
+            ),
           ),
         ),
       if (featuredDoctors.isNotEmpty)

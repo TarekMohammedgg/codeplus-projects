@@ -17,13 +17,13 @@ class FavouriteDoctorsCubit extends Cubit<FavouriteDoctorsState> {
 
     emit(const FavouriteDoctorsLoading());
     try {
-      final favouriteFuture = initialFavouriteDoctors != null
+      final doctorsFuture = initialFavouriteDoctors != null
           ? Future.value(initialFavouriteDoctors)
-          : repository.fetchFavouriteDoctors();
+          : repository.fetchDoctors();
       final featuredFuture = initialFeaturedDoctors != null
           ? Future.value(initialFeaturedDoctors)
           : repository.fetchFeaturedDoctors();
-      final doctors = await Future.wait([favouriteFuture, featuredFuture]);
+      final doctors = await Future.wait([doctorsFuture, featuredFuture]);
 
       emit(
         FavouriteDoctorsSuccess(

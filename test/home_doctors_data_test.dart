@@ -43,6 +43,18 @@ void main() {
     expect(doctor.experienceYears, 5);
   });
 
+  test('DoctorModel displays the current locale name after data is loaded', () {
+    LocaleSettings.setLocaleSync(AppLocale.ar);
+    final doctor = DoctorModel.fromFirestore('bilingual_doctor', {
+      'fullName': {'ar': 'د. أحمد', 'en': 'Dr. Ahmed'},
+      'specialtyKey': 'dentist',
+    });
+
+    LocaleSettings.setLocaleSync(AppLocale.en);
+
+    expect(doctor.name, 'Dr. Ahmed');
+  });
+
   test(
     'DoctorModel.fromFirestore throws FormatException on missing required field',
     () {
