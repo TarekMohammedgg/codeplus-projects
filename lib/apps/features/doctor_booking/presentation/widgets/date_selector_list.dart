@@ -1,7 +1,8 @@
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
-import 'package:doctor_hunt/apps/features/doctor_select_time/data/models/time_slot_model.dart';
+import 'package:doctor_hunt/apps/features/doctor_booking/data/models/time_slot_model.dart';
 import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:flutter/material.dart';
+import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
 class DateSelectorList extends StatelessWidget {
   const DateSelectorList({
@@ -79,8 +80,8 @@ class DateSelectorList extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       option.hasSlots
-                          ? '${option.slotsCount} slots available'
-                          : 'No slots available',
+                          ? context.tr.slotsAvailable(count: option.slotsCount)
+                          : context.tr.noSlotsAvailable,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(

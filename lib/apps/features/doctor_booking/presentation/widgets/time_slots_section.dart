@@ -1,6 +1,6 @@
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
-import 'package:doctor_hunt/apps/features/doctor_select_time/data/models/time_slot_model.dart';
+import 'package:doctor_hunt/apps/features/doctor_booking/data/models/time_slot_model.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';

@@ -22,7 +22,7 @@ class NoSlotsAvailableSection extends StatelessWidget {
       children: [
         8.verticalSpace,
         Text(
-          tr.noSlotsAvailable,
+          context.tr.noSlotsAvailable,
           style: const TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w400,
@@ -46,7 +46,7 @@ class NoSlotsAvailableSection extends StatelessWidget {
               ),
             ),
             child: Text(
-              tr.nextAvailabilityOn(date: nextAvailableDateLabel),
+              context.tr.nextAvailabilityOn(date: nextAvailableDateLabel),
               style: const TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w700,
@@ -58,8 +58,8 @@ class NoSlotsAvailableSection extends StatelessWidget {
           ),
         ),
         16.verticalSpace,
-        const Text(
-          'OR',
+        Text(
+          context.tr.or,
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
@@ -82,9 +82,9 @@ class NoSlotsAvailableSection extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            child: const Text(
-              'Contact Clinic',
-              style: TextStyle(
+            child: Text(
+              context.tr.contactClinic,
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
                 color: Color(0xFF0EBE7F),

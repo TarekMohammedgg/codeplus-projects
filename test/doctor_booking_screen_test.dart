@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
-import 'package:doctor_hunt/apps/features/doctor_select_time/presentation/screens/doctor_select_time_screen.dart';
-import 'package:doctor_hunt/apps/features/doctor_select_time/presentation/widgets/date_selector_list.dart';
-import 'package:doctor_hunt/apps/features/doctor_select_time/presentation/widgets/no_slots_available_section.dart';
-import 'package:doctor_hunt/apps/features/doctor_select_time/presentation/widgets/thank_you_dialog.dart';
-import 'package:doctor_hunt/apps/features/doctor_select_time/presentation/widgets/time_slots_section.dart';
+import 'package:doctor_hunt/apps/features/doctor_booking/presentation/screens/doctor_booking_screen.dart';
+import 'package:doctor_hunt/apps/features/doctor_booking/presentation/widgets/date_selector_list.dart';
+import 'package:doctor_hunt/apps/features/doctor_booking/presentation/widgets/no_slots_available_section.dart';
+import 'package:doctor_hunt/apps/features/doctor_booking/presentation/widgets/thank_you_dialog.dart';
+import 'package:doctor_hunt/apps/features/doctor_booking/presentation/widgets/time_slots_section.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'test_app.dart';
 
@@ -20,7 +20,7 @@ void main() {
   );
 
   testWidgets(
-    'SelectTimeScreen starts on Today (no slots) and shows NoSlotsAvailableSection',
+    'DoctorBookingScreen starts on Today (no slots) and shows NoSlotsAvailableSection',
     (WidgetTester tester) async {
       final tr = AppLocale.en.buildSync();
       tester.view.physicalSize = const Size(1080, 2400);
@@ -31,7 +31,7 @@ void main() {
       });
 
       await tester.pumpWidget(
-        buildTestApp(SelectTimeScreen(doctor: testDoctor)),
+        buildTestApp(DoctorBookingScreen(doctor: testDoctor)),
       );
 
       expect(find.text(tr.selectTime), findsOneWidget);
@@ -39,18 +39,18 @@ void main() {
       expect(find.text('Cardiologist'), findsOneWidget);
       expect(find.text('\$35.00/hour'), findsOneWidget);
       expect(find.byType(DateSelectorList), findsOneWidget);
-      expect(find.text('Today, 23 Feb'), findsWidgets);
+      expect(find.text(tr.dateOptionToday), findsWidgets);
       expect(find.byType(NoSlotsAvailableSection), findsOneWidget);
       expect(find.text(tr.noSlotsAvailable), findsWidgets);
       expect(
-        find.text(tr.nextAvailabilityOn(date: 'Wed, 24 Feb')),
+        find.text(tr.nextAvailabilityOn(date: tr.dateOptionTomorrow)),
         findsOneWidget,
       );
     },
   );
 
   testWidgets(
-    'SelectTimeScreen selecting Tomorrow shows slots and tapping confirm displays ThankYouDialog',
+    'DoctorBookingScreen selecting Tomorrow shows slots and tapping confirm displays ThankYouDialog',
     (WidgetTester tester) async {
       final tr = AppLocale.en.buildSync();
       tester.view.physicalSize = const Size(1080, 2400);
@@ -61,11 +61,11 @@ void main() {
       });
 
       await tester.pumpWidget(
-        buildTestApp(SelectTimeScreen(doctor: testDoctor)),
+        buildTestApp(DoctorBookingScreen(doctor: testDoctor)),
       );
 
-      // Tap on Tomorrow, 24 Feb
-      await tester.tap(find.text('Tomorrow, 24 Feb'));
+      // Tap on tomorrow.
+      await tester.tap(find.text(tr.dateOptionTomorrow));
       await tester.pumpAndSettle();
 
       // TimeSlotsSection should be visible with 7 afternoon and 2 evening slots
@@ -102,7 +102,7 @@ void main() {
   );
 
   testWidgets(
-    'SelectTimeScreen selecting a different slot updates ThankYouDialog details',
+    'DoctorBookingScreen selecting a different slot updates ThankYouDialog details',
     (WidgetTester tester) async {
       final tr = AppLocale.en.buildSync();
       tester.view.physicalSize = const Size(1080, 2400);
@@ -113,11 +113,11 @@ void main() {
       });
 
       await tester.pumpWidget(
-        buildTestApp(SelectTimeScreen(doctor: testDoctor)),
+        buildTestApp(DoctorBookingScreen(doctor: testDoctor)),
       );
 
-      // Select Tomorrow, 24 Feb
-      await tester.tap(find.text('Tomorrow, 24 Feb'));
+      // Select tomorrow.
+      await tester.tap(find.text(tr.dateOptionTomorrow));
       await tester.pumpAndSettle();
 
       // Select 2:00 PM slot
@@ -134,7 +134,7 @@ void main() {
         find.text(
           tr.appointmentBookedWith(
             name: testDoctor.name,
-            date: 'Tomorrow, 24 Feb',
+            date: tr.dateOptionTomorrow,
             time: '2:00 PM',
           ),
         ),
@@ -184,7 +184,7 @@ void main() {
     expect(editPressed, isTrue);
   });
 
-  testWidgets('SelectTimeScreen shows only the three requested dates', (
+  testWidgets('DoctorBookingScreen shows only the three requested dates', (
     WidgetTester tester,
   ) async {
     tester.view.physicalSize = const Size(1080, 2400);
@@ -194,13 +194,16 @@ void main() {
       tester.view.resetDevicePixelRatio();
     });
 
-    await tester.pumpWidget(buildTestApp(SelectTimeScreen(doctor: testDoctor)));
+    await tester.pumpWidget(
+      buildTestApp(DoctorBookingScreen(doctor: testDoctor)),
+    );
 
-    expect(find.text('Today, 23 Feb'), findsWidgets);
-    expect(find.text('Tomorrow, 24 Feb'), findsOneWidget);
-    expect(find.text('Thursday, 25 Feb'), findsOneWidget);
-    expect(find.text('9 slots available'), findsOneWidget);
-    expect(find.text('10 slots available'), findsOneWidget);
-    expect(find.text('Fri, 26 Feb'), findsNothing);
+    final tr = AppLocale.en.buildSync();
+    expect(find.text(tr.dateOptionToday), findsWidgets);
+    expect(find.text(tr.dateOptionTomorrow), findsOneWidget);
+    expect(find.text(tr.dateOptionThu), findsOneWidget);
+    expect(find.text(tr.slotsAvailable(count: 9)), findsOneWidget);
+    expect(find.text(tr.slotsAvailable(count: 10)), findsOneWidget);
+    expect(find.text(tr.dateOptionFri), findsNothing);
   });
 }

@@ -6,35 +6,37 @@ import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_icon_button.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
-import 'package:doctor_hunt/apps/features/doctor_select_time/data/models/time_slot_model.dart';
-import 'package:doctor_hunt/apps/features/doctor_select_time/data/select_time_data.dart';
-import 'package:doctor_hunt/apps/features/doctor_select_time/presentation/widgets/date_selector_list.dart';
+import 'package:doctor_hunt/apps/features/doctor_booking/data/models/time_slot_model.dart';
+import 'package:doctor_hunt/apps/features/doctor_booking/data/doctor_booking_data.dart';
+import 'package:doctor_hunt/apps/features/doctor_booking/presentation/widgets/date_selector_list.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_profile_card.dart';
-import 'package:doctor_hunt/apps/features/doctor_select_time/presentation/widgets/no_slots_available_section.dart';
-import 'package:doctor_hunt/apps/features/doctor_select_time/presentation/widgets/thank_you_dialog.dart';
-import 'package:doctor_hunt/apps/features/doctor_select_time/presentation/widgets/time_slots_section.dart';
+import 'package:doctor_hunt/apps/features/doctor_booking/presentation/widgets/no_slots_available_section.dart';
+import 'package:doctor_hunt/apps/features/doctor_booking/presentation/widgets/thank_you_dialog.dart';
+import 'package:doctor_hunt/apps/features/doctor_booking/presentation/widgets/time_slots_section.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
-class SelectTimeScreen extends StatefulWidget {
-  const SelectTimeScreen({super.key, required this.doctor});
+class DoctorBookingScreen extends StatefulWidget {
+  const DoctorBookingScreen({super.key, required this.doctor});
 
   final DoctorModel doctor;
 
   @override
-  State<SelectTimeScreen> createState() => _SelectTimeScreenState();
+  State<DoctorBookingScreen> createState() => _DoctorBookingScreenState();
 }
 
-class _SelectTimeScreenState extends State<SelectTimeScreen> {
+class _DoctorBookingScreenState extends State<DoctorBookingScreen> {
   late List<DateOptionItem> _dateOptions;
-  late String _selectedOptionId;
+  String _selectedOptionId = 'date_1';
   String? _selectedSlotId;
 
   @override
-  void initState() {
-    super.initState();
-    _dateOptions = availableDateOptions();
-    _selectedOptionId = _dateOptions.first.id;
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _dateOptions = availableDateOptions(context.tr);
+    if (!_dateOptions.any((option) => option.id == _selectedOptionId)) {
+      _selectedOptionId = _dateOptions.first.id;
+    }
   }
 
   void _onDateOptionSelected(DateOptionItem option) {
@@ -63,13 +65,6 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
           (option) => option.hasSlots,
           orElse: () => dateOptions[safeIndex],
         );
-  }
-
-  String _formatNextAvailabilityDate(DateOptionItem nextOption) {
-    if (nextOption.dayLabel.contains('Tomorrow')) {
-      return 'Wed, 24 Feb';
-    }
-    return nextOption.dayLabel;
   }
 
   TimeSlotItem? _resolveSelectedSlot(List<TimeSlotItem> allSlots) {
@@ -111,7 +106,7 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
             }
           },
         ),
-        title: Text(tr.selectTime, style: context.bold18TextMain),
+        title: Text(context.tr.selectTime, style: context.bold18TextMain),
       ),
       body: Column(
         children: [
@@ -139,9 +134,10 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
                   16.verticalSpace,
                   if (!selectedDateOption.hasSlots)
                     NoSlotsAvailableSection(
-                      nextAvailableDateLabel: _formatNextAvailabilityDate(
-                        _findNextAvailableDate(_dateOptions, _selectedOptionId),
-                      ),
+                      nextAvailableDateLabel: _findNextAvailableDate(
+                        _dateOptions,
+                        _selectedOptionId,
+                      ).dayLabel,
                       onNextAvailabilityTap: () {
                         final nextOption = _findNextAvailableDate(
                           _dateOptions,
@@ -150,12 +146,12 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
                         _onDateOptionSelected(nextOption);
                       },
                       onContactClinicTap: () =>
-                          context.showInfoSnackBar(tr.contactingClinic),
+                          context.showInfoSnackBar(context.tr.contactingClinic),
                     )
                   else ...[
                     TimeSlotsSection(
                       title:
-                          '${tr.afternoonSlots} ${tr.slotsCount(count: selectedDateOption.afternoonSlots.length)}',
+                          '${context.tr.afternoonSlots} ${context.tr.slotsCount(count: selectedDateOption.afternoonSlots.length)}',
                       slots: selectedDateOption.afternoonSlots,
                       selectedSlotId: selectedSlot?.id,
                       onSelectSlot: _onSlotSelected,
@@ -163,7 +159,7 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
                     20.verticalSpace,
                     TimeSlotsSection(
                       title:
-                          '${tr.eveningSlots} ${tr.slotsCount(count: selectedDateOption.eveningSlots.length)}',
+                          '${context.tr.eveningSlots} ${context.tr.slotsCount(count: selectedDateOption.eveningSlots.length)}',
                       slots: selectedDateOption.eveningSlots,
                       selectedSlotId: selectedSlot?.id,
                       onSelectSlot: _onSlotSelected,
@@ -189,7 +185,7 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
                             selectedDateOption.dayLabel,
                             selectedSlot.time,
                           ),
-                    child: Text(tr.confirm, style: context.bold16White),
+                    child: Text(context.tr.confirm, style: context.bold16White),
                   ),
                 ),
               ),

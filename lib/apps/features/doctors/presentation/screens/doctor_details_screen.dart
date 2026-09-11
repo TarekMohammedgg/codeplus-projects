@@ -21,7 +21,7 @@ class DoctorDetailsScreen extends StatelessWidget {
     const FindDoctorsRoute().push(context);
   }
 
-  void openSelectTime(BuildContext context) {
+  void openDoctorBooking(BuildContext context) {
     SelectTimeRoute(doctor).push(context);
   }
 
@@ -43,7 +43,7 @@ class DoctorDetailsScreen extends StatelessWidget {
                   20.verticalSpace,
                   DoctorProfileCard(
                     doctor: doctor,
-                    onBookNow: () => openSelectTime(context),
+                    onBookNow: () => openDoctorBooking(context),
                   ),
                   24.verticalSpace,
                   DoctorStatsRow(

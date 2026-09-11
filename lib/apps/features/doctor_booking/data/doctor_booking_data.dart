@@ -1,12 +1,13 @@
-import 'package:doctor_hunt/apps/features/doctor_select_time/data/models/time_slot_model.dart';
+import 'package:doctor_hunt/apps/features/doctor_booking/data/models/time_slot_model.dart';
+import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
-List<DateOptionItem> availableDateOptions() {
+List<DateOptionItem> availableDateOptions(Translations translations) {
   return [
     // Today, 23 Feb - 0 slots
     DateOptionItem(
       id: 'date_1',
       date: DateTime(2021, 2, 23),
-      dayLabel: 'Today, 23 Feb',
+      dayLabel: translations.dateOptionToday,
       afternoonSlots: [],
       eveningSlots: [],
     ),
@@ -14,7 +15,7 @@ List<DateOptionItem> availableDateOptions() {
     DateOptionItem(
       id: 'date_2',
       date: DateTime(2021, 2, 24),
-      dayLabel: 'Tomorrow, 24 Feb',
+      dayLabel: translations.dateOptionTomorrow,
       afternoonSlots: [
         TimeSlotItem(id: 'd2_slot_1', time: '1:00 PM'),
         TimeSlotItem(id: 'd2_slot_2', time: '1:30 PM'),
@@ -33,7 +34,7 @@ List<DateOptionItem> availableDateOptions() {
     DateOptionItem(
       id: 'date_3',
       date: DateTime(2021, 2, 25),
-      dayLabel: 'Thursday, 25 Feb',
+      dayLabel: translations.dateOptionThu,
       afternoonSlots: [
         TimeSlotItem(id: 'd3_slot_1', time: '1:00 PM'),
         TimeSlotItem(id: 'd3_slot_2', time: '1:30 PM'),

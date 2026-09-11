@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:doctor_hunt/apps/core/constants/app_route_paths.dart';
 import 'package:doctor_hunt/apps/features/admin/presentation/screens/admin_login_screen.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/screens/login_screen.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/screens/otp_verification_screen.dart';
@@ -10,7 +11,6 @@ import 'package:doctor_hunt/apps/features/role_selection/presentation/screens/ro
 import 'package:doctor_hunt/apps/features/admin/presentation/screens/admin_doctors_screen.dart';
 import 'package:doctor_hunt/apps/features/admin/presentation/screens/admin_settings_screen.dart';
 import 'package:doctor_hunt/apps/features/admin/presentation/screens/create_doctor_screen.dart';
-import 'package:doctor_hunt/apps/features/admin/presentation/widgets/admin_access_guard.dart';
 import 'package:doctor_hunt/apps/features/admin/data/models/admin_doctor_model.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 
@@ -19,14 +19,14 @@ import 'package:doctor_hunt/apps/features/doctors/presentation/screens/find_doct
 import 'package:doctor_hunt/apps/features/favourite_doctors/presentation/screens/favourite_doctors_screen.dart';
 import 'package:doctor_hunt/apps/features/home/presentation/screens/home_screen.dart';
 import 'package:doctor_hunt/apps/features/onboarding/presentation/screens/onboarding_screen.dart';
-import 'package:doctor_hunt/apps/features/doctor_select_time/presentation/screens/doctor_select_time_screen.dart';
+import 'package:doctor_hunt/apps/features/doctor_booking/presentation/screens/doctor_booking_screen.dart';
 import 'package:doctor_hunt/apps/features/profile/data/models/user_profile_model.dart';
 import 'package:doctor_hunt/apps/features/profile/presentation/screens/profile_screen.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
 part 'routes.g.dart';
 
-@TypedGoRoute<OnboardingRoute>(path: '/')
+@TypedGoRoute<OnboardingRoute>(path: AppRoutePaths.onboarding)
 class OnboardingRoute extends GoRouteData with $OnboardingRoute {
   const OnboardingRoute();
 
@@ -36,7 +36,7 @@ class OnboardingRoute extends GoRouteData with $OnboardingRoute {
   }
 }
 
-@TypedGoRoute<LoginRoute>(path: '/login')
+@TypedGoRoute<LoginRoute>(path: AppRoutePaths.login)
 class LoginRoute extends GoRouteData with $LoginRoute {
   const LoginRoute();
 
@@ -46,7 +46,7 @@ class LoginRoute extends GoRouteData with $LoginRoute {
   }
 }
 
-@TypedGoRoute<SignupRoute>(path: '/signup')
+@TypedGoRoute<SignupRoute>(path: AppRoutePaths.signup)
 class SignupRoute extends GoRouteData with $SignupRoute {
   const SignupRoute();
 
@@ -56,7 +56,7 @@ class SignupRoute extends GoRouteData with $SignupRoute {
   }
 }
 
-@TypedGoRoute<OtpVerificationRoute>(path: '/otp-verification')
+@TypedGoRoute<OtpVerificationRoute>(path: AppRoutePaths.otpVerification)
 class OtpVerificationRoute extends GoRouteData with $OtpVerificationRoute {
   const OtpVerificationRoute([this.$extra]);
 
@@ -68,7 +68,7 @@ class OtpVerificationRoute extends GoRouteData with $OtpVerificationRoute {
   }
 }
 
-@TypedGoRoute<ResetPasswordRoute>(path: '/reset-password')
+@TypedGoRoute<ResetPasswordRoute>(path: AppRoutePaths.resetPassword)
 class ResetPasswordRoute extends GoRouteData with $ResetPasswordRoute {
   const ResetPasswordRoute();
 
@@ -78,7 +78,7 @@ class ResetPasswordRoute extends GoRouteData with $ResetPasswordRoute {
   }
 }
 
-@TypedGoRoute<RoleSelectionRoute>(path: '/role-selection')
+@TypedGoRoute<RoleSelectionRoute>(path: AppRoutePaths.roleSelection)
 class RoleSelectionRoute extends GoRouteData with $RoleSelectionRoute {
   const RoleSelectionRoute();
 
@@ -88,7 +88,7 @@ class RoleSelectionRoute extends GoRouteData with $RoleSelectionRoute {
   }
 }
 
-@TypedGoRoute<AdminLoginRoute>(path: '/admin-login')
+@TypedGoRoute<AdminLoginRoute>(path: AppRoutePaths.adminLogin)
 class AdminLoginRoute extends GoRouteData with $AdminLoginRoute {
   const AdminLoginRoute();
 
@@ -98,20 +98,17 @@ class AdminLoginRoute extends GoRouteData with $AdminLoginRoute {
   }
 }
 
-@TypedGoRoute<AdminDoctorsRoute>(path: '/admin/doctors')
+@TypedGoRoute<AdminDoctorsRoute>(path: AppRoutePaths.adminDoctors)
 class AdminDoctorsRoute extends GoRouteData with $AdminDoctorsRoute {
   const AdminDoctorsRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const AdminAccessGuard(
-      permission: 'manageDoctors',
-      child: AdminDoctorsScreen(),
-    );
+    return const AdminDoctorsScreen();
   }
 }
 
-@TypedGoRoute<CreateDoctorRoute>(path: '/admin/doctors/create')
+@TypedGoRoute<CreateDoctorRoute>(path: AppRoutePaths.createDoctor)
 class CreateDoctorRoute extends GoRouteData with $CreateDoctorRoute {
   const CreateDoctorRoute([this.$extra]);
 
@@ -119,24 +116,21 @@ class CreateDoctorRoute extends GoRouteData with $CreateDoctorRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return AdminAccessGuard(
-      permission: 'manageDoctors',
-      child: CreateDoctorScreen(doctor: $extra),
-    );
+    return CreateDoctorScreen(doctor: $extra);
   }
 }
 
-@TypedGoRoute<AdminSettingsRoute>(path: '/admin/settings')
+@TypedGoRoute<AdminSettingsRoute>(path: AppRoutePaths.adminSettings)
 class AdminSettingsRoute extends GoRouteData with $AdminSettingsRoute {
   const AdminSettingsRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const AdminAccessGuard(child: AdminSettingsScreen());
+    return const AdminSettingsScreen();
   }
 }
 
-@TypedGoRoute<HomeRoute>(path: '/home')
+@TypedGoRoute<HomeRoute>(path: AppRoutePaths.home)
 class HomeRoute extends GoRouteData with $HomeRoute {
   const HomeRoute();
 
@@ -146,7 +140,7 @@ class HomeRoute extends GoRouteData with $HomeRoute {
   }
 }
 
-@TypedGoRoute<FindDoctorsRoute>(path: '/find-doctors')
+@TypedGoRoute<FindDoctorsRoute>(path: AppRoutePaths.findDoctors)
 class FindDoctorsRoute extends GoRouteData with $FindDoctorsRoute {
   const FindDoctorsRoute();
 
@@ -156,7 +150,7 @@ class FindDoctorsRoute extends GoRouteData with $FindDoctorsRoute {
   }
 }
 
-@TypedGoRoute<DoctorDetailsRoute>(path: '/doctor-details')
+@TypedGoRoute<DoctorDetailsRoute>(path: AppRoutePaths.doctorDetails)
 class DoctorDetailsRoute extends GoRouteData with $DoctorDetailsRoute {
   const DoctorDetailsRoute([this.$extra]);
 
@@ -168,7 +162,7 @@ class DoctorDetailsRoute extends GoRouteData with $DoctorDetailsRoute {
   }
 }
 
-@TypedGoRoute<FavouriteDoctorsRoute>(path: '/favourite-doctors')
+@TypedGoRoute<FavouriteDoctorsRoute>(path: AppRoutePaths.favouriteDoctors)
 class FavouriteDoctorsRoute extends GoRouteData with $FavouriteDoctorsRoute {
   const FavouriteDoctorsRoute();
 
@@ -178,7 +172,7 @@ class FavouriteDoctorsRoute extends GoRouteData with $FavouriteDoctorsRoute {
   }
 }
 
-@TypedGoRoute<SelectTimeRoute>(path: '/select-time')
+@TypedGoRoute<SelectTimeRoute>(path: AppRoutePaths.selectTime)
 class SelectTimeRoute extends GoRouteData with $SelectTimeRoute {
   const SelectTimeRoute([this.$extra]);
 
@@ -186,11 +180,11 @@ class SelectTimeRoute extends GoRouteData with $SelectTimeRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return SelectTimeScreen(doctor: $extra ?? DoctorModel.placeholder());
+    return DoctorBookingScreen(doctor: $extra ?? DoctorModel.placeholder());
   }
 }
 
-@TypedGoRoute<ProfileRoute>(path: '/profile')
+@TypedGoRoute<ProfileRoute>(path: AppRoutePaths.profile)
 class ProfileRoute extends GoRouteData with $ProfileRoute {
   const ProfileRoute([this.$extra]);
 
