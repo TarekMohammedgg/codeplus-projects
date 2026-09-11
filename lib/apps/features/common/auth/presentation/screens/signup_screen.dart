@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
@@ -9,15 +8,21 @@ import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/utils/validators.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_text_field.dart';
+import 'package:doctor_hunt/apps/features/common/auth/data/repositories/auth_repository.dart';
 import 'package:doctor_hunt/apps/features/common/auth/data/service/auth_service.dart';
+import 'package:doctor_hunt/apps/features/common/auth/presentation/cubit/auth_cubit.dart';
+import 'package:doctor_hunt/apps/features/common/auth/presentation/cubit/auth_state.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/widgets/auth_buttons.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/widgets/auth_header.dart';
 import 'package:doctor_hunt/generated/app_image.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SignupScreen extends StatefulWidget {
-  const SignupScreen({super.key});
+  const SignupScreen({super.key, this.repository});
+
+  final AuthRepository? repository;
 
   @override
   State<SignupScreen> createState() => _SignupScreenState();
@@ -28,21 +33,30 @@ class _SignupScreenState extends State<SignupScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _authService = AuthService();
+  late final AuthCubit _authCubit;
 
   bool _termsAccepted = false;
-  bool _isLoading = false;
-  bool _isGoogleLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _authCubit = AuthCubit(
+      repository:
+          widget.repository ??
+          FirebaseAuthRepository(authService: AuthService()),
+    );
+  }
 
   @override
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _authCubit.close();
     super.dispose();
   }
 
-  Future<void> _createAccount() async {
+  void _createAccount() {
     if (!_formKey.currentState!.validate()) return;
     if (!_termsAccepted) {
       context.showWarningSnackBar(
@@ -52,117 +66,121 @@ class _SignupScreenState extends State<SignupScreen> {
     }
     FocusScope.of(context).unfocus();
 
-    setState(() => _isLoading = true);
-    try {
-      await _authService.signUpWithEmailAndPassword(
-        email: _emailController.text.trim(),
-        password: _passwordController.text,
-        name: _nameController.text.trim(),
-      );
-      if (!mounted) return;
-      context.showSuccessSnackBar('تم إنشاء الحساب بنجاح!');
-      const HomeRoute().go(context);
-    } catch (e) {
-      if (!mounted) return;
-      context.showErrorSnackBar(AppException.from(e).message);
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
+    _authCubit.signUp(
+      email: _emailController.text.trim(),
+      password: _passwordController.text,
+      name: _nameController.text.trim(),
+    );
   }
 
-  Future<void> _signInWithGoogle() async {
+  void _signInWithGoogle() {
     FocusScope.of(context).unfocus();
-    setState(() => _isGoogleLoading = true);
-    try {
-      final credential = await _authService.signInWithGoogle();
-      if (!mounted) return;
-      if (credential != null) const HomeRoute().go(context);
-    } catch (e) {
-      if (!mounted) return;
-      context.showErrorSnackBar(AppException.from(e).message);
-    } finally {
-      if (mounted) setState(() => _isGoogleLoading = false);
-    }
+    _authCubit.signInWithGoogle();
   }
 
   @override
   Widget build(BuildContext context) {
-    final isAnyLoading = _isLoading || _isGoogleLoading;
+    return BlocProvider.value(
+      value: _authCubit,
+      child: BlocConsumer<AuthCubit, AuthState>(
+        listener: (context, state) {
+          switch (state) {
+            case AuthFailure(:final errorMessage):
+              context.showErrorSnackBar(errorMessage);
+            case AuthSuccess(action: AuthAction.signUp):
+              context.showSuccessSnackBar('تم إنشاء الحساب بنجاح!');
+              const HomeRoute().go(context);
+            case AuthSuccess(action: AuthAction.googleSignIn):
+              const HomeRoute().go(context);
+            default:
+              break;
+          }
+        },
+        builder: (context, state) {
+          final isAnyLoading = state is AuthLoading;
+          final isEmailLoading =
+              state is AuthLoading && state.action == AuthAction.signUp;
+          final isGoogleLoading =
+              state is AuthLoading && state.action == AuthAction.googleSignIn;
 
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: SingleChildScrollView(
-        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-        padding: const EdgeInsets.fromLTRB(24, 48, 24, 32),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              28.verticalSpace,
-              AuthHeader(
-                title: tr.createYourAccount,
-                subtitle: tr.signupSubtitle,
+          return Scaffold(
+            backgroundColor: AppColors.background,
+            body: SingleChildScrollView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              padding: const EdgeInsets.fromLTRB(24, 48, 24, 32),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    28.verticalSpace,
+                    AuthHeader(
+                      title: tr.createYourAccount,
+                      subtitle: tr.signupSubtitle,
+                    ),
+                    32.verticalSpace,
+                    SocialAuthButton(
+                      label: tr.google,
+                      image: Assets.assetsDesignGoogleLogo,
+                      isLoading: isGoogleLoading,
+                      onPressed: isAnyLoading ? null : _signInWithGoogle,
+                    ),
+                    32.verticalSpace,
+                    AppTextField(
+                      controller: _nameController,
+                      hintText: tr.fullNameHint,
+                      prefixIcon: Icons.person_outline_rounded,
+                      keyboardType: TextInputType.name,
+                      textInputAction: TextInputAction.next,
+                      autofillHints: const [AutofillHints.name],
+                      validator: (value) => AppValidators.validateName(value),
+                    ),
+                    18.verticalSpace,
+                    AppTextField(
+                      controller: _emailController,
+                      hintText: tr.emailAddress,
+                      prefixIcon: Icons.mail_outline_rounded,
+                      keyboardType: TextInputType.emailAddress,
+                      textInputAction: TextInputAction.next,
+                      autofillHints: const [AutofillHints.email],
+                      validator: (value) => AppValidators.validateEmail(value),
+                    ),
+                    18.verticalSpace,
+                    AppTextField(
+                      controller: _passwordController,
+                      hintText: tr.passwordHint,
+                      prefixIcon: Icons.lock_outline_rounded,
+                      isPassword: true,
+                      textInputAction: TextInputAction.done,
+                      autofillHints: const [AutofillHints.newPassword],
+                      validator: (value) =>
+                          AppValidators.validatePassword(value),
+                    ),
+                    8.verticalSpace,
+                    const _PasswordHintRow(),
+                    20.verticalSpace,
+                    _TermsCheckbox(
+                      value: _termsAccepted,
+                      disabled: isAnyLoading,
+                      onChanged: (value) =>
+                          setState(() => _termsAccepted = value ?? false),
+                    ),
+                    24.verticalSpace,
+                    AppPrimaryButton(
+                      label: tr.createAccount,
+                      isLoading: isEmailLoading,
+                      onPressed: isAnyLoading ? null : _createAccount,
+                      height: 54,
+                      fontSize: 16,
+                    ),
+                    28.verticalSpace,
+                    _LoginFooter(disabled: isAnyLoading),
+                  ],
+                ),
               ),
-              32.verticalSpace,
-              SocialAuthButton(
-                label: tr.google,
-                image: Assets.assetsDesignGoogleLogo,
-                isLoading: _isGoogleLoading,
-                onPressed: isAnyLoading ? null : _signInWithGoogle,
-              ),
-              32.verticalSpace,
-              AppTextField(
-                controller: _nameController,
-                hintText: tr.fullNameHint,
-                prefixIcon: Icons.person_outline_rounded,
-                keyboardType: TextInputType.name,
-                textInputAction: TextInputAction.next,
-                autofillHints: const [AutofillHints.name],
-                validator: (value) => AppValidators.validateName(value),
-              ),
-              18.verticalSpace,
-              AppTextField(
-                controller: _emailController,
-                hintText: tr.emailAddress,
-                prefixIcon: Icons.mail_outline_rounded,
-                keyboardType: TextInputType.emailAddress,
-                textInputAction: TextInputAction.next,
-                autofillHints: const [AutofillHints.email],
-                validator: (value) => AppValidators.validateEmail(value),
-              ),
-              18.verticalSpace,
-              AppTextField(
-                controller: _passwordController,
-                hintText: tr.passwordHint,
-                prefixIcon: Icons.lock_outline_rounded,
-                isPassword: true,
-                textInputAction: TextInputAction.done,
-                autofillHints: const [AutofillHints.newPassword],
-                validator: (value) => AppValidators.validatePassword(value),
-              ),
-              8.verticalSpace,
-              const _PasswordHintRow(),
-              20.verticalSpace,
-              _TermsCheckbox(
-                value: _termsAccepted,
-                disabled: isAnyLoading,
-                onChanged: (value) =>
-                    setState(() => _termsAccepted = value ?? false),
-              ),
-              24.verticalSpace,
-              AppPrimaryButton(
-                label: tr.createAccount,
-                isLoading: _isLoading,
-                onPressed: isAnyLoading ? null : _createAccount,
-                height: 54,
-                fontSize: 16,
-              ),
-              28.verticalSpace,
-              _LoginFooter(disabled: isAnyLoading),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }

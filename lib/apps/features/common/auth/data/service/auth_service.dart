@@ -120,14 +120,16 @@ class AuthService {
     };
 
     if (snapshot.exists) {
-      await reference.set(profile, SetOptions(merge: true));
+      await reference.set({
+        ...profile,
+        'permissions': FieldValue.delete(),
+      }, SetOptions(merge: true));
       return;
     }
 
     await reference.set({
       ...profile,
       'role': 'patient',
-      'permissions': <String, dynamic>{},
       'createdAt': FieldValue.serverTimestamp(),
     });
   }
@@ -140,21 +142,6 @@ class AuthService {
         .doc(user.uid)
         .get();
     return snapshot.data()?['role'] == 'admin';
-  }
-
-  Future<bool> hasAdminPermission(String permission) async {
-    final user = currentUser;
-    if (user == null) return false;
-
-    final snapshot = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid)
-        .get();
-    final data = snapshot.data();
-    if (data?['role'] != 'admin') return false;
-
-    final permissions = data?['permissions'];
-    return permissions is Map && permissions[permission] == true;
   }
 
   Future<void> forgetpassword({required String email}) async {

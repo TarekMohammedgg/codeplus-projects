@@ -15,62 +15,46 @@ service cloud.firestore {
         && currentUser().role == 'admin';
     }
 
-    function canManageDoctors() {
-      return isAdmin() && currentUser().permissions.manageDoctors == true;
-    }
-
-    function canManageSpecialties() {
-      return isAdmin() && currentUser().permissions.manageSpecialties == true;
-    }
-
-    function canManageUsers() {
-      return isAdmin() && currentUser().permissions.manageUsers == true;
-    }
-
     match /doctors/{doctorId} {
       allow read: if true;
-      allow create, update, delete: if canManageDoctors();
+      allow create, update, delete: if isAdmin();
     }
 
     match /specialty/{specialtyId} {
       allow read: if true;
-      allow create, update, delete: if canManageSpecialties();
+      allow create, update, delete: if isAdmin();
     }
 
     match /users/{userId} {
-      allow read: if canManageUsers() || (signedIn() && request.auth.uid == userId);
+      allow read: if isAdmin() || (signedIn() && request.auth.uid == userId);
 
       allow create: if signedIn()
         && request.auth.uid == userId
         && request.resource.data.role == 'patient'
-        && request.resource.data.permissions == {}
         && request.resource.data.keys().hasOnly([
           'displayName',
           'email',
           'role',
-          'permissions',
           'createdAt',
           'updatedAt'
         ]);
 
-      allow update: if canManageUsers()
+      allow update: if isAdmin()
         || (
           signedIn()
           && request.auth.uid == userId
           && resource.data.role == 'patient'
           && request.resource.data.role == 'patient'
-          && request.resource.data.permissions == resource.data.permissions
           && request.resource.data.keys().hasOnly([
             'displayName',
             'email',
             'role',
-            'permissions',
             'createdAt',
             'updatedAt'
           ])
         );
 
-      allow delete: if canManageUsers();
+      allow delete: if isAdmin();
     }
   }
 }
