@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
@@ -10,6 +11,9 @@ import 'package:doctor_hunt/apps/core/widgets/doctor_avatar_placeholder.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_image.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/core/services/doctor_service.dart';
+import 'package:doctor_hunt/apps/features/doctors/data/repositories/doctor_repository.dart';
+import 'package:doctor_hunt/apps/features/doctors/presentation/cubit/find_doctors_cubit.dart';
+import 'package:doctor_hunt/apps/features/doctors/presentation/cubit/find_doctors_state.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
 import 'package:doctor_hunt/generated/style_atoms.dart';
@@ -18,10 +22,12 @@ class FindDoctorsScreen extends StatefulWidget {
   const FindDoctorsScreen({
     super.key,
     this.doctorService,
+    this.repository,
     this.initialDoctors,
   });
 
   final DoctorService? doctorService;
+  final DoctorRepository? repository;
   final List<DoctorModel>? initialDoctors;
 
   @override
@@ -29,16 +35,24 @@ class FindDoctorsScreen extends StatefulWidget {
 }
 
 class _FindDoctorsScreenState extends State<FindDoctorsScreen> {
-  late final DoctorService _doctorService;
-  late Future<List<DoctorModel>> _doctorsFuture;
+  late final FindDoctorsCubit _findDoctorsCubit;
 
   @override
   void initState() {
     super.initState();
-    _doctorService = widget.doctorService ?? DoctorService();
-    _doctorsFuture = widget.initialDoctors != null
-        ? Future.value(widget.initialDoctors!)
-        : _doctorService.fetchDoctors();
+    _findDoctorsCubit = FindDoctorsCubit(
+      repository:
+          widget.repository ??
+          FirebaseDoctorRepository(
+            doctorService: widget.doctorService ?? DoctorService(),
+          ),
+    )..load(initialDoctors: widget.initialDoctors);
+  }
+
+  @override
+  void dispose() {
+    _findDoctorsCubit.close();
+    super.dispose();
   }
 
   void onBookDoctor(BuildContext context, DoctorModel doctor) {
@@ -51,65 +65,59 @@ class _FindDoctorsScreenState extends State<FindDoctorsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Column(
-        children: [
-          48.verticalSpace,
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: FindDoctorsTopBar(onBackPressed: () => context.pop()),
-          ),
-          18.verticalSpace,
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: const AppSearchBar(),
-          ),
-          16.verticalSpace,
-          Expanded(
-            child: FutureBuilder<List<DoctorModel>>(
-              future: _doctorsFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(color: AppColors.primary),
-                  );
-                }
-
-                final doctorsList = snapshot.data ?? [];
-                if (doctorsList.isEmpty) {
-                  return Center(
-                    child: Text(
-                      tr.noDoctorsFound,
-                      style: context.semiBold16TextMain,
-                    ),
-                  );
-                }
-
-                return ListView.separated(
-                  padding: const EdgeInsets.only(
-                    left: 24,
-                    right: 24,
-                    top: 6,
-                    bottom: 32,
-                  ),
-                  itemCount: doctorsList.length,
-                  separatorBuilder: (context, index) => 14.verticalSpace,
-                  itemBuilder: (context, index) {
-                    final doctor = doctorsList[index];
-                    return FindDoctorCard(
-                      doctor: doctor,
-                      onBookNow: () => onBookDoctor(context, doctor),
-                      onTap: () => onDoctorTap(context, doctor),
-                    );
-                  },
-                );
-              },
+    return BlocProvider.value(
+      value: _findDoctorsCubit,
+      child: BlocBuilder<FindDoctorsCubit, FindDoctorsState>(
+        builder: (context, state) {
+          return Scaffold(
+            backgroundColor: Colors.white,
+            body: Column(
+              children: [
+                48.verticalSpace,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: FindDoctorsTopBar(onBackPressed: () => context.pop()),
+                ),
+                18.verticalSpace,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: const AppSearchBar(),
+                ),
+                16.verticalSpace,
+                Expanded(child: _buildDoctorsContent(context, state)),
+              ],
             ),
-          ),
-        ],
+          );
+        },
       ),
     );
+  }
+
+  Widget _buildDoctorsContent(BuildContext context, FindDoctorsState state) {
+    return switch (state) {
+      FindDoctorsInitial() || FindDoctorsLoading() => const Center(
+        child: CircularProgressIndicator(color: AppColors.primary),
+      ),
+      FindDoctorsFailure() => Center(
+        child: Text(tr.serviceError, style: context.semiBold16TextMain),
+      ),
+      FindDoctorsSuccess(:final doctors) when doctors.isEmpty => Center(
+        child: Text(tr.noDoctorsFound, style: context.semiBold16TextMain),
+      ),
+      FindDoctorsSuccess(:final doctors) => ListView.separated(
+        padding: const EdgeInsets.only(left: 24, right: 24, top: 6, bottom: 32),
+        itemCount: doctors.length,
+        separatorBuilder: (_, _) => 14.verticalSpace,
+        itemBuilder: (context, index) {
+          final doctor = doctors[index];
+          return FindDoctorCard(
+            doctor: doctor,
+            onBookNow: () => onBookDoctor(context, doctor),
+            onTap: () => onDoctorTap(context, doctor),
+          );
+        },
+      ),
+    };
   }
 }
 
