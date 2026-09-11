@@ -23,8 +23,6 @@ class DoctorService {
     }
   }
 
-  Future<List<DoctorModel>> fetchHomeDoctors() => fetchDoctors();
-
   Future<List<DoctorModel>> fetchDoctors() async {
     final collection = _doctors;
     if (collection == null) return const [];

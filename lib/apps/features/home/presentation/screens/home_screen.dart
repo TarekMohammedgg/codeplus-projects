@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:doctor_hunt/apps/features/home/data/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
+import 'package:doctor_hunt/apps/core/services/doctor_service.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_header_section.dart';
 import 'package:doctor_hunt/apps/features/common/auth/data/service/auth_service.dart';
-import 'package:doctor_hunt/apps/core/services/doctor_service.dart';
 import 'package:doctor_hunt/apps/features/specialty/data/models/specialty_model.dart';
 import 'package:doctor_hunt/apps/features/specialty/data/service/specialty_service.dart';
+import 'package:doctor_hunt/apps/features/home/data/repositories/home_repository.dart';
+import 'package:doctor_hunt/apps/features/home/presentation/cubit/home_cubit.dart';
+import 'package:doctor_hunt/apps/features/home/presentation/cubit/home_state.dart';
 import 'package:doctor_hunt/apps/features/home/presentation/widgets/doctor_category_section.dart';
 import 'package:doctor_hunt/apps/features/home/presentation/widgets/home_bottom_navigation_bar.dart';
 import 'package:doctor_hunt/apps/features/home/presentation/widgets/popular_doctor_section.dart';
@@ -14,7 +18,9 @@ import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({super.key, this.repository});
+
+  final HomeRepository? repository;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -23,35 +29,37 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final searchController = TextEditingController();
   final _authService = AuthService();
-  final _doctorService = DoctorService();
-  final _specialtyService = SpecialtyService();
-  late Future<List<DoctorModel>> _doctorsFuture;
-  late Future<List<SpecialtyModel>> _specialtiesFuture;
-  int selectedNavIndex = 0;
+  late final HomeCubit _homeCubit;
+  int _selectedNavIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    _doctorsFuture = _doctorService.fetchDoctors();
-    _specialtiesFuture = _specialtyService.fetchActiveSpecialties();
+    _homeCubit = HomeCubit(
+      repository:
+          widget.repository ??
+          FirebaseHomeRepository(
+            doctorService: DoctorService(),
+            specialtyService: SpecialtyService(),
+          ),
+    )..load();
   }
 
   @override
   void dispose() {
     searchController.dispose();
+    _homeCubit.close();
     super.dispose();
   }
 
-  void _onNavTap(int index) {
-    setState(() => selectedNavIndex = index);
+  void _onNavTap(BuildContext context, int index) {
+    setState(() => _selectedNavIndex = index);
     if (index == 1) {
-      try {
-        const FavouriteDoctorsRoute().push<int>(context).then((selected) {
-          if (mounted) {
-            setState(() => selectedNavIndex = selected ?? 0);
-          }
-        });
-      } catch (_) {}
+      const FavouriteDoctorsRoute().push<int>(context).then((selected) {
+        if (mounted) {
+          setState(() => _selectedNavIndex = selected ?? 0);
+        }
+      });
     }
   }
 
@@ -59,88 +67,51 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final user = _authService.currentUser;
 
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: (selectedNavIndex == 2 || selectedNavIndex == 3)
-          ? const ComingSoonView()
-          : SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AppHeaderSection(
-                    greeting: _authService.getUserGreeting(context),
-                    title: tr.findYourDoctor,
-                    searchController: searchController,
-                    showLanguageToggle: true,
-                    showProfile: true,
-                    profileImage: user?.photoURL,
-                    onProfileTap: () => const ProfileRoute().push(context),
-                  ),
-                  FutureBuilder<List<DoctorModel>>(
-                    future: _doctorsFuture,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const DoctorsLoading();
-                      }
-
-                      if (snapshot.hasError) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 32,
+    return BlocProvider.value(
+      value: _homeCubit,
+      child: BlocBuilder<HomeCubit, HomeState>(
+        builder: (context, state) {
+          return Scaffold(
+            backgroundColor: AppColors.background,
+            body: (_selectedNavIndex == 2 || _selectedNavIndex == 3)
+                ? const ComingSoonView()
+                : SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        AppHeaderSection(
+                          greeting: _authService.getUserGreeting(context),
+                          title: tr.findYourDoctor,
+                          searchController: searchController,
+                          showLanguageToggle: true,
+                          showProfile: true,
+                          profileImage: user?.photoURL,
+                          onProfileTap: () =>
+                              const ProfileRoute().push(context),
+                        ),
+                        switch (state) {
+                          HomeInitial() ||
+                          HomeLoading() => const DoctorsLoading(),
+                          HomeFailure() => HomeLoadError(
+                            onRetry: () => context.read<HomeCubit>().load(),
                           ),
-                          child: Center(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  tr.serviceError,
-                                  textAlign: TextAlign.center,
-                                  style: context.semiBold16TextMain,
-                                ),
-                                const SizedBox(height: 12),
-                                IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      _doctorsFuture = DoctorService()
-                                          .fetchDoctors();
-                                      _specialtiesFuture = SpecialtyService()
-                                          .fetchActiveSpecialties();
-                                    });
-                                  },
-                                  icon: const Icon(
-                                    Icons.refresh_rounded,
-                                    size: 28,
-                                    color: AppColors.primary,
-                                  ),
-                                ),
-                              ],
+                          HomeSuccess(:final doctors) when doctors.isEmpty =>
+                            const DoctorsIsEmpty(),
+                          HomeSuccess(:final doctors, :final specialties) =>
+                            DoctorsData(
+                              doctors: doctors,
+                              specialties: specialties,
                             ),
-                          ),
-                        );
-                      }
-
-                      final doctors = snapshot.data ?? [];
-                      if (doctors.isEmpty) {
-                        return DoctorsIsEmpty();
-                      }
-                      return FutureBuilder<List<SpecialtyModel>>(
-                        future: _specialtiesFuture,
-                        builder: (context, specialtiesSnapshot) {
-                          return DoctorsData(
-                            doctors: doctors,
-                            specialties: specialtiesSnapshot.data ?? const [],
-                          );
                         },
-                      );
-                    },
+                      ],
+                    ),
                   ),
-                ],
-              ),
+            bottomNavigationBar: HomeBottomNavigationBar(
+              currentIndex: _selectedNavIndex,
+              onTap: (index) => _onNavTap(context, index),
             ),
-      bottomNavigationBar: HomeBottomNavigationBar(
-        currentIndex: selectedNavIndex,
-        onTap: _onNavTap,
+          );
+        },
       ),
     );
   }
@@ -209,6 +180,40 @@ class DoctorsIsEmpty extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
       child: Center(
         child: Text(tr.noDoctorsFound, style: context.regular14TextSecondary),
+      ),
+    );
+  }
+}
+
+class HomeLoadError extends StatelessWidget {
+  const HomeLoadError({super.key, required this.onRetry});
+
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              tr.serviceError,
+              textAlign: TextAlign.center,
+              style: context.semiBold16TextMain,
+            ),
+            const SizedBox(height: 12),
+            IconButton(
+              onPressed: onRetry,
+              icon: const Icon(
+                Icons.refresh_rounded,
+                size: 28,
+                color: AppColors.primary,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
