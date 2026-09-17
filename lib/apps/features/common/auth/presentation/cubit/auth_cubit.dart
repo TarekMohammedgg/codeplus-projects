@@ -8,41 +8,46 @@ class AuthCubit extends Cubit<AuthState> {
 
   final AuthRepository repository;
 
-  Future<void> signIn({required String email, required String password}) {
-    return _run(
-      AuthAction.signIn,
-      () => repository.signInWithEmailAndPassword(
+  Future<void> signIn({required String email, required String password}) async {
+    emit(const AuthLoading(action: AuthAction.signIn));
+    try {
+      await repository.signInWithEmailAndPassword(
         email: email,
         password: password,
-      ),
-    );
+      );
+      emit(const AuthSuccess(action: AuthAction.signIn));
+    } catch (error, stackTrace) {
+      _emitFailure(error, stackTrace);
+    }
   }
 
   Future<void> signUp({
     required String email,
     required String password,
     required String name,
-  }) {
-    return _run(
-      AuthAction.signUp,
-      () => repository.signUpWithEmailAndPassword(
+  }) async {
+    emit(const AuthLoading(action: AuthAction.signUp));
+    try {
+      await repository.signUpWithEmailAndPassword(
         email: email,
         password: password,
         name: name,
-      ),
-    );
+      );
+      emit(const AuthSuccess(action: AuthAction.signUp));
+    } catch (error, stackTrace) {
+      _emitFailure(error, stackTrace);
+    }
   }
 
   Future<void> signInWithGoogle() async {
-    const action = AuthAction.googleSignIn;
-    emit(const AuthLoading(action: action));
+    emit(const AuthLoading(action: AuthAction.googleSignIn));
     try {
       final credential = await repository.signInWithGoogle();
       if (credential == null) {
         emit(const AuthInitial());
         return;
       }
-      emit(const AuthSuccess(action: action));
+      emit(const AuthSuccess(action: AuthAction.googleSignIn));
     } catch (error, stackTrace) {
       _emitFailure(error, stackTrace);
     }
@@ -52,8 +57,7 @@ class AuthCubit extends Cubit<AuthState> {
     required String email,
     required String password,
   }) async {
-    const action = AuthAction.adminSignIn;
-    emit(const AuthLoading(action: action));
+    emit(const AuthLoading(action: AuthAction.adminSignIn));
     try {
       await repository.signInWithEmailAndPassword(
         email: email,
@@ -66,28 +70,27 @@ class AuthCubit extends Cubit<AuthState> {
         );
         return;
       }
-      emit(const AuthSuccess(action: action));
+      emit(const AuthSuccess(action: AuthAction.adminSignIn));
     } catch (error, stackTrace) {
       _emitFailure(error, stackTrace);
     }
   }
 
-  Future<void> resetPassword({required String email}) {
-    return _run(
-      AuthAction.resetPassword,
-      () => repository.resetPassword(email: email),
-    );
-  }
-
-  Future<void> signOut() {
-    return _run(AuthAction.signOut, repository.signOut);
-  }
-
-  Future<void> _run(AuthAction action, Future<void> Function() request) async {
-    emit(AuthLoading(action: action));
+  Future<void> resetPassword({required String email}) async {
+    emit(const AuthLoading(action: AuthAction.resetPassword));
     try {
-      await request();
-      emit(AuthSuccess(action: action));
+      await repository.resetPassword(email: email);
+      emit(const AuthSuccess(action: AuthAction.resetPassword));
+    } catch (error, stackTrace) {
+      _emitFailure(error, stackTrace);
+    }
+  }
+
+  Future<void> signOut() async {
+    emit(const AuthLoading(action: AuthAction.signOut));
+    try {
+      await repository.signOut();
+      emit(const AuthSuccess(action: AuthAction.signOut));
     } catch (error, stackTrace) {
       _emitFailure(error, stackTrace);
     }
