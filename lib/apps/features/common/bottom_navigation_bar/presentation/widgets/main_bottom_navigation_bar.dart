@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 
-class HomeBottomNavigationBar extends StatelessWidget {
-  const HomeBottomNavigationBar({
+class MainBottomNavigationBar extends StatelessWidget {
+  const MainBottomNavigationBar({
     super.key,
     required this.currentIndex,
     required this.onTap,

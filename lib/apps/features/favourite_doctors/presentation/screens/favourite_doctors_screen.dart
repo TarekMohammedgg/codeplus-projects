@@ -10,7 +10,7 @@ import 'package:doctor_hunt/apps/core/widgets/app_icon_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_search_bar.dart';
 import 'package:doctor_hunt/apps/features/favourite_doctors/presentation/widgets/favourite_doctor_card.dart';
 import 'package:doctor_hunt/apps/features/home/presentation/widgets/featured_doctor_section.dart';
-import 'package:doctor_hunt/apps/features/home/presentation/widgets/home_bottom_navigation_bar.dart';
+import 'package:doctor_hunt/apps/features/common/bottom_navigation_bar/presentation/widgets/main_bottom_navigation_bar.dart';
 import 'package:doctor_hunt/apps/core/services/doctor_service.dart';
 import 'package:doctor_hunt/apps/features/doctors/data/repositories/doctor_repository.dart';
 import 'package:doctor_hunt/apps/features/favourite_doctors/presentation/cubit/favourite_doctors_cubit.dart';
@@ -130,7 +130,7 @@ class _FavouriteDoctorsScreenState extends State<FavouriteDoctorsScreen> {
                 ..._buildContentSlivers(context, state),
               ],
             ),
-            bottomNavigationBar: HomeBottomNavigationBar(
+            bottomNavigationBar: MainBottomNavigationBar(
               currentIndex: 1,
               onTap: (index) => _onNavTap(context, index),
             ),

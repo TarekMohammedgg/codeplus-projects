@@ -14,7 +14,7 @@ import 'package:doctor_hunt/apps/features/home/presentation/cubit/home_cubit.dar
 import 'package:doctor_hunt/apps/features/home/presentation/cubit/home_state.dart';
 import 'package:doctor_hunt/apps/features/home/presentation/widgets/doctor_category_section.dart';
 import 'package:doctor_hunt/apps/features/home/presentation/widgets/featured_doctor_section.dart';
-import 'package:doctor_hunt/apps/features/home/presentation/widgets/home_bottom_navigation_bar.dart';
+import 'package:doctor_hunt/apps/features/common/bottom_navigation_bar/presentation/widgets/main_bottom_navigation_bar.dart';
 import 'package:doctor_hunt/apps/features/home/presentation/widgets/live_doctor_section.dart';
 import 'package:doctor_hunt/apps/features/home/presentation/widgets/popular_doctor_section.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
@@ -115,7 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                   ),
-            bottomNavigationBar: HomeBottomNavigationBar(
+            bottomNavigationBar: MainBottomNavigationBar(
               currentIndex: _selectedNavIndex,
               onTap: (index) => _onNavTap(context, index),
             ),

@@ -10,7 +10,7 @@ import 'package:doctor_hunt/apps/core/widgets/doctor_image.dart';
 import 'package:doctor_hunt/apps/features/home/data/doctors_categories.dart';
 import 'package:doctor_hunt/apps/features/home/presentation/widgets/doctor_category_section.dart';
 import 'package:doctor_hunt/apps/features/home/presentation/widgets/featured_doctor_section.dart';
-import 'package:doctor_hunt/apps/features/home/presentation/widgets/home_bottom_navigation_bar.dart';
+import 'package:doctor_hunt/apps/features/common/bottom_navigation_bar/presentation/widgets/main_bottom_navigation_bar.dart';
 import 'package:doctor_hunt/apps/features/home/presentation/widgets/live_doctor_section.dart';
 import 'package:doctor_hunt/apps/features/home/presentation/widgets/popular_doctor_section.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
@@ -52,7 +52,7 @@ void main() {
 
     expect(find.text('Dr. Cric'), findsOneWidget);
 
-    expect(find.byType(HomeBottomNavigationBar), findsOneWidget);
+    expect(find.byType(MainBottomNavigationBar), findsOneWidget);
     expect(find.byIcon(Icons.home_rounded), findsOneWidget);
     expect(find.byIcon(Icons.language_rounded), findsOneWidget);
     expect(find.byIcon(Icons.menu_book_rounded), findsOneWidget);
@@ -132,7 +132,7 @@ void main() {
         StatefulBuilder(
           builder: (context, setState) {
             return Scaffold(
-              bottomNavigationBar: HomeBottomNavigationBar(
+              bottomNavigationBar: MainBottomNavigationBar(
                 currentIndex: currentIndex,
                 onTap: (index) {
                   setState(() => currentIndex = index);
@@ -337,15 +337,12 @@ Widget testHomeScreen({
   VoidCallback? onSeeAllDoctors,
 }) {
   final doctors = testHomeDoctors();
-  final liveDoctors =
-      doctors.where((d) => d.isLive).toList()
-        ..sort((a, b) => a.liveOrder.compareTo(b.liveOrder));
-  final popularDoctors =
-      doctors.where((d) => d.isPopular).toList()
-        ..sort((a, b) => a.popularOrder.compareTo(b.popularOrder));
-  final featuredDoctors =
-      doctors.where((d) => d.isFeatured).toList()
-        ..sort((a, b) => a.featuredOrder.compareTo(b.featuredOrder));
+  final liveDoctors = doctors.where((d) => d.isLive).toList()
+    ..sort((a, b) => a.liveOrder.compareTo(b.liveOrder));
+  final popularDoctors = doctors.where((d) => d.isPopular).toList()
+    ..sort((a, b) => a.popularOrder.compareTo(b.popularOrder));
+  final featuredDoctors = doctors.where((d) => d.isFeatured).toList()
+    ..sort((a, b) => a.featuredOrder.compareTo(b.featuredOrder));
 
   final searchController = TextEditingController();
 
@@ -400,7 +397,7 @@ Widget testHomeScreen({
             ],
           ),
         ),
-        bottomNavigationBar: HomeBottomNavigationBar(
+        bottomNavigationBar: MainBottomNavigationBar(
           currentIndex: 0,
           onTap: (_) {},
         ),
