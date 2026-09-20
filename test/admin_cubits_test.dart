@@ -2,14 +2,14 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:doctor_hunt/apps/features/admin/data/models/admin_doctor_model.dart';
-import 'package:doctor_hunt/apps/features/admin/data/repositories/admin_doctors_repository.dart';
-import 'package:doctor_hunt/apps/features/admin/data/repositories/create_doctor_repository.dart';
-import 'package:doctor_hunt/apps/features/admin/presentation/cubit/admin_doctors_cubit.dart';
-import 'package:doctor_hunt/apps/features/admin/presentation/cubit/admin_doctors_state.dart';
-import 'package:doctor_hunt/apps/features/admin/presentation/cubit/create_doctor_cubit.dart';
-import 'package:doctor_hunt/apps/features/admin/presentation/cubit/create_doctor_state.dart';
-import 'package:doctor_hunt/apps/features/specialty/data/models/specialty_model.dart';
+import 'package:doctor_hunt/apps/features/admin/doctors/data/models/admin_doctor_model.dart';
+import 'package:doctor_hunt/apps/features/admin/doctors/data/repositories/admin_doctors_repository.dart';
+import 'package:doctor_hunt/apps/features/admin/doctors/presentation/controller/cubit/admin_doctors_cubit.dart';
+import 'package:doctor_hunt/apps/features/admin/doctors/presentation/controller/cubit/admin_doctors_state.dart';
+import 'package:doctor_hunt/apps/features/common/specialty/data/models/specialty_model.dart';
+import 'package:doctor_hunt/apps/features/admin/create_doctor/data/repositories/create_doctor_repository.dart';
+import 'package:doctor_hunt/apps/features/admin/create_doctor/presentation/cubit/create_doctor_cubit.dart';
+import 'package:doctor_hunt/apps/features/admin/create_doctor/presentation/cubit/create_doctor_state.dart';
 
 void main() {
   test('AdminDoctorsCubit emits doctors from the Firestore stream', () async {

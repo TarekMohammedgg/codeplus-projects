@@ -70,5 +70,34 @@ void main() {
       expect(find.byIcon(Icons.send_rounded), findsOneWidget);
       expect(find.text('Send'), findsOneWidget);
     });
+
+    testWidgets('applies custom width, height, and padding properly', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        buildTestApp(
+          Scaffold(
+            body: AppPrimaryButton(
+              label: 'Custom Size',
+              width: 150,
+              height: 40,
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              onPressed: () {},
+            ),
+          ),
+        ),
+      );
+
+      final sizedBox = tester.widget<SizedBox>(
+        find
+            .ancestor(
+              of: find.byType(ElevatedButton),
+              matching: find.byType(SizedBox),
+            )
+            .first,
+      );
+      expect(sizedBox.width, 150);
+      expect(sizedBox.height, 40);
+    });
   });
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
+import 'apps/core/di/injection.dart';
 import 'apps/core/router/app_router.dart';
 import 'apps/core/theme/app_theme.dart';
 import 'generated/i18n/translations.g.dart';
@@ -20,6 +21,7 @@ void main() async {
   }
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await AuthService.initialize();
+  await setupServiceLocator();
 
   LocaleSettings.useDeviceLocale();
   runApp(TranslationProvider(child: const DoctorHuntApp()));

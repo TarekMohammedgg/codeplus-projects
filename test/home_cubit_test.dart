@@ -1,10 +1,10 @@
-import 'package:flutter_test/flutter_test.dart';
+﻿import 'package:flutter_test/flutter_test.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
-import 'package:doctor_hunt/apps/features/home/data/models/home_data.dart';
-import 'package:doctor_hunt/apps/features/home/data/repositories/home_repository.dart';
-import 'package:doctor_hunt/apps/features/home/presentation/cubit/home_cubit.dart';
-import 'package:doctor_hunt/apps/features/home/presentation/cubit/home_state.dart';
-import 'package:doctor_hunt/apps/features/specialty/data/models/specialty_model.dart';
+import 'package:doctor_hunt/apps/features/patient/home/data/models/home_data.dart';
+import 'package:doctor_hunt/apps/features/patient/home/data/repositories/home_repository.dart';
+import 'package:doctor_hunt/apps/features/patient/home/presentation/cubit/home_cubit.dart';
+import 'package:doctor_hunt/apps/features/patient/home/presentation/cubit/home_state.dart';
+import 'package:doctor_hunt/apps/features/common/specialty/data/models/specialty_model.dart';
 
 void main() {
   test('load emits loading then success with repository data', () async {

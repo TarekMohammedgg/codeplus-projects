@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:doctor_hunt/apps/core/di/injection.dart';
 import 'package:doctor_hunt/apps/core/extensions/context_extensions.dart';
 import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
@@ -36,11 +37,15 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
   @override
   void initState() {
     super.initState();
-    _authCubit = AuthCubit(
-      repository:
-          widget.repository ??
-          FirebaseAuthRepository(authService: AuthService()),
-    );
+    _authCubit = widget.repository != null
+        ? AuthCubit(repository: widget.repository!)
+        : (getIt.isRegistered<AuthCubit>()
+              ? getIt<AuthCubit>()
+              : AuthCubit(
+                  repository: getIt.isRegistered<AuthRepository>()
+                      ? getIt<AuthRepository>()
+                      : FirebaseAuthRepository(authService: AuthService()),
+                ));
   }
 
   @override

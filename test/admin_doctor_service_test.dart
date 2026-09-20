@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:doctor_hunt/apps/features/admin/data/models/admin_doctor_model.dart';
+import 'package:doctor_hunt/apps/features/admin/doctors/data/models/admin_doctor_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

@@ -1,11 +1,11 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
-import 'package:doctor_hunt/apps/features/doctor_booking/presentation/screens/doctor_booking_screen.dart';
-import 'package:doctor_hunt/apps/features/doctor_booking/presentation/widgets/date_selector_list.dart';
-import 'package:doctor_hunt/apps/features/doctor_booking/presentation/widgets/no_slots_available_section.dart';
-import 'package:doctor_hunt/apps/features/doctor_booking/presentation/widgets/thank_you_dialog.dart';
-import 'package:doctor_hunt/apps/features/doctor_booking/presentation/widgets/time_slots_section.dart';
+import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/screens/doctor_booking_screen.dart';
+import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/widgets/date_selector_list.dart';
+import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/widgets/no_slots_available_section.dart';
+import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/widgets/thank_you_dialog.dart';
+import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/widgets/time_slots_section.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'test_app.dart';
 

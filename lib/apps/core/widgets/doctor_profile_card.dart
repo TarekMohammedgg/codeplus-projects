@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_avatar_placeholder.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_image.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
@@ -106,24 +107,12 @@ class DoctorProfileCard extends StatelessWidget {
           ),
           if (onBookNow != null) ...[
             16.verticalSpace,
-            SizedBox(
-              width: double.infinity,
+            AppPrimaryButton(
+              label: tr.bookNow,
+              onPressed: onBookNow,
               height: 48,
-              child: ElevatedButton(
-                onPressed: onBookNow,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  elevation: 0,
-                ),
-                child: Text(
-                  tr.bookNow,
-                  style: context.semiBold16White.copyWith(fontSize: 15),
-                ),
-              ),
+              fontSize: 15,
+              borderRadius: BorderRadius.circular(12),
             ),
           ],
         ],

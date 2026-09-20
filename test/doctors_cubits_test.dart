@@ -1,10 +1,10 @@
-import 'package:flutter_test/flutter_test.dart';
+﻿import 'package:flutter_test/flutter_test.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
-import 'package:doctor_hunt/apps/features/doctors/data/repositories/doctor_repository.dart';
-import 'package:doctor_hunt/apps/features/doctors/presentation/cubit/find_doctors_cubit.dart';
-import 'package:doctor_hunt/apps/features/doctors/presentation/cubit/find_doctors_state.dart';
-import 'package:doctor_hunt/apps/features/favourite_doctors/presentation/cubit/favourite_doctors_cubit.dart';
-import 'package:doctor_hunt/apps/features/favourite_doctors/presentation/cubit/favourite_doctors_state.dart';
+import 'package:doctor_hunt/apps/features/patient/find_doctors/data/repositories/doctor_repository.dart';
+import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/cubit/find_doctors_cubit.dart';
+import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/cubit/find_doctors_state.dart';
+import 'package:doctor_hunt/apps/features/patient/favourite_doctors/presentation/controller/cubit/favourite_doctors_cubit.dart';
+import 'package:doctor_hunt/apps/features/patient/favourite_doctors/presentation/controller/cubit/favourite_doctors_state.dart';
 
 void main() {
   test('FindDoctorsCubit loads doctors through the repository', () async {
@@ -66,6 +66,7 @@ void main() {
 class _FakeDoctorRepository implements DoctorRepository {
   _FakeDoctorRepository({
     this.doctors = const [],
+    // ignore: unused_element_parameter
     this.favouriteDoctors = const [],
     this.featuredDoctors = const [],
   });

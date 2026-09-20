@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:doctor_hunt/apps/features/profile/data/models/user_profile_model.dart';
-import 'package:doctor_hunt/apps/features/profile/presentation/screens/profile_screen.dart';
-import 'package:doctor_hunt/apps/features/profile/presentation/widgets/profile_header_section.dart';
-import 'package:doctor_hunt/apps/features/profile/presentation/widgets/profile_info_card.dart';
+import 'package:doctor_hunt/apps/features/patient/profile/data/models/user_profile_model.dart';
+import 'package:doctor_hunt/apps/features/patient/profile/presentation/screens/profile_screen.dart';
+import 'package:doctor_hunt/apps/features/patient/profile/presentation/widgets/profile_header_section.dart';
+import 'package:doctor_hunt/apps/features/patient/profile/presentation/widgets/profile_info_card.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'test_app.dart';
 

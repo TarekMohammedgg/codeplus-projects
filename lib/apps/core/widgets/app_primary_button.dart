@@ -8,6 +8,7 @@ import 'package:doctor_hunt/generated/style_atoms.dart';
 class AppPrimaryButton extends StatelessWidget {
   final String label;
   final VoidCallback? onPressed;
+  final double? width;
   final double height;
   final double fontSize;
   final IconData? icon;
@@ -15,11 +16,14 @@ class AppPrimaryButton extends StatelessWidget {
   final Color? backgroundColor;
   final Color? foregroundColor;
   final BorderRadius? borderRadius;
+  final EdgeInsetsGeometry? padding;
+  final TextStyle? textStyle;
 
   const AppPrimaryButton({
     super.key,
     required this.label,
     required this.onPressed,
+    this.width = double.infinity,
     this.height = 54,
     this.fontSize = 16,
     this.icon,
@@ -27,6 +31,8 @@ class AppPrimaryButton extends StatelessWidget {
     this.backgroundColor,
     this.foregroundColor,
     this.borderRadius,
+    this.padding,
+    this.textStyle,
   });
 
   @override
@@ -35,7 +41,7 @@ class AppPrimaryButton extends StatelessWidget {
     final effectiveFg = foregroundColor ?? Colors.white;
 
     return SizedBox(
-      width: double.infinity,
+      width: width,
       height: height,
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
@@ -43,10 +49,12 @@ class AppPrimaryButton extends StatelessWidget {
           backgroundColor: effectiveBg,
           disabledBackgroundColor: effectiveBg.withValues(alpha: 0.6),
           foregroundColor: effectiveFg,
+          padding: padding,
           shape: RoundedRectangleBorder(
             borderRadius: borderRadius ?? BorderRadius.circular(12),
           ),
-          textStyle: context.semiBold16White.copyWith(fontSize: fontSize),
+          textStyle:
+              textStyle ?? context.semiBold16White.copyWith(fontSize: fontSize),
           elevation: 0,
         ),
         child: isLoading

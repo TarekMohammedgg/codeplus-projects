@@ -1,27 +1,26 @@
-import 'package:doctor_hunt/apps/features/onboarding/presentation/screens/onboarding_screen.dart';
+import 'package:doctor_hunt/apps/features/common/onboarding/presentation/screens/onboarding_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:doctor_hunt/apps/core/constants/app_route_paths.dart';
-import 'package:doctor_hunt/apps/features/admin/presentation/screens/admin_login_screen.dart';
+import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
+import 'package:doctor_hunt/apps/features/admin/doctors/data/models/admin_doctor_model.dart';
+import 'package:doctor_hunt/apps/features/admin/doctors/presentation/screens/admin_doctors_screen.dart';
+import 'package:doctor_hunt/apps/features/admin/settings/presentation/screens/admin_settings_screen.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/screens/login_screen.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/screens/otp_verification_screen.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/screens/reset_password_screen.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/screens/signup_screen.dart';
-import 'package:doctor_hunt/apps/features/role_selection/presentation/screens/role_selection_screen.dart';
-import 'package:doctor_hunt/apps/features/admin/presentation/screens/admin_doctors_screen.dart';
-import 'package:doctor_hunt/apps/features/admin/presentation/screens/admin_settings_screen.dart';
-import 'package:doctor_hunt/apps/features/admin/presentation/screens/create_doctor_screen.dart';
-import 'package:doctor_hunt/apps/features/admin/data/models/admin_doctor_model.dart';
-import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
-
-import 'package:doctor_hunt/apps/features/doctors/presentation/screens/doctor_details_screen.dart';
-import 'package:doctor_hunt/apps/features/doctors/presentation/screens/find_doctors_screen.dart';
-import 'package:doctor_hunt/apps/features/favourite_doctors/presentation/screens/favourite_doctors_screen.dart';
-import 'package:doctor_hunt/apps/features/home/presentation/screens/home_screen.dart';
-import 'package:doctor_hunt/apps/features/doctor_booking/presentation/screens/doctor_booking_screen.dart';
-import 'package:doctor_hunt/apps/features/profile/data/models/user_profile_model.dart';
-import 'package:doctor_hunt/apps/features/profile/presentation/screens/profile_screen.dart';
+import 'package:doctor_hunt/apps/features/common/role_selection/data/models/user_role.dart';
+import 'package:doctor_hunt/apps/features/common/role_selection/presentation/screens/role_selection_screen.dart';
+import 'package:doctor_hunt/apps/features/admin/create_doctor/presentation/screens/create_doctor_screen.dart';
+import 'package:doctor_hunt/apps/features/patient/doctor_details/presentation/screens/patient_doctor_details_screen.dart';
+import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/screens/find_doctors_screen.dart';
+import 'package:doctor_hunt/apps/features/patient/favourite_doctors/presentation/screens/favourite_doctors_screen.dart';
+import 'package:doctor_hunt/apps/features/patient/home/presentation/screens/patient_home_screen.dart';
+import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/screens/doctor_booking_screen.dart';
+import 'package:doctor_hunt/apps/features/patient/profile/data/models/user_profile_model.dart';
+import 'package:doctor_hunt/apps/features/patient/profile/presentation/screens/profile_screen.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
 part 'routes.g.dart';
@@ -38,11 +37,13 @@ class OnboardingRoute extends GoRouteData with $OnboardingRoute {
 
 @TypedGoRoute<LoginRoute>(path: AppRoutePaths.login)
 class LoginRoute extends GoRouteData with $LoginRoute {
-  const LoginRoute();
+  const LoginRoute([this.$extra]);
+
+  final UserRole? $extra;
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const LoginScreen();
+    return LoginScreen(role: $extra);
   }
 }
 
@@ -85,16 +86,6 @@ class RoleSelectionRoute extends GoRouteData with $RoleSelectionRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return const RoleSelectionScreen();
-  }
-}
-
-@TypedGoRoute<AdminLoginRoute>(path: AppRoutePaths.adminLogin)
-class AdminLoginRoute extends GoRouteData with $AdminLoginRoute {
-  const AdminLoginRoute();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) {
-    return const AdminLoginScreen();
   }
 }
 

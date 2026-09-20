@@ -13,7 +13,6 @@ List<RouteBase> get $appRoutes => [
   $otpVerificationRoute,
   $resetPasswordRoute,
   $roleSelectionRoute,
-  $adminLoginRoute,
   $adminDoctorsRoute,
   $createDoctorRoute,
   $adminSettingsRoute,
@@ -59,23 +58,28 @@ RouteBase get $loginRoute => GoRouteData.$route(
 );
 
 mixin $LoginRoute on GoRouteData {
-  static LoginRoute _fromState(GoRouterState state) => const LoginRoute();
+  static LoginRoute _fromState(GoRouterState state) =>
+      LoginRoute(state.extra as UserRole?);
+
+  LoginRoute get _self => this as LoginRoute;
 
   @override
   String get location => GoRouteData.$location('/login');
 
   @override
-  void go(BuildContext context) => context.go(location);
+  void go(BuildContext context) => context.go(location, extra: _self.$extra);
 
   @override
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: _self.$extra);
 
   @override
   void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
+      context.pushReplacement(location, extra: _self.$extra);
 
   @override
-  void replace(BuildContext context) => context.replace(location);
+  void replace(BuildContext context) =>
+      context.replace(location, extra: _self.$extra);
 }
 
 RouteBase get $signupRoute => GoRouteData.$route(
@@ -174,33 +178,6 @@ mixin $RoleSelectionRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location('/role-selection');
-
-  @override
-  void go(BuildContext context) => context.go(location);
-
-  @override
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
-
-  @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
-
-  @override
-  void replace(BuildContext context) => context.replace(location);
-}
-
-RouteBase get $adminLoginRoute => GoRouteData.$route(
-  path: '/admin-login',
-  hasOverriddenOnExit: false,
-  factory: $AdminLoginRoute._fromState,
-);
-
-mixin $AdminLoginRoute on GoRouteData {
-  static AdminLoginRoute _fromState(GoRouterState state) =>
-      const AdminLoginRoute();
-
-  @override
-  String get location => GoRouteData.$location('/admin-login');
 
   @override
   void go(BuildContext context) => context.go(location);

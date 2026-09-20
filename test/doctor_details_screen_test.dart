@@ -3,7 +3,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
-import 'package:doctor_hunt/apps/features/doctors/presentation/screens/doctor_details_screen.dart';
+import 'package:doctor_hunt/apps/features/patient/doctor_details/presentation/screens/patient_doctor_details_screen.dart';
+import 'package:doctor_hunt/apps/features/patient/doctor_details/presentation/widgets/doctor_details_widgets.dart';
 import 'test_app.dart';
 
 void main() {

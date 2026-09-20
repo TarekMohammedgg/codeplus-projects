@@ -5,7 +5,6 @@ abstract final class AppRoutePaths {
   static const String otpVerification = '/otp-verification';
   static const String resetPassword = '/reset-password';
   static const String roleSelection = '/role-selection';
-  static const String adminLogin = '/admin-login';
   static const String adminDoctors = '/admin/doctors';
   static const String createDoctor = '/admin/doctors/create';
   static const String adminSettings = '/admin/settings';

@@ -21,7 +21,7 @@ class DoctorModel {
 
   const DoctorModel({
     required this.id,
-    required this.name,
+    required String name,
     required this.specialty,
     this.nameAr,
     this.nameEn,
@@ -57,10 +57,23 @@ class DoctorModel {
     this.clinicNameEn = '',
     this.clinicAddressAr = '',
     this.clinicAddressEn = '',
-  });
+    // ignore: prefer_initializing_formals
+  }) : _name = name;
 
   final String id;
-  final String name;
+  final String _name;
+  String get name {
+    if (LocaleSettings.currentLocale == AppLocale.ar &&
+        (nameAr?.isNotEmpty ?? false)) {
+      return nameAr!;
+    }
+    if (LocaleSettings.currentLocale == AppLocale.en &&
+        (nameEn?.isNotEmpty ?? false)) {
+      return nameEn!;
+    }
+    return _name;
+  }
+
   final String? nameAr;
   final String? nameEn;
   final String specialty;
