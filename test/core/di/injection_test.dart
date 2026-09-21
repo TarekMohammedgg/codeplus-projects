@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:doctor_hunt/apps/core/di/injection.dart';
@@ -21,12 +23,26 @@ import 'package:doctor_hunt/apps/features/patient/home/data/service/home_service
 import 'package:doctor_hunt/apps/features/patient/home/presentation/controller/cubit/home_cubit.dart';
 import 'package:doctor_hunt/apps/core/services/specialty_service.dart';
 
+class _FakeFirebaseAuth extends Fake implements FirebaseAuth {}
+
+class _FakeFirebaseFirestore extends Fake implements FirebaseFirestore {}
+
 void main() {
   setUp(() async {
+    await getIt.reset();
     await setupServiceLocator();
   });
 
+  tearDown(() async {
+    await getIt.reset();
+  });
+
   group('Service Locator (GetIt) Registration', () {
+    test('registers Firebase dependencies as lazy singletons', () {
+      expect(getIt.isRegistered<FirebaseAuth>(), isTrue);
+      expect(getIt.isRegistered<FirebaseFirestore>(), isTrue);
+    });
+
     test('registers all core and feature services as lazy singletons', () {
       expect(getIt.isRegistered<AuthService>(), isTrue);
       expect(getIt.isRegistered<HomeService>(), isTrue);
@@ -53,6 +69,36 @@ void main() {
       expect(getIt.isRegistered<FavouriteDoctorsCubit>(), isTrue);
       expect(getIt.isRegistered<AdminDoctorsCubit>(), isTrue);
       expect(getIt.isRegistered<CreateDoctorCubit>(), isTrue);
+    });
+  });
+
+  group('Firebase Service Constructor Dependency Injection', () {
+    test('AuthService accepts injected FirebaseAuth and FirebaseFirestore', () {
+      final fakeAuth = _FakeFirebaseAuth();
+      final fakeFirestore = _FakeFirebaseFirestore();
+      final service = AuthService(auth: fakeAuth, firestore: fakeFirestore);
+      expect(service, isNotNull);
+    });
+
+    test('AdminDoctorService accepts injected FirebaseFirestore', () {
+      final fakeFirestore = _FakeFirebaseFirestore();
+      final service = AdminDoctorService(firestore: fakeFirestore);
+      expect(service, isNotNull);
+    });
+
+    test('AuthRepository receives injected AuthService', () {
+      final fakeAuth = _FakeFirebaseAuth();
+      final fakeFirestore = _FakeFirebaseFirestore();
+      final service = AuthService(auth: fakeAuth, firestore: fakeFirestore);
+      final repo = FirebaseAuthRepository(authService: service);
+      expect(repo.authService, same(service));
+    });
+
+    test('AdminDoctorsRepository receives injected AdminDoctorService', () {
+      final fakeFirestore = _FakeFirebaseFirestore();
+      final service = AdminDoctorService(firestore: fakeFirestore);
+      final repo = FirebaseAdminDoctorsRepository(doctorService: service);
+      expect(repo.doctorService, same(service));
     });
   });
 }

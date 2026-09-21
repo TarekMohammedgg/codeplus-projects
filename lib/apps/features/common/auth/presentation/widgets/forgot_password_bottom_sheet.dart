@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:doctor_hunt/apps/core/di/injection.dart';
@@ -46,16 +48,28 @@ class ForgotPasswordBottomSheetState extends State<ForgotPasswordBottomSheet> {
     super.initState();
     _authCubit = widget.repository != null
         ? AuthCubit(repository: widget.repository!)
-    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
-    //CR Use `getIt<Cubit>()` directly or inject via constructor.
+        //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
+        //CR Use `getIt<Cubit>()` directly or inject via constructor.
         : (getIt.isRegistered<AuthCubit>()
               ? getIt<AuthCubit>()
               : AuthCubit(
-    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
-    //CR Use `getIt<Cubit>()` directly or inject via constructor.
+                  //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
+                  //CR Use `getIt<Cubit>()` directly or inject via constructor.
                   repository: getIt.isRegistered<AuthRepository>()
                       ? getIt<AuthRepository>()
-                      : FirebaseAuthRepository(authService: AuthService()),
+                      : FirebaseAuthRepository(
+                          authService: getIt.isRegistered<AuthService>()
+                              ? getIt<AuthService>()
+                              : AuthService(
+                                  auth: getIt.isRegistered<FirebaseAuth>()
+                                      ? getIt<FirebaseAuth>()
+                                      : FirebaseAuth.instance,
+                                  firestore:
+                                      getIt.isRegistered<FirebaseFirestore>()
+                                      ? getIt<FirebaseFirestore>()
+                                      : FirebaseFirestore.instance,
+                                ),
+                        ),
                 ));
   }
 

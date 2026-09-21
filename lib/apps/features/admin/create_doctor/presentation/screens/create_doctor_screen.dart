@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -57,17 +58,25 @@ class CreateDoctorScreenState extends State<CreateDoctorScreen> {
     super.initState();
     _createDoctorCubit = widget.repository != null
         ? CreateDoctorCubit(repository: widget.repository!)
-    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
-    //CR Use `getIt<Cubit>()` directly or inject via constructor.
+        //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
+        //CR Use `getIt<Cubit>()` directly or inject via constructor.
         : (getIt.isRegistered<CreateDoctorCubit>()
               ? getIt<CreateDoctorCubit>()
               : CreateDoctorCubit(
-    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
-    //CR Use `getIt<Cubit>()` directly or inject via constructor.
+                  //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
+                  //CR Use `getIt<Cubit>()` directly or inject via constructor.
                   repository: getIt.isRegistered<CreateDoctorRepository>()
                       ? getIt<CreateDoctorRepository>()
                       : FirebaseCreateDoctorRepository(
-                          doctorService: AdminDoctorService(),
+                          doctorService:
+                              getIt.isRegistered<AdminDoctorService>()
+                              ? getIt<AdminDoctorService>()
+                              : AdminDoctorService(
+                                  firestore:
+                                      getIt.isRegistered<FirebaseFirestore>()
+                                      ? getIt<FirebaseFirestore>()
+                                      : FirebaseFirestore.instance,
+                                ),
                           specialtyService: SpecialtyService(),
                           uploadService: CloudinaryUploadService(),
                         ),

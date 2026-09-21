@@ -4,33 +4,26 @@ import 'package:doctor_hunt/apps/features/admin/doctors/data/models/admin_doctor
 class AdminDoctorService {
   //CR Bad DI: Avoid mixing static singletons and swallowing Firebase uninitialized errors with catch (_) => null.
   //CR Inject non-nullable `FirebaseFirestore` via constructor.
-  static final AdminDoctorService instance = AdminDoctorService();
-
-  AdminDoctorService({FirebaseFirestore? firestore})
-  //CR Bad DI: Avoid mixing static singletons and swallowing Firebase uninitialized errors with catch (_) => null.
-  //CR Inject non-nullable `FirebaseFirestore` via constructor.
-    : _firestore = firestore ?? _safeFirestore();
-
-  final FirebaseFirestore? _firestore;
+  // solved
 
   //CR Bad DI: Avoid mixing static singletons and swallowing Firebase uninitialized errors with catch (_) => null.
   //CR Inject non-nullable `FirebaseFirestore` via constructor.
-  static FirebaseFirestore? _safeFirestore() {
-    try {
-      return FirebaseFirestore.instance;
-    } catch (_) {
-      return null;
-    }
-  }
+  // solved
+  AdminDoctorService({
+    required FirebaseFirestore firestore,
+    // ignore: prefer_initializing_formals
+  }) : _firestore = firestore;
 
-  CollectionReference<Map<String, dynamic>>? get _doctors =>
-      _firestore?.collection('doctors');
+  final FirebaseFirestore _firestore;
+
+  //CR Bad DI: Avoid mixing static singletons and swallowing Firebase uninitialized errors with catch (_) => null.
+  //CR Inject non-nullable `FirebaseFirestore` via constructor.
+  // solved
+  CollectionReference<Map<String, dynamic>> get _doctors =>
+      _firestore.collection('doctors');
 
   Stream<List<AdminDoctorModel>> streamDoctors() {
-    final collection = _doctors;
-    if (collection == null) return const Stream.empty();
-
-    return collection.snapshots().asyncMap((snapshot) async {
+    return _doctors.snapshots().asyncMap((snapshot) async {
       final specialtyNames = await _fetchSpecialtyNames();
       final doctors = snapshot.docs
           .map(
@@ -58,8 +51,6 @@ class AdminDoctorService {
     String? imageUrl,
   }) async {
     final collection = _doctors;
-    if (collection == null) throw StateError('Firestore is not initialized');
-
     final id = await _nextDoctorId(collection);
     final reference = collection.doc(id);
     if ((await reference.get()).exists) {
@@ -98,10 +89,7 @@ class AdminDoctorService {
     required String specialtyId,
     String? imageUrl,
   }) async {
-    final collection = _doctors;
-    if (collection == null) throw StateError('Firestore is not initialized');
-
-    await collection.doc(id).update({
+    await _doctors.doc(id).update({
       'fullName': {'ar': fullNameAr.trim(), 'en': fullNameEn.trim()},
       'specialtyId': specialtyId,
       'imageUrl': _cleanUrl(imageUrl),
@@ -110,27 +98,20 @@ class AdminDoctorService {
   }
 
   Future<void> deleteDoctor(String id) async {
-    final collection = _doctors;
-    if (collection == null) throw StateError('Firestore is not initialized');
-    await collection.doc(id).delete();
+    await _doctors.doc(id).delete();
   }
 
   Future<Map<String, (String, String)>> _fetchSpecialtyNames() async {
-    if (_firestore == null) return const {};
-    try {
-      final snapshot = await _firestore.collection('specialty').get();
-      return {
-        for (final doc in snapshot.docs)
-          doc.id: (
-            _localizedText(doc.data()['name'], 'ar') ??
-                (doc.data()['nameAr'] as String? ?? ''),
-            _localizedText(doc.data()['name'], 'en') ??
-                (doc.data()['nameEn'] as String? ?? ''),
-          ),
-      };
-    } catch (_) {
-      return const {};
-    }
+    final snapshot = await _firestore.collection('specialty').get();
+    return {
+      for (final doc in snapshot.docs)
+        doc.id: (
+          _localizedText(doc.data()['name'], 'ar') ??
+              (doc.data()['nameAr'] as String? ?? ''),
+          _localizedText(doc.data()['name'], 'en') ??
+              (doc.data()['nameEn'] as String? ?? ''),
+        ),
+    };
   }
 
   static Future<String> _nextDoctorId(

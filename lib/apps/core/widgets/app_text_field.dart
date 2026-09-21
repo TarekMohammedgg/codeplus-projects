@@ -191,7 +191,9 @@ class AppTextFieldState extends State<AppTextField> {
     );
   }
 }
+
 //CR instead of repeat code in any fields use password
+// solved
 class AppPasswordTextField extends AppTextField {
   const AppPasswordTextField({
     super.key,

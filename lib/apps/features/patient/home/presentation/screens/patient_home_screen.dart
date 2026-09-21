@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:doctor_hunt/apps/core/di/injection.dart';
@@ -41,16 +43,19 @@ class _HomeScreenState extends State<HomeScreen> {
     //CR Use `getIt<Cubit>()` directly or inject via constructor.
     _authService = getIt.isRegistered<AuthService>()
         ? getIt<AuthService>()
-        : AuthService();
+        : AuthService(
+            auth: getIt<FirebaseAuth>(),
+            firestore: getIt<FirebaseFirestore>(),
+          );
     _homeCubit = widget.repository != null
         ? HomeCubit(repository: widget.repository!)
-    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
-    //CR Use `getIt<Cubit>()` directly or inject via constructor.
+        //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
+        //CR Use `getIt<Cubit>()` directly or inject via constructor.
         : (getIt.isRegistered<HomeCubit>()
               ? getIt<HomeCubit>()
               : HomeCubit(
-    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
-    //CR Use `getIt<Cubit>()` directly or inject via constructor.
+                  //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
+                  //CR Use `getIt<Cubit>()` directly or inject via constructor.
                   repository: getIt.isRegistered<HomeRepository>()
                       ? getIt<HomeRepository>()
                       : FirebaseHomeRepository(

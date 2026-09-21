@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:doctor_hunt/apps/core/di/injection.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_text_field.dart';
@@ -53,7 +55,19 @@ class LoginScreenState extends State<LoginScreen> {
               : AuthCubit(
                   repository: getIt.isRegistered<AuthRepository>()
                       ? getIt<AuthRepository>()
-                      : FirebaseAuthRepository(authService: AuthService()),
+                      : FirebaseAuthRepository(
+                          authService: getIt.isRegistered<AuthService>()
+                              ? getIt<AuthService>()
+                              : AuthService(
+                                  auth: getIt.isRegistered<FirebaseAuth>()
+                                      ? getIt<FirebaseAuth>()
+                                      : FirebaseAuth.instance,
+                                  firestore:
+                                      getIt.isRegistered<FirebaseFirestore>()
+                                      ? getIt<FirebaseFirestore>()
+                                      : FirebaseFirestore.instance,
+                                ),
+                        ),
                 ));
   }
 

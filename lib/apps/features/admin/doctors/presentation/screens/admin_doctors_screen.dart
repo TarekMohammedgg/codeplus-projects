@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -43,20 +44,36 @@ class AdminDoctorsScreenState extends State<AdminDoctorsScreen> {
             repository:
                 widget.repository ??
                 FirebaseAdminDoctorsRepository(
-                  doctorService: widget.doctorService ?? AdminDoctorService(),
+                  doctorService:
+                      widget.doctorService ??
+                      (getIt.isRegistered<AdminDoctorService>()
+                          ? getIt<AdminDoctorService>()
+                          : AdminDoctorService(
+                              firestore: getIt.isRegistered<FirebaseFirestore>()
+                                  ? getIt<FirebaseFirestore>()
+                                  : FirebaseFirestore.instance,
+                            )),
                 ),
           )
-    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
-    //CR Use `getIt<Cubit>()` directly or inject via constructor.
+        //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
+        //CR Use `getIt<Cubit>()` directly or inject via constructor.
         : (getIt.isRegistered<AdminDoctorsCubit>()
               ? getIt<AdminDoctorsCubit>()
               : AdminDoctorsCubit(
-    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
-    //CR Use `getIt<Cubit>()` directly or inject via constructor.
+                  //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
+                  //CR Use `getIt<Cubit>()` directly or inject via constructor.
                   repository: getIt.isRegistered<AdminDoctorsRepository>()
                       ? getIt<AdminDoctorsRepository>()
                       : FirebaseAdminDoctorsRepository(
-                          doctorService: AdminDoctorService(),
+                          doctorService:
+                              getIt.isRegistered<AdminDoctorService>()
+                              ? getIt<AdminDoctorService>()
+                              : AdminDoctorService(
+                                  firestore:
+                                      getIt.isRegistered<FirebaseFirestore>()
+                                      ? getIt<FirebaseFirestore>()
+                                      : FirebaseFirestore.instance,
+                                ),
                         ),
                 ));
     _adminDoctorsCubit.load();

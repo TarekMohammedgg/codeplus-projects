@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
 
 import 'package:doctor_hunt/apps/features/admin/doctors/data/repositories/admin_doctors_repository.dart';
@@ -23,26 +25,47 @@ import 'package:doctor_hunt/apps/core/services/specialty_service.dart';
 final getIt = GetIt.instance;
 //CR will tell u in session
 Future<void> setupServiceLocator() async {
+  // Firebase
+  if (!getIt.isRegistered<FirebaseAuth>()) {
+    getIt.registerLazySingleton<FirebaseAuth>(() => FirebaseAuth.instance);
+  }
+  if (!getIt.isRegistered<FirebaseFirestore>()) {
+    getIt.registerLazySingleton<FirebaseFirestore>(
+      () => FirebaseFirestore.instance,
+    );
+  }
+
   // Services
   if (!getIt.isRegistered<AuthService>()) {
-    getIt.registerLazySingleton<AuthService>(() => AuthService());
+    getIt.registerLazySingleton<AuthService>(
+      () => AuthService(
+        auth: getIt<FirebaseAuth>(),
+        firestore: getIt<FirebaseFirestore>(),
+      ),
+    );
   }
   if (!getIt.isRegistered<HomeService>()) {
-    getIt.registerLazySingleton<HomeService>(() => HomeService());
+    getIt.registerLazySingleton<HomeService>(
+      () => HomeService(firestore: getIt<FirebaseFirestore>()),
+    );
   }
   if (!getIt.isRegistered<FindDoctorsService>()) {
-    getIt.registerLazySingleton<FindDoctorsService>(() => FindDoctorsService());
+    getIt.registerLazySingleton<FindDoctorsService>(
+      () => FindDoctorsService(firestore: getIt<FirebaseFirestore>()),
+    );
   }
   if (!getIt.isRegistered<FavouriteDoctorsService>()) {
     getIt.registerLazySingleton<FavouriteDoctorsService>(
-      () => FavouriteDoctorsService(),
+      () => FavouriteDoctorsService(firestore: getIt<FirebaseFirestore>()),
     );
   }
   if (!getIt.isRegistered<SpecialtyService>()) {
     getIt.registerLazySingleton<SpecialtyService>(() => SpecialtyService());
   }
   if (!getIt.isRegistered<AdminDoctorService>()) {
-    getIt.registerLazySingleton<AdminDoctorService>(() => AdminDoctorService());
+    getIt.registerLazySingleton<AdminDoctorService>(
+      () => AdminDoctorService(firestore: getIt<FirebaseFirestore>()),
+    );
   }
   if (!getIt.isRegistered<CloudinaryUploadService>()) {
     getIt.registerLazySingleton<CloudinaryUploadService>(

@@ -10,7 +10,8 @@ class AuthService {
   static String get serverClientId =>
       (dotenv.isInitialized ? dotenv.maybeGet('SERVER_CLIENT_ID') : null) ?? '';
 
-  final FirebaseAuth? _auth;
+  final FirebaseAuth _auth;
+  final FirebaseFirestore _firestore;
 
   //CR [Correct DI Approach for Service Layer]:
   //CR Do not use nullable `_auth` or `_safeAuth()` fallback that catches and swallows startup errors.
@@ -23,15 +24,14 @@ class AuthService {
   //CR     AuthService({required this.auth});
   //CR   }
   //CR   ```
-  AuthService({FirebaseAuth? auth}) : _auth = auth ?? _safeAuth();
-
-  static FirebaseAuth? _safeAuth() {
-    try {
-      return FirebaseAuth.instance;
-    } catch (_) {
-      return null;
-    }
-  }
+  // solved
+  AuthService({
+    required FirebaseAuth auth,
+    required FirebaseFirestore firestore,
+    // ignore: prefer_initializing_formals
+  }) : _auth = auth,
+       // ignore: prefer_initializing_formals
+       _firestore = firestore;
 
   static Future<void> initialize() async {
     final clientId = serverClientId;
@@ -40,13 +40,7 @@ class AuthService {
     );
   }
 
-  User? get currentUser {
-    try {
-      return _auth?.currentUser;
-    } catch (_) {
-      return null;
-    }
-  }
+  User? get currentUser => _auth.currentUser;
 
   //CR Layer separation defect: Data service must never take BuildContext or handle UI greetings/translations.
   String getUserGreeting(BuildContext context) {
@@ -64,7 +58,7 @@ class AuthService {
   }
 
   Future<void> signOut() async {
-    await Future.wait([_auth!.signOut(), GoogleSignIn.instance.signOut()]);
+    await Future.wait([_auth.signOut(), GoogleSignIn.instance.signOut()]);
   }
 
   Future<UserCredential> signUpWithEmailAndPassword({
@@ -72,7 +66,7 @@ class AuthService {
     required String password,
     String? name,
   }) async {
-    final userCredential = await _auth!.createUserWithEmailAndPassword(
+    final userCredential = await _auth.createUserWithEmailAndPassword(
       email: email.trim(),
       password: password,
     );
@@ -92,7 +86,7 @@ class AuthService {
     required String email,
     required String password,
   }) async {
-    final credential = await _auth!.signInWithEmailAndPassword(
+    final credential = await _auth.signInWithEmailAndPassword(
       email: email.trim(),
       password: password,
     );
@@ -108,7 +102,7 @@ class AuthService {
         idToken: googleUser.authentication.idToken,
       );
 
-      final result = await _auth!.signInWithCredential(credential);
+      final result = await _auth.signInWithCredential(credential);
       final user = result.user;
       if (user != null) await ensureUserProfile(user);
       return result;
@@ -121,9 +115,7 @@ class AuthService {
   }
 
   Future<void> ensureUserProfile(User user) async {
-    final reference = FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid);
+    final reference = _firestore.collection('users').doc(user.uid);
     final snapshot = await reference.get();
     final profile = {
       'displayName': user.displayName?.trim() ?? '',
@@ -149,16 +141,13 @@ class AuthService {
   Future<bool> isCurrentUserAdmin() async {
     final user = currentUser;
     if (user == null) return false;
-    final snapshot = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid)
-        .get();
+    final snapshot = await _firestore.collection('users').doc(user.uid).get();
     return snapshot.data()?['role'] == 'admin';
   }
 
   Future<void> forgetpassword({required String email}) async {
     try {
-      await _auth!.sendPasswordResetEmail(email: email.trim());
+      await _auth.sendPasswordResetEmail(email: email.trim());
     } on FirebaseAuthException catch (e) {
       throw AppException.fromFirebaseAuth(e);
     } catch (e) {

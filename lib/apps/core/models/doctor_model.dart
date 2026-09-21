@@ -4,8 +4,7 @@ import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
 class DoctorModel {
   //CR hardcode color
-  // Solved
-  // Accent colors are stored as backend data and resolved by presentation.
+  // solved
   static const defaultLocation = LatLng(-1.286389, 36.817223);
 
   static DoctorModel placeholder() {
@@ -15,6 +14,8 @@ class DoctorModel {
       nameAr: 'د. طبيب أطفال',
       nameEn: 'Dr. Pediatrician',
       specialty: tr.medicineSpecialist,
+      specialtyAr: 'طبيب باطني',
+      specialtyEn: 'Medicine Specialist',
       services: [tr.serviceOne, tr.serviceTwo, tr.serviceThree],
       location: defaultLocation,
     );
@@ -23,9 +24,11 @@ class DoctorModel {
   const DoctorModel({
     required this.id,
     required String name,
-    required this.specialty,
+    required String specialty,
     this.nameAr,
     this.nameEn,
+    this.specialtyAr,
+    this.specialtyEn,
     this.specialtyId,
     this.imageUrl,
     this.accentColorHex,
@@ -59,7 +62,9 @@ class DoctorModel {
     this.clinicAddressAr = '',
     this.clinicAddressEn = '',
     // ignore: prefer_initializing_formals
-  }) : _name = name;
+  }) : _name = name,
+       // ignore: prefer_initializing_formals
+       _specialty = specialty;
 
   final String id;
   final String _name;
@@ -77,7 +82,22 @@ class DoctorModel {
 
   final String? nameAr;
   final String? nameEn;
-  final String specialty;
+  final String? specialtyAr;
+  final String? specialtyEn;
+  final String _specialty;
+
+  String get specialty {
+    if (LocaleSettings.currentLocale == AppLocale.ar &&
+        (specialtyAr?.isNotEmpty ?? false)) {
+      return specialtyAr!;
+    }
+    if (LocaleSettings.currentLocale == AppLocale.en &&
+        (specialtyEn?.isNotEmpty ?? false)) {
+      return specialtyEn!;
+    }
+    return _specialty;
+  }
+
   final String? specialtyId;
   final String? imageUrl;
   final String? accentColorHex;
@@ -130,31 +150,60 @@ class DoctorModel {
     );
 
     final storedSpecialty = _localizedMap(data['specialty']);
-    final rawSpecialty =
+    final rawSpecialtyAr =
+        (storedSpecialty['ar'] ?? data['specialtyAr']) as String?;
+    final rawSpecialtyEn =
+        (storedSpecialty['en'] ?? data['specialtyEn']) as String?;
+    final legacyRawSpecialty =
         [
-          storedSpecialty['en'],
-          data['specialtyEn'],
-          data['specialty'],
-          data['specialtyKey'],
-        ].firstWhere(
-          (value) => value is String && value.trim().isNotEmpty,
-          orElse: () => null,
-        );
-    final specialtyEn =
-        specialtyNameEn ?? _localizedSpecialty(rawSpecialty, AppLocale.en, id);
-    final specialtyAr =
-        specialtyNameAr ??
-        _localizedSpecialty(
-          storedSpecialty['ar'] ?? data['specialtyAr'] ?? rawSpecialty,
-          AppLocale.ar,
-          id,
-        );
+              rawSpecialtyEn,
+              rawSpecialtyAr,
+              data['specialty'],
+              data['specialtyKey'],
+            ].firstWhere(
+              (value) => value is String && value.trim().isNotEmpty,
+              orElse: () => null,
+            )
+            as String?;
+
+    final trimmedSpecAr = specialtyNameAr?.trim();
+    final trimmedSpecEn = specialtyNameEn?.trim();
+    final trimmedRawAr = rawSpecialtyAr?.trim();
+    final trimmedRawEn = rawSpecialtyEn?.trim();
+    final trimmedLegacy = legacyRawSpecialty?.trim();
+
+    if ((trimmedSpecAr == null || trimmedSpecAr.isEmpty) &&
+        (trimmedSpecEn == null || trimmedSpecEn.isEmpty) &&
+        (trimmedLegacy == null || trimmedLegacy.isEmpty)) {
+      throw FormatException('Doctor $id is missing required field: specialty');
+    }
+
+    final resolvedAr = (trimmedSpecAr?.isNotEmpty ?? false)
+        ? trimmedSpecAr!
+        : (trimmedSpecEn?.isNotEmpty ?? false)
+        ? trimmedSpecEn!
+        : (trimmedRawAr?.isNotEmpty ?? false)
+        ? trimmedRawAr!
+        : (trimmedLegacy?.isNotEmpty ?? false)
+        ? _localizedSpecialty(trimmedLegacy, AppLocale.ar, id)
+        : '';
+
+    final resolvedEn = (trimmedSpecEn?.isNotEmpty ?? false)
+        ? trimmedSpecEn!
+        : (trimmedSpecAr?.isNotEmpty ?? false)
+        ? trimmedSpecAr!
+        : (trimmedRawEn?.isNotEmpty ?? false)
+        ? trimmedRawEn!
+        : (trimmedLegacy?.isNotEmpty ?? false)
+        ? _localizedSpecialty(trimmedLegacy, AppLocale.en, id)
+        : '';
+
     final localizedName = LocaleSettings.currentLocale == AppLocale.ar
         ? nameAr
         : nameEn;
     final localizedSpecialty = LocaleSettings.currentLocale == AppLocale.ar
-        ? specialtyAr
-        : specialtyEn;
+        ? resolvedAr
+        : resolvedEn;
 
     final clinic = data['clinic'] is Map
         ? Map<String, dynamic>.from(data['clinic'] as Map)
@@ -168,6 +217,8 @@ class DoctorModel {
       nameAr: nameAr,
       nameEn: nameEn,
       specialty: localizedSpecialty,
+      specialtyAr: resolvedAr,
+      specialtyEn: resolvedEn,
       specialtyId: (data['specialtyId'] as String?)?.trim(),
       imageUrl: (data['imageUrl'] as String?)?.trim(),
       accentColorHex: _accentColorHex(data['accentColorHex']),
@@ -216,6 +267,8 @@ class DoctorModel {
     String? specialty,
     String? nameAr,
     String? nameEn,
+    String? specialtyAr,
+    String? specialtyEn,
     String? specialtyId,
     String? imageUrl,
     String? accentColorHex,
@@ -251,10 +304,12 @@ class DoctorModel {
   }) {
     return DoctorModel(
       id: id ?? this.id,
-      name: name ?? this.name,
-      specialty: specialty ?? this.specialty,
+      name: name ?? _name,
+      specialty: specialty ?? _specialty,
       nameAr: nameAr ?? this.nameAr,
       nameEn: nameEn ?? this.nameEn,
+      specialtyAr: specialtyAr ?? this.specialtyAr,
+      specialtyEn: specialtyEn ?? this.specialtyEn,
       specialtyId: specialtyId ?? this.specialtyId,
       imageUrl: imageUrl ?? this.imageUrl,
       accentColorHex: accentColorHex ?? this.accentColorHex,
@@ -303,43 +358,14 @@ String _firstText(List<dynamic> values, String id, String field) {
   throw FormatException('Doctor $id is missing required field: $field');
 }
 
+//CR We can use enums !
+// solved
 String _localizedSpecialty(dynamic value, AppLocale locale, String id) {
   final text = value is String ? value.trim() : '';
   if (text.isEmpty) {
     throw FormatException('Doctor $id is missing required field: specialty');
   }
-  //CR We can use enums !
-  final key = text.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), '_');
-  final english = AppLocale.en.buildSync();
-  final arabic = AppLocale.ar.buildSync();
-  final labels = switch (key) {
-    'dentist' ||
-    'dental' ||
-    'dental_specialist' => (en: english.dentist, ar: arabic.dentist),
-    'cardiology' ||
-    'cardiologist' ||
-    'heart_specialist' => (en: english.cardiology, ar: arabic.cardiology),
-    'eye_care' ||
-    'ophthalmology' ||
-    'eye_specialist' => (en: english.eyeCare, ar: arabic.eyeCare),
-    'nutrition' ||
-    'nutritionist' => (en: english.nutrition, ar: arabic.nutrition),
-    'pediatric' ||
-    'pediatrics' ||
-    'pediatrician' => (en: english.pediatric, ar: arabic.pediatric),
-    'neurology' ||
-    'neurologist' => (en: english.neurology, ar: arabic.neurology),
-    'medicine_specialist' || 'internal_medicine' => (
-      en: english.medicineSpecialist,
-      ar: arabic.medicineSpecialist,
-    ),
-    'general_surgeon' ||
-    'surgery' => (en: english.generalSurgeon, ar: arabic.generalSurgeon),
-    _ => null,
-  };
-
-  if (labels == null) return text;
-  return locale == AppLocale.ar ? labels.ar : labels.en;
+  return text;
 }
 
 List<String> _parseServices(Map<String, dynamic> data) {
@@ -367,6 +393,9 @@ LatLng? _parseLocation(dynamic locationData) {
 
 String? _accentColorHex(dynamic value) {
   if (value is! String) return null;
-  final hex = value.trim();
-  return hex.isEmpty ? null : hex;
+  final trimmed = value.trim();
+  final hex = trimmed.startsWith('#') ? trimmed.substring(1) : trimmed;
+  if (hex.length != 6 && hex.length != 8) return null;
+  if (!RegExp(r'^[0-9a-fA-F]+$').hasMatch(hex)) return null;
+  return '#${hex.toUpperCase()}';
 }

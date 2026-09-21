@@ -1,6 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
+import 'package:doctor_hunt/apps/core/di/injection.dart';
 
 import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
@@ -25,16 +29,28 @@ class AdminSettingsScreen extends StatefulWidget {
 }
 
 class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
-  final _authService = AuthService();
+  late final AuthService _authService;
   late final AuthCubit _authCubit;
 
   @override
   void initState() {
     super.initState();
+    _authService = getIt.isRegistered<AuthService>()
+        ? getIt<AuthService>()
+        : AuthService(
+            auth: getIt.isRegistered<FirebaseAuth>()
+                ? getIt<FirebaseAuth>()
+                : FirebaseAuth.instance,
+            firestore: getIt.isRegistered<FirebaseFirestore>()
+                ? getIt<FirebaseFirestore>()
+                : FirebaseFirestore.instance,
+          );
     _authCubit = AuthCubit(
       repository:
           widget.repository ??
-          FirebaseAuthRepository(authService: _authService),
+          (getIt.isRegistered<AuthRepository>()
+              ? getIt<AuthRepository>()
+              : FirebaseAuthRepository(authService: _authService)),
     );
   }
 
