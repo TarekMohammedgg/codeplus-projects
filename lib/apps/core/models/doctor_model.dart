@@ -3,19 +3,17 @@ import 'package:latlong2/latlong.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
 class DoctorModel {
-  //CR hardcode color
-  // solved
   static const defaultLocation = LatLng(-1.286389, 36.817223);
 
   static DoctorModel placeholder() {
     return DoctorModel(
       id: 'placeholder',
-      name: 'Dr. Pediatrician',
-      nameAr: 'د. طبيب أطفال',
-      nameEn: 'Dr. Pediatrician',
+      name: tr.placeholderDoctorName,
+      nameAr: AppLocale.ar.translations.placeholderDoctorName,
+      nameEn: AppLocale.en.translations.placeholderDoctorName,
       specialty: tr.medicineSpecialist,
-      specialtyAr: 'طبيب باطني',
-      specialtyEn: 'Medicine Specialist',
+      specialtyAr: AppLocale.ar.translations.medicineSpecialist,
+      specialtyEn: AppLocale.en.translations.medicineSpecialist,
       services: [tr.serviceOne, tr.serviceTwo, tr.serviceThree],
       location: defaultLocation,
     );
@@ -166,37 +164,28 @@ class DoctorModel {
             )
             as String?;
 
-    final trimmedSpecAr = specialtyNameAr?.trim();
-    final trimmedSpecEn = specialtyNameEn?.trim();
-    final trimmedRawAr = rawSpecialtyAr?.trim();
-    final trimmedRawEn = rawSpecialtyEn?.trim();
-    final trimmedLegacy = legacyRawSpecialty?.trim();
-
-    if ((trimmedSpecAr == null || trimmedSpecAr.isEmpty) &&
-        (trimmedSpecEn == null || trimmedSpecEn.isEmpty) &&
-        (trimmedLegacy == null || trimmedLegacy.isEmpty)) {
-      throw FormatException('Doctor $id is missing required field: specialty');
-    }
-
-    final resolvedAr = (trimmedSpecAr?.isNotEmpty ?? false)
-        ? trimmedSpecAr!
-        : (trimmedSpecEn?.isNotEmpty ?? false)
-        ? trimmedSpecEn!
-        : (trimmedRawAr?.isNotEmpty ?? false)
-        ? trimmedRawAr!
-        : (trimmedLegacy?.isNotEmpty ?? false)
-        ? _localizedSpecialty(trimmedLegacy, AppLocale.ar, id)
-        : '';
-
-    final resolvedEn = (trimmedSpecEn?.isNotEmpty ?? false)
-        ? trimmedSpecEn!
-        : (trimmedSpecAr?.isNotEmpty ?? false)
-        ? trimmedSpecAr!
-        : (trimmedRawEn?.isNotEmpty ?? false)
-        ? trimmedRawEn!
-        : (trimmedLegacy?.isNotEmpty ?? false)
-        ? _localizedSpecialty(trimmedLegacy, AppLocale.en, id)
-        : '';
+    final resolvedAr = _firstText(
+      [
+        specialtyNameAr,
+        rawSpecialtyAr,
+        specialtyNameEn,
+        rawSpecialtyEn,
+        legacyRawSpecialty,
+      ],
+      id,
+      'specialty',
+    );
+    final resolvedEn = _firstText(
+      [
+        specialtyNameEn,
+        rawSpecialtyEn,
+        specialtyNameAr,
+        rawSpecialtyAr,
+        legacyRawSpecialty,
+      ],
+      id,
+      'specialty',
+    );
 
     final localizedName = LocaleSettings.currentLocale == AppLocale.ar
         ? nameAr
@@ -360,14 +349,6 @@ String _firstText(List<dynamic> values, String id, String field) {
 
 //CR We can use enums !
 // solved
-String _localizedSpecialty(dynamic value, AppLocale locale, String id) {
-  final text = value is String ? value.trim() : '';
-  if (text.isEmpty) {
-    throw FormatException('Doctor $id is missing required field: specialty');
-  }
-  return text;
-}
-
 List<String> _parseServices(Map<String, dynamic> data) {
   final raw = data['services'] is Map
       ? _localizedMap(

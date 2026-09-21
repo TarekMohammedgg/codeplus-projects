@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
 
+import 'package:doctor_hunt/apps/core/services/doctor_service.dart';
+import 'package:doctor_hunt/apps/core/services/specialty_service.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/data/repositories/admin_doctors_repository.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/data/service/admin_doctor_service.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/presentation/controller/cubit/admin_doctors_cubit.dart';
@@ -20,135 +22,110 @@ import 'package:doctor_hunt/apps/features/patient/favourite_doctors/presentation
 import 'package:doctor_hunt/apps/features/patient/home/data/repositories/home_repository.dart';
 import 'package:doctor_hunt/apps/features/patient/home/data/service/home_service.dart';
 import 'package:doctor_hunt/apps/features/patient/home/presentation/controller/cubit/home_cubit.dart';
-import 'package:doctor_hunt/apps/core/services/specialty_service.dart';
 
 final getIt = GetIt.instance;
+
+/// Registers every Firebase dependency, service, repository and Cubit
+/// factory used by the app. Called once from `main()` after Firebase is
+/// initialized, and from test setup with fakes registered beforehand.
+///
+/// Every dependency is registered unconditionally: callers own the
+/// lifecycle (`getIt.reset()` between test cases) instead of guarding each
+/// registration with `isRegistered`.
 //CR will tell u in session
-Future<void> setupServiceLocator() async {
+void setupServiceLocator() {
   // Firebase
-  if (!getIt.isRegistered<FirebaseAuth>()) {
-    getIt.registerLazySingleton<FirebaseAuth>(() => FirebaseAuth.instance);
-  }
-  if (!getIt.isRegistered<FirebaseFirestore>()) {
-    getIt.registerLazySingleton<FirebaseFirestore>(
-      () => FirebaseFirestore.instance,
-    );
-  }
+  getIt.registerLazySingleton<FirebaseAuth>(() => FirebaseAuth.instance);
+  getIt.registerLazySingleton<FirebaseFirestore>(
+    () => FirebaseFirestore.instance,
+  );
 
   // Services
-  if (!getIt.isRegistered<AuthService>()) {
-    getIt.registerLazySingleton<AuthService>(
-      () => AuthService(
-        auth: getIt<FirebaseAuth>(),
-        firestore: getIt<FirebaseFirestore>(),
-      ),
-    );
-  }
-  if (!getIt.isRegistered<HomeService>()) {
-    getIt.registerLazySingleton<HomeService>(
-      () => HomeService(firestore: getIt<FirebaseFirestore>()),
-    );
-  }
-  if (!getIt.isRegistered<FindDoctorsService>()) {
-    getIt.registerLazySingleton<FindDoctorsService>(
-      () => FindDoctorsService(firestore: getIt<FirebaseFirestore>()),
-    );
-  }
-  if (!getIt.isRegistered<FavouriteDoctorsService>()) {
-    getIt.registerLazySingleton<FavouriteDoctorsService>(
-      () => FavouriteDoctorsService(firestore: getIt<FirebaseFirestore>()),
-    );
-  }
-  if (!getIt.isRegistered<SpecialtyService>()) {
-    getIt.registerLazySingleton<SpecialtyService>(() => SpecialtyService());
-  }
-  if (!getIt.isRegistered<AdminDoctorService>()) {
-    getIt.registerLazySingleton<AdminDoctorService>(
-      () => AdminDoctorService(firestore: getIt<FirebaseFirestore>()),
-    );
-  }
-  if (!getIt.isRegistered<CloudinaryUploadService>()) {
-    getIt.registerLazySingleton<CloudinaryUploadService>(
-      () => CloudinaryUploadService(),
-    );
-  }
+  getIt.registerLazySingleton<AuthService>(
+    () => AuthService(
+      auth: getIt<FirebaseAuth>(),
+      firestore: getIt<FirebaseFirestore>(),
+    ),
+  );
+  getIt.registerLazySingleton<SpecialtyService>(
+    () => SpecialtyService(firestore: getIt<FirebaseFirestore>()),
+  );
+  getIt.registerLazySingleton<DoctorService>(
+    () => DoctorService(
+      firestore: getIt<FirebaseFirestore>(),
+      specialtyService: getIt<SpecialtyService>(),
+    ),
+  );
+  getIt.registerLazySingleton<HomeService>(
+    () => HomeService(doctorService: getIt<DoctorService>()),
+  );
+  getIt.registerLazySingleton<FindDoctorsService>(
+    () => FindDoctorsService(doctorService: getIt<DoctorService>()),
+  );
+  getIt.registerLazySingleton<FavouriteDoctorsService>(
+    () => FavouriteDoctorsService(doctorService: getIt<DoctorService>()),
+  );
+  getIt.registerLazySingleton<AdminDoctorService>(
+    () => AdminDoctorService(
+      firestore: getIt<FirebaseFirestore>(),
+      specialtyService: getIt<SpecialtyService>(),
+    ),
+  );
+  getIt.registerLazySingleton<CloudinaryUploadService>(
+    () => CloudinaryUploadService(),
+  );
 
   // Repositories
-  if (!getIt.isRegistered<AuthRepository>()) {
-    getIt.registerLazySingleton<AuthRepository>(
-      () => FirebaseAuthRepository(authService: getIt<AuthService>()),
-    );
-  }
-  if (!getIt.isRegistered<DoctorRepository>()) {
-    getIt.registerLazySingleton<DoctorRepository>(
-      () => FirebaseDoctorRepository(
-        findDoctorsService: getIt<FindDoctorsService>(),
-      ),
-    );
-  }
-  if (!getIt.isRegistered<FavouriteDoctorsRepository>()) {
-    getIt.registerLazySingleton<FavouriteDoctorsRepository>(
-      () => FirebaseFavouriteDoctorsRepository(
-        favouriteDoctorsService: getIt<FavouriteDoctorsService>(),
-      ),
-    );
-  }
-  if (!getIt.isRegistered<HomeRepository>()) {
-    getIt.registerLazySingleton<HomeRepository>(
-      () => FirebaseHomeRepository(
-        homeService: getIt<HomeService>(),
-        specialtyService: getIt<SpecialtyService>(),
-      ),
-    );
-  }
-  if (!getIt.isRegistered<AdminDoctorsRepository>()) {
-    getIt.registerLazySingleton<AdminDoctorsRepository>(
-      () => FirebaseAdminDoctorsRepository(
-        doctorService: getIt<AdminDoctorService>(),
-      ),
-    );
-  }
-  if (!getIt.isRegistered<CreateDoctorRepository>()) {
-    getIt.registerLazySingleton<CreateDoctorRepository>(
-      () => FirebaseCreateDoctorRepository(
-        doctorService: getIt<AdminDoctorService>(),
-        specialtyService: getIt<SpecialtyService>(),
-        uploadService: getIt<CloudinaryUploadService>(),
-      ),
-    );
-  }
+  getIt.registerLazySingleton<AuthRepository>(
+    () => FirebaseAuthRepository(authService: getIt<AuthService>()),
+  );
+  getIt.registerLazySingleton<DoctorRepository>(
+    () => FirebaseDoctorRepository(
+      findDoctorsService: getIt<FindDoctorsService>(),
+    ),
+  );
+  getIt.registerLazySingleton<FavouriteDoctorsRepository>(
+    () => FirebaseFavouriteDoctorsRepository(
+      favouriteDoctorsService: getIt<FavouriteDoctorsService>(),
+    ),
+  );
+  getIt.registerLazySingleton<HomeRepository>(
+    () => FirebaseHomeRepository(
+      homeService: getIt<HomeService>(),
+      specialtyService: getIt<SpecialtyService>(),
+    ),
+  );
+  getIt.registerLazySingleton<AdminDoctorsRepository>(
+    () => FirebaseAdminDoctorsRepository(
+      doctorService: getIt<AdminDoctorService>(),
+    ),
+  );
+  getIt.registerLazySingleton<CreateDoctorRepository>(
+    () => FirebaseCreateDoctorRepository(
+      doctorService: getIt<AdminDoctorService>(),
+      specialtyService: getIt<SpecialtyService>(),
+      uploadService: getIt<CloudinaryUploadService>(),
+    ),
+  );
 
-  // Cubits (Registered as factories to return a fresh instance on demand)
-  if (!getIt.isRegistered<AuthCubit>()) {
-    getIt.registerFactory<AuthCubit>(
-      () => AuthCubit(repository: getIt<AuthRepository>()),
-    );
-  }
-  if (!getIt.isRegistered<HomeCubit>()) {
-    getIt.registerFactory<HomeCubit>(
-      () => HomeCubit(repository: getIt<HomeRepository>()),
-    );
-  }
-  if (!getIt.isRegistered<FindDoctorsCubit>()) {
-    getIt.registerFactory<FindDoctorsCubit>(
-      () => FindDoctorsCubit(repository: getIt<DoctorRepository>()),
-    );
-  }
-  if (!getIt.isRegistered<FavouriteDoctorsCubit>()) {
-    getIt.registerFactory<FavouriteDoctorsCubit>(
-      () => FavouriteDoctorsCubit(
-        repository: getIt<FavouriteDoctorsRepository>(),
-      ),
-    );
-  }
-  if (!getIt.isRegistered<AdminDoctorsCubit>()) {
-    getIt.registerFactory<AdminDoctorsCubit>(
-      () => AdminDoctorsCubit(repository: getIt<AdminDoctorsRepository>()),
-    );
-  }
-  if (!getIt.isRegistered<CreateDoctorCubit>()) {
-    getIt.registerFactory<CreateDoctorCubit>(
-      () => CreateDoctorCubit(repository: getIt<CreateDoctorRepository>()),
-    );
-  }
+  // Cubits (registered as factories to return a fresh instance on demand)
+  getIt.registerFactory<AuthCubit>(
+    () => AuthCubit(repository: getIt<AuthRepository>()),
+  );
+  getIt.registerFactory<HomeCubit>(
+    () => HomeCubit(repository: getIt<HomeRepository>()),
+  );
+  getIt.registerFactory<FindDoctorsCubit>(
+    () => FindDoctorsCubit(repository: getIt<DoctorRepository>()),
+  );
+  getIt.registerFactory<FavouriteDoctorsCubit>(
+    () =>
+        FavouriteDoctorsCubit(repository: getIt<FavouriteDoctorsRepository>()),
+  );
+  getIt.registerFactory<AdminDoctorsCubit>(
+    () => AdminDoctorsCubit(repository: getIt<AdminDoctorsRepository>()),
+  );
+  getIt.registerFactory<CreateDoctorCubit>(
+    () => CreateDoctorCubit(repository: getIt<CreateDoctorRepository>()),
+  );
 }

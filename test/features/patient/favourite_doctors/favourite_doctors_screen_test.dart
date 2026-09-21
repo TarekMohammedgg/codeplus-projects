@@ -1,11 +1,14 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
+import 'package:doctor_hunt/apps/features/patient/favourite_doctors/presentation/controller/cubit/favourite_doctors_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/favourite_doctors/presentation/screens/favourite_doctors_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/favourite_doctors/presentation/widgets/favourite_doctor_card.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import '../../../helpers/test_app.dart';
+import '../../../helpers/test_fakes.dart';
 
 List<DoctorModel> testFavouriteDoctors() {
   return const [
@@ -36,9 +39,17 @@ List<DoctorModel> testFeaturedDoctors() {
 }
 
 Widget buildTestFavouriteScreen() {
-  return FavouriteDoctorsScreen(
-    initialFavouriteDoctors: testFavouriteDoctors(),
-    initialFeaturedDoctors: testFeaturedDoctors(),
+  return BlocProvider<FavouriteDoctorsCubit>(
+    create: (_) => FavouriteDoctorsCubit(
+      repository: FakeFavouriteDoctorsRepository(
+        favouriteDoctors: testFavouriteDoctors(),
+        featuredDoctors: testFeaturedDoctors(),
+      ),
+    ),
+    child: FavouriteDoctorsScreen(
+      initialFavouriteDoctors: testFavouriteDoctors(),
+      initialFeaturedDoctors: testFeaturedDoctors(),
+    ),
   );
 }
 

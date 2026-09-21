@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:doctor_hunt/apps/core/di/injection.dart';
@@ -12,16 +10,12 @@ import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_text_field.dart';
-import 'package:doctor_hunt/apps/features/common/auth/data/repositories/auth_repository.dart';
-import 'package:doctor_hunt/apps/features/common/auth/data/service/auth_service.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/controller/cubit/auth_cubit.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/controller/cubit/auth_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ForgotPasswordBottomSheet extends StatefulWidget {
-  const ForgotPasswordBottomSheet({super.key, this.repository});
-
-  final AuthRepository? repository;
+  const ForgotPasswordBottomSheet({super.key});
 
   static void show(BuildContext context) {
     showModalBottomSheet(
@@ -29,7 +23,10 @@ class ForgotPasswordBottomSheet extends StatefulWidget {
       isScrollControlled: true,
       useSafeArea: true,
       backgroundColor: Colors.transparent,
-      builder: (modalContext) => const ForgotPasswordBottomSheet(),
+      builder: (modalContext) => BlocProvider<AuthCubit>(
+        create: (_) => getIt<AuthCubit>(),
+        child: const ForgotPasswordBottomSheet(),
+      ),
     );
   }
 
@@ -46,37 +43,20 @@ class ForgotPasswordBottomSheetState extends State<ForgotPasswordBottomSheet> {
   @override
   void initState() {
     super.initState();
-    _authCubit = widget.repository != null
-        ? AuthCubit(repository: widget.repository!)
-        //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
-        //CR Use `getIt<Cubit>()` directly or inject via constructor.
-        : (getIt.isRegistered<AuthCubit>()
-              ? getIt<AuthCubit>()
-              : AuthCubit(
-                  //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
-                  //CR Use `getIt<Cubit>()` directly or inject via constructor.
-                  repository: getIt.isRegistered<AuthRepository>()
-                      ? getIt<AuthRepository>()
-                      : FirebaseAuthRepository(
-                          authService: getIt.isRegistered<AuthService>()
-                              ? getIt<AuthService>()
-                              : AuthService(
-                                  auth: getIt.isRegistered<FirebaseAuth>()
-                                      ? getIt<FirebaseAuth>()
-                                      : FirebaseAuth.instance,
-                                  firestore:
-                                      getIt.isRegistered<FirebaseFirestore>()
-                                      ? getIt<FirebaseFirestore>()
-                                      : FirebaseFirestore.instance,
-                                ),
-                        ),
-                ));
+    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
+    // solved
+    //CR Use `getIt<Cubit>()` directly or inject via constructor.
+    // solved
+    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
+    // solved
+    //CR Use `getIt<Cubit>()` directly or inject via constructor.
+    // solved
+    _authCubit = context.read<AuthCubit>();
   }
 
   @override
   void dispose() {
     emailController.dispose();
-    _authCubit.close();
     super.dispose();
   }
 
@@ -92,89 +72,86 @@ class ForgotPasswordBottomSheetState extends State<ForgotPasswordBottomSheet> {
   Widget build(BuildContext context) {
     final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
 
-    return BlocProvider.value(
-      value: _authCubit,
-      child: BlocConsumer<AuthCubit, AuthState>(
-        listener: (context, state) {
-          switch (state) {
-            case AuthSuccess(action: AuthAction.resetPassword):
-              Navigator.of(context).pop();
-              context.showSuccessSnackBar(tr.passwordResetSuccess);
-            case AuthFailure(:final errorMessage):
-              Navigator.of(context).pop();
-              context.showErrorSnackBar(errorMessage);
-            default:
-              break;
-          }
-        },
-        builder: (context, state) {
-          final isLoading =
-              state is AuthLoading && state.action == AuthAction.resetPassword;
+    return BlocConsumer<AuthCubit, AuthState>(
+      listener: (context, state) {
+        switch (state) {
+          case AuthSuccess(action: AuthAction.resetPassword):
+            Navigator.of(context).pop();
+            context.showSuccessSnackBar(tr.passwordResetSuccess);
+          case AuthFailure(:final errorMessage):
+            Navigator.of(context).pop();
+            context.showErrorSnackBar(errorMessage);
+          default:
+            break;
+        }
+      },
+      builder: (context, state) {
+        final isLoading =
+            state is AuthLoading && state.action == AuthAction.resetPassword;
 
-          return Padding(
-            padding: EdgeInsets.only(bottom: bottomInset),
-            child: Container(
-              decoration: const BoxDecoration(
-                color: AppColors.surface,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-              ),
-              child: SafeArea(
-                top: false,
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(24, 14, 24, 24),
-                  child: Form(
-                    key: formKey,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Center(
-                          child: Container(
-                            width: 54,
-                            height: 4,
-                            decoration: BoxDecoration(
-                              color: AppColors.outline,
-                              borderRadius: BorderRadius.circular(2),
-                            ),
+        return Padding(
+          padding: EdgeInsets.only(bottom: bottomInset),
+          child: Container(
+            decoration: const BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+            ),
+            child: SafeArea(
+              top: false,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(24, 14, 24, 24),
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Center(
+                        child: Container(
+                          width: 54,
+                          height: 4,
+                          decoration: BoxDecoration(
+                            color: AppColors.outline,
+                            borderRadius: BorderRadius.circular(2),
                           ),
                         ),
-                        24.verticalSpace,
-                        Text(tr.forgotPassword, style: context.bold24TextMain),
-                        10.verticalSpace,
-                        Text(
-                          tr.forgotPasswordSubtitle,
-                          style: context.regular14TextSecondary.copyWith(
-                            height: 1.4,
-                          ),
+                      ),
+                      24.verticalSpace,
+                      Text(tr.forgotPassword, style: context.bold24TextMain),
+                      10.verticalSpace,
+                      Text(
+                        tr.forgotPasswordSubtitle,
+                        style: context.regular14TextSecondary.copyWith(
+                          height: 1.4,
                         ),
-                        24.verticalSpace,
-                        AppTextField(
-                          controller: emailController,
-                          hintText: tr.emailAddress,
-                          keyboardType: TextInputType.emailAddress,
-                          textInputAction: TextInputAction.done,
-                          autofillHints: const [AutofillHints.email],
-                          validator: (value) =>
-                              AppValidators.validateEmail(value),
-                          onFieldSubmitted: (_) => onContinue(),
-                        ),
-                        24.verticalSpace,
-                        AppPrimaryButton(
-                          label: tr.continueText,
-                          isLoading: isLoading,
-                          onPressed: isLoading ? null : onContinue,
-                          height: 52,
-                        ),
-                        8.verticalSpace,
-                      ],
-                    ),
+                      ),
+                      24.verticalSpace,
+                      AppTextField(
+                        controller: emailController,
+                        hintText: tr.emailAddress,
+                        keyboardType: TextInputType.emailAddress,
+                        textInputAction: TextInputAction.done,
+                        autofillHints: const [AutofillHints.email],
+                        validator: (value) =>
+                            AppValidators.validateEmail(value),
+                        onFieldSubmitted: (_) => onContinue(),
+                      ),
+                      24.verticalSpace,
+                      AppPrimaryButton(
+                        label: tr.continueText,
+                        isLoading: isLoading,
+                        onPressed: isLoading ? null : onContinue,
+                        height: 52,
+                      ),
+                      8.verticalSpace,
+                    ],
                   ),
                 ),
               ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

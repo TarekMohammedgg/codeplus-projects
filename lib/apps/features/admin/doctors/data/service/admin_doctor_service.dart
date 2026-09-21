@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:doctor_hunt/apps/core/services/specialty_service.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/data/models/admin_doctor_model.dart';
 
 class AdminDoctorService {
@@ -11,10 +12,14 @@ class AdminDoctorService {
   // solved
   AdminDoctorService({
     required FirebaseFirestore firestore,
+    required SpecialtyService specialtyService,
     // ignore: prefer_initializing_formals
-  }) : _firestore = firestore;
+  }) : _firestore = firestore,
+       // ignore: prefer_initializing_formals
+       _specialtyService = specialtyService;
 
   final FirebaseFirestore _firestore;
+  final SpecialtyService _specialtyService;
 
   //CR Bad DI: Avoid mixing static singletons and swallowing Firebase uninitialized errors with catch (_) => null.
   //CR Inject non-nullable `FirebaseFirestore` via constructor.
@@ -24,7 +29,7 @@ class AdminDoctorService {
 
   Stream<List<AdminDoctorModel>> streamDoctors() {
     return _doctors.snapshots().asyncMap((snapshot) async {
-      final specialtyNames = await _fetchSpecialtyNames();
+      final specialtyNames = await _specialtyService.fetchSpecialtyNames();
       final doctors = snapshot.docs
           .map(
             (doc) => AdminDoctorModel.fromFirestore(
@@ -101,19 +106,6 @@ class AdminDoctorService {
     await _doctors.doc(id).delete();
   }
 
-  Future<Map<String, (String, String)>> _fetchSpecialtyNames() async {
-    final snapshot = await _firestore.collection('specialty').get();
-    return {
-      for (final doc in snapshot.docs)
-        doc.id: (
-          _localizedText(doc.data()['name'], 'ar') ??
-              (doc.data()['nameAr'] as String? ?? ''),
-          _localizedText(doc.data()['name'], 'en') ??
-              (doc.data()['nameEn'] as String? ?? ''),
-        ),
-    };
-  }
-
   static Future<String> _nextDoctorId(
     CollectionReference<Map<String, dynamic>> collection,
   ) async {
@@ -135,10 +127,5 @@ class AdminDoctorService {
   static String? _cleanUrl(String? value) {
     final trimmed = value?.trim();
     return trimmed == null || trimmed.isEmpty ? null : trimmed;
-  }
-
-  static String? _localizedText(dynamic value, String language) {
-    if (value is Map) return value[language] as String?;
-    return null;
   }
 }

@@ -1,10 +1,13 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
+import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/controller/cubit/find_doctors_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/screens/find_doctors_screen.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import '../../../helpers/test_app.dart';
+import '../../../helpers/test_fakes.dart';
 
 List<DoctorModel> testFindDoctors() {
   return const [
@@ -36,7 +39,14 @@ void main() {
 
     final tr = AppLocale.en.buildSync();
     await tester.pumpWidget(
-      buildTestApp(FindDoctorsScreen(initialDoctors: testFindDoctors())),
+      buildTestApp(
+        BlocProvider<FindDoctorsCubit>(
+          create: (_) => FindDoctorsCubit(
+            repository: FakeDoctorRepository(doctors: testFindDoctors()),
+          ),
+          child: FindDoctorsScreen(initialDoctors: testFindDoctors()),
+        ),
+      ),
     );
     await tester.pump();
 
@@ -56,7 +66,14 @@ void main() {
     });
 
     await tester.pumpWidget(
-      buildTestApp(FindDoctorsScreen(initialDoctors: testFindDoctors())),
+      buildTestApp(
+        BlocProvider<FindDoctorsCubit>(
+          create: (_) => FindDoctorsCubit(
+            repository: FakeDoctorRepository(doctors: testFindDoctors()),
+          ),
+          child: FindDoctorsScreen(initialDoctors: testFindDoctors()),
+        ),
+      ),
     );
     await tester.pump();
 

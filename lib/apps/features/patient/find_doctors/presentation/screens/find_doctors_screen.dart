@@ -5,15 +5,12 @@ import 'package:go_router/go_router.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
-import 'package:doctor_hunt/apps/core/di/injection.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_icon_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_search_bar.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_avatar_placeholder.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_image.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
-import 'package:doctor_hunt/apps/features/patient/find_doctors/data/service/find_doctors_service.dart';
-import 'package:doctor_hunt/apps/features/patient/find_doctors/data/repositories/doctor_repository.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/controller/cubit/find_doctors_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/controller/cubit/find_doctors_state.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
@@ -21,15 +18,8 @@ import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
 class FindDoctorsScreen extends StatefulWidget {
-  const FindDoctorsScreen({
-    super.key,
-    this.doctorService,
-    this.repository,
-    this.initialDoctors,
-  });
+  const FindDoctorsScreen({super.key, this.initialDoctors});
 
-  final FindDoctorsService? doctorService;
-  final DoctorRepository? repository;
   final List<DoctorModel>? initialDoctors;
 
   @override
@@ -42,35 +32,20 @@ class _FindDoctorsScreenState extends State<FindDoctorsScreen> {
   @override
   void initState() {
     super.initState();
-    _findDoctorsCubit =
-        (widget.repository != null || widget.doctorService != null)
-        ? FindDoctorsCubit(
-            repository:
-                widget.repository ??
-                FirebaseDoctorRepository(
-                  findDoctorsService:
-                      widget.doctorService ?? FindDoctorsService(),
-                ),
-          )
-        //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
-        //CR Use `getIt<Cubit>()` directly or inject via constructor.
-        : (getIt.isRegistered<FindDoctorsCubit>()
-              ? getIt<FindDoctorsCubit>()
-              : FindDoctorsCubit(
-                  //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
-                  //CR Use `getIt<Cubit>()` directly or inject via constructor.
-                  repository: getIt.isRegistered<DoctorRepository>()
-                      ? getIt<DoctorRepository>()
-                      : FirebaseDoctorRepository(
-                          findDoctorsService: FindDoctorsService(),
-                        ),
-                ));
+    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
+    // solved
+    //CR Use `getIt<Cubit>()` directly or inject via constructor.
+    // solved
+    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
+    // solved
+    //CR Use `getIt<Cubit>()` directly or inject via constructor.
+    // solved
+    _findDoctorsCubit = context.read<FindDoctorsCubit>();
     _findDoctorsCubit.load(initialDoctors: widget.initialDoctors);
   }
 
   @override
   void dispose() {
-    _findDoctorsCubit.close();
     super.dispose();
   }
 
@@ -84,31 +59,28 @@ class _FindDoctorsScreenState extends State<FindDoctorsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: _findDoctorsCubit,
-      child: BlocBuilder<FindDoctorsCubit, FindDoctorsState>(
-        builder: (context, state) {
-          return Scaffold(
-            backgroundColor: Colors.white,
-            body: Column(
-              children: [
-                48.verticalSpace,
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: FindDoctorsTopBar(onBackPressed: () => context.pop()),
-                ),
-                18.verticalSpace,
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: const AppSearchBar(),
-                ),
-                16.verticalSpace,
-                Expanded(child: _buildDoctorsContent(context, state)),
-              ],
-            ),
-          );
-        },
-      ),
+    return BlocBuilder<FindDoctorsCubit, FindDoctorsState>(
+      builder: (context, state) {
+        return Scaffold(
+          backgroundColor: Colors.white,
+          body: Column(
+            children: [
+              48.verticalSpace,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: FindDoctorsTopBar(onBackPressed: () => context.pop()),
+              ),
+              18.verticalSpace,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: const AppSearchBar(),
+              ),
+              16.verticalSpace,
+              Expanded(child: _buildDoctorsContent(context, state)),
+            ],
+          ),
+        );
+      },
     );
   }
 

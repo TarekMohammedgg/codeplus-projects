@@ -1,6 +1,16 @@
 import 'package:doctor_hunt/apps/features/common/onboarding/presentation/screens/onboarding_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
+import 'package:doctor_hunt/apps/core/di/injection.dart';
+import 'package:doctor_hunt/apps/features/admin/create_doctor/presentation/controller/cubit/create_doctor_cubit.dart';
+import 'package:doctor_hunt/apps/features/admin/doctors/presentation/controller/cubit/admin_doctors_cubit.dart';
+import 'package:doctor_hunt/apps/features/common/auth/data/repositories/auth_repository.dart';
+import 'package:doctor_hunt/apps/features/common/auth/presentation/controller/cubit/auth_cubit.dart';
+import 'package:doctor_hunt/apps/features/patient/favourite_doctors/presentation/controller/cubit/favourite_doctors_cubit.dart';
+import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/controller/cubit/find_doctors_cubit.dart';
+import 'package:doctor_hunt/apps/features/patient/home/presentation/controller/cubit/home_cubit.dart';
 
 import 'package:doctor_hunt/apps/core/constants/app_route_paths.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
@@ -43,7 +53,10 @@ class LoginRoute extends GoRouteData with $LoginRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return LoginScreen(role: $extra);
+    return BlocProvider<AuthCubit>(
+      create: (_) => getIt<AuthCubit>(),
+      child: LoginScreen(role: $extra),
+    );
   }
 }
 
@@ -53,7 +66,10 @@ class SignupRoute extends GoRouteData with $SignupRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const SignupScreen();
+    return BlocProvider<AuthCubit>(
+      create: (_) => getIt<AuthCubit>(),
+      child: const SignupScreen(),
+    );
   }
 }
 
@@ -75,7 +91,10 @@ class ResetPasswordRoute extends GoRouteData with $ResetPasswordRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const ResetPasswordScreen();
+    return BlocProvider<AuthCubit>(
+      create: (_) => getIt<AuthCubit>(),
+      child: const ResetPasswordScreen(),
+    );
   }
 }
 
@@ -95,7 +114,10 @@ class AdminDoctorsRoute extends GoRouteData with $AdminDoctorsRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const AdminDoctorsScreen();
+    return BlocProvider<AdminDoctorsCubit>(
+      create: (_) => getIt<AdminDoctorsCubit>(),
+      child: const AdminDoctorsScreen(),
+    );
   }
 }
 
@@ -107,7 +129,10 @@ class CreateDoctorRoute extends GoRouteData with $CreateDoctorRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return CreateDoctorScreen(doctor: $extra);
+    return BlocProvider<CreateDoctorCubit>(
+      create: (_) => getIt<CreateDoctorCubit>(),
+      child: CreateDoctorScreen(doctor: $extra),
+    );
   }
 }
 
@@ -117,7 +142,10 @@ class AdminSettingsRoute extends GoRouteData with $AdminSettingsRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const AdminSettingsScreen();
+    return BlocProvider<AuthCubit>(
+      create: (_) => getIt<AuthCubit>(),
+      child: const AdminSettingsScreen(),
+    );
   }
 }
 
@@ -127,7 +155,10 @@ class HomeRoute extends GoRouteData with $HomeRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const HomeScreen();
+    return BlocProvider<HomeCubit>(
+      create: (_) => getIt<HomeCubit>(),
+      child: HomeScreen(user: getIt<AuthRepository>().currentUser),
+    );
   }
 }
 
@@ -137,7 +168,10 @@ class FindDoctorsRoute extends GoRouteData with $FindDoctorsRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const FindDoctorsScreen();
+    return BlocProvider<FindDoctorsCubit>(
+      create: (_) => getIt<FindDoctorsCubit>(),
+      child: const FindDoctorsScreen(),
+    );
   }
 }
 
@@ -159,7 +193,10 @@ class FavouriteDoctorsRoute extends GoRouteData with $FavouriteDoctorsRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const FavouriteDoctorsScreen();
+    return BlocProvider<FavouriteDoctorsCubit>(
+      create: (_) => getIt<FavouriteDoctorsCubit>(),
+      child: const FavouriteDoctorsScreen(),
+    );
   }
 }
 
@@ -183,6 +220,9 @@ class ProfileRoute extends GoRouteData with $ProfileRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return ProfileScreen(profile: $extra);
+    return BlocProvider<AuthCubit>(
+      create: (_) => getIt<AuthCubit>(),
+      child: ProfileScreen(profile: $extra),
+    );
   }
 }

@@ -31,7 +31,7 @@ void main() {
     await tester.pumpWidget(buildTestApp(testHomeScreen()));
     await tester.pump();
 
-    expect(find.text(tr.hiSteven), findsOneWidget);
+    expect(find.text(tr.greetingGeneric), findsOneWidget);
     expect(find.text(tr.findYourDoctor), findsOneWidget);
 
     expect(find.text(tr.searchDoctorHint), findsOneWidget);
@@ -356,7 +356,7 @@ Widget testHomeScreen({
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               AppHeaderSection(
-                greeting: tr.hiSteven,
+                greeting: tr.greetingGeneric,
                 title: tr.findYourDoctor,
                 searchController: searchController,
                 showLanguageToggle: true,

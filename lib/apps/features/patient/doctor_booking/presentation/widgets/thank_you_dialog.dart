@@ -3,6 +3,7 @@ import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_text_button.dart';
 import 'package:doctor_hunt/generated/app_image.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
@@ -95,20 +96,13 @@ class ThankYouDialog extends StatelessWidget {
             ),
             14.verticalSpace,
             //CR use primary widget (any reuse widget)
-            TextButton(
+            // Solved
+            AppTextButton(
+              label: tr.editYourAppointment,
               onPressed: onEdit ?? () => Navigator.of(context).pop(),
-              //CR use primary widget (any reuse widget)
-              style: TextButton.styleFrom(
-                foregroundColor: AppColors.textSecondary,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-              ),
-              child: Text(
-                tr.editYourAppointment,
-                style: context.medium14TextSecondary,
-              ),
+              foregroundColor: AppColors.textSecondary,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              textStyle: context.medium14TextSecondary,
             ),
           ],
         ),

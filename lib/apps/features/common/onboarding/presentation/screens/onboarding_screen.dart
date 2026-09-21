@@ -1,8 +1,10 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_icon_button.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_text_button.dart';
 import 'package:doctor_hunt/apps/features/common/onboarding/data/onboarding_data.dart';
 import 'package:doctor_hunt/apps/features/common/onboarding/data/models/onboarding_model.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
@@ -69,18 +71,23 @@ class OnboardingScreenState extends State<OnboardingScreen> {
             child: Row(
               children: [
                 //CR use primary widget (any reuse widget)
-                TextButton(onPressed: onSkip, child: Text(tr.skip)),
+                // Solved
+                AppTextButton(
+                  onPressed: onSkip,
+                  label: tr.skip,
+                  foregroundColor: AppColors.textSecondary,
+                ),
                 const Spacer(),
-                IconButton(
-                  onPressed: onNext,
-                  icon: const Icon(Icons.arrow_forward_rounded),
-                  color: Colors.white,
-                  style: IconButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    fixedSize: const Size(58, 58),
-                    elevation: 0,
-                    shadowColor: Colors.transparent,
-                  ),
+                AppIconButton(
+                  onTap: onNext,
+                  icon: Icons.arrow_forward_rounded,
+                  iconColor: AppColors.white,
+                  iconSize: 24,
+                  backgroundColor: AppColors.primary,
+                  width: 58,
+                  height: 58,
+                  borderRadius: BorderRadius.circular(29),
+                  boxShadow: const [],
                 ),
               ],
             ),

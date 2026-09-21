@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:doctor_hunt/apps/core/di/injection.dart';
+import 'package:doctor_hunt/apps/core/services/doctor_service.dart';
+import 'package:doctor_hunt/apps/core/services/specialty_service.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/data/repositories/admin_doctors_repository.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/data/service/admin_doctor_service.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/presentation/controller/cubit/admin_doctors_cubit.dart';
@@ -21,7 +23,6 @@ import 'package:doctor_hunt/apps/features/patient/favourite_doctors/presentation
 import 'package:doctor_hunt/apps/features/patient/home/data/repositories/home_repository.dart';
 import 'package:doctor_hunt/apps/features/patient/home/data/service/home_service.dart';
 import 'package:doctor_hunt/apps/features/patient/home/presentation/controller/cubit/home_cubit.dart';
-import 'package:doctor_hunt/apps/core/services/specialty_service.dart';
 
 class _FakeFirebaseAuth extends Fake implements FirebaseAuth {}
 
@@ -30,7 +31,7 @@ class _FakeFirebaseFirestore extends Fake implements FirebaseFirestore {}
 void main() {
   setUp(() async {
     await getIt.reset();
-    await setupServiceLocator();
+    setupServiceLocator();
   });
 
   tearDown(() async {
@@ -45,6 +46,7 @@ void main() {
 
     test('registers all core and feature services as lazy singletons', () {
       expect(getIt.isRegistered<AuthService>(), isTrue);
+      expect(getIt.isRegistered<DoctorService>(), isTrue);
       expect(getIt.isRegistered<HomeService>(), isTrue);
       expect(getIt.isRegistered<FindDoctorsService>(), isTrue);
       expect(getIt.isRegistered<FavouriteDoctorsService>(), isTrue);
@@ -82,7 +84,11 @@ void main() {
 
     test('AdminDoctorService accepts injected FirebaseFirestore', () {
       final fakeFirestore = _FakeFirebaseFirestore();
-      final service = AdminDoctorService(firestore: fakeFirestore);
+      final specialtyService = SpecialtyService(firestore: fakeFirestore);
+      final service = AdminDoctorService(
+        firestore: fakeFirestore,
+        specialtyService: specialtyService,
+      );
       expect(service, isNotNull);
     });
 
@@ -96,7 +102,11 @@ void main() {
 
     test('AdminDoctorsRepository receives injected AdminDoctorService', () {
       final fakeFirestore = _FakeFirebaseFirestore();
-      final service = AdminDoctorService(firestore: fakeFirestore);
+      final specialtyService = SpecialtyService(firestore: fakeFirestore);
+      final service = AdminDoctorService(
+        firestore: fakeFirestore,
+        specialtyService: specialtyService,
+      );
       final repo = FirebaseAdminDoctorsRepository(doctorService: service);
       expect(repo.doctorService, same(service));
     });

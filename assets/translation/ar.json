@@ -70,7 +70,8 @@
   "enterValidPhoneNumber": "يرجى إدخال رقم هاتف صحيح (مثال: 01012345678)",
   "enterPassword": "أدخل كلمة المرور",
   "useAtLeast8Characters": "استخدم 8 أحرف على الأقل",
-  "hiSteven": "مرحبًا سما 👋",
+  "greetingGeneric": "مرحبًا 👋",
+  "greetingWithName(name)": "مرحبًا $name 👋",
   "findYourDoctor": "اعثر على طبيبك",
   "searchDoctorHint": "ابحث.... ",
   "live": "مباشر",
@@ -231,5 +232,6 @@
   "deleteDoctorTitle": "حذف الطبيب",
   "deleteDoctorConfirm": "هل أنت متأكد من رغبتك في حذف هذا الطبيب؟",
   "doctorDeletedSuccess": "تم حذف الطبيب بنجاح",
-  "changeImage": "تغيير الصورة"
+  "changeImage": "تغيير الصورة",
+  "placeholderDoctorName": "د. طبيب أطفال"
 }

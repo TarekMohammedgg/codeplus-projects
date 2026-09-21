@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/apps/features/common/auth/data/repositories/auth_repository.dart';
@@ -7,6 +8,8 @@ class AuthCubit extends Cubit<AuthState> {
   AuthCubit({required this.repository}) : super(const AuthInitial());
 
   final AuthRepository repository;
+
+  User? get currentUser => repository.currentUser;
 
   Future<void> signIn({required String email, required String password}) async {
     emit(const AuthLoading(action: AuthAction.signIn));

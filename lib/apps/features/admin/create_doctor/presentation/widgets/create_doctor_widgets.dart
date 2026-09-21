@@ -1,9 +1,10 @@
-﻿import 'dart:typed_data';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/models/specialty_model.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_text_button.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
@@ -235,10 +236,12 @@ class DoctorImagePickerField extends StatelessWidget {
           Align(
             alignment: AlignmentDirectional.centerEnd,
             //CR use primary widget (any reuse widget)
-            child: TextButton.icon(
+            // Solved
+            child: AppTextButton(
               onPressed: onClear,
-              icon: const Icon(Icons.close_rounded, size: 18),
-              label: Text(tr.removeImage),
+              icon: Icons.close_rounded,
+              iconSize: 18,
+              label: tr.removeImage,
             ),
           ),
       ],

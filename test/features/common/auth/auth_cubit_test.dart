@@ -72,4 +72,7 @@ class _FakeAuthRepository implements AuthRepository {
 
   @override
   Future<void> signOut() async {}
+
+  @override
+  User? get currentUser => null;
 }

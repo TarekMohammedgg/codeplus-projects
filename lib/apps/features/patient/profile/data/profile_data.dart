@@ -1,14 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:doctor_hunt/apps/core/di/injection.dart';
-import 'package:doctor_hunt/apps/features/common/auth/data/service/auth_service.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/data/models/user_profile_model.dart';
 
-UserProfileModel defaultUserProfile() {
-  final user = getIt.isRegistered<AuthService>()
-      ? getIt<AuthService>().currentUser
-      : (getIt.isRegistered<FirebaseAuth>()
-            ? getIt<FirebaseAuth>().currentUser
-            : null);
+UserProfileModel defaultUserProfile(User? user) {
   final displayName = user?.displayName?.trim();
   final phone = user?.phoneNumber?.trim();
   final photoUrl = user?.photoURL?.trim();

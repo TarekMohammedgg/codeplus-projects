@@ -21,7 +21,7 @@ void main() async {
   }
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await AuthService.initialize();
-  await setupServiceLocator();
+  setupServiceLocator();
 
   LocaleSettings.useDeviceLocale();
   runApp(TranslationProvider(child: const DoctorHuntApp()));

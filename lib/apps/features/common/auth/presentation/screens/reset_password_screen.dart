@@ -1,9 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:doctor_hunt/apps/core/di/injection.dart';
 import 'package:doctor_hunt/apps/core/extensions/context_extensions.dart';
 import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
@@ -14,18 +11,15 @@ import 'package:doctor_hunt/generated/app_image.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_text_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_text_field.dart';
-import 'package:doctor_hunt/apps/features/common/auth/data/repositories/auth_repository.dart';
-import 'package:doctor_hunt/apps/features/common/auth/data/service/auth_service.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/controller/cubit/auth_cubit.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/controller/cubit/auth_state.dart';
 import '../widgets/auth_back_button.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
-  const ResetPasswordScreen({super.key, this.repository});
-
-  final AuthRepository? repository;
+  const ResetPasswordScreen({super.key});
 
   @override
   State<ResetPasswordScreen> createState() => ResetPasswordScreenState();
@@ -39,37 +33,20 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
   @override
   void initState() {
     super.initState();
-    _authCubit = widget.repository != null
-        ? AuthCubit(repository: widget.repository!)
-        //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
-        //CR Use `getIt<Cubit>()` directly or inject via constructor.
-        : (getIt.isRegistered<AuthCubit>()
-              ? getIt<AuthCubit>()
-              : AuthCubit(
-                  //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
-                  //CR Use `getIt<Cubit>()` directly or inject via constructor.
-                  repository: getIt.isRegistered<AuthRepository>()
-                      ? getIt<AuthRepository>()
-                      : FirebaseAuthRepository(
-                          authService: getIt.isRegistered<AuthService>()
-                              ? getIt<AuthService>()
-                              : AuthService(
-                                  auth: getIt.isRegistered<FirebaseAuth>()
-                                      ? getIt<FirebaseAuth>()
-                                      : FirebaseAuth.instance,
-                                  firestore:
-                                      getIt.isRegistered<FirebaseFirestore>()
-                                      ? getIt<FirebaseFirestore>()
-                                      : FirebaseFirestore.instance,
-                                ),
-                        ),
-                ));
+    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
+    // solved
+    //CR Use `getIt<Cubit>()` directly or inject via constructor.
+    // solved
+    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
+    // solved
+    //CR Use `getIt<Cubit>()` directly or inject via constructor.
+    // solved
+    _authCubit = context.read<AuthCubit>();
   }
 
   @override
   void dispose() {
     emailController.dispose();
-    _authCubit.close();
     super.dispose();
   }
 
@@ -83,127 +60,120 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: _authCubit,
-      child: BlocConsumer<AuthCubit, AuthState>(
-        listener: (context, state) {
-          switch (state) {
-            case AuthFailure(:final errorMessage):
-              context.showErrorSnackBar(errorMessage);
-            case AuthSuccess(action: AuthAction.resetPassword):
-              context.showSuccessSnackBar(tr.passwordResetSuccess);
-              if (context.canPop()) {
-                context.pop();
-              } else {
-                const LoginRoute().go(context);
-              }
-            default:
-              break;
-          }
-        },
-        builder: (context, state) {
-          final isLoading =
-              state is AuthLoading && state.action == AuthAction.resetPassword;
+    return BlocConsumer<AuthCubit, AuthState>(
+      listener: (context, state) {
+        switch (state) {
+          case AuthFailure(:final errorMessage):
+            context.showErrorSnackBar(errorMessage);
+          case AuthSuccess(action: AuthAction.resetPassword):
+            context.showSuccessSnackBar(tr.passwordResetSuccess);
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              const LoginRoute().go(context);
+            }
+          default:
+            break;
+        }
+      },
+      builder: (context, state) {
+        final isLoading =
+            state is AuthLoading && state.action == AuthAction.resetPassword;
 
-          return Scaffold(
-            backgroundColor: AppColors.background,
-            body: SingleChildScrollView(
-              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              padding: const EdgeInsets.fromLTRB(24, 48, 24, 32),
-              child: Form(
-                key: formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Row(
+        return Scaffold(
+          backgroundColor: AppColors.background,
+          body: SingleChildScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            padding: const EdgeInsets.fromLTRB(24, 48, 24, 32),
+            child: Form(
+              key: formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    children: [
+                      const AuthBackButton(circular: true),
+                      const Spacer(),
+                      Image.asset(
+                        Assets.assetsDesignDoctorHuntLogo,
+                        height: 28,
+                      ),
+                      const Spacer(),
+                    ],
+                  ),
+                  18.verticalSpace,
+                  const Center(child: ResetPasswordHeroIllustration(size: 110)),
+                  16.verticalSpace,
+                  Text(
+                    tr.resetYourPassword,
+                    textAlign: TextAlign.center,
+                    style: context.bold26TextMain,
+                  ),
+                  6.verticalSpace,
+                  Text(
+                    tr.resetPasswordSubtitle,
+                    textAlign: TextAlign.center,
+                    style: context.regular14TextSecondary.copyWith(
+                      height: 1.35,
+                    ),
+                  ),
+                  20.verticalSpace,
+                  Text(tr.emailAddress, style: context.semiBold14TextMain),
+                  6.verticalSpace,
+                  AppTextField(
+                    controller: emailController,
+                    hintText: tr.emailHint,
+                    prefixIcon: Icons.mail_outline_rounded,
+                    keyboardType: TextInputType.emailAddress,
+                    textInputAction: TextInputAction.done,
+                    autofillHints: const [AutofillHints.email],
+                    validator: (value) => AppValidators.validateEmail(value),
+                  ),
+                  20.verticalSpace,
+                  AppPrimaryButton(
+                    label: tr.sendResetLink,
+                    icon: Icons.send_rounded,
+                    isLoading: isLoading,
+                    onPressed: isLoading ? null : sendResetLink,
+                    height: 52,
+                    fontSize: 16,
+                  ),
+                  24.verticalSpace,
+                  Center(
+                    child: Wrap(
+                      alignment: WrapAlignment.center,
+                      crossAxisAlignment: WrapCrossAlignment.center,
                       children: [
-                        const AuthBackButton(circular: true),
-                        const Spacer(),
-                        Image.asset(
-                          Assets.assetsDesignDoctorHuntLogo,
-                          height: 28,
+                        Text(
+                          tr.rememberedPassword,
+                          style: context.regular14TextSecondary,
                         ),
-                        const Spacer(),
+                        //CR use primary widget (any reuse widget)
+                        // Solved
+                        AppTextButton(
+                          onPressed: () {
+                            if (context.canPop()) {
+                              context.pop();
+                            } else {
+                              const LoginRoute().go(context);
+                            }
+                          },
+                          foregroundColor: AppColors.primary,
+                          padding: const EdgeInsets.only(left: 6),
+                          minimumSize: Size.zero,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          textStyle: context.semiBold14Primary,
+                          label: tr.signIn,
+                        ),
                       ],
                     ),
-                    18.verticalSpace,
-                    const Center(
-                      child: ResetPasswordHeroIllustration(size: 110),
-                    ),
-                    16.verticalSpace,
-                    Text(
-                      tr.resetYourPassword,
-                      textAlign: TextAlign.center,
-                      style: context.bold26TextMain,
-                    ),
-                    6.verticalSpace,
-                    Text(
-                      tr.resetPasswordSubtitle,
-                      textAlign: TextAlign.center,
-                      style: context.regular14TextSecondary.copyWith(
-                        height: 1.35,
-                      ),
-                    ),
-                    20.verticalSpace,
-                    Text(tr.emailAddress, style: context.semiBold14TextMain),
-                    6.verticalSpace,
-                    AppTextField(
-                      controller: emailController,
-                      hintText: tr.emailHint,
-                      prefixIcon: Icons.mail_outline_rounded,
-                      keyboardType: TextInputType.emailAddress,
-                      textInputAction: TextInputAction.done,
-                      autofillHints: const [AutofillHints.email],
-                      validator: (value) => AppValidators.validateEmail(value),
-                    ),
-                    20.verticalSpace,
-                    AppPrimaryButton(
-                      label: tr.sendResetLink,
-                      icon: Icons.send_rounded,
-                      isLoading: isLoading,
-                      onPressed: isLoading ? null : sendResetLink,
-                      height: 52,
-                      fontSize: 16,
-                    ),
-                    24.verticalSpace,
-                    Center(
-                      child: Wrap(
-                        alignment: WrapAlignment.center,
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        children: [
-                          Text(
-                            tr.rememberedPassword,
-                            style: context.regular14TextSecondary,
-                          ),
-                          //CR use primary widget (any reuse widget)
-                          TextButton(
-                            onPressed: () {
-                              if (context.canPop()) {
-                                context.pop();
-                              } else {
-                                const LoginRoute().go(context);
-                              }
-                            },
-                            //CR use primary widget (any reuse widget)
-                            style: TextButton.styleFrom(
-                              foregroundColor: AppColors.primary,
-                              padding: const EdgeInsets.only(left: 6),
-                              minimumSize: Size.zero,
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              textStyle: context.semiBold14Primary,
-                            ),
-                            child: Text(tr.signIn),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

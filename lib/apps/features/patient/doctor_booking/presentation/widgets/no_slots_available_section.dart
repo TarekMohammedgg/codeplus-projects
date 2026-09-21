@@ -48,34 +48,18 @@ class NoSlotsAvailableSection extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
         16.verticalSpace,
-        SizedBox(
+        //CR use primary widget (any reuse widget)
+        // Solved
+        AppPrimaryButton.outlined(
+          label: context.tr.contactClinic,
+          onPressed: onContactClinicTap,
           width: 306,
           height: 54,
-          //CR use primary widget (any reuse widget)
-          child: OutlinedButton(
-            onPressed: onContactClinicTap,
-            //CR use primary widget (any reuse widget)
-            style: OutlinedButton.styleFrom(
-              backgroundColor: Colors.white,
-              elevation: 0,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              side: BorderSide(
-                color: AppColors.primary.withValues(alpha: 0.5),
-                width: 1.2,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            child: Text(
-              context.tr.contactClinic,
-              //CR hardcode textstyle
-              // Solved
-              style: context.bold16Primary,
-              maxLines: 1,
-              textAlign: TextAlign.center,
-            ),
-          ),
+          backgroundColor: Colors.white,
+          borderColor: AppColors.primary.withValues(alpha: 0.5),
+          borderWidth: 1.2,
+          borderRadius: BorderRadius.circular(8),
+          textStyle: context.bold16Primary,
         ),
         24.verticalSpace,
       ],

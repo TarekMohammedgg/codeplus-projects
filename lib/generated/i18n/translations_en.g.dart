@@ -254,8 +254,11 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'Use at least 8 characters'
 	String get useAtLeast8Characters => 'Use at least 8 characters';
 
-	/// en: 'Hi Sama 👋'
-	String get hiSteven => 'Hi Sama 👋';
+	/// en: 'Hi 👋'
+	String get greetingGeneric => 'Hi 👋';
+
+	/// en: 'Hi $name 👋'
+	String greetingWithName({required Object name}) => 'Hi ${name} 👋';
 
 	/// en: 'Find Your Doctor'
 	String get findYourDoctor => 'Find Your Doctor';
@@ -736,6 +739,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// en: 'Change image'
 	String get changeImage => 'Change image';
+
+	/// en: 'Dr. Pediatrician'
+	String get placeholderDoctorName => 'Dr. Pediatrician';
 }
 
 /// The flat map containing all translations for locale <en>.
@@ -817,7 +823,8 @@ extension on Translations {
 			'enterValidPhoneNumber' => 'Please enter a valid phone number (e.g. 01012345678)',
 			'enterPassword' => 'Enter your password',
 			'useAtLeast8Characters' => 'Use at least 8 characters',
-			'hiSteven' => 'Hi Sama 👋',
+			'greetingGeneric' => 'Hi 👋',
+			'greetingWithName' => ({required Object name}) => 'Hi ${name} 👋',
 			'findYourDoctor' => 'Find Your Doctor',
 			'searchDoctorHint' => 'Search.... ',
 			'live' => 'LIVE',
@@ -978,6 +985,7 @@ extension on Translations {
 			'deleteDoctorConfirm' => 'Are you sure you want to delete this doctor?',
 			'doctorDeletedSuccess' => 'Doctor deleted successfully',
 			'changeImage' => 'Change image',
+			'placeholderDoctorName' => 'Dr. Pediatrician',
 			_ => null,
 		};
 	}

@@ -11,6 +11,7 @@ import 'package:doctor_hunt/apps/core/utils/phone_utils.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_text_button.dart';
 import '../widgets/auth_back_button.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
@@ -223,26 +224,19 @@ class OtpVerificationScreenState extends State<OtpVerificationScreen> {
             14.verticalSpace,
             Center(
               //CR use primary widget (any reuse widget)
-              child: TextButton(
+              // Solved
+              child: AppTextButton(
                 onPressed: isResendActive ? resendCode : null,
-                //CR use primary widget (any reuse widget)
-                style: TextButton.styleFrom(
-                  foregroundColor: isResendActive
-                      ? AppColors.primary
-                      : AppColors.textSecondary.withValues(alpha: 0.5),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  textStyle: context.bold16Primary.copyWith(fontSize: 15),
+                label: tr.resendCode,
+                isLoading: _isSendingCode,
+                foregroundColor: isResendActive
+                    ? AppColors.primary
+                    : AppColors.textSecondary.withValues(alpha: 0.5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
                 ),
-                child: _isSendingCode
-                    ? const SizedBox(
-                        width: 18,
-                        height: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : Text(tr.resendCode),
+                textStyle: context.bold16Primary.copyWith(fontSize: 15),
               ),
             ),
             32.verticalSpace,

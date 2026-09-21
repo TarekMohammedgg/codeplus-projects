@@ -2,8 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doctor_hunt/apps/core/models/specialty_model.dart';
 
 class SpecialtyService {
-  SpecialtyService({FirebaseFirestore? firestore})
-    : _firestore = firestore ?? FirebaseFirestore.instance;
+  SpecialtyService({
+    required FirebaseFirestore firestore,
+    // ignore: prefer_initializing_formals
+  }) : _firestore = firestore;
 
   final FirebaseFirestore _firestore;
 
@@ -59,5 +61,25 @@ class SpecialtyService {
   static String _readText(dynamic value, String id) {
     if (value is String && value.trim().isNotEmpty) return value.trim();
     throw FormatException('Specialty $id has an invalid localized name');
+  }
+
+  /// Localized (ar, en) specialty names keyed by specialty id, used to
+  /// resolve a doctor's `specialtyId` into display text.
+  Future<Map<String, (String, String)>> fetchSpecialtyNames() async {
+    final snapshot = await _specialties.get();
+    return {
+      for (final doc in snapshot.docs)
+        doc.id: (
+          _localizedText(doc.data()['name'], 'ar') ??
+              (doc.data()['nameAr'] as String? ?? ''),
+          _localizedText(doc.data()['name'], 'en') ??
+              (doc.data()['nameEn'] as String? ?? ''),
+        ),
+    };
+  }
+
+  static String? _localizedText(dynamic value, String language) {
+    if (value is Map) return value[language] as String?;
+    return null;
   }
 }

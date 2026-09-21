@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:doctor_hunt/apps/features/common/auth/presentation/controller/cubit/auth_cubit.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/screens/login_screen.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/screens/signup_screen.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import '../../../helpers/test_app.dart';
+import '../../../helpers/test_fakes.dart';
 
 void main() {
   testWidgets('Login and signup headers use matching typography', (
@@ -11,11 +14,25 @@ void main() {
   ) async {
     final tr = AppLocale.en.buildSync();
 
-    await tester.pumpWidget(buildTestApp(const LoginScreen()));
+    await tester.pumpWidget(
+      buildTestApp(
+        BlocProvider<AuthCubit>(
+          create: (_) => AuthCubit(repository: FakeAuthRepository()),
+          child: const LoginScreen(),
+        ),
+      ),
+    );
     final loginTitle = tester.widget<Text>(find.text(tr.welcomeBack));
     final loginSubtitle = tester.widget<Text>(find.text(tr.loginSubtitle));
 
-    await tester.pumpWidget(buildTestApp(const SignupScreen()));
+    await tester.pumpWidget(
+      buildTestApp(
+        BlocProvider<AuthCubit>(
+          create: (_) => AuthCubit(repository: FakeAuthRepository()),
+          child: const SignupScreen(),
+        ),
+      ),
+    );
     final signupTitle = tester.widget<Text>(find.text(tr.createYourAccount));
     final signupSubtitle = tester.widget<Text>(find.text(tr.signupSubtitle));
 

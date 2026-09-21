@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:skeletonizer/skeletonizer.dart';
-import 'package:doctor_hunt/apps/core/di/injection.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
@@ -12,8 +11,6 @@ import 'package:doctor_hunt/apps/core/widgets/app_search_bar.dart';
 import 'package:doctor_hunt/apps/features/patient/favourite_doctors/presentation/widgets/favourite_doctor_card.dart';
 import 'package:doctor_hunt/apps/features/patient/home/presentation/widgets/featured_doctor_section.dart';
 import 'package:doctor_hunt/apps/features/common/bottom_navigation_bar/presentation/widgets/main_bottom_navigation_bar.dart';
-import 'package:doctor_hunt/apps/features/patient/favourite_doctors/data/service/favourite_doctors_service.dart';
-import 'package:doctor_hunt/apps/features/patient/favourite_doctors/data/repositories/favourite_doctors_repository.dart';
 import 'package:doctor_hunt/apps/features/patient/favourite_doctors/presentation/controller/cubit/favourite_doctors_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/favourite_doctors/presentation/controller/cubit/favourite_doctors_state.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
@@ -22,14 +19,10 @@ import 'package:doctor_hunt/generated/style_atoms.dart';
 class FavouriteDoctorsScreen extends StatefulWidget {
   const FavouriteDoctorsScreen({
     super.key,
-    this.doctorService,
-    this.repository,
     this.initialFavouriteDoctors,
     this.initialFeaturedDoctors,
   });
 
-  final FavouriteDoctorsService? doctorService;
-  final FavouriteDoctorsRepository? repository;
   final List<DoctorModel>? initialFavouriteDoctors;
   final List<DoctorModel>? initialFeaturedDoctors;
 
@@ -43,29 +36,15 @@ class _FavouriteDoctorsScreenState extends State<FavouriteDoctorsScreen> {
   @override
   void initState() {
     super.initState();
-    _favouriteDoctorsCubit =
-        (widget.repository != null || widget.doctorService != null)
-        ? FavouriteDoctorsCubit(
-            repository:
-                widget.repository ??
-                FirebaseFavouriteDoctorsRepository(
-                  favouriteDoctorsService:
-                      widget.doctorService ?? FavouriteDoctorsService(),
-                ),
-          )
     //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
+    // solved
     //CR Use `getIt<Cubit>()` directly or inject via constructor.
-        : (getIt.isRegistered<FavouriteDoctorsCubit>()
-              ? getIt<FavouriteDoctorsCubit>()
-              : FavouriteDoctorsCubit(
+    // solved
     //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
+    // solved
     //CR Use `getIt<Cubit>()` directly or inject via constructor.
-                  repository: getIt.isRegistered<FavouriteDoctorsRepository>()
-                      ? getIt<FavouriteDoctorsRepository>()
-                      : FirebaseFavouriteDoctorsRepository(
-                          favouriteDoctorsService: FavouriteDoctorsService(),
-                        ),
-                ));
+    // solved
+    _favouriteDoctorsCubit = context.read<FavouriteDoctorsCubit>();
     _favouriteDoctorsCubit.load(
       initialFavouriteDoctors: widget.initialFavouriteDoctors,
       initialFeaturedDoctors: widget.initialFeaturedDoctors,
@@ -74,7 +53,6 @@ class _FavouriteDoctorsScreenState extends State<FavouriteDoctorsScreen> {
 
   @override
   void dispose() {
-    _favouriteDoctorsCubit.close();
     super.dispose();
   }
 
@@ -98,62 +76,59 @@ class _FavouriteDoctorsScreenState extends State<FavouriteDoctorsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: _favouriteDoctorsCubit,
-      child: BlocBuilder<FavouriteDoctorsCubit, FavouriteDoctorsState>(
-        builder: (context, state) {
-          return Scaffold(
-            backgroundColor: AppColors.background,
-            body: CustomScrollView(
-              slivers: [
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 48, 24, 16),
-                    child: Row(
-                      children: [
-                        AppIconButton(
-                          onTap: () {
-                            if (context.canPop()) {
-                              context.pop();
-                            } else {
-                              const HomeRoute().go(context);
-                            }
-                          },
-                          child: const Icon(
-                            Icons.arrow_back_ios_new_rounded,
-                            size: 16,
-                            color: AppColors.textSecondary,
-                          ),
+    return BlocBuilder<FavouriteDoctorsCubit, FavouriteDoctorsState>(
+      builder: (context, state) {
+        return Scaffold(
+          backgroundColor: AppColors.background,
+          body: CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 48, 24, 16),
+                  child: Row(
+                    children: [
+                      AppIconButton(
+                        onTap: () {
+                          if (context.canPop()) {
+                            context.pop();
+                          } else {
+                            const HomeRoute().go(context);
+                          }
+                        },
+                        child: const Icon(
+                          Icons.arrow_back_ios_new_rounded,
+                          size: 16,
+                          color: AppColors.textSecondary,
                         ),
-                        16.horizontalSpace,
-                        Expanded(
-                          child: Text(
-                            tr.favouriteDoctors,
-                            style: context.bold18TextMain,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                      ),
+                      16.horizontalSpace,
+                      Expanded(
+                        child: Text(
+                          tr.favouriteDoctors,
+                          style: context.bold18TextMain,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
-                const SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24),
-                    child: AppSearchBar(),
-                  ),
+              ),
+              const SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24),
+                  child: AppSearchBar(),
                 ),
-                ..._buildContentSlivers(context, state),
-              ],
-            ),
-            bottomNavigationBar: MainBottomNavigationBar(
-              currentIndex: 1,
-              onTap: (index) => _onNavTap(context, index),
-            ),
-          );
-        },
-      ),
+              ),
+              ..._buildContentSlivers(context, state),
+            ],
+          ),
+          bottomNavigationBar: MainBottomNavigationBar(
+            currentIndex: 1,
+            onTap: (index) => _onNavTap(context, index),
+          ),
+        );
+      },
     );
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_text_button.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
 enum SnackBarStatus { success, error, warning, info }
@@ -102,19 +103,13 @@ extension CustomSnackBarExtension on BuildContext {
               if (actionLabel != null && onAction != null) ...[
                 const SizedBox(width: 8),
                 //CR use primary widget (any reuse widget)
-                TextButton(
+                // Solved
+                AppTextButton(
                   onPressed: onAction,
-                  //CR use primary widget (any reuse widget)
-                  style: TextButton.styleFrom(
-                    foregroundColor: primaryColor,
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                  ),
-                  child: Text(
-                    actionLabel,
-                    //CR hardcode textstyle
-                    // Solved
-                    style: bold14,
-                  ),
+                  label: actionLabel,
+                  foregroundColor: primaryColor,
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  textStyle: bold14,
                 ),
               ],
             ],

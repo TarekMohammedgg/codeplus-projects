@@ -110,7 +110,8 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get enterValidPhoneNumber => 'يرجى إدخال رقم هاتف صحيح (مثال: 01012345678)';
 	@override String get enterPassword => 'أدخل كلمة المرور';
 	@override String get useAtLeast8Characters => 'استخدم 8 أحرف على الأقل';
-	@override String get hiSteven => 'مرحبًا سما 👋';
+	@override String get greetingGeneric => 'مرحبًا 👋';
+	@override String greetingWithName({required Object name}) => 'مرحبًا ${name} 👋';
 	@override String get findYourDoctor => 'اعثر على طبيبك';
 	@override String get searchDoctorHint => 'ابحث.... ';
 	@override String get live => 'مباشر';
@@ -271,6 +272,7 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get deleteDoctorConfirm => 'هل أنت متأكد من رغبتك في حذف هذا الطبيب؟';
 	@override String get doctorDeletedSuccess => 'تم حذف الطبيب بنجاح';
 	@override String get changeImage => 'تغيير الصورة';
+	@override String get placeholderDoctorName => 'د. طبيب أطفال';
 }
 
 /// The flat map containing all translations for locale <ar>.
@@ -352,7 +354,8 @@ extension on TranslationsAr {
 			'enterValidPhoneNumber' => 'يرجى إدخال رقم هاتف صحيح (مثال: 01012345678)',
 			'enterPassword' => 'أدخل كلمة المرور',
 			'useAtLeast8Characters' => 'استخدم 8 أحرف على الأقل',
-			'hiSteven' => 'مرحبًا سما 👋',
+			'greetingGeneric' => 'مرحبًا 👋',
+			'greetingWithName' => ({required Object name}) => 'مرحبًا ${name} 👋',
 			'findYourDoctor' => 'اعثر على طبيبك',
 			'searchDoctorHint' => 'ابحث.... ',
 			'live' => 'مباشر',
@@ -513,6 +516,7 @@ extension on TranslationsAr {
 			'deleteDoctorConfirm' => 'هل أنت متأكد من رغبتك في حذف هذا الطبيب؟',
 			'doctorDeletedSuccess' => 'تم حذف الطبيب بنجاح',
 			'changeImage' => 'تغيير الصورة',
+			'placeholderDoctorName' => 'د. طبيب أطفال',
 			_ => null,
 		};
 	}

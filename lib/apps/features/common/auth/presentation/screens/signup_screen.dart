@@ -1,18 +1,14 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:doctor_hunt/apps/core/di/injection.dart';
 import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/utils/validators.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_text_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_text_field.dart';
-import 'package:doctor_hunt/apps/features/common/auth/data/repositories/auth_repository.dart';
-import 'package:doctor_hunt/apps/features/common/auth/data/service/auth_service.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/controller/cubit/auth_cubit.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/controller/cubit/auth_state.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/widgets/auth_buttons.dart';
@@ -23,9 +19,7 @@ import 'package:doctor_hunt/generated/style_atoms.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SignupScreen extends StatefulWidget {
-  const SignupScreen({super.key, this.repository});
-
-  final AuthRepository? repository;
+  const SignupScreen({super.key});
 
   @override
   State<SignupScreen> createState() => _SignupScreenState();
@@ -43,31 +37,15 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   void initState() {
     super.initState();
-    _authCubit = widget.repository != null
-        ? AuthCubit(repository: widget.repository!)
-        //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
-        //CR Use `getIt<Cubit>()` directly or inject via constructor.
-        : (getIt.isRegistered<AuthCubit>()
-              ? getIt<AuthCubit>()
-              : AuthCubit(
-                  //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
-                  //CR Use `getIt<Cubit>()` directly or inject via constructor.
-                  repository: getIt.isRegistered<AuthRepository>()
-                      ? getIt<AuthRepository>()
-                      : FirebaseAuthRepository(
-                          authService: getIt.isRegistered<AuthService>()
-                              ? getIt<AuthService>()
-                              : AuthService(
-                                  auth: getIt.isRegistered<FirebaseAuth>()
-                                      ? getIt<FirebaseAuth>()
-                                      : FirebaseAuth.instance,
-                                  firestore:
-                                      getIt.isRegistered<FirebaseFirestore>()
-                                      ? getIt<FirebaseFirestore>()
-                                      : FirebaseFirestore.instance,
-                                ),
-                        ),
-                ));
+    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
+    // solved
+    //CR Use `getIt<Cubit>()` directly or inject via constructor.
+    // solved
+    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
+    // solved
+    //CR Use `getIt<Cubit>()` directly or inject via constructor.
+    // solved
+    _authCubit = context.read<AuthCubit>();
   }
 
   @override
@@ -75,7 +53,6 @@ class _SignupScreenState extends State<SignupScreen> {
     _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-    _authCubit.close();
     super.dispose();
   }
 
@@ -105,108 +82,104 @@ class _SignupScreenState extends State<SignupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: _authCubit,
-      child: BlocConsumer<AuthCubit, AuthState>(
-        listener: (context, state) {
-          switch (state) {
-            case AuthFailure(:final errorMessage):
-              context.showErrorSnackBar(errorMessage);
-            case AuthSuccess(action: AuthAction.signUp):
-              //CR hardcode text
-              // Solved
-              context.showSuccessSnackBar(context.tr.accountCreatedSuccess);
-              const HomeRoute().go(context);
-            case AuthSuccess(action: AuthAction.googleSignIn):
-              const HomeRoute().go(context);
-            default:
-              break;
-          }
-        },
-        builder: (context, state) {
-          final isAnyLoading = state is AuthLoading;
-          final isEmailLoading =
-              state is AuthLoading && state.action == AuthAction.signUp;
-          final isGoogleLoading =
-              state is AuthLoading && state.action == AuthAction.googleSignIn;
+    return BlocConsumer<AuthCubit, AuthState>(
+      listener: (context, state) {
+        switch (state) {
+          case AuthFailure(:final errorMessage):
+            context.showErrorSnackBar(errorMessage);
+          case AuthSuccess(action: AuthAction.signUp):
+            //CR hardcode text
+            // Solved
+            context.showSuccessSnackBar(context.tr.accountCreatedSuccess);
+            const HomeRoute().go(context);
+          case AuthSuccess(action: AuthAction.googleSignIn):
+            const HomeRoute().go(context);
+          default:
+            break;
+        }
+      },
+      builder: (context, state) {
+        final isAnyLoading = state is AuthLoading;
+        final isEmailLoading =
+            state is AuthLoading && state.action == AuthAction.signUp;
+        final isGoogleLoading =
+            state is AuthLoading && state.action == AuthAction.googleSignIn;
 
-          return Scaffold(
-            backgroundColor: AppColors.background,
-            body: SingleChildScrollView(
-              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              padding: const EdgeInsets.fromLTRB(24, 48, 24, 32),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    28.verticalSpace,
-                    AuthHeader(
-                      title: tr.createYourAccount,
-                      subtitle: tr.signupSubtitle,
-                    ),
-                    32.verticalSpace,
-                    SocialAuthButton(
-                      label: tr.google,
-                      image: Assets.assetsDesignGoogleLogo,
-                      isLoading: isGoogleLoading,
-                      onPressed: isAnyLoading ? null : _signInWithGoogle,
-                    ),
-                    32.verticalSpace,
-                    AppTextField(
-                      controller: _nameController,
-                      hintText: tr.fullNameHint,
-                      prefixIcon: Icons.person_outline_rounded,
-                      keyboardType: TextInputType.name,
-                      textInputAction: TextInputAction.next,
-                      autofillHints: const [AutofillHints.name],
-                      validator: (value) => AppValidators.validateName(value),
-                    ),
-                    18.verticalSpace,
-                    AppTextField(
-                      controller: _emailController,
-                      hintText: tr.emailAddress,
-                      prefixIcon: Icons.mail_outline_rounded,
-                      keyboardType: TextInputType.emailAddress,
-                      textInputAction: TextInputAction.next,
-                      autofillHints: const [AutofillHints.email],
-                      validator: (value) => AppValidators.validateEmail(value),
-                    ),
-                    18.verticalSpace,
-                    AppPasswordTextField(
-                      controller: _passwordController,
-                      hintText: tr.passwordHint,
-                      textInputAction: TextInputAction.done,
-                      autofillHints: const [AutofillHints.newPassword],
-                      validator: (value) =>
-                          AppValidators.validatePassword(value),
-                    ),
-                    8.verticalSpace,
-                    const _PasswordHintRow(),
-                    20.verticalSpace,
-                    _TermsCheckbox(
-                      value: _termsAccepted,
-                      disabled: isAnyLoading,
-                      onChanged: (value) =>
-                          setState(() => _termsAccepted = value ?? false),
-                    ),
-                    24.verticalSpace,
-                    AppPrimaryButton(
-                      label: tr.createAccount,
-                      isLoading: isEmailLoading,
-                      onPressed: isAnyLoading ? null : _createAccount,
-                      height: 54,
-                      fontSize: 16,
-                    ),
-                    28.verticalSpace,
-                    _LoginFooter(disabled: isAnyLoading),
-                  ],
-                ),
+        return Scaffold(
+          backgroundColor: AppColors.background,
+          body: SingleChildScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            padding: const EdgeInsets.fromLTRB(24, 48, 24, 32),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  28.verticalSpace,
+                  AuthHeader(
+                    title: tr.createYourAccount,
+                    subtitle: tr.signupSubtitle,
+                  ),
+                  32.verticalSpace,
+                  SocialAuthButton(
+                    label: tr.google,
+                    image: Assets.assetsDesignGoogleLogo,
+                    isLoading: isGoogleLoading,
+                    onPressed: isAnyLoading ? null : _signInWithGoogle,
+                  ),
+                  32.verticalSpace,
+                  AppTextField(
+                    controller: _nameController,
+                    hintText: tr.fullNameHint,
+                    prefixIcon: Icons.person_outline_rounded,
+                    keyboardType: TextInputType.name,
+                    textInputAction: TextInputAction.next,
+                    autofillHints: const [AutofillHints.name],
+                    validator: (value) => AppValidators.validateName(value),
+                  ),
+                  18.verticalSpace,
+                  AppTextField(
+                    controller: _emailController,
+                    hintText: tr.emailAddress,
+                    prefixIcon: Icons.mail_outline_rounded,
+                    keyboardType: TextInputType.emailAddress,
+                    textInputAction: TextInputAction.next,
+                    autofillHints: const [AutofillHints.email],
+                    validator: (value) => AppValidators.validateEmail(value),
+                  ),
+                  18.verticalSpace,
+                  AppPasswordTextField(
+                    controller: _passwordController,
+                    hintText: tr.passwordHint,
+                    textInputAction: TextInputAction.done,
+                    autofillHints: const [AutofillHints.newPassword],
+                    validator: (value) => AppValidators.validatePassword(value),
+                  ),
+                  8.verticalSpace,
+                  const _PasswordHintRow(),
+                  20.verticalSpace,
+                  _TermsCheckbox(
+                    value: _termsAccepted,
+                    disabled: isAnyLoading,
+                    onChanged: (value) =>
+                        setState(() => _termsAccepted = value ?? false),
+                  ),
+                  24.verticalSpace,
+                  AppPrimaryButton(
+                    label: tr.createAccount,
+                    isLoading: isEmailLoading,
+                    onPressed: isAnyLoading ? null : _createAccount,
+                    height: 54,
+                    fontSize: 16,
+                  ),
+                  28.verticalSpace,
+                  _LoginFooter(disabled: isAnyLoading),
+                ],
               ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }
@@ -307,7 +280,8 @@ class _LoginFooter extends StatelessWidget {
         children: [
           Text(tr.alreadyHaveAccount, style: context.regular14TextMain),
           //CR use primary widget (any reuse widget)
-          TextButton(
+          // Solved
+          AppTextButton(
             onPressed: disabled
                 ? null
                 : () {
@@ -317,15 +291,12 @@ class _LoginFooter extends StatelessWidget {
                       const LoginRoute().go(context);
                     }
                   },
-            //CR use primary widget (any reuse widget)
-            style: TextButton.styleFrom(
-              foregroundColor: AppColors.primary,
-              padding: const EdgeInsets.only(left: 6),
-              minimumSize: Size.zero,
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              textStyle: context.semiBold14Primary,
-            ),
-            child: Text(tr.signIn),
+            foregroundColor: AppColors.primary,
+            padding: const EdgeInsets.only(left: 6),
+            minimumSize: Size.zero,
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            textStyle: context.semiBold14Primary,
+            label: tr.signIn,
           ),
         ],
       ),

@@ -1,6 +1,6 @@
+import 'package:doctor_hunt/apps/features/patient/home/data/service/home_service.dart';
 import 'package:doctor_hunt/apps/core/services/specialty_service.dart';
 import 'package:doctor_hunt/apps/features/patient/home/data/models/home_data.dart';
-import 'package:doctor_hunt/apps/features/patient/home/data/service/home_service.dart';
 
 abstract interface class HomeRepository {
   Future<HomeData> fetchHomeData();

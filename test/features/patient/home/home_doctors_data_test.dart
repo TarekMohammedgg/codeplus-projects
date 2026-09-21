@@ -254,6 +254,24 @@ void main() {
         expect(doctor.specialty, 'تخصص غير مسبوق في الطب الجيني');
       },
     );
+
+    test(
+      'resolves placeholder doctor using slang translations dynamically',
+      () {
+        addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.en));
+
+        final doctor = DoctorModel.placeholder();
+        expect(doctor.id, 'placeholder');
+
+        LocaleSettings.setLocaleSync(AppLocale.en);
+        expect(doctor.name, 'Dr. Pediatrician');
+        expect(doctor.specialty, 'Medicine Specialist');
+
+        LocaleSettings.setLocaleSync(AppLocale.ar);
+        expect(doctor.name, 'د. طبيب أطفال');
+        expect(doctor.specialty, 'أخصائي طب عام');
+      },
+    );
   });
 }
 

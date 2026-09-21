@@ -70,7 +70,8 @@
   "enterValidPhoneNumber": "Please enter a valid phone number (e.g. 01012345678)",
   "enterPassword": "Enter your password",
   "useAtLeast8Characters": "Use at least 8 characters",
-  "hiSteven": "Hi Sama 👋",
+  "greetingGeneric": "Hi 👋",
+  "greetingWithName(name)": "Hi $name 👋",
   "findYourDoctor": "Find Your Doctor",
   "searchDoctorHint": "Search.... ",
   "live": "LIVE",
@@ -231,5 +232,6 @@
   "deleteDoctorTitle": "Delete Doctor",
   "deleteDoctorConfirm": "Are you sure you want to delete this doctor?",
   "doctorDeletedSuccess": "Doctor deleted successfully",
-  "changeImage": "Change image"
+  "changeImage": "Change image",
+  "placeholderDoctorName": "Dr. Pediatrician"
 }

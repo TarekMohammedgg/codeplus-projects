@@ -1,11 +1,21 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:doctor_hunt/apps/features/common/auth/presentation/controller/cubit/auth_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/data/models/user_profile_model.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/presentation/screens/profile_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/presentation/widgets/profile_header_section.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/presentation/widgets/profile_info_card.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import '../../../helpers/test_app.dart';
+import '../../../helpers/test_fakes.dart';
+
+Widget _buildTestProfileScreen({UserProfileModel? profile}) {
+  return BlocProvider<AuthCubit>(
+    create: (_) => AuthCubit(repository: FakeAuthRepository()),
+    child: ProfileScreen(profile: profile),
+  );
+}
 
 void main() {
   testWidgets(
@@ -27,7 +37,7 @@ void main() {
       );
 
       await tester.pumpWidget(
-        buildTestApp(const ProfileScreen(profile: profile)),
+        buildTestApp(_buildTestProfileScreen(profile: profile)),
       );
 
       expect(find.byType(ProfileHeaderSection), findsOneWidget);
@@ -55,7 +65,7 @@ void main() {
         tester.view.resetDevicePixelRatio();
       });
 
-      await tester.pumpWidget(buildTestApp(const ProfileScreen()));
+      await tester.pumpWidget(buildTestApp(_buildTestProfileScreen()));
 
       expect(find.byType(ProfileHeaderSection), findsOneWidget);
       expect(find.text(tr.profile), findsOneWidget);
@@ -75,7 +85,7 @@ void main() {
         tester.view.resetDevicePixelRatio();
       });
 
-      await tester.pumpWidget(buildTestApp(const ProfileScreen()));
+      await tester.pumpWidget(buildTestApp(_buildTestProfileScreen()));
       await tester.pumpAndSettle();
 
       expect(tester.takeException(), isNull);

@@ -20,6 +20,8 @@ abstract interface class AuthRepository {
   Future<bool> isCurrentUserAdmin();
 
   Future<void> signOut();
+
+  User? get currentUser;
 }
 
 class FirebaseAuthRepository implements AuthRepository {
@@ -70,4 +72,7 @@ class FirebaseAuthRepository implements AuthRepository {
   Future<void> signOut() {
     return authService.signOut();
   }
+
+  @override
+  User? get currentUser => authService.currentUser;
 }

@@ -99,5 +99,53 @@ void main() {
       expect(sizedBox.width, 150);
       expect(sizedBox.height, 40);
     });
+
+    testWidgets(
+      'outlined constructor renders OutlinedButton and triggers callback',
+      (WidgetTester tester) async {
+        bool tapped = false;
+
+        await tester.pumpWidget(
+          buildTestApp(
+            Scaffold(
+              body: AppPrimaryButton.outlined(
+                label: 'Outlined Action',
+                onPressed: () => tapped = true,
+              ),
+            ),
+          ),
+        );
+
+        expect(find.text('Outlined Action'), findsOneWidget);
+        expect(find.byType(OutlinedButton), findsOneWidget);
+        await tester.tap(find.byType(OutlinedButton));
+        expect(tapped, isTrue);
+      },
+    );
+
+    testWidgets(
+      'outlined constructor shows loading indicator and disables press',
+      (WidgetTester tester) async {
+        bool tapped = false;
+
+        await tester.pumpWidget(
+          buildTestApp(
+            Scaffold(
+              body: AppPrimaryButton.outlined(
+                label: 'Outlined Action',
+                isLoading: true,
+                onPressed: () => tapped = true,
+              ),
+            ),
+          ),
+        );
+
+        expect(find.byType(CircularProgressIndicator), findsOneWidget);
+        expect(find.text('Outlined Action'), findsNothing);
+
+        await tester.tap(find.byType(OutlinedButton));
+        expect(tapped, isFalse);
+      },
+    );
   });
 }

@@ -1,12 +1,10 @@
 import 'dart:typed_data';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
-import 'package:doctor_hunt/apps/core/di/injection.dart';
 import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
@@ -16,11 +14,7 @@ import 'package:doctor_hunt/apps/core/widgets/app_header_section.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_text_field.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/data/models/admin_doctor_model.dart';
-import 'package:doctor_hunt/apps/features/admin/doctors/data/service/admin_doctor_service.dart';
 import 'package:doctor_hunt/apps/core/models/specialty_model.dart';
-import 'package:doctor_hunt/apps/core/services/specialty_service.dart';
-import 'package:doctor_hunt/apps/features/admin/create_doctor/data/repositories/create_doctor_repository.dart';
-import 'package:doctor_hunt/apps/features/admin/create_doctor/data/service/cloudinary_upload_service.dart';
 import 'package:doctor_hunt/apps/features/admin/create_doctor/presentation/controller/cubit/create_doctor_cubit.dart';
 import 'package:doctor_hunt/apps/features/admin/create_doctor/presentation/controller/cubit/create_doctor_state.dart';
 import 'package:doctor_hunt/apps/features/admin/create_doctor/presentation/widgets/create_doctor_widgets.dart';
@@ -28,10 +22,9 @@ import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
 class CreateDoctorScreen extends StatefulWidget {
-  const CreateDoctorScreen({super.key, this.doctor, this.repository});
+  const CreateDoctorScreen({super.key, this.doctor});
 
   final AdminDoctorModel? doctor;
-  final CreateDoctorRepository? repository;
 
   @override
   State<CreateDoctorScreen> createState() => CreateDoctorScreenState();
@@ -56,31 +49,15 @@ class CreateDoctorScreenState extends State<CreateDoctorScreen> {
   @override
   void initState() {
     super.initState();
-    _createDoctorCubit = widget.repository != null
-        ? CreateDoctorCubit(repository: widget.repository!)
-        //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
-        //CR Use `getIt<Cubit>()` directly or inject via constructor.
-        : (getIt.isRegistered<CreateDoctorCubit>()
-              ? getIt<CreateDoctorCubit>()
-              : CreateDoctorCubit(
-                  //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
-                  //CR Use `getIt<Cubit>()` directly or inject via constructor.
-                  repository: getIt.isRegistered<CreateDoctorRepository>()
-                      ? getIt<CreateDoctorRepository>()
-                      : FirebaseCreateDoctorRepository(
-                          doctorService:
-                              getIt.isRegistered<AdminDoctorService>()
-                              ? getIt<AdminDoctorService>()
-                              : AdminDoctorService(
-                                  firestore:
-                                      getIt.isRegistered<FirebaseFirestore>()
-                                      ? getIt<FirebaseFirestore>()
-                                      : FirebaseFirestore.instance,
-                                ),
-                          specialtyService: SpecialtyService(),
-                          uploadService: CloudinaryUploadService(),
-                        ),
-                ));
+    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
+    // solved
+    //CR Use `getIt<Cubit>()` directly or inject via constructor.
+    // solved
+    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
+    // solved
+    //CR Use `getIt<Cubit>()` directly or inject via constructor.
+    // solved
+    _createDoctorCubit = context.read<CreateDoctorCubit>();
     _createDoctorCubit.loadSpecialties();
     if (isEditing) {
       final doctor = widget.doctor!;
@@ -94,7 +71,6 @@ class CreateDoctorScreenState extends State<CreateDoctorScreen> {
   void dispose() {
     _nameArController.dispose();
     _nameEnController.dispose();
-    _createDoctorCubit.close();
     super.dispose();
   }
 
@@ -190,105 +166,102 @@ class CreateDoctorScreenState extends State<CreateDoctorScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: _createDoctorCubit,
-      child: BlocConsumer<CreateDoctorCubit, CreateDoctorState>(
-        listener: (context, state) {
-          switch (state) {
-            case CreateDoctorFailure(:final errorMessage):
-              context.showErrorSnackBar(errorMessage);
-            case CreateDoctorSuccess(:final specialties):
-              _selectEditingSpecialty(specialties);
-            default:
-              break;
-          }
-        },
-        builder: (context, state) {
-          return Scaffold(
-            backgroundColor: AppColors.background,
-            body: Column(
-              children: [
-                AppHeaderSection(
-                  title: isEditing ? tr.editDoctorTitle : tr.createDoctorTitle,
-                  onBackTap: () => context.pop(),
-                  showSearchBar: false,
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.fromLTRB(20, 24, 20, 32),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Text(
-                            '${tr.doctorNameLabel} (AR)',
-                            style: context.semiBold14TextMain,
-                          ),
-                          8.verticalSpace,
-                          AppTextField(
-                            controller: _nameArController,
-                            hintText: tr.doctorNameHint,
-                            prefixIcon: Icons.person_outline_rounded,
-                            textInputAction: TextInputAction.next,
-                            validator: AppValidators.validateDoctorName,
-                          ),
-                          20.verticalSpace,
-                          Text(
-                            '${tr.doctorNameLabel} (EN)',
-                            style: context.semiBold14TextMain,
-                          ),
-                          8.verticalSpace,
-                          AppTextField(
-                            controller: _nameEnController,
-                            hintText: tr.doctorNameHint,
-                            prefixIcon: Icons.person_outline_rounded,
-                            textInputAction: TextInputAction.next,
-                            validator: AppValidators.validateDoctorName,
-                          ),
-                          20.verticalSpace,
-                          Text(
-                            tr.specialtyLabel,
-                            style: context.semiBold14TextMain,
-                          ),
-                          8.verticalSpace,
-                          _buildSpecialtyField(context, state),
-                          20.verticalSpace,
-                          Text(
-                            tr.doctorImageLabel,
-                            style: context.semiBold14TextMain,
-                          ),
-                          8.verticalSpace,
-                          DoctorImagePickerField(
-                            imageUrl: _imageUrl,
-                            selectedBytes: _selectedImageBytes,
-                            isUploading: _isUploadingImage,
-                            onPick: _pickImage,
-                            onClear: () => setState(() {
-                              _selectedImage = null;
-                              _selectedImageBytes = null;
-                            }),
-                          ),
-                          32.verticalSpace,
-                          AppPrimaryButton(
-                            label: isEditing
-                                ? tr.updateDoctorButton
-                                : tr.createDoctorButton,
-                            isLoading: _isSaving,
-                            onPressed: _isSaving ? null : _submit,
-                            height: 54,
-                            fontSize: 16,
-                          ),
-                        ],
-                      ),
+    return BlocConsumer<CreateDoctorCubit, CreateDoctorState>(
+      listener: (context, state) {
+        switch (state) {
+          case CreateDoctorFailure(:final errorMessage):
+            context.showErrorSnackBar(errorMessage);
+          case CreateDoctorSuccess(:final specialties):
+            _selectEditingSpecialty(specialties);
+          default:
+            break;
+        }
+      },
+      builder: (context, state) {
+        return Scaffold(
+          backgroundColor: AppColors.background,
+          body: Column(
+            children: [
+              AppHeaderSection(
+                title: isEditing ? tr.editDoctorTitle : tr.createDoctorTitle,
+                onBackTap: () => context.pop(),
+                showSearchBar: false,
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(20, 24, 20, 32),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(
+                          '${tr.doctorNameLabel} (AR)',
+                          style: context.semiBold14TextMain,
+                        ),
+                        8.verticalSpace,
+                        AppTextField(
+                          controller: _nameArController,
+                          hintText: tr.doctorNameHint,
+                          prefixIcon: Icons.person_outline_rounded,
+                          textInputAction: TextInputAction.next,
+                          validator: AppValidators.validateDoctorName,
+                        ),
+                        20.verticalSpace,
+                        Text(
+                          '${tr.doctorNameLabel} (EN)',
+                          style: context.semiBold14TextMain,
+                        ),
+                        8.verticalSpace,
+                        AppTextField(
+                          controller: _nameEnController,
+                          hintText: tr.doctorNameHint,
+                          prefixIcon: Icons.person_outline_rounded,
+                          textInputAction: TextInputAction.next,
+                          validator: AppValidators.validateDoctorName,
+                        ),
+                        20.verticalSpace,
+                        Text(
+                          tr.specialtyLabel,
+                          style: context.semiBold14TextMain,
+                        ),
+                        8.verticalSpace,
+                        _buildSpecialtyField(context, state),
+                        20.verticalSpace,
+                        Text(
+                          tr.doctorImageLabel,
+                          style: context.semiBold14TextMain,
+                        ),
+                        8.verticalSpace,
+                        DoctorImagePickerField(
+                          imageUrl: _imageUrl,
+                          selectedBytes: _selectedImageBytes,
+                          isUploading: _isUploadingImage,
+                          onPick: _pickImage,
+                          onClear: () => setState(() {
+                            _selectedImage = null;
+                            _selectedImageBytes = null;
+                          }),
+                        ),
+                        32.verticalSpace,
+                        AppPrimaryButton(
+                          label: isEditing
+                              ? tr.updateDoctorButton
+                              : tr.createDoctorButton,
+                          isLoading: _isSaving,
+                          onPressed: _isSaving ? null : _submit,
+                          height: 54,
+                          fontSize: 16,
+                        ),
+                      ],
                     ),
                   ),
                 ),
-              ],
-            ),
-          );
-        },
-      ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
