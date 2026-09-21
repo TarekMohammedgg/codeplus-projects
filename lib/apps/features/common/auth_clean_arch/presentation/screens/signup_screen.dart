@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
@@ -13,14 +12,13 @@ import 'package:doctor_hunt/apps/features/common/auth_clean_arch/presentation/co
 import 'package:doctor_hunt/apps/features/common/auth_clean_arch/presentation/controller/cubit/auth_state.dart';
 import 'package:doctor_hunt/apps/features/common/auth_clean_arch/presentation/widgets/auth_buttons.dart';
 import 'package:doctor_hunt/apps/features/common/auth_clean_arch/presentation/widgets/auth_header.dart';
+import 'package:doctor_hunt/apps/features/common/auth_clean_arch/presentation/widgets/auth_navigation.dart';
 import 'package:doctor_hunt/generated/app_image.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
 class SignupScreen extends StatefulWidget {
-  const SignupScreen({super.key, this.cubit});
-
-  final AuthCubit? cubit;
+  const SignupScreen({super.key});
 
   @override
   State<SignupScreen> createState() => _SignupScreenState();
@@ -32,13 +30,13 @@ class _SignupScreenState extends State<SignupScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  bool _termsAccepted = true;
+  bool _termsAccepted = false;
   late final AuthCubit _authCubit;
 
   @override
   void initState() {
     super.initState();
-    _authCubit = widget.cubit ?? context.read<AuthCubit>();
+    _authCubit = context.read<AuthCubit>();
   }
 
   @override
@@ -52,9 +50,7 @@ class _SignupScreenState extends State<SignupScreen> {
   void _signUp() {
     if (!_formKey.currentState!.validate()) return;
     if (!_termsAccepted) {
-      context.showWarningSnackBar(
-        context.tr.acceptTermsAndPrivacyWarning,
-      );
+      context.showWarningSnackBar(context.tr.acceptTermsAndPrivacyWarning);
       return;
     }
     FocusScope.of(context).unfocus();
@@ -74,7 +70,6 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AuthCubit, AuthState>(
-      bloc: _authCubit,
       listener: (context, state) {
         switch (state) {
           case AuthFailure(:final errorMessage):
@@ -144,8 +139,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     textInputAction: TextInputAction.done,
                     autofillHints: const [AutofillHints.newPassword],
                     onFieldSubmitted: (_) => _signUp(),
-                    validator: (value) =>
-                        AppValidators.validatePassword(value),
+                    validator: (value) => AppValidators.validatePassword(value),
                   ),
                   16.verticalSpace,
                   _TermsCheckbox(
@@ -159,8 +153,6 @@ class _SignupScreenState extends State<SignupScreen> {
                     label: tr.createAccount,
                     isLoading: isEmailLoading,
                     onPressed: isAnyLoading ? null : _signUp,
-                    height: 54,
-                    fontSize: 16,
                   ),
                   28.verticalSpace,
                   _LoginFooter(disabled: isAnyLoading),
@@ -245,15 +237,7 @@ class _LoginFooter extends StatelessWidget {
         children: [
           Text(tr.alreadyHaveAccount, style: context.regular14TextMain),
           AppTextButton(
-            onPressed: disabled
-                ? null
-                : () {
-                    if (context.canPop()) {
-                      context.pop();
-                    } else {
-                      const LoginRoute().go(context);
-                    }
-                  },
+            onPressed: disabled ? null : context.popOrGoToLogin,
             label: tr.signIn,
             foregroundColor: AppColors.primary,
             padding: const EdgeInsets.only(left: 6),

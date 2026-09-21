@@ -21,7 +21,7 @@ class ForgotPasswordBottomSheet extends StatefulWidget {
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.transparent,
       builder: (modalContext) => BlocProvider<AuthCubit>(
         create: (_) => getIt<AuthCubit>(),
         child: const ForgotPasswordBottomSheet(),

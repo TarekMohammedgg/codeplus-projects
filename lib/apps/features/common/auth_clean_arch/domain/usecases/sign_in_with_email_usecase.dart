@@ -6,10 +6,7 @@ class SignInWithEmailUseCase {
 
   final AuthRepository _repository;
 
-  Future<UserEntity> call({
-    required String email,
-    required String password,
-  }) {
+  Future<UserEntity> call({required String email, required String password}) {
     return _repository.signInWithEmailAndPassword(
       email: email,
       password: password,

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:doctor_hunt/apps/core/extensions/context_extensions.dart';
 import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
-import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/utils/validators.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
@@ -13,14 +11,14 @@ import 'package:doctor_hunt/apps/core/widgets/app_text_field.dart';
 import 'package:doctor_hunt/apps/features/common/auth_clean_arch/presentation/controller/cubit/auth_cubit.dart';
 import 'package:doctor_hunt/apps/features/common/auth_clean_arch/presentation/controller/cubit/auth_state.dart';
 import 'package:doctor_hunt/apps/features/common/auth_clean_arch/presentation/widgets/auth_back_button.dart';
+import 'package:doctor_hunt/apps/features/common/auth_clean_arch/presentation/widgets/auth_hero_illustration.dart';
+import 'package:doctor_hunt/apps/features/common/auth_clean_arch/presentation/widgets/auth_navigation.dart';
 import 'package:doctor_hunt/generated/app_image.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
-  const ResetPasswordScreen({super.key, this.cubit});
-
-  final AuthCubit? cubit;
+  const ResetPasswordScreen({super.key});
 
   @override
   State<ResetPasswordScreen> createState() => ResetPasswordScreenState();
@@ -34,7 +32,7 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
   @override
   void initState() {
     super.initState();
-    _authCubit = widget.cubit ?? context.read<AuthCubit>();
+    _authCubit = context.read<AuthCubit>();
   }
 
   @override
@@ -54,18 +52,13 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AuthCubit, AuthState>(
-      bloc: _authCubit,
       listener: (context, state) {
         switch (state) {
           case AuthFailure(:final errorMessage):
             context.showErrorSnackBar(errorMessage);
           case AuthSuccess(action: AuthAction.resetPassword):
             context.showSuccessSnackBar(tr.passwordResetSuccess);
-            if (context.canPop()) {
-              context.pop();
-            } else {
-              const LoginRoute().go(context);
-            }
+            context.popOrGoToLogin();
           default:
             break;
         }
@@ -96,7 +89,12 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     ],
                   ),
                   18.verticalSpace,
-                  const Center(child: ResetPasswordHeroIllustration(size: 110)),
+                  const Center(
+                    child: AuthHeroIllustration(
+                      icon: Icons.lock_reset_rounded,
+                      size: 110,
+                    ),
+                  ),
                   16.verticalSpace,
                   Text(
                     tr.resetYourPassword,
@@ -130,7 +128,6 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     isLoading: isLoading,
                     onPressed: isLoading ? null : sendResetLink,
                     height: 52,
-                    fontSize: 16,
                   ),
                   24.verticalSpace,
                   Center(
@@ -143,13 +140,7 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           style: context.regular14TextSecondary,
                         ),
                         AppTextButton(
-                          onPressed: () {
-                            if (context.canPop()) {
-                              context.pop();
-                            } else {
-                              const LoginRoute().go(context);
-                            }
-                          },
+                          onPressed: context.popOrGoToLogin,
                           foregroundColor: AppColors.primary,
                           padding: const EdgeInsets.only(left: 6),
                           minimumSize: Size.zero,
@@ -166,35 +157,6 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
           ),
         );
       },
-    );
-  }
-}
-
-class ResetPasswordHeroIllustration extends StatelessWidget {
-  final double size;
-
-  const ResetPasswordHeroIllustration({super.key, this.size = 110});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        color: AppColors.primaryLight,
-        shape: BoxShape.circle,
-        border: Border.all(
-          color: AppColors.primary.withValues(alpha: 0.3),
-          width: 2,
-        ),
-      ),
-      child: Center(
-        child: Icon(
-          Icons.lock_reset_rounded,
-          size: size * 0.5,
-          color: AppColors.primary,
-        ),
-      ),
     );
   }
 }

@@ -1,9 +1,9 @@
 // Domain
 export 'domain/entities/user_entity.dart';
 export 'domain/repositories/auth_repository.dart';
-export 'domain/usecases/check_admin_status_usecase.dart';
 export 'domain/usecases/get_current_user_usecase.dart';
 export 'domain/usecases/reset_password_usecase.dart';
+export 'domain/usecases/sign_in_as_admin_usecase.dart';
 export 'domain/usecases/sign_in_with_email_usecase.dart';
 export 'domain/usecases/sign_in_with_google_usecase.dart';
 export 'domain/usecases/sign_out_usecase.dart';
@@ -25,5 +25,5 @@ export 'presentation/screens/signup_screen.dart';
 export 'presentation/widgets/auth_back_button.dart';
 export 'presentation/widgets/auth_buttons.dart';
 export 'presentation/widgets/auth_header.dart';
+export 'presentation/widgets/auth_hero_illustration.dart';
 export 'presentation/widgets/forgot_password_bottom_sheet.dart';
-export 'presentation/widgets/otp_verification_bottom_sheet.dart';

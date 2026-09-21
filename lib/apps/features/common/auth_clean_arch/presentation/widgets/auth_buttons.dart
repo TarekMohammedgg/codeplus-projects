@@ -19,16 +19,16 @@ class SocialAuthButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.transparent,
+      color: AppColors.transparent,
       child: InkWell(
         onTap: isLoading ? null : onPressed,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppTheme.fieldRadius,
         child: Container(
           height: 54,
           padding: const EdgeInsets.symmetric(horizontal: 12),
           decoration: BoxDecoration(
             color: AppColors.surface,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: AppTheme.fieldRadius,
             border: Border.all(color: AppColors.outline, width: 1),
             boxShadow: const [
               BoxShadow(

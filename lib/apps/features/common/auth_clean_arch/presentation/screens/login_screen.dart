@@ -20,9 +20,8 @@ import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key, this.cubit, this.role});
+  const LoginScreen({super.key, this.role});
 
-  final AuthCubit? cubit;
   final UserRole? role;
 
   @override
@@ -38,7 +37,7 @@ class LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    _authCubit = widget.cubit ?? context.read<AuthCubit>();
+    _authCubit = context.read<AuthCubit>();
   }
 
   @override
@@ -73,7 +72,6 @@ class LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AuthCubit, AuthState>(
-      bloc: _authCubit,
       listener: (context, state) {
         switch (state) {
           case AuthFailure(:final errorMessage):
@@ -112,8 +110,7 @@ class LoginScreenState extends State<LoginScreen> {
                       alignment: AlignmentDirectional.centerStart,
                       child: AuthBackButton(
                         circular: true,
-                        onPressed: () =>
-                            const RoleSelectionRoute().go(context),
+                        onPressed: () => const RoleSelectionRoute().go(context),
                       ),
                     ),
                     16.verticalSpace,
@@ -160,8 +157,6 @@ class LoginScreenState extends State<LoginScreen> {
                     label: tr.logIn,
                     isLoading: isEmailLoading,
                     onPressed: isAnyLoading ? null : signIn,
-                    height: 54,
-                    fontSize: 16,
                   ),
                   if (!isAdmin) ...[
                     28.verticalSpace,

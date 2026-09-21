@@ -15,17 +15,14 @@ void main() {
       signUpWithEmailUseCase: SignUpWithEmailUseCase(repository),
       signInWithGoogleUseCase: SignInWithGoogleUseCase(repository),
       resetPasswordUseCase: ResetPasswordUseCase(repository),
-      checkAdminStatusUseCase: CheckAdminStatusUseCase(repository),
+      signInAsAdminUseCase: SignInAsAdminUseCase(repository),
       signOutUseCase: SignOutUseCase(repository),
       getCurrentUserUseCase: GetCurrentUserUseCase(repository),
     );
 
     await tester.pumpWidget(
       buildTestApp(
-        BlocProvider<AuthCubit>.value(
-          value: cubit,
-          child: const LoginScreen(),
-        ),
+        BlocProvider<AuthCubit>.value(value: cubit, child: const LoginScreen()),
       ),
     );
 
@@ -71,9 +68,6 @@ class _FakeAuthRepository implements AuthRepository {
 
   @override
   Future<void> resetPassword({required String email}) async {}
-
-  @override
-  Future<bool> isCurrentUserAdmin() async => false;
 
   @override
   Future<void> signOut() async {}

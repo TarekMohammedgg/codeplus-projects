@@ -1,9 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/apps/features/common/auth_clean_arch/domain/entities/user_entity.dart';
-import 'package:doctor_hunt/apps/features/common/auth_clean_arch/domain/usecases/check_admin_status_usecase.dart';
 import 'package:doctor_hunt/apps/features/common/auth_clean_arch/domain/usecases/get_current_user_usecase.dart';
 import 'package:doctor_hunt/apps/features/common/auth_clean_arch/domain/usecases/reset_password_usecase.dart';
+import 'package:doctor_hunt/apps/features/common/auth_clean_arch/domain/usecases/sign_in_as_admin_usecase.dart';
 import 'package:doctor_hunt/apps/features/common/auth_clean_arch/domain/usecases/sign_in_with_email_usecase.dart';
 import 'package:doctor_hunt/apps/features/common/auth_clean_arch/domain/usecases/sign_in_with_google_usecase.dart';
 import 'package:doctor_hunt/apps/features/common/auth_clean_arch/domain/usecases/sign_out_usecase.dart';
@@ -16,7 +16,7 @@ class AuthCubit extends Cubit<AuthState> {
     required this.signUpWithEmailUseCase,
     required this.signInWithGoogleUseCase,
     required this.resetPasswordUseCase,
-    required this.checkAdminStatusUseCase,
+    required this.signInAsAdminUseCase,
     required this.signOutUseCase,
     required this.getCurrentUserUseCase,
   }) : super(const AuthInitial());
@@ -25,7 +25,7 @@ class AuthCubit extends Cubit<AuthState> {
   final SignUpWithEmailUseCase signUpWithEmailUseCase;
   final SignInWithGoogleUseCase signInWithGoogleUseCase;
   final ResetPasswordUseCase resetPasswordUseCase;
-  final CheckAdminStatusUseCase checkAdminStatusUseCase;
+  final SignInAsAdminUseCase signInAsAdminUseCase;
   final SignOutUseCase signOutUseCase;
   final GetCurrentUserUseCase getCurrentUserUseCase;
 
@@ -83,20 +83,12 @@ class AuthCubit extends Cubit<AuthState> {
   }) async {
     emit(const AuthLoading(action: AuthAction.adminSignIn));
     try {
-      final user = await signInWithEmailUseCase(
-        email: email,
-        password: password,
-      );
+      final user = await signInAsAdminUseCase(email: email, password: password);
       if (isClosed) return;
-      final isAdmin = await checkAdminStatusUseCase();
-      if (isClosed) return;
-      if (!isAdmin) {
-        await signOutUseCase();
-        if (isClosed) return;
-        emit(const AuthFailure(code: AuthFailureCode.adminPermissionDenied));
-        return;
-      }
       emit(AuthSuccess(action: AuthAction.adminSignIn, user: user));
+    } on AdminPermissionDeniedException {
+      if (isClosed) return;
+      emit(const AuthFailure(code: AuthFailureCode.adminPermissionDenied));
     } catch (error, stackTrace) {
       _emitFailure(error, stackTrace);
     }

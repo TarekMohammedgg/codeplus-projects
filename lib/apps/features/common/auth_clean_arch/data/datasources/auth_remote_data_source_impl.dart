@@ -5,18 +5,22 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/apps/features/common/auth_clean_arch/data/datasources/auth_remote_data_source.dart';
 import 'package:doctor_hunt/apps/features/common/auth_clean_arch/data/models/user_model.dart';
+import 'package:doctor_hunt/apps/features/common/auth_clean_arch/domain/entities/user_entity.dart';
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   AuthRemoteDataSourceImpl({
     required FirebaseAuth auth,
     required FirebaseFirestore firestore,
     // ignore: prefer_initializing_formals
-  })  : _auth = auth,
-        // ignore: prefer_initializing_formals
-        _firestore = firestore;
+  }) : _auth = auth,
+       // ignore: prefer_initializing_formals
+       _firestore = firestore;
 
   final FirebaseAuth _auth;
   final FirebaseFirestore _firestore;
+
+  static const _usersCollection = 'users';
+  static const _roleField = 'role';
 
   static String get serverClientId =>
       (dotenv.isInitialized ? dotenv.maybeGet('SERVER_CLIENT_ID') : null) ?? '';
@@ -66,7 +70,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         await user.reload();
       }
       await _ensureUserProfile(user);
-      return UserModel.fromFirebaseUser(user, role: 'patient');
+      return UserModel.fromFirebaseUser(user);
     } on FirebaseAuthException catch (e) {
       throw AppException.fromFirebaseAuth(e);
     } catch (e) {
@@ -111,22 +115,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<bool> isUserAdmin(String uid) async {
-    try {
-      final role = await _getUserRole(uid);
-      return role == 'admin';
-    } catch (_) {
-      return false;
-    }
-  }
-
-  @override
   Future<void> signOut() async {
     try {
-      await Future.wait([
-        _auth.signOut(),
-        GoogleSignIn.instance.signOut(),
-      ]);
+      await Future.wait([_auth.signOut(), GoogleSignIn.instance.signOut()]);
     } catch (e) {
       throw AppException.from(e);
     }
@@ -134,14 +125,18 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<UserModel?> getCurrentUser() async {
-    final user = _auth.currentUser;
-    if (user == null) return null;
-    final role = await _getUserRole(user.uid);
-    return UserModel.fromFirebaseUser(user, role: role);
+    try {
+      final user = _auth.currentUser;
+      if (user == null) return null;
+      final role = await _getUserRole(user.uid);
+      return UserModel.fromFirebaseUser(user, role: role);
+    } catch (e) {
+      throw AppException.from(e);
+    }
   }
 
   Future<void> _ensureUserProfile(User user) async {
-    final reference = _firestore.collection('users').doc(user.uid);
+    final reference = _firestore.collection(_usersCollection).doc(user.uid);
     final snapshot = await reference.get();
     final profile = {
       'displayName': user.displayName?.trim() ?? '',
@@ -159,17 +154,17 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
     await reference.set({
       ...profile,
-      'role': 'patient',
+      _roleField: AuthRole.patient.name,
       'createdAt': FieldValue.serverTimestamp(),
     });
   }
 
-  Future<String> _getUserRole(String uid) async {
-    try {
-      final snapshot = await _firestore.collection('users').doc(uid).get();
-      return (snapshot.data()?['role'] as String?) ?? 'patient';
-    } catch (_) {
-      return 'patient';
-    }
+  Future<AuthRole> _getUserRole(String uid) async {
+    final snapshot = await _firestore
+        .collection(_usersCollection)
+        .doc(uid)
+        .get();
+    final role = snapshot.data()?[_roleField] as String?;
+    return AuthRole.values.asNameMap()[role] ?? AuthRole.patient;
   }
 }

@@ -150,13 +150,14 @@ void setupServiceLocator() {
     () => clean_auth.SignUpWithEmailUseCase(getIt<clean_auth.AuthRepository>()),
   );
   getIt.registerLazySingleton<clean_auth.SignInWithGoogleUseCase>(
-    () => clean_auth.SignInWithGoogleUseCase(getIt<clean_auth.AuthRepository>()),
+    () =>
+        clean_auth.SignInWithGoogleUseCase(getIt<clean_auth.AuthRepository>()),
   );
   getIt.registerLazySingleton<clean_auth.ResetPasswordUseCase>(
     () => clean_auth.ResetPasswordUseCase(getIt<clean_auth.AuthRepository>()),
   );
-  getIt.registerLazySingleton<clean_auth.CheckAdminStatusUseCase>(
-    () => clean_auth.CheckAdminStatusUseCase(getIt<clean_auth.AuthRepository>()),
+  getIt.registerLazySingleton<clean_auth.SignInAsAdminUseCase>(
+    () => clean_auth.SignInAsAdminUseCase(getIt<clean_auth.AuthRepository>()),
   );
   getIt.registerLazySingleton<clean_auth.SignOutUseCase>(
     () => clean_auth.SignOutUseCase(getIt<clean_auth.AuthRepository>()),
@@ -170,7 +171,7 @@ void setupServiceLocator() {
       signUpWithEmailUseCase: getIt<clean_auth.SignUpWithEmailUseCase>(),
       signInWithGoogleUseCase: getIt<clean_auth.SignInWithGoogleUseCase>(),
       resetPasswordUseCase: getIt<clean_auth.ResetPasswordUseCase>(),
-      checkAdminStatusUseCase: getIt<clean_auth.CheckAdminStatusUseCase>(),
+      signInAsAdminUseCase: getIt<clean_auth.SignInAsAdminUseCase>(),
       signOutUseCase: getIt<clean_auth.SignOutUseCase>(),
       getCurrentUserUseCase: getIt<clean_auth.GetCurrentUserUseCase>(),
     ),

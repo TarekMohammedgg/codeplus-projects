@@ -12,7 +12,7 @@ void main() {
       signUpWithEmailUseCase: SignUpWithEmailUseCase(repository),
       signInWithGoogleUseCase: SignInWithGoogleUseCase(repository),
       resetPasswordUseCase: ResetPasswordUseCase(repository),
-      checkAdminStatusUseCase: CheckAdminStatusUseCase(repository),
+      signInAsAdminUseCase: SignInAsAdminUseCase(repository),
       signOutUseCase: SignOutUseCase(repository),
       getCurrentUserUseCase: GetCurrentUserUseCase(repository),
     );
@@ -22,84 +22,125 @@ void main() {
     await cubit.close();
   });
 
-  test('AuthCubit emits [AuthLoading, AuthFailure] when signIn fails', () async {
-    repository.shouldFail = true;
+  test(
+    'AuthCubit emits [AuthLoading, AuthFailure] when signIn fails',
+    () async {
+      repository.shouldFail = true;
 
-    final states = expectLater(
-      cubit.stream,
-      emitsInOrder([isA<AuthLoading>(), isA<AuthFailure>()]),
-    );
+      final states = expectLater(
+        cubit.stream,
+        emitsInOrder([isA<AuthLoading>(), isA<AuthFailure>()]),
+      );
 
-    await cubit.signIn(email: 'user@example.com', password: 'password');
-    await states;
+      await cubit.signIn(email: 'user@example.com', password: 'password');
+      await states;
 
-    expect((cubit.state as AuthFailure).errorMessage, isNotEmpty);
-  });
+      expect((cubit.state as AuthFailure).errorMessage, isNotEmpty);
+    },
+  );
 
-  test('AuthCubit emits [AuthLoading, AuthSuccess] on successful signIn', () async {
-    final states = expectLater(
-      cubit.stream,
-      emitsInOrder([isA<AuthLoading>(), isA<AuthSuccess>()]),
-    );
+  test(
+    'AuthCubit emits [AuthLoading, AuthSuccess] on successful signIn',
+    () async {
+      final states = expectLater(
+        cubit.stream,
+        emitsInOrder([isA<AuthLoading>(), isA<AuthSuccess>()]),
+      );
 
-    await cubit.signIn(email: 'user@example.com', password: 'password');
-    await states;
+      await cubit.signIn(email: 'user@example.com', password: 'password');
+      await states;
 
-    final success = cubit.state as AuthSuccess;
-    expect(success.action, AuthAction.signIn);
-    expect(success.user?.email, 'user@example.com');
-  });
+      final success = cubit.state as AuthSuccess;
+      expect(success.action, AuthAction.signIn);
+      expect(success.user?.email, 'user@example.com');
+    },
+  );
 
-  test('AuthCubit emits [AuthLoading, AuthSuccess] on successful signUp', () async {
-    final states = expectLater(
-      cubit.stream,
-      emitsInOrder([isA<AuthLoading>(), isA<AuthSuccess>()]),
-    );
+  test(
+    'AuthCubit emits [AuthLoading, AuthSuccess] on successful signUp',
+    () async {
+      final states = expectLater(
+        cubit.stream,
+        emitsInOrder([isA<AuthLoading>(), isA<AuthSuccess>()]),
+      );
 
-    await cubit.signUp(
-      email: 'newuser@example.com',
-      password: 'password',
-      name: 'Dr. Test',
-    );
-    await states;
+      await cubit.signUp(
+        email: 'newuser@example.com',
+        password: 'password',
+        name: 'Dr. Test',
+      );
+      await states;
 
-    final success = cubit.state as AuthSuccess;
-    expect(success.action, AuthAction.signUp);
-    expect(success.user?.displayName, 'Dr. Test');
-  });
+      final success = cubit.state as AuthSuccess;
+      expect(success.action, AuthAction.signUp);
+      expect(success.user?.displayName, 'Dr. Test');
+    },
+  );
 
-  test('AuthCubit emits adminPermissionDenied when signInAsAdmin user is not admin', () async {
-    repository.isAdmin = false;
+  test(
+    'AuthCubit emits adminPermissionDenied when signInAsAdmin user is not admin',
+    () async {
+      repository.isAdmin = false;
 
-    final states = expectLater(
-      cubit.stream,
-      emitsInOrder([isA<AuthLoading>(), isA<AuthFailure>()]),
-    );
+      final states = expectLater(
+        cubit.stream,
+        emitsInOrder([isA<AuthLoading>(), isA<AuthFailure>()]),
+      );
 
-    await cubit.signInAsAdmin(email: 'notadmin@example.com', password: 'password');
-    await states;
+      await cubit.signInAsAdmin(
+        email: 'notadmin@example.com',
+        password: 'password',
+      );
+      await states;
 
-    final failure = cubit.state as AuthFailure;
-    expect(failure.code, AuthFailureCode.adminPermissionDenied);
-  });
+      final failure = cubit.state as AuthFailure;
+      expect(failure.code, AuthFailureCode.adminPermissionDenied);
+      expect(repository.signedOut, isTrue);
+    },
+  );
 
-  test('AuthCubit emits [AuthLoading, AuthSuccess] on successful signOut', () async {
-    final states = expectLater(
-      cubit.stream,
-      emitsInOrder([isA<AuthLoading>(), isA<AuthSuccess>()]),
-    );
+  test(
+    'AuthCubit emits adminSignIn success when the user is an admin',
+    () async {
+      final states = expectLater(
+        cubit.stream,
+        emitsInOrder([isA<AuthLoading>(), isA<AuthSuccess>()]),
+      );
 
-    await cubit.signOut();
-    await states;
+      await cubit.signInAsAdmin(
+        email: 'admin@example.com',
+        password: 'password',
+      );
+      await states;
 
-    final success = cubit.state as AuthSuccess;
-    expect(success.action, AuthAction.signOut);
-  });
+      final success = cubit.state as AuthSuccess;
+      expect(success.action, AuthAction.adminSignIn);
+      expect(success.user?.isAdmin, isTrue);
+      expect(repository.signedOut, isFalse);
+    },
+  );
+
+  test(
+    'AuthCubit emits [AuthLoading, AuthSuccess] on successful signOut',
+    () async {
+      final states = expectLater(
+        cubit.stream,
+        emitsInOrder([isA<AuthLoading>(), isA<AuthSuccess>()]),
+      );
+
+      await cubit.signOut();
+      await states;
+
+      final success = cubit.state as AuthSuccess;
+      expect(success.action, AuthAction.signOut);
+    },
+  );
 }
 
 class _FakeAuthRepository implements AuthRepository {
   bool shouldFail = false;
   bool isAdmin = true;
+  bool signedOut = false;
 
   @override
   Future<UserEntity> signInWithEmailAndPassword({
@@ -111,7 +152,7 @@ class _FakeAuthRepository implements AuthRepository {
       id: 'uid_1',
       email: email,
       displayName: 'Test User',
-      role: isAdmin ? 'admin' : 'patient',
+      role: isAdmin ? AuthRole.admin : AuthRole.patient,
     );
   }
 
@@ -126,7 +167,7 @@ class _FakeAuthRepository implements AuthRepository {
       id: 'uid_2',
       email: email,
       displayName: name,
-      role: 'patient',
+      role: AuthRole.patient,
     );
   }
 
@@ -146,10 +187,9 @@ class _FakeAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<bool> isCurrentUserAdmin() async => isAdmin;
-
-  @override
-  Future<void> signOut() async {}
+  Future<void> signOut() async {
+    signedOut = true;
+  }
 
   @override
   Future<UserEntity?> getCurrentUser() async {

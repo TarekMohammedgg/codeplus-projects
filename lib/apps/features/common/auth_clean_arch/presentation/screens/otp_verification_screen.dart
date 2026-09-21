@@ -10,28 +10,32 @@ import 'package:doctor_hunt/apps/core/utils/phone_utils.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_text_button.dart';
 import 'package:doctor_hunt/apps/features/common/auth_clean_arch/presentation/widgets/auth_back_button.dart';
+import 'package:doctor_hunt/apps/features/common/auth_clean_arch/presentation/widgets/auth_hero_illustration.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
   final String phoneNumber;
 
-  const OtpVerificationScreen({
-    super.key,
-    this.phoneNumber = '+20 10 1234 5678',
-  });
+  const OtpVerificationScreen({super.key, required this.phoneNumber});
 
   @override
   State<OtpVerificationScreen> createState() => OtpVerificationScreenState();
 }
 
 class OtpVerificationScreenState extends State<OtpVerificationScreen> {
+  static const _otpLength = 6;
+  static const _resendSeconds = 60;
+  // Stand-ins for the network calls until phone verification is implemented.
+  static const _sendCodeDelay = Duration(milliseconds: 400);
+  static const _verifyDelay = Duration(milliseconds: 300);
+
   final pinController = TextEditingController();
   final pinFocusNode = FocusNode();
 
   bool _isSendingCode = false;
   bool _isVerifying = false;
-  int _remainingSeconds = 60;
+  int _remainingSeconds = _resendSeconds;
   Timer? _timer;
 
   @override
@@ -50,7 +54,7 @@ class OtpVerificationScreenState extends State<OtpVerificationScreen> {
 
   void _startTimer() {
     _timer?.cancel();
-    setState(() => _remainingSeconds = 60);
+    setState(() => _remainingSeconds = _resendSeconds);
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_remainingSeconds > 0) {
         setState(() => _remainingSeconds--);
@@ -64,7 +68,7 @@ class OtpVerificationScreenState extends State<OtpVerificationScreen> {
     if (_isSendingCode) return;
     setState(() => _isSendingCode = true);
 
-    await Future.delayed(const Duration(milliseconds: 400));
+    await Future.delayed(_sendCodeDelay);
     if (!mounted) return;
     setState(() => _isSendingCode = false);
     _startTimer();
@@ -73,7 +77,7 @@ class OtpVerificationScreenState extends State<OtpVerificationScreen> {
 
   Future<void> verifyOtp() async {
     final smsCode = pinController.text.trim();
-    if (smsCode.length != 6) {
+    if (smsCode.length != _otpLength) {
       context.showWarningSnackBar(context.tr.enterSixDigitOtp);
       return;
     }
@@ -81,7 +85,7 @@ class OtpVerificationScreenState extends State<OtpVerificationScreen> {
     context.unfocus();
     setState(() => _isVerifying = true);
 
-    await Future.delayed(const Duration(milliseconds: 300));
+    await Future.delayed(_verifyDelay);
     if (!mounted) return;
     setState(() => _isVerifying = false);
     context.showSuccessSnackBar(context.tr.phoneVerifiedSuccess);
@@ -101,7 +105,7 @@ class OtpVerificationScreenState extends State<OtpVerificationScreen> {
       textStyle: context.bold20TextMain,
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppTheme.fieldRadius,
         border: Border.all(color: AppColors.outline, width: 1.2),
         boxShadow: const [
           BoxShadow(
@@ -116,7 +120,7 @@ class OtpVerificationScreenState extends State<OtpVerificationScreen> {
     final focusedPinTheme = defaultPinTheme.copyWith(
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppTheme.fieldRadius,
         border: Border.all(color: AppColors.primary, width: 1.8),
         boxShadow: const [
           BoxShadow(
@@ -142,7 +146,12 @@ class OtpVerificationScreenState extends State<OtpVerificationScreen> {
               child: AuthBackButton(circular: true),
             ),
             16.verticalSpace,
-            const Center(child: OtpVerificationHeroIllustration(size: 160)),
+            const Center(
+              child: AuthHeroIllustration(
+                icon: Icons.mark_email_read_outlined,
+                size: 160,
+              ),
+            ),
             24.verticalSpace,
             Text(
               tr.verifyYourNumber,
@@ -171,7 +180,7 @@ class OtpVerificationScreenState extends State<OtpVerificationScreen> {
             32.verticalSpace,
             Center(
               child: Pinput(
-                length: 6,
+                length: _otpLength,
                 controller: pinController,
                 focusNode: pinFocusNode,
                 defaultPinTheme: defaultPinTheme,
@@ -200,7 +209,7 @@ class OtpVerificationScreenState extends State<OtpVerificationScreen> {
                 ),
                 8.horizontalSpace,
                 Text(
-                  _remainingSeconds == 60
+                  _remainingSeconds == _resendSeconds
                       ? tr.resendTimerDefault
                       : '0:${_remainingSeconds.toString().padLeft(2, '0')}',
                   style: context.bold16TextMain,
@@ -235,39 +244,8 @@ class OtpVerificationScreenState extends State<OtpVerificationScreen> {
               label: tr.continueText,
               isLoading: _isVerifying,
               onPressed: (_isVerifying || _isSendingCode) ? null : verifyOtp,
-              height: 54,
-              fontSize: 16,
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class OtpVerificationHeroIllustration extends StatelessWidget {
-  final double size;
-
-  const OtpVerificationHeroIllustration({super.key, this.size = 120});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        color: AppColors.primaryLight,
-        shape: BoxShape.circle,
-        border: Border.all(
-          color: AppColors.primary.withValues(alpha: 0.3),
-          width: 2,
-        ),
-      ),
-      child: Center(
-        child: Icon(
-          Icons.mark_email_read_outlined,
-          size: size * 0.5,
-          color: AppColors.primary,
         ),
       ),
     );

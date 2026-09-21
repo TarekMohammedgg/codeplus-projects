@@ -16,8 +16,6 @@ abstract interface class AuthRemoteDataSource {
 
   Future<void> sendPasswordResetEmail({required String email});
 
-  Future<bool> isUserAdmin(String uid);
-
   Future<void> signOut();
 
   Future<UserModel?> getCurrentUser();

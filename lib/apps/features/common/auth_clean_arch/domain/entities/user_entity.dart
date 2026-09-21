@@ -1,19 +1,21 @@
+enum AuthRole { patient, admin }
+
 class UserEntity {
   const UserEntity({
     required this.id,
     required this.email,
     required this.displayName,
-    this.role = 'patient',
+    this.role = AuthRole.patient,
     this.photoUrl,
   });
 
   final String id;
   final String email;
   final String displayName;
-  final String role;
+  final AuthRole role;
   final String? photoUrl;
 
-  bool get isAdmin => role == 'admin';
+  bool get isAdmin => role == AuthRole.admin;
 
   @override
   bool operator ==(Object other) =>
@@ -36,5 +38,5 @@ class UserEntity {
 
   @override
   String toString() =>
-      'UserEntity(id: $id, email: $email, displayName: $displayName, role: $role)';
+      'UserEntity(id: $id, email: $email, displayName: $displayName, role: ${role.name})';
 }
