@@ -45,6 +45,7 @@ class AuthBackButton extends StatelessWidget {
         border: Border.all(color: AppColors.outline.withAlpha(128)),
         boxShadow: const [
           BoxShadow(
+            //CR hardcode color
             color: Color(0x0C0C3268),
             blurRadius: 10,
             offset: Offset(0, 4),

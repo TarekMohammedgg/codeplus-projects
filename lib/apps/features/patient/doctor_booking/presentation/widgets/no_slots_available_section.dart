@@ -24,6 +24,7 @@ class NoSlotsAvailableSection extends StatelessWidget {
         8.verticalSpace,
         Text(
           context.tr.noSlotsAvailable,
+          //CR hardcode textstyle
           style: const TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w400,
@@ -43,6 +44,7 @@ class NoSlotsAvailableSection extends StatelessWidget {
         16.verticalSpace,
         Text(
           context.tr.or,
+          //CR hardcode textstyle
           style: const TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
@@ -54,8 +56,10 @@ class NoSlotsAvailableSection extends StatelessWidget {
         SizedBox(
           width: 306,
           height: 54,
+          //CR use primary widget (any reuse widget)
           child: OutlinedButton(
             onPressed: onContactClinicTap,
+            //CR use primary widget (any reuse widget)
             style: OutlinedButton.styleFrom(
               backgroundColor: Colors.white,
               elevation: 0,
@@ -70,6 +74,7 @@ class NoSlotsAvailableSection extends StatelessWidget {
             ),
             child: Text(
               context.tr.contactClinic,
+              //CR hardcode textstyle
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,

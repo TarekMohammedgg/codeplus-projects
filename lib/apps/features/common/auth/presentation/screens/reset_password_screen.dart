@@ -15,8 +15,8 @@ import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_text_field.dart';
 import 'package:doctor_hunt/apps/features/common/auth/data/repositories/auth_repository.dart';
 import 'package:doctor_hunt/apps/features/common/auth/data/service/auth_service.dart';
-import 'package:doctor_hunt/apps/features/common/auth/presentation/cubit/auth_cubit.dart';
-import 'package:doctor_hunt/apps/features/common/auth/presentation/cubit/auth_state.dart';
+import 'package:doctor_hunt/apps/features/common/auth/presentation/controller/cubit/auth_cubit.dart';
+import 'package:doctor_hunt/apps/features/common/auth/presentation/controller/cubit/auth_state.dart';
 import '../widgets/auth_back_button.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -39,9 +39,13 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
     super.initState();
     _authCubit = widget.repository != null
         ? AuthCubit(repository: widget.repository!)
+    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
+    //CR Use `getIt<Cubit>()` directly or inject via constructor.
         : (getIt.isRegistered<AuthCubit>()
               ? getIt<AuthCubit>()
               : AuthCubit(
+    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
+    //CR Use `getIt<Cubit>()` directly or inject via constructor.
                   repository: getIt.isRegistered<AuthRepository>()
                       ? getIt<AuthRepository>()
                       : FirebaseAuthRepository(authService: AuthService()),
@@ -157,6 +161,7 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
                             tr.rememberedPassword,
                             style: context.regular14TextSecondary,
                           ),
+                          //CR use primary widget (any reuse widget)
                           TextButton(
                             onPressed: () {
                               if (context.canPop()) {
@@ -165,6 +170,7 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                 const LoginRoute().go(context);
                               }
                             },
+                            //CR use primary widget (any reuse widget)
                             style: TextButton.styleFrom(
                               foregroundColor: AppColors.primary,
                               padding: const EdgeInsets.only(left: 6),

@@ -22,6 +22,7 @@ class MainBottomNavigationBar extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
+            //CR hardcode color
             color: Color(0x12000000),
             blurRadius: 20,
             offset: Offset(0, -4),

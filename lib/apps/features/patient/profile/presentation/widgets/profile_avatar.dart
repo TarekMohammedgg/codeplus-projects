@@ -36,6 +36,7 @@ class ProfileAvatar extends StatelessWidget {
             boxShadow ??
             const [
               BoxShadow(
+                //CR hardcode color
                 color: Color(0x24000000),
                 blurRadius: 16,
                 offset: Offset(0, 6),

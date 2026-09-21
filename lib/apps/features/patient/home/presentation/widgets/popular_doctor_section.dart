@@ -69,6 +69,7 @@ class PopularDoctorCard extends StatelessWidget {
           border: Border.all(color: AppColors.outline.withValues(alpha: 0.6)),
           boxShadow: const [
             BoxShadow(
+              //CR hardcode color
               color: Color(0x0C000000),
               blurRadius: 14,
               offset: Offset(0, 4),
@@ -114,6 +115,7 @@ class PopularDoctorCard extends StatelessWidget {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
+                          //CR hardcode color
                           color: Color(0x18000000),
                           blurRadius: 6,
                           offset: Offset(0, 2),
@@ -158,6 +160,7 @@ class PopularDoctorCard extends StatelessWidget {
                     children: [
                       const Icon(
                         Icons.star_rounded,
+                        //CR hardcode color
                         color: Color(0xFFFFB800),
                         size: 16,
                       ),

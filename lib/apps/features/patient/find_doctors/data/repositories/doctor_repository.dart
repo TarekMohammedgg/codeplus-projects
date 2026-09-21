@@ -1,31 +1,17 @@
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
-import 'package:doctor_hunt/apps/core/services/doctor_service.dart';
+import 'package:doctor_hunt/apps/features/patient/find_doctors/data/service/find_doctors_service.dart';
 
 abstract interface class DoctorRepository {
   Future<List<DoctorModel>> fetchDoctors();
-
-  Future<List<DoctorModel>> fetchFavouriteDoctors();
-
-  Future<List<DoctorModel>> fetchFeaturedDoctors();
 }
 
 class FirebaseDoctorRepository implements DoctorRepository {
-  FirebaseDoctorRepository({required this.doctorService});
+  FirebaseDoctorRepository({required this.findDoctorsService});
 
-  final DoctorService doctorService;
+  final FindDoctorsService findDoctorsService;
 
   @override
   Future<List<DoctorModel>> fetchDoctors() {
-    return doctorService.fetchDoctors();
-  }
-
-  @override
-  Future<List<DoctorModel>> fetchFavouriteDoctors() {
-    return doctorService.fetchFavouriteDoctors();
-  }
-
-  @override
-  Future<List<DoctorModel>> fetchFeaturedDoctors() {
-    return doctorService.fetchFeaturedDoctors();
+    return findDoctorsService.fetchDoctors();
   }
 }

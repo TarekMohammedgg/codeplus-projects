@@ -56,6 +56,7 @@ extension CustomSnackBarExtension on BuildContext {
             ),
             boxShadow: const [
               BoxShadow(
+                //CR hardcode color
                 color: Color(0x1A000000),
                 blurRadius: 16,
                 offset: Offset(0, 6),
@@ -81,6 +82,7 @@ extension CustomSnackBarExtension on BuildContext {
                     if (title != null && title.isNotEmpty) ...[
                       Text(
                         title,
+                        //CR hardcode textstyle
                         style: TextStyle(
                           color: primaryColor,
                           fontSize: 14,
@@ -91,6 +93,7 @@ extension CustomSnackBarExtension on BuildContext {
                     ],
                     Text(
                       message,
+                      //CR hardcode textstyle
                       style: const TextStyle(
                         color: AppColors.textMain,
                         fontSize: 13,
@@ -102,14 +105,17 @@ extension CustomSnackBarExtension on BuildContext {
               ),
               if (actionLabel != null && onAction != null) ...[
                 const SizedBox(width: 8),
+                //CR use primary widget (any reuse widget)
                 TextButton(
                   onPressed: onAction,
+                  //CR use primary widget (any reuse widget)
                   style: TextButton.styleFrom(
                     foregroundColor: primaryColor,
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                   ),
                   child: Text(
                     actionLabel,
+                    //CR hardcode textstyle
                     style: const TextStyle(fontWeight: FontWeight.w700),
                   ),
                 ),

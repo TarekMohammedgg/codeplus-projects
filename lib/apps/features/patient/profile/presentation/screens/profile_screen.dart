@@ -8,8 +8,8 @@ import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/features/common/auth/data/service/auth_service.dart';
 import 'package:doctor_hunt/apps/features/common/auth/data/repositories/auth_repository.dart';
-import 'package:doctor_hunt/apps/features/common/auth/presentation/cubit/auth_cubit.dart';
-import 'package:doctor_hunt/apps/features/common/auth/presentation/cubit/auth_state.dart';
+import 'package:doctor_hunt/apps/features/common/auth/presentation/controller/cubit/auth_cubit.dart';
+import 'package:doctor_hunt/apps/features/common/auth/presentation/controller/cubit/auth_state.dart';
 import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/data/models/user_profile_model.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/data/profile_data.dart';
@@ -36,9 +36,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     _authCubit = widget.repository != null
         ? AuthCubit(repository: widget.repository!)
+    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
+    //CR Use `getIt<Cubit>()` directly or inject via constructor.
         : (getIt.isRegistered<AuthCubit>()
               ? getIt<AuthCubit>()
               : AuthCubit(
+    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
+    //CR Use `getIt<Cubit>()` directly or inject via constructor.
                   repository: getIt.isRegistered<AuthRepository>()
                       ? getIt<AuthRepository>()
                       : FirebaseAuthRepository(authService: AuthService()),
@@ -108,6 +112,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 tr.personalInformation,
                                 style: context.bold18TextMain.copyWith(
                                   fontSize: 18,
+                                  //CR hardcode color
                                   color: const Color(0xFF333333),
                                 ),
                               ),

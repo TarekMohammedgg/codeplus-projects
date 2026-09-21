@@ -1,9 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 /// A standardized, reusable text field widget for the Doctor Hunt application.
 ///
@@ -191,4 +190,38 @@ class AppTextFieldState extends State<AppTextField> {
       ),
     );
   }
+}
+//CR instead of repeat code in any fields use password
+class AppPasswordTextField extends AppTextField {
+  const AppPasswordTextField({
+    super.key,
+    super.controller,
+    super.initialValue,
+    super.hintText,
+    super.labelText,
+    super.prefixWidget,
+    super.prefixIconColor,
+    super.suffixIcon,
+    super.keyboardType,
+    super.textInputAction,
+    super.autofillHints,
+    super.validator,
+    super.onChanged,
+    super.onFieldSubmitted,
+    super.onTap,
+    super.readOnly,
+    super.enabled,
+    super.autofocus,
+    super.focusNode,
+    super.maxLines,
+    super.minLines,
+    super.fillColor,
+    super.borderRadius,
+    super.contentPadding,
+    super.errorMaxLines,
+    super.textCapitalization,
+    super.inputFormatters,
+    super.style,
+    super.hintStyle,
+  }) : super(isPassword: true, prefixIcon: Icons.lock_outline);
 }

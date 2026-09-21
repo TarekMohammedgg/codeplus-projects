@@ -54,6 +54,7 @@ class LiveDoctorCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: const [
           BoxShadow(
+            //CR hardcode color
             color: Color(0x0C000000),
             blurRadius: 12,
             offset: Offset(0, 4),
@@ -105,6 +106,7 @@ class LiveDoctorCard extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
+                  //CR hardcode color
                   color: const Color(0xFFFF003A),
                   borderRadius: BorderRadius.circular(6),
                 ),

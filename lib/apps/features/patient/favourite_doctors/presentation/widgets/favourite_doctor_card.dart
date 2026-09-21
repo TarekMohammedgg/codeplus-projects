@@ -29,6 +29,7 @@ class FavouriteDoctorCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: const [
             BoxShadow(
+              //CR hardcode color
               color: Color(0x0A000000),
               blurRadius: 14,
               offset: Offset(0, 4),
@@ -114,6 +115,7 @@ class _RatingRow extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        //CR hardcode color
         const Icon(Icons.star_rounded, color: Color(0xFFFFB800), size: 15),
         4.horizontalSpace,
         Text(

@@ -58,6 +58,7 @@ class ProfileHeaderSection extends StatelessWidget {
                     width: 36,
                     height: 36,
                     borderRadius: BorderRadius.circular(18),
+                    //CR hardcode color
                     backgroundColor: const Color(0xCC677294),
                     border: Border.all(color: Colors.white, width: 2),
                     boxShadow: const [],

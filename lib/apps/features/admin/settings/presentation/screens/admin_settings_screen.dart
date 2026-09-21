@@ -10,8 +10,8 @@ import 'package:doctor_hunt/apps/core/widgets/app_header_section.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_avatar_placeholder.dart';
 import 'package:doctor_hunt/apps/features/common/auth/data/repositories/auth_repository.dart';
 import 'package:doctor_hunt/apps/features/common/auth/data/service/auth_service.dart';
-import 'package:doctor_hunt/apps/features/common/auth/presentation/cubit/auth_cubit.dart';
-import 'package:doctor_hunt/apps/features/common/auth/presentation/cubit/auth_state.dart';
+import 'package:doctor_hunt/apps/features/common/auth/presentation/controller/cubit/auth_cubit.dart';
+import 'package:doctor_hunt/apps/features/common/auth/presentation/controller/cubit/auth_state.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
@@ -110,6 +110,7 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
                           ],
                         ),
                         32.verticalSpace,
+                        //CR use primary widget (any reuse widget)
                         OutlinedButton.icon(
                           onPressed: isLoggingOut ? null : _onLogOut,
                           icon: const Icon(
@@ -122,6 +123,7 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
                               color: AppColors.error,
                             ),
                           ),
+                          //CR use primary widget (any reuse widget)
                           style: OutlinedButton.styleFrom(
                             side: const BorderSide(color: AppColors.error),
                           ),

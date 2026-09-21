@@ -63,6 +63,7 @@ class AppIconButton extends StatelessWidget {
         boxShadow ??
         const [
           BoxShadow(
+            //CR hardcode color
             color: Color(0x0F000000),
             blurRadius: 10,
             offset: Offset(0, 2),

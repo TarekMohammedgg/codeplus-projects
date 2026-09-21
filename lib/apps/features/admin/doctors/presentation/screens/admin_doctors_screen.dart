@@ -46,9 +46,13 @@ class AdminDoctorsScreenState extends State<AdminDoctorsScreen> {
                   doctorService: widget.doctorService ?? AdminDoctorService(),
                 ),
           )
+    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
+    //CR Use `getIt<Cubit>()` directly or inject via constructor.
         : (getIt.isRegistered<AdminDoctorsCubit>()
               ? getIt<AdminDoctorsCubit>()
               : AdminDoctorsCubit(
+    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
+    //CR Use `getIt<Cubit>()` directly or inject via constructor.
                   repository: getIt.isRegistered<AdminDoctorsRepository>()
                       ? getIt<AdminDoctorsRepository>()
                       : FirebaseAdminDoctorsRepository(
@@ -98,10 +102,12 @@ class AdminDoctorsScreenState extends State<AdminDoctorsScreen> {
           style: context.regular14TextSecondary,
         ),
         actions: [
+          //CR use primary widget (any reuse widget)
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(false),
             child: Text(tr.cancel, style: context.medium14TextSecondary),
           ),
+          //CR use primary widget (any reuse widget)
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
             child: Text(

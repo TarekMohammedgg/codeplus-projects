@@ -1,8 +1,8 @@
 import 'dart:typed_data';
 
 import 'package:doctor_hunt/apps/features/admin/doctors/data/service/admin_doctor_service.dart';
-import 'package:doctor_hunt/apps/features/common/specialty/data/models/specialty_model.dart';
-import 'package:doctor_hunt/apps/features/common/specialty/data/service/specialty_service.dart';
+import 'package:doctor_hunt/apps/core/models/specialty_model.dart';
+import 'package:doctor_hunt/apps/core/services/specialty_service.dart';
 import 'package:doctor_hunt/apps/features/admin/create_doctor/data/service/cloudinary_upload_service.dart';
 
 abstract interface class CreateDoctorRepository {

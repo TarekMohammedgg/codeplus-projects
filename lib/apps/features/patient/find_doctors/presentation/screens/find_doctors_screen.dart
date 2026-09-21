@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -12,10 +12,10 @@ import 'package:doctor_hunt/apps/core/widgets/app_search_bar.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_avatar_placeholder.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_image.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
-import 'package:doctor_hunt/apps/core/services/doctor_service.dart';
+import 'package:doctor_hunt/apps/features/patient/find_doctors/data/service/find_doctors_service.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/data/repositories/doctor_repository.dart';
-import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/cubit/find_doctors_cubit.dart';
-import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/cubit/find_doctors_state.dart';
+import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/controller/cubit/find_doctors_cubit.dart';
+import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/controller/cubit/find_doctors_state.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
 import 'package:doctor_hunt/generated/style_atoms.dart';
@@ -28,7 +28,7 @@ class FindDoctorsScreen extends StatefulWidget {
     this.initialDoctors,
   });
 
-  final DoctorService? doctorService;
+  final FindDoctorsService? doctorService;
   final DoctorRepository? repository;
   final List<DoctorModel>? initialDoctors;
 
@@ -48,16 +48,20 @@ class _FindDoctorsScreenState extends State<FindDoctorsScreen> {
             repository:
                 widget.repository ??
                 FirebaseDoctorRepository(
-                  doctorService: widget.doctorService ?? DoctorService(),
+                  findDoctorsService: widget.doctorService ?? FindDoctorsService(),
                 ),
           )
+    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
+    //CR Use `getIt<Cubit>()` directly or inject via constructor.
         : (getIt.isRegistered<FindDoctorsCubit>()
               ? getIt<FindDoctorsCubit>()
               : FindDoctorsCubit(
+    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
+    //CR Use `getIt<Cubit>()` directly or inject via constructor.
                   repository: getIt.isRegistered<DoctorRepository>()
                       ? getIt<DoctorRepository>()
                       : FirebaseDoctorRepository(
-                          doctorService: DoctorService(),
+                          findDoctorsService: FindDoctorsService(),
                         ),
                 ));
     _findDoctorsCubit.load(initialDoctors: widget.initialDoctors);
@@ -182,6 +186,7 @@ class FindDoctorCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(14),
           boxShadow: const [
             BoxShadow(
+              //CR hardcode color
               color: Color(0x0C000000),
               blurRadius: 14,
               offset: Offset(0, 4),
@@ -227,6 +232,7 @@ class FindDoctorCard extends StatelessWidget {
                                 ? Icons.favorite_rounded
                                 : Icons.favorite_border_rounded,
                             color: doctor.isFavorite
+                                //CR hardcode color
                                 ? const Color(0xFFFF003A)
                                 : AppColors.disabled,
                             size: 20,

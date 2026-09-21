@@ -16,12 +16,12 @@ import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_text_field.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/data/models/admin_doctor_model.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/data/service/admin_doctor_service.dart';
-import 'package:doctor_hunt/apps/features/common/specialty/data/models/specialty_model.dart';
-import 'package:doctor_hunt/apps/features/common/specialty/data/service/specialty_service.dart';
+import 'package:doctor_hunt/apps/core/models/specialty_model.dart';
+import 'package:doctor_hunt/apps/core/services/specialty_service.dart';
 import 'package:doctor_hunt/apps/features/admin/create_doctor/data/repositories/create_doctor_repository.dart';
 import 'package:doctor_hunt/apps/features/admin/create_doctor/data/service/cloudinary_upload_service.dart';
-import 'package:doctor_hunt/apps/features/admin/create_doctor/presentation/cubit/create_doctor_cubit.dart';
-import 'package:doctor_hunt/apps/features/admin/create_doctor/presentation/cubit/create_doctor_state.dart';
+import 'package:doctor_hunt/apps/features/admin/create_doctor/presentation/controller/cubit/create_doctor_cubit.dart';
+import 'package:doctor_hunt/apps/features/admin/create_doctor/presentation/controller/cubit/create_doctor_state.dart';
 import 'package:doctor_hunt/apps/features/admin/create_doctor/presentation/widgets/create_doctor_widgets.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
@@ -57,9 +57,13 @@ class CreateDoctorScreenState extends State<CreateDoctorScreen> {
     super.initState();
     _createDoctorCubit = widget.repository != null
         ? CreateDoctorCubit(repository: widget.repository!)
+    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
+    //CR Use `getIt<Cubit>()` directly or inject via constructor.
         : (getIt.isRegistered<CreateDoctorCubit>()
               ? getIt<CreateDoctorCubit>()
               : CreateDoctorCubit(
+    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
+    //CR Use `getIt<Cubit>()` directly or inject via constructor.
                   repository: getIt.isRegistered<CreateDoctorRepository>()
                       ? getIt<CreateDoctorRepository>()
                       : FirebaseCreateDoctorRepository(

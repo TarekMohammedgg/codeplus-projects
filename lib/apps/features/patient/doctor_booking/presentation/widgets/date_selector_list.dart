@@ -54,6 +54,7 @@ class DateSelectorList extends StatelessWidget {
                 border: Border.all(
                   color: isSelected
                       ? AppColors.primary
+                      //CR hardcode color
                       : const Color(0xFFE8E8E8),
                 ),
               ),
@@ -69,11 +70,13 @@ class DateSelectorList extends StatelessWidget {
                       option.dayLabel,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
+                      //CR hardcode textstyle
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
                         color: isSelected
                             ? Colors.white
+                            //CR hardcode color
                             : const Color(0xFF222B45),
                       ),
                     ),
@@ -84,10 +87,12 @@ class DateSelectorList extends StatelessWidget {
                           : context.tr.noSlotsAvailable,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
+                      //CR hardcode textstyle
                       style: TextStyle(
                         fontSize: 10,
                         color: isSelected
                             ? Colors.white.withValues(alpha: 0.9)
+                            //CR hardcode color
                             : const Color(0xFF677294),
                       ),
                     ),

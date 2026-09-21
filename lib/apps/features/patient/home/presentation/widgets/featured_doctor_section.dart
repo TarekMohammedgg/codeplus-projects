@@ -69,6 +69,7 @@ class FeaturedDoctorCard extends StatelessWidget {
           border: Border.all(color: AppColors.outline.withValues(alpha: 0.6)),
           boxShadow: const [
             BoxShadow(
+              //CR hardcode color
               color: Color(0x0C000000),
               blurRadius: 12,
               offset: Offset(0, 4),
@@ -84,6 +85,7 @@ class FeaturedDoctorCard extends StatelessWidget {
                   children: [
                     const Icon(
                       Icons.star_rounded,
+                      //CR hardcode color
                       color: Color(0xFFFFB800),
                       size: 14,
                     ),

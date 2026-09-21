@@ -35,7 +35,9 @@ class TimeSlotsSection extends StatelessWidget {
       children: [
         Text(title, style: context.bold16TextMain),
         12.verticalSpace,
+        //CR hardcode textstyle
         DefaultTextStyle(
+          //CR hardcode textstyle
           style: const TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w600,

@@ -1,16 +1,16 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:doctor_hunt/apps/core/di/injection.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
-import 'package:doctor_hunt/apps/core/services/doctor_service.dart';
+import 'package:doctor_hunt/apps/features/patient/home/data/service/home_service.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_header_section.dart';
 import 'package:doctor_hunt/apps/features/common/auth/data/service/auth_service.dart';
 import 'package:doctor_hunt/apps/features/common/bottom_navigation_bar/presentation/widgets/main_bottom_navigation_bar.dart';
 import 'package:doctor_hunt/apps/features/patient/home/data/repositories/home_repository.dart';
-import 'package:doctor_hunt/apps/features/patient/home/presentation/cubit/home_cubit.dart';
-import 'package:doctor_hunt/apps/features/patient/home/presentation/cubit/home_state.dart';
-import 'package:doctor_hunt/apps/features/common/specialty/data/service/specialty_service.dart';
+import 'package:doctor_hunt/apps/features/patient/home/presentation/controller/cubit/home_cubit.dart';
+import 'package:doctor_hunt/apps/features/patient/home/presentation/controller/cubit/home_state.dart';
+import 'package:doctor_hunt/apps/core/services/specialty_service.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
 import '../widgets/coming_soon_view.dart';
@@ -37,18 +37,24 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
+    //CR Use `getIt<Cubit>()` directly or inject via constructor.
     _authService = getIt.isRegistered<AuthService>()
         ? getIt<AuthService>()
         : AuthService();
     _homeCubit = widget.repository != null
         ? HomeCubit(repository: widget.repository!)
+    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
+    //CR Use `getIt<Cubit>()` directly or inject via constructor.
         : (getIt.isRegistered<HomeCubit>()
               ? getIt<HomeCubit>()
               : HomeCubit(
+    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
+    //CR Use `getIt<Cubit>()` directly or inject via constructor.
                   repository: getIt.isRegistered<HomeRepository>()
                       ? getIt<HomeRepository>()
                       : FirebaseHomeRepository(
-                          doctorService: DoctorService(),
+                          homeService: HomeService(),
                           specialtyService: SpecialtyService(),
                         ),
                 ));

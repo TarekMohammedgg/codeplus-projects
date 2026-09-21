@@ -107,12 +107,14 @@ class RoleSelectionScreenState extends State<RoleSelectionScreen> {
             color: AppColors.surface,
             borderRadius: BorderRadius.circular(18),
             border: Border.all(
+              //CR hardcode color
               color: isSelected ? AppColors.primary : const Color(0xFFE5E9EB),
               width: isSelected ? 1.8 : 1.2,
             ),
             boxShadow: isSelected
                 ? const [
                     BoxShadow(
+                      //CR hardcode color
                       color: Color(0x140EBE7E),
                       blurRadius: 16,
                       offset: Offset(0, 4),
@@ -120,6 +122,7 @@ class RoleSelectionScreenState extends State<RoleSelectionScreen> {
                   ]
                 : const [
                     BoxShadow(
+                      //CR hardcode color
                       color: Color(0x06000000),
                       blurRadius: 10,
                       offset: Offset(0, 2),
@@ -135,6 +138,7 @@ class RoleSelectionScreenState extends State<RoleSelectionScreen> {
                 decoration: BoxDecoration(
                   color: isSelected
                       ? AppColors.primaryLight
+                      //CR hardcode color
                       : const Color(0xFFF1F4F6),
                   shape: BoxShape.circle,
                 ),
@@ -142,6 +146,7 @@ class RoleSelectionScreenState extends State<RoleSelectionScreen> {
                   icon,
                   color: isSelected
                       ? AppColors.primary
+                      //CR hardcode color
                       : const Color(0xFF8A94A6),
                   size: 24,
                 ),

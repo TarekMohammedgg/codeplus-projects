@@ -5,7 +5,7 @@ import 'package:doctor_hunt/apps/features/patient/home/presentation/widgets/doct
 import 'package:doctor_hunt/apps/features/patient/home/presentation/widgets/featured_doctor_section.dart';
 import 'package:doctor_hunt/apps/features/patient/home/presentation/widgets/live_doctor_section.dart';
 import 'package:doctor_hunt/apps/features/patient/home/presentation/widgets/popular_doctor_section.dart';
-import 'package:doctor_hunt/apps/features/common/specialty/data/models/specialty_model.dart';
+import 'package:doctor_hunt/apps/core/models/specialty_model.dart';
 import 'package:flutter/material.dart';
 
 class DoctorsData extends StatelessWidget {

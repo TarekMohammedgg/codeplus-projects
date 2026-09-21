@@ -29,6 +29,7 @@ class DoctorProfileCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: const [
           BoxShadow(
+            //CR hardcode color
             color: Color(0x0C000000),
             blurRadius: 16,
             offset: Offset(0, 4),
@@ -77,6 +78,7 @@ class DoctorProfileCard extends StatelessWidget {
                                   ? Icons.favorite_rounded
                                   : Icons.favorite_border_rounded,
                               color: doctor.isFavorite
+                                  //CR hardcode color
                                   ? const Color(0xFFFF003A)
                                   : AppColors.disabled,
                               size: 22,
@@ -138,6 +140,7 @@ class DoctorStarRating extends StatelessWidget {
               : halfFilled
               ? Icons.star_half_rounded
               : Icons.star_border_rounded,
+          //CR hardcode color
           color: const Color(0xFFFFB800),
           size: 18,
         );

@@ -94,8 +94,10 @@ class ThankYouDialog extends StatelessWidget {
               height: 52,
             ),
             14.verticalSpace,
+            //CR use primary widget (any reuse widget)
             TextButton(
               onPressed: onEdit ?? () => Navigator.of(context).pop(),
+              //CR use primary widget (any reuse widget)
               style: TextButton.styleFrom(
                 foregroundColor: AppColors.textSecondary,
                 padding: const EdgeInsets.symmetric(

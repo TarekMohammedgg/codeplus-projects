@@ -2,13 +2,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/data/models/admin_doctor_model.dart';
 
 class AdminDoctorService {
+  //CR Bad DI: Avoid mixing static singletons and swallowing Firebase uninitialized errors with catch (_) => null.
+  //CR Inject non-nullable `FirebaseFirestore` via constructor.
   static final AdminDoctorService instance = AdminDoctorService();
 
   AdminDoctorService({FirebaseFirestore? firestore})
+  //CR Bad DI: Avoid mixing static singletons and swallowing Firebase uninitialized errors with catch (_) => null.
+  //CR Inject non-nullable `FirebaseFirestore` via constructor.
     : _firestore = firestore ?? _safeFirestore();
 
   final FirebaseFirestore? _firestore;
 
+  //CR Bad DI: Avoid mixing static singletons and swallowing Firebase uninitialized errors with catch (_) => null.
+  //CR Inject non-nullable `FirebaseFirestore` via constructor.
   static FirebaseFirestore? _safeFirestore() {
     try {
       return FirebaseFirestore.instance;

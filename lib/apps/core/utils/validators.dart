@@ -49,9 +49,11 @@ abstract final class AppValidators {
   static String? validatePhone(String? value) {
     final phone = value?.trim() ?? '';
     if (phone.isEmpty) {
+      //CR hardcode text
       return 'يرجى إدخال رقم الهاتف';
     }
     if (!PhoneUtils.isValidPhone(phone)) {
+      //CR hardcode text
       return 'يرجى إدخال رقم هاتف صحيح (مثال: 01012345678)';
     }
     return null;

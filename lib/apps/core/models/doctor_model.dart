@@ -4,6 +4,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
 class DoctorModel {
+  //CR hardcode color
   static const defaultAccentColor = Color(0xFF0EBE7E);
   static const defaultLocation = LatLng(-1.286389, 36.817223);
 
@@ -307,7 +308,7 @@ String _localizedSpecialty(dynamic value, AppLocale locale, String id) {
   if (text.isEmpty) {
     throw FormatException('Doctor $id is missing required field: specialty');
   }
-
+ //CR We can use enums !
   final key = text.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), '_');
   final english = AppLocale.en.buildSync();
   final arabic = AppLocale.ar.buildSync();

@@ -12,8 +12,8 @@ import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_text_field.dart';
 import 'package:doctor_hunt/apps/features/common/auth/data/repositories/auth_repository.dart';
 import 'package:doctor_hunt/apps/features/common/auth/data/service/auth_service.dart';
-import 'package:doctor_hunt/apps/features/common/auth/presentation/cubit/auth_cubit.dart';
-import 'package:doctor_hunt/apps/features/common/auth/presentation/cubit/auth_state.dart';
+import 'package:doctor_hunt/apps/features/common/auth/presentation/controller/cubit/auth_cubit.dart';
+import 'package:doctor_hunt/apps/features/common/auth/presentation/controller/cubit/auth_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ForgotPasswordBottomSheet extends StatefulWidget {
@@ -46,9 +46,13 @@ class ForgotPasswordBottomSheetState extends State<ForgotPasswordBottomSheet> {
     super.initState();
     _authCubit = widget.repository != null
         ? AuthCubit(repository: widget.repository!)
+    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
+    //CR Use `getIt<Cubit>()` directly or inject via constructor.
         : (getIt.isRegistered<AuthCubit>()
               ? getIt<AuthCubit>()
               : AuthCubit(
+    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
+    //CR Use `getIt<Cubit>()` directly or inject via constructor.
                   repository: getIt.isRegistered<AuthRepository>()
                       ? getIt<AuthRepository>()
                       : FirebaseAuthRepository(authService: AuthService()),

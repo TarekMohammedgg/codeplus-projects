@@ -3,8 +3,8 @@ import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_text_field.dart';
 import 'package:doctor_hunt/apps/features/common/auth/data/repositories/auth_repository.dart';
 import 'package:doctor_hunt/apps/features/common/auth/data/service/auth_service.dart';
-import 'package:doctor_hunt/apps/features/common/auth/presentation/cubit/auth_cubit.dart';
-import 'package:doctor_hunt/apps/features/common/auth/presentation/cubit/auth_state.dart';
+import 'package:doctor_hunt/apps/features/common/auth/presentation/controller/cubit/auth_cubit.dart';
+import 'package:doctor_hunt/apps/features/common/auth/presentation/controller/cubit/auth_state.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/widgets/auth_back_button.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/widgets/auth_buttons.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/widgets/auth_header.dart';
@@ -40,6 +40,12 @@ class LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
+    //CR [Correct DI Approach for Cubit in UI Layer]:
+    //CR Eliminate defensive nested ternaries and manual fallback constructor chains (`new FirebaseAuthRepository(AuthService())`).
+    //CR Option A (Direct GetIt):
+    //CR   `_authCubit = widget.cubit ?? getIt<AuthCubit>();`
+    //CR Option B (Provider in Route/Screen):
+    //CR   Provide the Cubit at the route level: `BlocProvider(create: (_) => getIt<AuthCubit>(), child: const LoginScreen())`
     _authCubit = widget.repository != null
         ? AuthCubit(repository: widget.repository!)
         : (getIt.isRegistered<AuthCubit>()
@@ -157,11 +163,9 @@ class LoginScreenState extends State<LoginScreen> {
                       validator: (value) => AppValidators.validateEmail(value),
                     ),
                     18.verticalSpace,
-                    AppTextField(
+                    AppPasswordTextField(
                       controller: passwordController,
                       hintText: tr.enterPasswordHint,
-                      prefixIcon: Icons.lock_outline_rounded,
-                      isPassword: true,
                       textInputAction: TextInputAction.done,
                       autofillHints: const [AutofillHints.password],
                       onFieldSubmitted: (_) => signIn(),
@@ -218,10 +222,12 @@ class _ForgotPasswordButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment.centerRight,
+      //CR use primary widget (any reuse widget)
       child: TextButton(
         onPressed: disabled
             ? null
             : () => ForgotPasswordBottomSheet.show(context),
+        //CR use primary widget (any reuse widget)
         style: TextButton.styleFrom(
           foregroundColor: AppColors.primary,
           padding: const EdgeInsets.only(top: 8, bottom: 8),
@@ -248,10 +254,12 @@ class _SignUpFooter extends StatelessWidget {
         crossAxisAlignment: WrapCrossAlignment.center,
         children: [
           Text(tr.dontHaveAccount, style: context.regular14TextSecondary),
+          //CR use primary widget (any reuse widget)
           TextButton(
             onPressed: disabled
                 ? null
                 : () => const SignupRoute().push(context),
+            //CR use primary widget (any reuse widget)
             style: TextButton.styleFrom(
               foregroundColor: AppColors.primary,
               padding: const EdgeInsets.only(left: 4),

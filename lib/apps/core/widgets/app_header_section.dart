@@ -66,6 +66,7 @@ class AppHeaderSection extends StatelessWidget {
     final effectiveGradient =
         gradient ??
         const LinearGradient(
+          //CR hardcode color
           colors: [AppColors.primary, Color(0xFF07D9AD)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -185,6 +186,7 @@ class AppHeaderSection extends StatelessWidget {
                                 6.horizontalSpace,
                                 Text(
                                   targetLangLabel,
+                                  //CR hardcode textstyle
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w700,
@@ -213,6 +215,7 @@ class AppHeaderSection extends StatelessWidget {
                             ),
                             boxShadow: const [
                               BoxShadow(
+                                //CR hardcode color
                                 color: Color(0x24000000),
                                 blurRadius: 10,
                                 offset: Offset(0, 4),
@@ -265,6 +268,7 @@ class AppHeaderSection extends StatelessWidget {
                                 : const DoctorAvatarPlaceholder(
                                     size: 48,
                                     iconColor: AppColors.primary,
+                                    //CR hardcode color
                                     backgroundColor: Color(0xFFE8FBF6),
                                   ),
                           ),

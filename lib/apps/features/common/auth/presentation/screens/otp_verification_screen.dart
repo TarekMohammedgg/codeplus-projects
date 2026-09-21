@@ -74,6 +74,7 @@ class OtpVerificationScreenState extends State<OtpVerificationScreen> {
   Future<void> verifyOtp() async {
     final smsCode = pinController.text.trim();
     if (smsCode.length != 6) {
+      //CR hardcode text
       context.showWarningSnackBar('يرجى إدخال رمز التحقق المكون من 6 أرقام');
       return;
     }
@@ -84,6 +85,7 @@ class OtpVerificationScreenState extends State<OtpVerificationScreen> {
     await Future.delayed(const Duration(milliseconds: 300));
     if (!mounted) return;
     setState(() => _isVerifying = false);
+    //CR hardcode text
     context.showSuccessSnackBar('تم تأكيد رقم الهاتف بنجاح!');
     const HomeRoute().push(context);
   }
@@ -105,6 +107,7 @@ class OtpVerificationScreenState extends State<OtpVerificationScreen> {
         border: Border.all(color: AppColors.outline, width: 1.2),
         boxShadow: const [
           BoxShadow(
+            //CR hardcode color
             color: Color(0x08000000),
             blurRadius: 8,
             offset: Offset(0, 3),
@@ -216,8 +219,10 @@ class OtpVerificationScreenState extends State<OtpVerificationScreen> {
             ),
             14.verticalSpace,
             Center(
+              //CR use primary widget (any reuse widget)
               child: TextButton(
                 onPressed: isResendActive ? resendCode : null,
+                //CR use primary widget (any reuse widget)
                 style: TextButton.styleFrom(
                   foregroundColor: isResendActive
                       ? AppColors.primary

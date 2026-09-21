@@ -6,6 +6,7 @@ class DoctorAvatarPlaceholder extends StatelessWidget {
     super.key,
     this.size = 48,
     this.iconColor = AppColors.primary,
+    //CR hardcode color
     this.backgroundColor = const Color(0xFFE8FBF6),
     this.circle = true,
     this.iconSize,
@@ -23,6 +24,7 @@ class DoctorAvatarPlaceholder extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
+        //CR hardcode color
         color: backgroundColor ?? const Color(0xFFE8FBF6),
         shape: circle ? BoxShape.circle : BoxShape.rectangle,
         borderRadius: circle ? null : BorderRadius.circular(12),

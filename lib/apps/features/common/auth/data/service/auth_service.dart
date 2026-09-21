@@ -12,6 +12,17 @@ class AuthService {
 
   final FirebaseAuth? _auth;
 
+  //CR [Correct DI Approach for Service Layer]:
+  //CR Do not use nullable `_auth` or `_safeAuth()` fallback that catches and swallows startup errors.
+  //CR Step 1: Register FirebaseAuth in `injection.dart`:
+  //CR   `getIt.registerLazySingleton<FirebaseAuth>(() => FirebaseAuth.instance);`
+  //CR Step 2: Inject non-nullable `FirebaseAuth` directly into AuthService:
+  //CR   ```dart
+  //CR   class AuthService {
+  //CR     final FirebaseAuth auth;
+  //CR     AuthService({required this.auth});
+  //CR   }
+  //CR   ```
   AuthService({FirebaseAuth? auth}) : _auth = auth ?? _safeAuth();
 
   static FirebaseAuth? _safeAuth() {
@@ -37,6 +48,7 @@ class AuthService {
     }
   }
 
+  //CR Layer separation defect: Data service must never take BuildContext or handle UI greetings/translations.
   String getUserGreeting(BuildContext context) {
     final user = currentUser;
     final rawName = user?.displayName?.trim();

@@ -5,7 +5,10 @@ import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_profile_card.dart';
-import 'package:doctor_hunt/apps/features/patient/doctor_details/presentation/widgets/doctor_details_widgets.dart';
+import 'package:doctor_hunt/apps/features/patient/doctor_details/presentation/widgets/doctor_details_app_bar.dart';
+import 'package:doctor_hunt/apps/features/patient/doctor_details/presentation/widgets/doctor_location_map.dart';
+import 'package:doctor_hunt/apps/features/patient/doctor_details/presentation/widgets/doctor_services_section.dart';
+import 'package:doctor_hunt/apps/features/patient/doctor_details/presentation/widgets/doctor_stats_row.dart';
 
 class DoctorDetailsScreen extends StatelessWidget {
   const DoctorDetailsScreen({super.key, required this.doctor});

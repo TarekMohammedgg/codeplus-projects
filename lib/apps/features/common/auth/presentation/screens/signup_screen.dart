@@ -11,8 +11,8 @@ import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_text_field.dart';
 import 'package:doctor_hunt/apps/features/common/auth/data/repositories/auth_repository.dart';
 import 'package:doctor_hunt/apps/features/common/auth/data/service/auth_service.dart';
-import 'package:doctor_hunt/apps/features/common/auth/presentation/cubit/auth_cubit.dart';
-import 'package:doctor_hunt/apps/features/common/auth/presentation/cubit/auth_state.dart';
+import 'package:doctor_hunt/apps/features/common/auth/presentation/controller/cubit/auth_cubit.dart';
+import 'package:doctor_hunt/apps/features/common/auth/presentation/controller/cubit/auth_state.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/widgets/auth_buttons.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/widgets/auth_header.dart';
 import 'package:doctor_hunt/generated/app_image.dart';
@@ -43,9 +43,13 @@ class _SignupScreenState extends State<SignupScreen> {
     super.initState();
     _authCubit = widget.repository != null
         ? AuthCubit(repository: widget.repository!)
+    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
+    //CR Use `getIt<Cubit>()` directly or inject via constructor.
         : (getIt.isRegistered<AuthCubit>()
               ? getIt<AuthCubit>()
               : AuthCubit(
+    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
+    //CR Use `getIt<Cubit>()` directly or inject via constructor.
                   repository: getIt.isRegistered<AuthRepository>()
                       ? getIt<AuthRepository>()
                       : FirebaseAuthRepository(authService: AuthService()),
@@ -65,6 +69,7 @@ class _SignupScreenState extends State<SignupScreen> {
     if (!_formKey.currentState!.validate()) return;
     if (!_termsAccepted) {
       context.showWarningSnackBar(
+        //CR hardcode text
         'يرجى الموافقة على شروط الخدمة وسياسة الخصوصية للمتابعة.',
       );
       return;
@@ -93,6 +98,7 @@ class _SignupScreenState extends State<SignupScreen> {
             case AuthFailure(:final errorMessage):
               context.showErrorSnackBar(errorMessage);
             case AuthSuccess(action: AuthAction.signUp):
+              //CR hardcode text
               context.showSuccessSnackBar('تم إنشاء الحساب بنجاح!');
               const HomeRoute().go(context);
             case AuthSuccess(action: AuthAction.googleSignIn):
@@ -151,11 +157,9 @@ class _SignupScreenState extends State<SignupScreen> {
                       validator: (value) => AppValidators.validateEmail(value),
                     ),
                     18.verticalSpace,
-                    AppTextField(
+                    AppPasswordTextField(
                       controller: _passwordController,
                       hintText: tr.passwordHint,
-                      prefixIcon: Icons.lock_outline_rounded,
-                      isPassword: true,
                       textInputAction: TextInputAction.done,
                       autofillHints: const [AutofillHints.newPassword],
                       validator: (value) =>
@@ -286,6 +290,7 @@ class _LoginFooter extends StatelessWidget {
         crossAxisAlignment: WrapCrossAlignment.center,
         children: [
           Text(tr.alreadyHaveAccount, style: context.regular14TextMain),
+          //CR use primary widget (any reuse widget)
           TextButton(
             onPressed: disabled
                 ? null
@@ -296,6 +301,7 @@ class _LoginFooter extends StatelessWidget {
                       const LoginRoute().go(context);
                     }
                   },
+            //CR use primary widget (any reuse widget)
             style: TextButton.styleFrom(
               foregroundColor: AppColors.primary,
               padding: const EdgeInsets.only(left: 6),
