@@ -36,6 +36,13 @@ dist/
 .pub/
 /build/
 /coverage/
+**/ephemeral/
+/linux/flutter/ephemeral/
+/windows/flutter/ephemeral/
+/macos/Flutter/ephemeral/
+windows/
+linux/
+macos/
 
 # Symbolication related
 app.*.symbols
