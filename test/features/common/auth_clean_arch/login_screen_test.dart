@@ -1,0 +1,83 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:doctor_hunt/apps/features/common/auth_clean_arch/auth_clean_arch.dart';
+import 'package:doctor_hunt/generated/i18n/translations.g.dart';
+import '../../../helpers/test_app.dart';
+
+void main() {
+  testWidgets('clean_arch LoginScreen renders UI components properly', (
+    WidgetTester tester,
+  ) async {
+    final tr = AppLocale.en.buildSync();
+    final repository = _FakeAuthRepository();
+    final cubit = AuthCubit(
+      signInWithEmailUseCase: SignInWithEmailUseCase(repository),
+      signUpWithEmailUseCase: SignUpWithEmailUseCase(repository),
+      signInWithGoogleUseCase: SignInWithGoogleUseCase(repository),
+      resetPasswordUseCase: ResetPasswordUseCase(repository),
+      checkAdminStatusUseCase: CheckAdminStatusUseCase(repository),
+      signOutUseCase: SignOutUseCase(repository),
+      getCurrentUserUseCase: GetCurrentUserUseCase(repository),
+    );
+
+    await tester.pumpWidget(
+      buildTestApp(
+        BlocProvider<AuthCubit>.value(
+          value: cubit,
+          child: const LoginScreen(),
+        ),
+      ),
+    );
+
+    expect(find.text(tr.welcomeBack), findsOneWidget);
+    expect(find.text(tr.loginSubtitle), findsOneWidget);
+
+    expect(find.text(tr.google), findsOneWidget);
+    expect(find.byType(SocialMark), findsOneWidget);
+
+    expect(find.text(tr.emailHint), findsOneWidget);
+    expect(find.text(tr.enterPasswordHint), findsOneWidget);
+
+    expect(find.text(tr.forgotPassword), findsOneWidget);
+    expect(find.text(tr.logIn), findsOneWidget);
+
+    expect(find.text(tr.dontHaveAccount), findsOneWidget);
+    expect(find.text(tr.joinUs), findsOneWidget);
+
+    await cubit.close();
+  });
+}
+
+class _FakeAuthRepository implements AuthRepository {
+  @override
+  Future<UserEntity> signInWithEmailAndPassword({
+    required String email,
+    required String password,
+  }) async {
+    return UserEntity(id: '1', email: email, displayName: 'Test');
+  }
+
+  @override
+  Future<UserEntity> signUpWithEmailAndPassword({
+    required String email,
+    required String password,
+    required String name,
+  }) async {
+    return UserEntity(id: '1', email: email, displayName: name);
+  }
+
+  @override
+  Future<UserEntity?> signInWithGoogle() async => null;
+
+  @override
+  Future<void> resetPassword({required String email}) async {}
+
+  @override
+  Future<bool> isCurrentUserAdmin() async => false;
+
+  @override
+  Future<void> signOut() async {}
+
+  @override
+  Future<UserEntity?> getCurrentUser() async => null;
+}
