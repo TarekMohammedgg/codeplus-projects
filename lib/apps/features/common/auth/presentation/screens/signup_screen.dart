@@ -43,13 +43,13 @@ class _SignupScreenState extends State<SignupScreen> {
     super.initState();
     _authCubit = widget.repository != null
         ? AuthCubit(repository: widget.repository!)
-    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
-    //CR Use `getIt<Cubit>()` directly or inject via constructor.
+        //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
+        //CR Use `getIt<Cubit>()` directly or inject via constructor.
         : (getIt.isRegistered<AuthCubit>()
               ? getIt<AuthCubit>()
               : AuthCubit(
-    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
-    //CR Use `getIt<Cubit>()` directly or inject via constructor.
+                  //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
+                  //CR Use `getIt<Cubit>()` directly or inject via constructor.
                   repository: getIt.isRegistered<AuthRepository>()
                       ? getIt<AuthRepository>()
                       : FirebaseAuthRepository(authService: AuthService()),
@@ -70,7 +70,8 @@ class _SignupScreenState extends State<SignupScreen> {
     if (!_termsAccepted) {
       context.showWarningSnackBar(
         //CR hardcode text
-        'يرجى الموافقة على شروط الخدمة وسياسة الخصوصية للمتابعة.',
+        // Solved
+        context.tr.acceptTermsAndPrivacyWarning,
       );
       return;
     }
@@ -99,7 +100,8 @@ class _SignupScreenState extends State<SignupScreen> {
               context.showErrorSnackBar(errorMessage);
             case AuthSuccess(action: AuthAction.signUp):
               //CR hardcode text
-              context.showSuccessSnackBar('تم إنشاء الحساب بنجاح!');
+              // Solved
+              context.showSuccessSnackBar(context.tr.accountCreatedSuccess);
               const HomeRoute().go(context);
             case AuthSuccess(action: AuthAction.googleSignIn):
               const HomeRoute().go(context);

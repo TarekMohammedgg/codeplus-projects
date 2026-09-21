@@ -72,7 +72,8 @@ class AuthCubit extends Cubit<AuthState> {
         if (isClosed) return;
         emit(
           //CR hardcode text
-          const AuthFailure(errorMessage: 'هذا الحساب لا يملك صلاحيات الأدمن.'),
+          // Solved
+          const AuthFailure(code: AuthFailureCode.adminPermissionDenied),
         );
         return;
       }
@@ -108,6 +109,6 @@ class AuthCubit extends Cubit<AuthState> {
   void _emitFailure(Object error, StackTrace stackTrace) {
     if (isClosed) return;
     addError(error, stackTrace);
-    emit(AuthFailure(errorMessage: AppException.from(error).message));
+    emit(AuthFailure.withMessage(AppException.from(error).message));
   }
 }

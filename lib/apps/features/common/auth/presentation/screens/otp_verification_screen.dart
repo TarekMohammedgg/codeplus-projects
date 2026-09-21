@@ -75,7 +75,8 @@ class OtpVerificationScreenState extends State<OtpVerificationScreen> {
     final smsCode = pinController.text.trim();
     if (smsCode.length != 6) {
       //CR hardcode text
-      context.showWarningSnackBar('يرجى إدخال رمز التحقق المكون من 6 أرقام');
+      // Solved
+      context.showWarningSnackBar(context.tr.enterSixDigitOtp);
       return;
     }
 
@@ -86,7 +87,8 @@ class OtpVerificationScreenState extends State<OtpVerificationScreen> {
     if (!mounted) return;
     setState(() => _isVerifying = false);
     //CR hardcode text
-    context.showSuccessSnackBar('تم تأكيد رقم الهاتف بنجاح!');
+    // Solved
+    context.showSuccessSnackBar(context.tr.phoneVerifiedSuccess);
     const HomeRoute().push(context);
   }
 
@@ -108,7 +110,8 @@ class OtpVerificationScreenState extends State<OtpVerificationScreen> {
         boxShadow: const [
           BoxShadow(
             //CR hardcode color
-            color: Color(0x08000000),
+            // Solved
+            color: AppColors.shadowSubtle,
             blurRadius: 8,
             offset: Offset(0, 3),
           ),

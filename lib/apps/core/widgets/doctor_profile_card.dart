@@ -30,7 +30,8 @@ class DoctorProfileCard extends StatelessWidget {
         boxShadow: const [
           BoxShadow(
             //CR hardcode color
-            color: Color(0x0C000000),
+            // Solved
+            color: AppColors.shadowCard,
             blurRadius: 16,
             offset: Offset(0, 4),
           ),
@@ -79,7 +80,8 @@ class DoctorProfileCard extends StatelessWidget {
                                   : Icons.favorite_border_rounded,
                               color: doctor.isFavorite
                                   //CR hardcode color
-                                  ? const Color(0xFFFF003A)
+                                  // Solved
+                                  ? AppColors.favorite
                                   : AppColors.disabled,
                               size: 22,
                             ),
@@ -141,7 +143,8 @@ class DoctorStarRating extends StatelessWidget {
               ? Icons.star_half_rounded
               : Icons.star_border_rounded,
           //CR hardcode color
-          color: const Color(0xFFFFB800),
+          // Solved
+          color: AppColors.rating,
           size: 18,
         );
       }),

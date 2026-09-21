@@ -108,14 +108,16 @@ class RoleSelectionScreenState extends State<RoleSelectionScreen> {
             borderRadius: BorderRadius.circular(18),
             border: Border.all(
               //CR hardcode color
-              color: isSelected ? AppColors.primary : const Color(0xFFE5E9EB),
+              // Solved
+              color: isSelected ? AppColors.primary : AppColors.outlineSoft,
               width: isSelected ? 1.8 : 1.2,
             ),
             boxShadow: isSelected
                 ? const [
                     BoxShadow(
                       //CR hardcode color
-                      color: Color(0x140EBE7E),
+                      // Solved
+                      color: AppColors.boxShadow,
                       blurRadius: 16,
                       offset: Offset(0, 4),
                     ),
@@ -123,7 +125,8 @@ class RoleSelectionScreenState extends State<RoleSelectionScreen> {
                 : const [
                     BoxShadow(
                       //CR hardcode color
-                      color: Color(0x06000000),
+                      // Solved
+                      color: AppColors.shadowFaint,
                       blurRadius: 10,
                       offset: Offset(0, 2),
                     ),
@@ -139,7 +142,8 @@ class RoleSelectionScreenState extends State<RoleSelectionScreen> {
                   color: isSelected
                       ? AppColors.primaryLight
                       //CR hardcode color
-                      : const Color(0xFFF1F4F6),
+                      // Solved
+                      : AppColors.surfaceMuted,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -147,7 +151,8 @@ class RoleSelectionScreenState extends State<RoleSelectionScreen> {
                   color: isSelected
                       ? AppColors.primary
                       //CR hardcode color
-                      : const Color(0xFF8A94A6),
+                      // Solved
+                      : AppColors.textMuted,
                   size: 24,
                 ),
               ),

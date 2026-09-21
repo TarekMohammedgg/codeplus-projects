@@ -94,7 +94,8 @@ class AppSearchBarState extends State<AppSearchBar> {
             const [
               BoxShadow(
                 //CR hardcode color
-                color: Color(0x14000000),
+                // Solved
+                color: AppColors.shadowElevated,
                 blurRadius: 16,
                 offset: Offset(0, 4),
               ),
@@ -110,19 +111,15 @@ class AppSearchBarState extends State<AppSearchBar> {
         onSubmitted: widget.onSubmitted,
         textInputAction: widget.textInputAction,
         //CR hardcode textstyle
-        style: const TextStyle(
-          color: AppColors.textMain,
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-        ),
+        // Solved
+        style: context.medium14TextMain,
         decoration: InputDecoration(
           filled: false,
           hintText: hint,
           //CR hardcode textstyle
-          hintStyle: TextStyle(
+          // Solved
+          hintStyle: context.regular14TextSecondary.copyWith(
             color: AppColors.textSecondary.withValues(alpha: 0.7),
-            fontSize: 14,
-            fontWeight: FontWeight.w400,
           ),
           prefixIcon:
               widget.prefixIcon ??
@@ -171,7 +168,8 @@ class AppSearchBarState extends State<AppSearchBar> {
             const [
               BoxShadow(
                 //CR hardcode color
-                color: Color(0x14000000),
+                // Solved
+                color: AppColors.shadowElevated,
                 blurRadius: 16,
                 offset: Offset(0, 4),
               ),

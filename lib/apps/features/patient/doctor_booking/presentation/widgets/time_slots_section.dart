@@ -1,4 +1,4 @@
-﻿import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
+import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_booking/data/models/time_slot_model.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
@@ -36,13 +36,11 @@ class TimeSlotsSection extends StatelessWidget {
         Text(title, style: context.bold16TextMain),
         12.verticalSpace,
         //CR hardcode textstyle
+        // Solved
         DefaultTextStyle(
           //CR hardcode textstyle
-          style: const TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-            color: AppColors.primary,
-          ),
+          // Solved
+          style: context.semiBold13Primary,
           child: TimesSlotGridViewFromList(
             key: ValueKey(slots.first.id),
             initTime: selectedDates,

@@ -1,6 +1,8 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:doctor_hunt/apps/core/extensions/doctor_accent_color.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
+import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_image.dart';
 import 'package:doctor_hunt/apps/features/patient/home/presentation/widgets/section_header.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
@@ -55,7 +57,8 @@ class LiveDoctorCard extends StatelessWidget {
         boxShadow: const [
           BoxShadow(
             //CR hardcode color
-            color: Color(0x0C000000),
+            // Solved
+            color: AppColors.shadowCard,
             blurRadius: 12,
             offset: Offset(0, 4),
           ),
@@ -107,7 +110,8 @@ class LiveDoctorCard extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   //CR hardcode color
-                  color: const Color(0xFFFF003A),
+                  // Solved
+                  color: AppColors.live,
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Row(

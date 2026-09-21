@@ -67,7 +67,8 @@ class AppHeaderSection extends StatelessWidget {
         gradient ??
         const LinearGradient(
           //CR hardcode color
-          colors: [AppColors.primary, Color(0xFF07D9AD)],
+          // Solved
+          colors: [AppColors.primary, AppColors.secondary],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         );
@@ -187,11 +188,8 @@ class AppHeaderSection extends StatelessWidget {
                                 Text(
                                   targetLangLabel,
                                   //CR hardcode textstyle
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 13,
-                                  ),
+                                  // Solved
+                                  style: context.bold13White,
                                 ),
                               ],
                             ),
@@ -216,7 +214,8 @@ class AppHeaderSection extends StatelessWidget {
                             boxShadow: const [
                               BoxShadow(
                                 //CR hardcode color
-                                color: Color(0x24000000),
+                                // Solved
+                                color: AppColors.shadowStrong,
                                 blurRadius: 10,
                                 offset: Offset(0, 4),
                               ),
@@ -269,7 +268,8 @@ class AppHeaderSection extends StatelessWidget {
                                     size: 48,
                                     iconColor: AppColors.primary,
                                     //CR hardcode color
-                                    backgroundColor: Color(0xFFE8FBF6),
+                                    // Solved
+                                    backgroundColor: AppColors.primaryLight,
                                   ),
                           ),
                         ),

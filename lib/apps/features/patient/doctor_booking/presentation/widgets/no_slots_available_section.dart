@@ -3,6 +3,7 @@ import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
+import 'package:doctor_hunt/generated/style_atoms.dart';
 
 class NoSlotsAvailableSection extends StatelessWidget {
   const NoSlotsAvailableSection({
@@ -25,11 +26,8 @@ class NoSlotsAvailableSection extends StatelessWidget {
         Text(
           context.tr.noSlotsAvailable,
           //CR hardcode textstyle
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w400,
-            color: AppColors.textSecondary,
-          ),
+          // Solved
+          style: context.regular14TextSecondary,
           textAlign: TextAlign.center,
         ),
         28.verticalSpace,
@@ -45,11 +43,8 @@ class NoSlotsAvailableSection extends StatelessWidget {
         Text(
           context.tr.or,
           //CR hardcode textstyle
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: AppColors.textSecondary,
-          ),
+          // Solved
+          style: context.medium14TextSecondary,
           textAlign: TextAlign.center,
         ),
         16.verticalSpace,
@@ -75,11 +70,8 @@ class NoSlotsAvailableSection extends StatelessWidget {
             child: Text(
               context.tr.contactClinic,
               //CR hardcode textstyle
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                color: AppColors.primary,
-              ),
+              // Solved
+              style: context.bold16Primary,
               maxLines: 1,
               textAlign: TextAlign.center,
             ),

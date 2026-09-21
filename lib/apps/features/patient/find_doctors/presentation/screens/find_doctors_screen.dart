@@ -48,16 +48,17 @@ class _FindDoctorsScreenState extends State<FindDoctorsScreen> {
             repository:
                 widget.repository ??
                 FirebaseDoctorRepository(
-                  findDoctorsService: widget.doctorService ?? FindDoctorsService(),
+                  findDoctorsService:
+                      widget.doctorService ?? FindDoctorsService(),
                 ),
           )
-    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
-    //CR Use `getIt<Cubit>()` directly or inject via constructor.
+        //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
+        //CR Use `getIt<Cubit>()` directly or inject via constructor.
         : (getIt.isRegistered<FindDoctorsCubit>()
               ? getIt<FindDoctorsCubit>()
               : FindDoctorsCubit(
-    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
-    //CR Use `getIt<Cubit>()` directly or inject via constructor.
+                  //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
+                  //CR Use `getIt<Cubit>()` directly or inject via constructor.
                   repository: getIt.isRegistered<DoctorRepository>()
                       ? getIt<DoctorRepository>()
                       : FirebaseDoctorRepository(
@@ -187,7 +188,8 @@ class FindDoctorCard extends StatelessWidget {
           boxShadow: const [
             BoxShadow(
               //CR hardcode color
-              color: Color(0x0C000000),
+              // Solved
+              color: AppColors.shadowCard,
               blurRadius: 14,
               offset: Offset(0, 4),
             ),
@@ -233,7 +235,8 @@ class FindDoctorCard extends StatelessWidget {
                                 : Icons.favorite_border_rounded,
                             color: doctor.isFavorite
                                 //CR hardcode color
-                                ? const Color(0xFFFF003A)
+                                // Solved
+                                ? AppColors.favorite
                                 : AppColors.disabled,
                             size: 20,
                           ),

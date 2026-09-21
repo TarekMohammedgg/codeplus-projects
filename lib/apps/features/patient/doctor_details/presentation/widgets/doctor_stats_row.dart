@@ -26,7 +26,8 @@ class DoctorStatsRow extends StatelessWidget {
         boxShadow: const [
           BoxShadow(
             //CR hardcode color
-            color: Color(0x0C000000),
+            // Solved
+            color: AppColors.shadowCard,
             blurRadius: 16,
             offset: Offset(0, 4),
           ),
@@ -36,7 +37,10 @@ class DoctorStatsRow extends StatelessWidget {
         child: Row(
           children: [
             Expanded(
-              child: _DoctorStatItem(count: runningCount, label: tr.statRunning),
+              child: _DoctorStatItem(
+                count: runningCount,
+                label: tr.statRunning,
+              ),
             ),
             const VerticalDivider(
               width: 1,
@@ -44,7 +48,10 @@ class DoctorStatsRow extends StatelessWidget {
               color: AppColors.outline,
             ),
             Expanded(
-              child: _DoctorStatItem(count: ongoingCount, label: tr.statOngoing),
+              child: _DoctorStatItem(
+                count: ongoingCount,
+                label: tr.statOngoing,
+              ),
             ),
             const VerticalDivider(
               width: 1,
@@ -52,7 +59,10 @@ class DoctorStatsRow extends StatelessWidget {
               color: AppColors.outline,
             ),
             Expanded(
-              child: _DoctorStatItem(count: patientCount, label: tr.statPatient),
+              child: _DoctorStatItem(
+                count: patientCount,
+                label: tr.statPatient,
+              ),
             ),
           ],
         ),

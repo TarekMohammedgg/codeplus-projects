@@ -39,6 +39,31 @@ abstract final class AppColors {
   static const Color black = Colors.black;
   static const Color transparent = Colors.transparent;
   static const Color boxShadow = Color(0x140EBE7E);
+
+  // Semantic UI accents
+  static const Color attention = Color(0xFFFF003A);
+  static const Color favorite = attention;
+  static const Color live = attention;
+  static const Color rating = Color(0xFFFFB800);
+  static const Color textStrong = Color(0xFF222B45);
+  static const Color textMuted = Color(0xFF8A94A6);
+  static const Color outlineSoft = Color(0xFFE5E9EB);
+  static const Color dateOutline = Color(0xFFE8E8E8);
+  static const Color surfaceMuted = Color(0xFFF1F4F6);
+  static const Color mapPlaceholder = Color(0xFFE2EAF0);
+
+  // Exact shadow tones used by the existing visual language.
+  static const Color shadowFaint = Color(0x06000000);
+  static const Color shadowSubtle = Color(0x08000000);
+  static const Color shadowSoft = Color(0x0A000000);
+  static const Color shadowCard = Color(0x0C000000);
+  static const Color shadowControl = Color(0x0F000000);
+  static const Color shadowNavigation = Color(0x12000000);
+  static const Color shadowElevated = Color(0x14000000);
+  static const Color shadowImage = Color(0x18000000);
+  static const Color shadowSnackbar = Color(0x1A000000);
+  static const Color shadowStrong = Color(0x24000000);
+  static const Color authBackShadow = Color(0x0C0C3268);
 }
 
 /// Application theme, text styles, and visual decorations.

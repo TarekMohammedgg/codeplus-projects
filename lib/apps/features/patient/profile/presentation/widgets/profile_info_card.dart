@@ -29,7 +29,8 @@ class ProfileInfoCard extends StatelessWidget {
         boxShadow: const [
           BoxShadow(
             //CR hardcode color
-            color: Color(0x08000000),
+            // Solved
+            color: AppColors.shadowSubtle,
             blurRadius: 10,
             offset: Offset(0, 4),
           ),

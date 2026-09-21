@@ -106,6 +106,8 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get enterFullName => 'أدخل اسمك بالكامل';
 	@override String get enterEmailAddress => 'أدخل بريدك الإلكتروني';
 	@override String get enterValidEmailAddress => 'أدخل بريدًا إلكترونيًا صحيحًا';
+	@override String get enterPhoneNumber => 'يرجى إدخال رقم الهاتف';
+	@override String get enterValidPhoneNumber => 'يرجى إدخال رقم هاتف صحيح (مثال: 01012345678)';
 	@override String get enterPassword => 'أدخل كلمة المرور';
 	@override String get useAtLeast8Characters => 'استخدم 8 أحرف على الأقل';
 	@override String get hiSteven => 'مرحبًا سما 👋';
@@ -221,6 +223,9 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get googleSignInFailedError => 'فشل تسجيل الدخول عبر Google.';
 	@override String get enterSixDigitOtp => 'يرجى إدخال رمز التحقق المكون من 6 أرقام.';
 	@override String get phoneVerifiedSuccess => 'تم تأكيد رقم الهاتف بنجاح!';
+	@override String get acceptTermsAndPrivacyWarning => 'يرجى الموافقة على شروط الخدمة وسياسة الخصوصية للمتابعة.';
+	@override String get accountCreatedSuccess => 'تم إنشاء الحساب بنجاح!';
+	@override String get adminPermissionDenied => 'هذا الحساب لا يملك صلاحيات الأدمن.';
 	@override String get adminLoginTitle => 'مرحبًا بعودتك!';
 	@override String get adminLoginSubtitle => 'سجّل الدخول إلى حساب المسؤول';
 	@override String get adminEmailHint => 'admin@doctorhunt.com';
@@ -343,6 +348,8 @@ extension on TranslationsAr {
 			'enterFullName' => 'أدخل اسمك بالكامل',
 			'enterEmailAddress' => 'أدخل بريدك الإلكتروني',
 			'enterValidEmailAddress' => 'أدخل بريدًا إلكترونيًا صحيحًا',
+			'enterPhoneNumber' => 'يرجى إدخال رقم الهاتف',
+			'enterValidPhoneNumber' => 'يرجى إدخال رقم هاتف صحيح (مثال: 01012345678)',
 			'enterPassword' => 'أدخل كلمة المرور',
 			'useAtLeast8Characters' => 'استخدم 8 أحرف على الأقل',
 			'hiSteven' => 'مرحبًا سما 👋',
@@ -458,6 +465,9 @@ extension on TranslationsAr {
 			'googleSignInFailedError' => 'فشل تسجيل الدخول عبر Google.',
 			'enterSixDigitOtp' => 'يرجى إدخال رمز التحقق المكون من 6 أرقام.',
 			'phoneVerifiedSuccess' => 'تم تأكيد رقم الهاتف بنجاح!',
+			'acceptTermsAndPrivacyWarning' => 'يرجى الموافقة على شروط الخدمة وسياسة الخصوصية للمتابعة.',
+			'accountCreatedSuccess' => 'تم إنشاء الحساب بنجاح!',
+			'adminPermissionDenied' => 'هذا الحساب لا يملك صلاحيات الأدمن.',
 			'adminLoginTitle' => 'مرحبًا بعودتك!',
 			'adminLoginSubtitle' => 'سجّل الدخول إلى حساب المسؤول',
 			'adminEmailHint' => 'admin@doctorhunt.com',

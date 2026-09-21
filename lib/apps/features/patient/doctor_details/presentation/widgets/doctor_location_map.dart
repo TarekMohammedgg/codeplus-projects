@@ -19,7 +19,8 @@ class DoctorLocationMap extends StatelessWidget {
         height: 180,
         width: double.infinity,
         //CR hardcode color
-        color: const Color(0xFFE2EAF0),
+        // Solved
+        color: AppColors.mapPlaceholder,
         child: FlutterMap(
           options: MapOptions(
             initialCenter: targetLocation,

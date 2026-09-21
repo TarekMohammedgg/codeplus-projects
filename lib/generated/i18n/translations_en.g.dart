@@ -242,6 +242,12 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'Enter a valid email address'
 	String get enterValidEmailAddress => 'Enter a valid email address';
 
+	/// en: 'Please enter your phone number'
+	String get enterPhoneNumber => 'Please enter your phone number';
+
+	/// en: 'Please enter a valid phone number (e.g. 01012345678)'
+	String get enterValidPhoneNumber => 'Please enter a valid phone number (e.g. 01012345678)';
+
 	/// en: 'Enter your password'
 	String get enterPassword => 'Enter your password';
 
@@ -587,6 +593,15 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'Phone number verified successfully!'
 	String get phoneVerifiedSuccess => 'Phone number verified successfully!';
 
+	/// en: 'Please agree to the Terms of Service and Privacy Policy to continue.'
+	String get acceptTermsAndPrivacyWarning => 'Please agree to the Terms of Service and Privacy Policy to continue.';
+
+	/// en: 'Account created successfully!'
+	String get accountCreatedSuccess => 'Account created successfully!';
+
+	/// en: 'This account does not have admin permissions.'
+	String get adminPermissionDenied => 'This account does not have admin permissions.';
+
 	/// en: 'Welcome Back!'
 	String get adminLoginTitle => 'Welcome Back!';
 
@@ -798,6 +813,8 @@ extension on Translations {
 			'enterFullName' => 'Enter your full name',
 			'enterEmailAddress' => 'Enter your email address',
 			'enterValidEmailAddress' => 'Enter a valid email address',
+			'enterPhoneNumber' => 'Please enter your phone number',
+			'enterValidPhoneNumber' => 'Please enter a valid phone number (e.g. 01012345678)',
 			'enterPassword' => 'Enter your password',
 			'useAtLeast8Characters' => 'Use at least 8 characters',
 			'hiSteven' => 'Hi Sama 👋',
@@ -913,6 +930,9 @@ extension on Translations {
 			'googleSignInFailedError' => 'Google sign-in failed.',
 			'enterSixDigitOtp' => 'Please enter the 6-digit verification code.',
 			'phoneVerifiedSuccess' => 'Phone number verified successfully!',
+			'acceptTermsAndPrivacyWarning' => 'Please agree to the Terms of Service and Privacy Policy to continue.',
+			'accountCreatedSuccess' => 'Account created successfully!',
+			'adminPermissionDenied' => 'This account does not have admin permissions.',
 			'adminLoginTitle' => 'Welcome Back!',
 			'adminLoginSubtitle' => 'Login to your admin account',
 			'adminEmailHint' => 'admin@doctorhunt.com',

@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_avatar_placeholder.dart';
 import 'package:flutter/material.dart';
 
@@ -37,7 +38,8 @@ class ProfileAvatar extends StatelessWidget {
             const [
               BoxShadow(
                 //CR hardcode color
-                color: Color(0x24000000),
+                // Solved
+                color: AppColors.shadowStrong,
                 blurRadius: 16,
                 offset: Offset(0, 6),
               ),

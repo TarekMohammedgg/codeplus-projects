@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
 class DoctorModel {
   //CR hardcode color
-  static const defaultAccentColor = Color(0xFF0EBE7E);
+  // Solved
+  // Accent colors are stored as backend data and resolved by presentation.
   static const defaultLocation = LatLng(-1.286389, 36.817223);
 
   static DoctorModel placeholder() {
@@ -28,7 +28,7 @@ class DoctorModel {
     this.nameEn,
     this.specialtyId,
     this.imageUrl,
-    this.accentColor = defaultAccentColor,
+    this.accentColorHex,
     this.rating = 4.5,
     this.ratingPercent = 85,
     this.reviewsCount = 100,
@@ -80,7 +80,7 @@ class DoctorModel {
   final String specialty;
   final String? specialtyId;
   final String? imageUrl;
-  final Color accentColor;
+  final String? accentColorHex;
   final double rating;
   final int ratingPercent;
   final int reviewsCount;
@@ -170,7 +170,7 @@ class DoctorModel {
       specialty: localizedSpecialty,
       specialtyId: (data['specialtyId'] as String?)?.trim(),
       imageUrl: (data['imageUrl'] as String?)?.trim(),
-      accentColor: _colorFromHex(data['accentColorHex']),
+      accentColorHex: _accentColorHex(data['accentColorHex']),
       rating: (data['rating'] as num?)?.toDouble() ?? 4.5,
       ratingPercent: (data['ratingPercent'] as num?)?.toInt() ?? 85,
       reviewsCount: (data['reviewsCount'] as num?)?.toInt() ?? 0,
@@ -218,7 +218,7 @@ class DoctorModel {
     String? nameEn,
     String? specialtyId,
     String? imageUrl,
-    Color? accentColor,
+    String? accentColorHex,
     double? rating,
     int? ratingPercent,
     int? reviewsCount,
@@ -257,7 +257,7 @@ class DoctorModel {
       nameEn: nameEn ?? this.nameEn,
       specialtyId: specialtyId ?? this.specialtyId,
       imageUrl: imageUrl ?? this.imageUrl,
-      accentColor: accentColor ?? this.accentColor,
+      accentColorHex: accentColorHex ?? this.accentColorHex,
       rating: rating ?? this.rating,
       ratingPercent: ratingPercent ?? this.ratingPercent,
       reviewsCount: reviewsCount ?? this.reviewsCount,
@@ -308,7 +308,7 @@ String _localizedSpecialty(dynamic value, AppLocale locale, String id) {
   if (text.isEmpty) {
     throw FormatException('Doctor $id is missing required field: specialty');
   }
- //CR We can use enums !
+  //CR We can use enums !
   final key = text.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), '_');
   final english = AppLocale.en.buildSync();
   final arabic = AppLocale.ar.buildSync();
@@ -365,13 +365,8 @@ LatLng? _parseLocation(dynamic locationData) {
   return (lat != null && lng != null) ? LatLng(lat, lng) : null;
 }
 
-Color _colorFromHex(dynamic hex) {
-  if (hex is! String) return DoctorModel.defaultAccentColor;
-  final cleaned = hex.replaceFirst('#', '');
-  final value = switch (cleaned.length) {
-    6 => int.tryParse('FF$cleaned', radix: 16),
-    8 => int.tryParse(cleaned, radix: 16),
-    _ => null,
-  };
-  return value != null ? Color(value) : DoctorModel.defaultAccentColor;
+String? _accentColorHex(dynamic value) {
+  if (value is! String) return null;
+  final hex = value.trim();
+  return hex.isEmpty ? null : hex;
 }

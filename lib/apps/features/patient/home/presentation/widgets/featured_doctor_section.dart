@@ -1,4 +1,5 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:doctor_hunt/apps/core/extensions/doctor_accent_color.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
@@ -70,7 +71,8 @@ class FeaturedDoctorCard extends StatelessWidget {
           boxShadow: const [
             BoxShadow(
               //CR hardcode color
-              color: Color(0x0C000000),
+              // Solved
+              color: AppColors.shadowCard,
               blurRadius: 12,
               offset: Offset(0, 4),
             ),
@@ -86,7 +88,8 @@ class FeaturedDoctorCard extends StatelessWidget {
                     const Icon(
                       Icons.star_rounded,
                       //CR hardcode color
-                      color: Color(0xFFFFB800),
+                      // Solved
+                      color: AppColors.rating,
                       size: 14,
                     ),
                     2.horizontalSpace,

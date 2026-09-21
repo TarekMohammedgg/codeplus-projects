@@ -34,7 +34,8 @@ class SocialAuthButton extends StatelessWidget {
             boxShadow: const [
               BoxShadow(
                 //CR hardcode color
-                color: Color(0x0A000000),
+                // Solved
+                color: AppColors.shadowSoft,
                 blurRadius: 10,
                 offset: Offset(0, 3),
               ),

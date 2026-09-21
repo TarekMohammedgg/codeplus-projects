@@ -251,7 +251,8 @@ class AdminBottomNavigationBar extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             //CR hardcode color
-            color: Color(0x12000000),
+            // Solved
+            color: AppColors.shadowNavigation,
             blurRadius: 20,
             offset: Offset(0, -4),
           ),

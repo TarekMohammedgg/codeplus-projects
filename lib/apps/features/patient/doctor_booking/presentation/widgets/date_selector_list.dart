@@ -1,8 +1,9 @@
-﻿import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
+import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_booking/data/models/time_slot_model.dart';
 import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
+import 'package:doctor_hunt/generated/style_atoms.dart';
 
 class DateSelectorList extends StatelessWidget {
   const DateSelectorList({
@@ -55,7 +56,8 @@ class DateSelectorList extends StatelessWidget {
                   color: isSelected
                       ? AppColors.primary
                       //CR hardcode color
-                      : const Color(0xFFE8E8E8),
+                      // Solved
+                      : AppColors.dateOutline,
                 ),
               ),
               child: Padding(
@@ -71,13 +73,13 @@ class DateSelectorList extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       //CR hardcode textstyle
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
+                      // Solved
+                      style: context.bold14.copyWith(
                         color: isSelected
                             ? Colors.white
                             //CR hardcode color
-                            : const Color(0xFF222B45),
+                            // Solved
+                            : AppColors.textStrong,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -88,12 +90,13 @@ class DateSelectorList extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       //CR hardcode textstyle
-                      style: TextStyle(
-                        fontSize: 10,
+                      // Solved
+                      style: context.regular10.copyWith(
                         color: isSelected
                             ? Colors.white.withValues(alpha: 0.9)
                             //CR hardcode color
-                            : const Color(0xFF677294),
+                            // Solved
+                            : AppColors.textSecondary,
                       ),
                     ),
                   ],

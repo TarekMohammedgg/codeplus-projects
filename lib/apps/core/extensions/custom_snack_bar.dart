@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
+import 'package:doctor_hunt/generated/style_atoms.dart';
 
 enum SnackBarStatus { success, error, warning, info }
 
@@ -57,7 +58,8 @@ extension CustomSnackBarExtension on BuildContext {
             boxShadow: const [
               BoxShadow(
                 //CR hardcode color
-                color: Color(0x1A000000),
+                // Solved
+                color: AppColors.shadowSnackbar,
                 blurRadius: 16,
                 offset: Offset(0, 6),
               ),
@@ -83,22 +85,16 @@ extension CustomSnackBarExtension on BuildContext {
                       Text(
                         title,
                         //CR hardcode textstyle
-                        style: TextStyle(
-                          color: primaryColor,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                        ),
+                        // Solved
+                        style: bold14.copyWith(color: primaryColor),
                       ),
                       const SizedBox(height: 2),
                     ],
                     Text(
                       message,
                       //CR hardcode textstyle
-                      style: const TextStyle(
-                        color: AppColors.textMain,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                      ),
+                      // Solved
+                      style: medium13TextMain,
                     ),
                   ],
                 ),
@@ -116,7 +112,8 @@ extension CustomSnackBarExtension on BuildContext {
                   child: Text(
                     actionLabel,
                     //CR hardcode textstyle
-                    style: const TextStyle(fontWeight: FontWeight.w700),
+                    // Solved
+                    style: bold14,
                   ),
                 ),
               ],

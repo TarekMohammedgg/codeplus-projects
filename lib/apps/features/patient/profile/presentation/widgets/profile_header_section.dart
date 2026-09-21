@@ -1,4 +1,5 @@
 ﻿import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
+import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_header_section.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_icon_button.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/presentation/widgets/profile_avatar.dart';
@@ -59,7 +60,10 @@ class ProfileHeaderSection extends StatelessWidget {
                     height: 36,
                     borderRadius: BorderRadius.circular(18),
                     //CR hardcode color
-                    backgroundColor: const Color(0xCC677294),
+                    // Solved
+                    backgroundColor: AppColors.textSecondary.withValues(
+                      alpha: 0.8,
+                    ),
                     border: Border.all(color: Colors.white, width: 2),
                     boxShadow: const [],
                     icon: Icons.camera_alt_outlined,
