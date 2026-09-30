@@ -20,6 +20,9 @@ import 'package:doctor_hunt/apps/features/patient/find_doctors/data/repositories
 import 'package:doctor_hunt/apps/features/patient/find_doctors/data/service/find_doctors_service.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/controller/cubit/find_doctors_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_booking/data/repositories/booking_repository.dart';
+import 'package:doctor_hunt/apps/features/patient/favorites/data/repositories/favorites_repository.dart';
+import 'package:doctor_hunt/apps/features/patient/favorites/data/service/favorites_service.dart';
+import 'package:doctor_hunt/apps/features/patient/favorites/presentation/controller/cubit/favorites_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/controller/cubit/booking_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/home/data/repositories/home_repository.dart';
 import 'package:doctor_hunt/apps/features/patient/home/data/service/home_service.dart';
@@ -82,6 +85,9 @@ void setupServiceLocator() {
   getIt.registerLazySingleton<ReviewService>(
     () => ReviewService(firestore: getIt<FirebaseFirestore>()),
   );
+  getIt.registerLazySingleton<FavoritesService>(
+    () => FavoritesService(firestore: getIt<FirebaseFirestore>()),
+  );
 
   // Repositories
   getIt.registerLazySingleton<AuthRepository>(
@@ -114,6 +120,12 @@ void setupServiceLocator() {
     () =>
         BookingRepositoryImpl(appointmentService: getIt<AppointmentService>()),
   );
+  getIt.registerLazySingleton<FavoritesRepository>(
+    () => FirebaseFavoritesRepository(
+      favoritesService: getIt<FavoritesService>(),
+      authService: getIt<AuthService>(),
+    ),
+  );
 
   // Cubits (registered as factories to return a fresh instance on demand)
   getIt.registerFactory<AuthCubit>(
@@ -133,5 +145,8 @@ void setupServiceLocator() {
   );
   getIt.registerFactory<BookingCubit>(
     () => BookingCubit(repository: getIt<BookingRepository>()),
+  );
+  getIt.registerFactory<FavoritesCubit>(
+    () => FavoritesCubit(repository: getIt<FavoritesRepository>()),
   );
 }

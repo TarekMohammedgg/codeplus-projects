@@ -40,6 +40,10 @@ class AuthService {
 
   User? get currentUser => _auth.currentUser;
 
+  /// Emits the signed-in user's uid, or null after sign-out.
+  Stream<String?> userIdChanges() =>
+      _auth.authStateChanges().map((user) => user?.uid);
+
   //CR Layer separation defect: Data service must never take BuildContext or handle UI greetings/translations.
   // solved
 

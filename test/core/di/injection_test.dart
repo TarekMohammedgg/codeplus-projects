@@ -17,6 +17,9 @@ import 'package:doctor_hunt/apps/features/admin/create_doctor/presentation/contr
 import 'package:doctor_hunt/apps/features/common/auth/data/repositories/auth_repository.dart';
 import 'package:doctor_hunt/apps/features/common/auth/data/service/auth_service.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/controller/cubit/auth_cubit.dart';
+import 'package:doctor_hunt/apps/features/patient/favorites/data/repositories/favorites_repository.dart';
+import 'package:doctor_hunt/apps/features/patient/favorites/data/service/favorites_service.dart';
+import 'package:doctor_hunt/apps/features/patient/favorites/presentation/controller/cubit/favorites_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/data/repositories/doctor_repository.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/data/service/find_doctors_service.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/controller/cubit/find_doctors_cubit.dart';
@@ -55,6 +58,7 @@ void main() {
       expect(getIt.isRegistered<ClinicService>(), isTrue);
       expect(getIt.isRegistered<AppointmentService>(), isTrue);
       expect(getIt.isRegistered<ReviewService>(), isTrue);
+      expect(getIt.isRegistered<FavoritesService>(), isTrue);
     });
 
     test('registers all repositories', () {
@@ -63,6 +67,7 @@ void main() {
       expect(getIt.isRegistered<HomeRepository>(), isTrue);
       expect(getIt.isRegistered<AdminDoctorsRepository>(), isTrue);
       expect(getIt.isRegistered<CreateDoctorRepository>(), isTrue);
+      expect(getIt.isRegistered<FavoritesRepository>(), isTrue);
     });
 
     test('registers all cubits as factories', () {
@@ -71,6 +76,7 @@ void main() {
       expect(getIt.isRegistered<FindDoctorsCubit>(), isTrue);
       expect(getIt.isRegistered<AdminDoctorsCubit>(), isTrue);
       expect(getIt.isRegistered<CreateDoctorCubit>(), isTrue);
+      expect(getIt.isRegistered<FavoritesCubit>(), isTrue);
     });
   });
 

@@ -10,6 +10,7 @@ import 'package:doctor_hunt/apps/features/admin/doctors/data/repositories/admin_
 import 'package:doctor_hunt/apps/features/admin/create_doctor/data/repositories/create_doctor_repository.dart';
 import 'package:doctor_hunt/apps/features/common/auth/data/repositories/auth_repository.dart';
 import 'package:doctor_hunt/apps/features/common/auth/data/service/auth_service.dart';
+import 'package:doctor_hunt/apps/features/patient/favorites/data/repositories/favorites_repository.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/data/repositories/doctor_repository.dart';
 import 'package:doctor_hunt/apps/features/patient/home/data/models/home_data.dart';
 import 'package:doctor_hunt/apps/features/patient/home/data/repositories/home_repository.dart';
@@ -170,4 +171,34 @@ class FakeCreateDoctorRepository implements CreateDoctorRepository {
     required String specialtyId,
     String? imageUrl,
   }) async {}
+}
+
+/// Drive auth and favorites by adding to [userIds] / [favoriteIds].
+class FakeFavoritesRepository implements FavoritesRepository {
+  FakeFavoritesRepository({this.setFavoriteError});
+
+  final userIds = StreamController<String?>.broadcast();
+  final favoriteIds = StreamController<Set<String>>.broadcast();
+  final watchedUserIds = <String>[];
+  final writes = <(String userId, String doctorId, bool isFavorite)>[];
+  Object? setFavoriteError;
+
+  @override
+  Stream<String?> userIdChanges() => userIds.stream;
+
+  @override
+  Stream<Set<String>> watchFavoriteIds(String userId) {
+    watchedUserIds.add(userId);
+    return favoriteIds.stream;
+  }
+
+  @override
+  Future<void> setFavorite({
+    required String userId,
+    required String doctorId,
+    required bool isFavorite,
+  }) async {
+    if (setFavoriteError != null) throw setFavoriteError!;
+    writes.add((userId, doctorId, isFavorite));
+  }
 }

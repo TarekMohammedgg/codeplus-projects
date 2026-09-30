@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'apps/core/di/injection.dart';
@@ -9,6 +10,7 @@ import 'generated/i18n/translations.g.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'apps/features/common/auth/data/service/auth_service.dart';
+import 'apps/features/patient/favorites/presentation/controller/cubit/favorites_cubit.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -33,15 +35,20 @@ class DoctorHuntApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final locale = context.tr.$meta.locale;
-    return MaterialApp.router(
-      key: ValueKey(locale),
-      title: tr.appName,
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      locale: locale.flutterLocale,
-      supportedLocales: AppLocaleUtils.supportedLocales,
-      localizationsDelegates: GlobalMaterialLocalizations.delegates,
-      routerConfig: AppRouter.router,
+    // App-wide so tabs and full-screen routes share the same hearts. Lazy:
+    // created on the first patient screen that reads it, never for admins.
+    return BlocProvider<FavoritesCubit>(
+      create: (_) => getIt<FavoritesCubit>(),
+      child: MaterialApp.router(
+        key: ValueKey(locale),
+        title: tr.appName,
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.lightTheme,
+        locale: locale.flutterLocale,
+        supportedLocales: AppLocaleUtils.supportedLocales,
+        localizationsDelegates: GlobalMaterialLocalizations.delegates,
+        routerConfig: AppRouter.router,
+      ),
     );
   }
 }
