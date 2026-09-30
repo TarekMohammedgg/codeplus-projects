@@ -107,24 +107,32 @@ class AuthService {
   Future<void> ensureUserProfile(User user) async {
     final reference = _firestore.collection('users').doc(user.uid);
     final snapshot = await reference.get();
-    final profile = {
-      'displayName': user.displayName?.trim() ?? '',
-      'email': user.email?.trim() ?? '',
-      'updatedAt': FieldValue.serverTimestamp(),
-    };
 
     if (snapshot.exists) {
-      await reference.set({
-        ...profile,
+      final existingData = snapshot.data() ?? const <String, dynamic>{};
+      final updateData = <String, dynamic>{
+        'updatedAt': FieldValue.serverTimestamp(),
         'permissions': FieldValue.delete(),
-      }, SetOptions(merge: true));
+      };
+      final existingName = existingData['displayName'] as String?;
+      if ((existingName == null || existingName.trim().isEmpty) &&
+          user.displayName != null &&
+          user.displayName!.trim().isNotEmpty) {
+        updateData['displayName'] = user.displayName!.trim();
+      }
+      if (user.email != null && user.email!.trim().isNotEmpty) {
+        updateData['email'] = user.email!.trim();
+      }
+      await reference.set(updateData, SetOptions(merge: true));
       return;
     }
 
     await reference.set({
-      ...profile,
+      'displayName': user.displayName?.trim() ?? '',
+      'email': user.email?.trim() ?? '',
       'role': 'patient',
       'createdAt': FieldValue.serverTimestamp(),
+      'updatedAt': FieldValue.serverTimestamp(),
     });
   }
 

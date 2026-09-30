@@ -234,6 +234,12 @@ class FakeProfileRepository implements ProfileRepository {
   FakeProfileRepository({this.profile});
 
   final UserProfileModel? profile;
+  String? lastUpdatedUid;
+  String? lastUpdatedDisplayName;
+  String? lastUpdatedPhone;
+  DateTime? lastUpdatedDob;
+  String? lastUpdatedGender;
+  String? lastUpdatedPhotoUrl;
 
   @override
   Stream<UserProfileModel> streamProfile(String uid) {
@@ -251,7 +257,14 @@ class FakeProfileRepository implements ProfileRepository {
     String? photoUrl,
     String? language,
     bool? notificationsEnabled,
-  }) async {}
+  }) async {
+    lastUpdatedUid = uid;
+    lastUpdatedDisplayName = displayName;
+    lastUpdatedPhone = phone;
+    lastUpdatedDob = dob;
+    lastUpdatedGender = gender;
+    lastUpdatedPhotoUrl = photoUrl;
+  }
 }
 
 class FakeBookingRepository implements BookingRepository {

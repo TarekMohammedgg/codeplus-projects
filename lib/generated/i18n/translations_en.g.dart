@@ -398,6 +398,21 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'Language'
 	String get language => 'Language';
 
+	/// en: 'Edit Profile'
+	String get editProfile => 'Edit Profile';
+
+	/// en: 'Save'
+	String get save => 'Save';
+
+	/// en: 'Male'
+	String get male => 'Male';
+
+	/// en: 'Female'
+	String get female => 'Female';
+
+	/// en: 'Select date of birth'
+	String get selectDob => 'Select date of birth';
+
 	/// en: 'Profile updated successfully'
 	String get profileUpdatedSuccess => 'Profile updated successfully';
 
@@ -871,6 +886,11 @@ extension on Translations {
 			'addDetails' => 'Add Details',
 			'settings' => 'Settings',
 			'language' => 'Language',
+			'editProfile' => 'Edit Profile',
+			'save' => 'Save',
+			'male' => 'Male',
+			'female' => 'Female',
+			'selectDob' => 'Select date of birth',
 			'profileUpdatedSuccess' => 'Profile updated successfully',
 			'logOutConfirmTitle' => 'Log out?',
 			'logOutConfirmMessage' => 'You will need to sign in again to use the app.',

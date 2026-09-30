@@ -115,7 +115,7 @@ class _ProfileContent extends StatelessWidget {
                 24.verticalSpace,
                 AppPrimaryButton(
                   label: tr.edit,
-                  onPressed: () => const EditProfileRoute().push(context),
+                  onPressed: () => EditProfileRoute(profile).push(context),
                 ),
                 16.verticalSpace,
                 _SettingsTile(

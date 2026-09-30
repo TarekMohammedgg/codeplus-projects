@@ -158,6 +158,11 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get addDetails => 'إضافة تفاصيل';
 	@override String get settings => 'الإعدادات';
 	@override String get language => 'اللغة';
+	@override String get editProfile => 'تعديل الملف الشخصي';
+	@override String get save => 'حفظ';
+	@override String get male => 'ذكر';
+	@override String get female => 'أنثى';
+	@override String get selectDob => 'اختر تاريخ الميلاد';
 	@override String get profileUpdatedSuccess => 'تم تحديث الملف الشخصي بنجاح';
 	@override String get logOutConfirmTitle => 'تسجيل الخروج؟';
 	@override String get logOutConfirmMessage => 'ستحتاج إلى تسجيل الدخول مرة أخرى لاستخدام التطبيق.';
@@ -402,6 +407,11 @@ extension on TranslationsAr {
 			'addDetails' => 'إضافة تفاصيل',
 			'settings' => 'الإعدادات',
 			'language' => 'اللغة',
+			'editProfile' => 'تعديل الملف الشخصي',
+			'save' => 'حفظ',
+			'male' => 'ذكر',
+			'female' => 'أنثى',
+			'selectDob' => 'اختر تاريخ الميلاد',
 			'profileUpdatedSuccess' => 'تم تحديث الملف الشخصي بنجاح',
 			'logOutConfirmTitle' => 'تسجيل الخروج؟',
 			'logOutConfirmMessage' => 'ستحتاج إلى تسجيل الدخول مرة أخرى لاستخدام التطبيق.',

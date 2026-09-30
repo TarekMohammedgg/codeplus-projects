@@ -33,6 +33,7 @@ import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/scre
 import 'package:doctor_hunt/apps/features/patient/home/presentation/controller/cubit/home_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/home/presentation/screens/patient_home_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/data/models/user_profile_model.dart';
+import 'package:doctor_hunt/apps/features/patient/profile/presentation/screens/edit_profile_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/presentation/screens/profile_screen.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
@@ -359,11 +360,13 @@ class BookingReviewRoute extends GoRouteData with $BookingReviewRoute {
 
 @TypedGoRoute<EditProfileRoute>(path: AppRoutePaths.editProfile)
 class EditProfileRoute extends GoRouteData with $EditProfileRoute {
-  const EditProfileRoute();
+  const EditProfileRoute([this.$extra]);
+
+  final UserProfileModel? $extra;
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const Scaffold();
+    return EditProfileScreen(profile: $extra);
   }
 }
 
