@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:doctor_hunt/apps/core/router/app_router.dart';
 import 'package:doctor_hunt/apps/features/admin/settings/presentation/screens/admin_settings_screen.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/controller/cubit/auth_cubit.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
@@ -77,12 +78,21 @@ void main() {
       });
 
       final tr = AppLocale.en.buildSync();
-      final router = GoRouter(
+      final fakeAuth = FakeFirebaseAuth(
+        mockUser: _FakeUser(email: 'admin@doctorhunt.test'),
+      );
+      final repo = FakeAuthRepository(auth: fakeAuth, isAdmin: true);
+      final router = AppRouter.createRouter(
+        authRepository: repo,
+        firebaseAuth: fakeAuth,
         initialLocation: '/admin/settings',
         routes: [
           GoRoute(
             path: '/admin/settings',
-            builder: (context, state) => _buildTestAdminSettingsScreen(),
+            builder: (context, state) => BlocProvider<AuthCubit>(
+              create: (_) => AuthCubit(repository: repo),
+              child: const AdminSettingsScreen(),
+            ),
           ),
           GoRoute(
             path: '/role-selection',
@@ -92,6 +102,7 @@ void main() {
       );
 
       await tester.pumpWidget(buildTestRouterApp(router));
+      await tester.pumpAndSettle();
 
       await tester.tap(find.text(tr.logOut));
       await tester.pumpAndSettle();

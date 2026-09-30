@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -16,10 +17,21 @@ import 'package:doctor_hunt/apps/features/patient/home/data/repositories/home_re
 class FakeFirebaseAuth extends Fake implements FirebaseAuth {
   FakeFirebaseAuth({this.mockUser});
 
-  final User? mockUser;
+  User? mockUser;
+  final StreamController<User?> _controller =
+      StreamController<User?>.broadcast();
 
   @override
   User? get currentUser => mockUser;
+
+  @override
+  Stream<User?> authStateChanges() => _controller.stream;
+
+  @override
+  Future<void> signOut() async {
+    mockUser = null;
+    _controller.add(null);
+  }
 }
 
 class FakeFirebaseFirestore extends Fake implements FirebaseFirestore {}
@@ -34,12 +46,20 @@ class FakeAuthService extends Fake implements AuthService {
 }
 
 class FakeAuthRepository implements AuthRepository {
-  FakeAuthRepository({this.shouldFail = false, this.currentUser});
+  FakeAuthRepository({
+    this.shouldFail = false,
+    User? currentUser,
+    this.auth,
+    this.isAdmin = false,
+  }) : _currentUser = currentUser ?? auth?.currentUser;
 
   final bool shouldFail;
+  final FirebaseAuth? auth;
+  final bool isAdmin;
+  User? _currentUser;
 
   @override
-  final User? currentUser;
+  User? get currentUser => auth != null ? auth!.currentUser : _currentUser;
 
   void _throwIfNeeded() {
     if (shouldFail) throw StateError('auth operation failed');
@@ -76,11 +96,13 @@ class FakeAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<bool> isCurrentUserAdmin() async => false;
+  Future<bool> isCurrentUserAdmin() async => isAdmin;
 
   @override
   Future<void> signOut() async {
     _throwIfNeeded();
+    _currentUser = null;
+    await auth?.signOut();
   }
 }
 

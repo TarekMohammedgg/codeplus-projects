@@ -637,6 +637,21 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// en: 'Dr. Pediatrician'
 	String get placeholderDoctorName => 'Dr. Pediatrician';
+
+	/// en: 'Home'
+	String get tabHome => 'Home';
+
+	/// en: 'Doctors'
+	String get tabDoctors => 'Doctors';
+
+	/// en: 'Appointments'
+	String get tabAppointments => 'Appointments';
+
+	/// en: 'Profile'
+	String get tabProfile => 'Profile';
+
+	/// en: 'Appointments'
+	String get appointments => 'Appointments';
 }
 
 /// The flat map containing all translations for locale <en>.
@@ -846,6 +861,11 @@ extension on Translations {
 			'doctorDeletedSuccess' => 'Doctor deleted successfully',
 			'changeImage' => 'Change image',
 			'placeholderDoctorName' => 'Dr. Pediatrician',
+			'tabHome' => 'Home',
+			'tabDoctors' => 'Doctors',
+			'tabAppointments' => 'Appointments',
+			'tabProfile' => 'Profile',
+			'appointments' => 'Appointments',
 			_ => null,
 		};
 	}

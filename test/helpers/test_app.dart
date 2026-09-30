@@ -11,6 +11,9 @@ import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 class _FakeFirebaseAuth extends Fake implements FirebaseAuth {
   @override
   User? get currentUser => null;
+
+  @override
+  Stream<User?> authStateChanges() => Stream<User?>.value(null);
 }
 
 class _FakeFirebaseFirestore extends Fake implements FirebaseFirestore {}
@@ -21,7 +24,7 @@ class _FakeFirebaseFirestore extends Fake implements FirebaseFirestore {}
 // than a module-level flag that could go stale. This is test bootstrapping,
 // not the production isRegistered fallback-instantiation pattern the //CR
 // comments flag.
-void _ensureTestServiceLocator() {
+void ensureTestServiceLocator() {
   if (getIt.isRegistered<AuthService>()) return;
   // Registers everything, including the real FirebaseAuth/FirebaseFirestore
   // singletons — but nothing under test resolves them yet (they're lazy),
@@ -37,7 +40,7 @@ void _ensureTestServiceLocator() {
 
 Widget buildTestApp(Widget child) {
   LocaleSettings.setLocaleSync(AppLocale.en);
-  _ensureTestServiceLocator();
+  ensureTestServiceLocator();
   return TranslationProvider(
     child: Builder(
       builder: (context) {
@@ -54,7 +57,7 @@ Widget buildTestApp(Widget child) {
 
 Widget buildTestRouterApp(GoRouter router) {
   LocaleSettings.setLocaleSync(AppLocale.en);
-  _ensureTestServiceLocator();
+  ensureTestServiceLocator();
   return TranslationProvider(
     child: Builder(
       builder: (context) {

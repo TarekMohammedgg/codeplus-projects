@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
-import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_header_section.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
@@ -26,8 +24,6 @@ class AdminSettingsScreen extends StatelessWidget {
         switch (state) {
           case AuthFailure(:final errorMessage):
             context.showErrorSnackBar(errorMessage);
-          case AuthSuccess(action: AuthAction.signOut):
-            const RoleSelectionRoute().go(context);
           default:
             break;
         }
@@ -40,11 +36,7 @@ class AdminSettingsScreen extends StatelessWidget {
           backgroundColor: AppColors.background,
           body: Column(
             children: [
-              AppHeaderSection(
-                title: tr.settings,
-                onBackTap: () => context.pop(),
-                showSearchBar: false,
-              ),
+              AppHeaderSection(title: tr.settings, showSearchBar: false),
               Expanded(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(

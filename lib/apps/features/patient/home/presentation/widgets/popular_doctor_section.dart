@@ -28,7 +28,7 @@ class PopularDoctorSection extends StatelessWidget {
         SectionHeader(
           title: tr.popularDoctor,
           onSeeAllPressed:
-              onSeeAllPressed ?? () => const FindDoctorsRoute().push(context),
+              onSeeAllPressed ?? () => const FindDoctorsRoute().go(context),
         ),
         14.verticalSpace,
         SizedBox(

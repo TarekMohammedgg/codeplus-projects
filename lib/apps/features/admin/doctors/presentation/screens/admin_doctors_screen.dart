@@ -26,16 +26,11 @@ class AdminDoctorsScreenState extends State<AdminDoctorsScreen> {
   final _searchController = TextEditingController();
   late final AdminDoctorsCubit _adminDoctorsCubit;
 
-  int _selectedNavIndex = 0;
   String _query = '';
 
   @override
   void initState() {
     super.initState();
-    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
-    // solved
-    //CR Use `getIt<Cubit>()` directly or inject via constructor.
-    // solved
     //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
     // solved
     //CR Use `getIt<Cubit>()` directly or inject via constructor.
@@ -48,15 +43,6 @@ class AdminDoctorsScreenState extends State<AdminDoctorsScreen> {
   void dispose() {
     _searchController.dispose();
     super.dispose();
-  }
-
-  void _onNavTap(int index) {
-    setState(() => _selectedNavIndex = index);
-    if (index == 1) {
-      const AdminSettingsRoute().push(context).then((_) {
-        if (mounted) setState(() => _selectedNavIndex = 0);
-      });
-    }
   }
 
   List<AdminDoctorModel> _filter(List<AdminDoctorModel> doctors) {
@@ -145,10 +131,6 @@ class AdminDoctorsScreenState extends State<AdminDoctorsScreen> {
               tr.addDoctor,
               style: context.semiBold14Primary.copyWith(color: Colors.white),
             ),
-          ),
-          bottomNavigationBar: AdminBottomNavigationBar(
-            currentIndex: _selectedNavIndex,
-            onTap: _onNavTap,
           ),
         );
       },

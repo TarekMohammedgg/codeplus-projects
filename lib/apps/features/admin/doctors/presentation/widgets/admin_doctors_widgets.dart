@@ -272,10 +272,16 @@ class AdminBottomNavigationBar extends StatelessWidget {
                 onTap: () => onTap(0),
               ),
               _AdminNavItem(
-                icon: Icons.settings_rounded,
-                label: tr.settings,
+                icon: Icons.calendar_month_rounded,
+                label: tr.appointments,
                 isSelected: currentIndex == 1,
                 onTap: () => onTap(1),
+              ),
+              _AdminNavItem(
+                icon: Icons.settings_rounded,
+                label: tr.settings,
+                isSelected: currentIndex == 2,
+                onTap: () => onTap(2),
               ),
             ],
           ),

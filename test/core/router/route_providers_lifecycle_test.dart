@@ -255,7 +255,7 @@ void main() {
         });
 
         final router = GoRouter(
-          initialLocation: '/find-doctors',
+          initialLocation: '/doctors',
           routes: $appRoutes,
         );
         await tester.pumpWidget(buildTestRouterApp(router));

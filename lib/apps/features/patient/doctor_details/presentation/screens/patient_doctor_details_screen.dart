@@ -13,7 +13,7 @@ class DoctorDetailsScreen extends StatelessWidget {
   final DoctorModel doctor;
 
   void openFindDoctors(BuildContext context) {
-    const FindDoctorsRoute().push(context);
+    const FindDoctorsRoute().go(context);
   }
 
   void openDoctorBooking(BuildContext context) {

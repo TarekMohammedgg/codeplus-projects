@@ -44,11 +44,36 @@ void main() {
     expect(find.byType(PopularDoctorCard), findsWidgets);
     expect(find.byType(Image), findsWidgets);
 
-    expect(find.byType(MainBottomNavigationBar), findsOneWidget);
-    expect(find.byIcon(Icons.home_rounded), findsOneWidget);
-    expect(find.byIcon(Icons.language_rounded), findsOneWidget);
-    expect(find.byIcon(Icons.menu_book_rounded), findsOneWidget);
-    expect(find.byIcon(Icons.chat_bubble_rounded), findsOneWidget);
+    final navBarFinder = find.byType(MainBottomNavigationBar);
+    expect(navBarFinder, findsOneWidget);
+    expect(
+      find.descendant(
+        of: navBarFinder,
+        matching: find.byIcon(Icons.home_rounded),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(
+        of: navBarFinder,
+        matching: find.byIcon(Icons.medical_services_rounded),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(
+        of: navBarFinder,
+        matching: find.byIcon(Icons.calendar_month_rounded),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(
+        of: navBarFinder,
+        matching: find.byIcon(Icons.person_rounded),
+      ),
+      findsOneWidget,
+    );
   });
 
   testWidgets(
@@ -137,19 +162,15 @@ void main() {
     );
     await tester.pump();
 
-    await tester.tap(
-      find.byWidgetPredicate(
-        (w) => w is NavItem && w.icon == Icons.favorite_rounded,
-      ),
-    );
+    await tester.tap(find.byIcon(Icons.medical_services_rounded));
     await tester.pumpAndSettle();
     expect(currentIndex, 1);
 
-    await tester.tap(find.byIcon(Icons.menu_book_rounded));
+    await tester.tap(find.byIcon(Icons.calendar_month_rounded));
     await tester.pumpAndSettle();
     expect(currentIndex, 2);
 
-    await tester.tap(find.byIcon(Icons.chat_bubble_rounded));
+    await tester.tap(find.byIcon(Icons.person_rounded));
     await tester.pumpAndSettle();
     expect(currentIndex, 3);
 
@@ -212,7 +233,6 @@ void main() {
     await tester.pumpWidget(buildTestApp(testHomeScreen()));
     await tester.pump();
 
-    expect(find.byIcon(Icons.favorite_rounded), findsWidgets);
     expect(find.byIcon(Icons.favorite_border_rounded), findsWidgets);
   });
 

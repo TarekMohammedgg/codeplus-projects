@@ -68,8 +68,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         switch (state) {
           case AuthFailure(:final errorMessage):
             context.showErrorSnackBar(errorMessage);
-          case AuthSuccess(action: AuthAction.signOut):
-            const RoleSelectionRoute().go(context);
           default:
             break;
         }

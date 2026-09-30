@@ -238,6 +238,11 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get doctorDeletedSuccess => 'تم حذف الطبيب بنجاح';
 	@override String get changeImage => 'تغيير الصورة';
 	@override String get placeholderDoctorName => 'د. طبيب أطفال';
+	@override String get tabHome => 'الرئيسية';
+	@override String get tabDoctors => 'الأطباء';
+	@override String get tabAppointments => 'المواعيد';
+	@override String get tabProfile => 'الملف الشخصي';
+	@override String get appointments => 'المواعيد';
 }
 
 /// The flat map containing all translations for locale <ar>.
@@ -447,6 +452,11 @@ extension on TranslationsAr {
 			'doctorDeletedSuccess' => 'تم حذف الطبيب بنجاح',
 			'changeImage' => 'تغيير الصورة',
 			'placeholderDoctorName' => 'د. طبيب أطفال',
+			'tabHome' => 'الرئيسية',
+			'tabDoctors' => 'الأطباء',
+			'tabAppointments' => 'المواعيد',
+			'tabProfile' => 'الملف الشخصي',
+			'appointments' => 'المواعيد',
 			_ => null,
 		};
 	}

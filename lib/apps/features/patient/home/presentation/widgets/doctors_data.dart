@@ -1,4 +1,4 @@
-﻿import 'package:doctor_hunt/apps/core/router/routes.dart';
+import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/features/patient/home/data/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/features/patient/home/presentation/widgets/doctor_category_section.dart';
@@ -33,13 +33,13 @@ class DoctorsData extends StatelessWidget {
                 ),
               )
               .toList(),
-          onCategoryTap: (_) => const FindDoctorsRoute().push(context),
+          onCategoryTap: (_) => const FindDoctorsRoute().go(context),
         ),
         if (doctors.isNotEmpty) ...[
           const SizedBox(height: 24),
           PopularDoctorSection(
             doctors: doctors,
-            onSeeAllPressed: () => const FindDoctorsRoute().push(context),
+            onSeeAllPressed: () => const FindDoctorsRoute().go(context),
           ),
           const SizedBox(height: 32),
         ],

@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_header_section.dart';
-import 'package:doctor_hunt/apps/features/common/bottom_navigation_bar/presentation/widgets/main_bottom_navigation_bar.dart';
 import 'package:doctor_hunt/apps/features/patient/home/presentation/controller/cubit/home_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/home/presentation/controller/cubit/home_state.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
@@ -28,7 +27,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final searchController = TextEditingController();
   late final HomeCubit _homeCubit;
-  int _selectedNavIndex = 0;
 
   @override
   void initState() {
@@ -73,42 +71,31 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (context, state) {
         return Scaffold(
           backgroundColor: AppColors.background,
-          // Other tabs stay empty until the patient shell replaces this bar.
-          body: _selectedNavIndex != 0
-              ? const SizedBox.shrink()
-              : SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      AppHeaderSection(
-                        greeting: _greeting(user),
-                        title: tr.findYourDoctor,
-                        searchController: searchController,
-                        showLanguageToggle: true,
-                        showProfile: true,
-                        profileImage: user?.photoURL,
-                        onProfileTap: () => const ProfileRoute().push(context),
-                      ),
-                      switch (state) {
-                        HomeInitial() ||
-                        HomeLoading() => const DoctorsLoading(),
-                        HomeFailure() => HomeLoadError(
-                          onRetry: () => context.read<HomeCubit>().load(),
-                        ),
-                        HomeSuccess(:final doctors) when doctors.isEmpty =>
-                          const DoctorsIsEmpty(),
-                        HomeSuccess(:final doctors, :final specialties) =>
-                          DoctorsData(
-                            doctors: doctors,
-                            specialties: specialties,
-                          ),
-                      },
-                    ],
-                  ),
+          body: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AppHeaderSection(
+                  greeting: _greeting(user),
+                  title: tr.findYourDoctor,
+                  searchController: searchController,
+                  showLanguageToggle: true,
+                  showProfile: true,
+                  profileImage: user?.photoURL,
+                  onProfileTap: () => const ProfileRoute().go(context),
                 ),
-          bottomNavigationBar: MainBottomNavigationBar(
-            currentIndex: _selectedNavIndex,
-            onTap: (index) => setState(() => _selectedNavIndex = index),
+                switch (state) {
+                  HomeInitial() || HomeLoading() => const DoctorsLoading(),
+                  HomeFailure() => HomeLoadError(
+                    onRetry: () => context.read<HomeCubit>().load(),
+                  ),
+                  HomeSuccess(:final doctors) when doctors.isEmpty =>
+                    const DoctorsIsEmpty(),
+                  HomeSuccess(:final doctors, :final specialties) =>
+                    DoctorsData(doctors: doctors, specialties: specialties),
+                },
+              ],
+            ),
           ),
         );
       },

@@ -198,5 +198,10 @@
   "deleteDoctorConfirm": "هل أنت متأكد من رغبتك في حذف هذا الطبيب؟",
   "doctorDeletedSuccess": "تم حذف الطبيب بنجاح",
   "changeImage": "تغيير الصورة",
-  "placeholderDoctorName": "د. طبيب أطفال"
+  "placeholderDoctorName": "د. طبيب أطفال",
+  "tabHome": "الرئيسية",
+  "tabDoctors": "الأطباء",
+  "tabAppointments": "المواعيد",
+  "tabProfile": "الملف الشخصي",
+  "appointments": "المواعيد"
 }
