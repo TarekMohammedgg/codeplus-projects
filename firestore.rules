@@ -15,9 +15,31 @@ service cloud.firestore {
         && currentUser().role == 'admin';
     }
 
+    function isOwner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    function changedOnly(keys) {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(keys);
+    }
+
     match /doctors/{doctorId} {
       allow read: if true;
-      allow create, update, delete: if isAdmin();
+      allow create: if isAdmin();
+      // Deactivate instead of delete, so booking history keeps its doctor.
+      allow delete: if false;
+      // A patient may only bump the rating aggregate in the same transaction
+      // that creates a brand-new review (see ReviewService.submitReview).
+      allow update: if isAdmin()
+        || (
+          signedIn()
+          && changedOnly(['rating', 'reviewsCount', 'lastReviewId'])
+          && request.resource.data.reviewsCount == resource.data.reviewsCount + 1
+          && request.resource.data.rating >= 1
+          && request.resource.data.rating <= 5
+          && !exists(/databases/$(database)/documents/reviews/$(request.resource.data.lastReviewId))
+          && existsAfter(/databases/$(database)/documents/reviews/$(request.resource.data.lastReviewId))
+        );
     }
 
     match /specialty/{specialtyId} {
@@ -25,36 +47,126 @@ service cloud.firestore {
       allow create, update, delete: if isAdmin();
     }
 
-    match /users/{userId} {
-      allow read: if isAdmin() || (signedIn() && request.auth.uid == userId);
+    match /clinic/{docId} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
 
-      allow create: if signedIn()
-        && request.auth.uid == userId
+    match /users/{userId} {
+      allow read: if isAdmin() || isOwner(userId);
+
+      allow create: if isOwner(userId)
         && request.resource.data.role == 'patient'
         && request.resource.data.keys().hasOnly([
           'displayName',
           'email',
           'role',
+          'phone',
+          'dob',
+          'gender',
+          'photoUrl',
+          'language',
+          'notificationsEnabled',
           'createdAt',
           'updatedAt'
         ]);
 
       allow update: if isAdmin()
         || (
-          signedIn()
-          && request.auth.uid == userId
+          isOwner(userId)
           && resource.data.role == 'patient'
           && request.resource.data.role == 'patient'
           && request.resource.data.keys().hasOnly([
             'displayName',
             'email',
             'role',
+            'phone',
+            'dob',
+            'gender',
+            'photoUrl',
+            'language',
+            'notificationsEnabled',
             'createdAt',
             'updatedAt'
           ])
         );
 
       allow delete: if isAdmin();
+
+      match /favorites/{doctorId} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    // Lock document per slot: it exists = the slot is taken. Created together
+    // with its appointment in one transaction (AppointmentService.book).
+    match /bookedSlots/{slotId} {
+      allow read: if signedIn();
+      allow create: if signedIn()
+        && request.resource.data.patientId == request.auth.uid
+        && existsAfter(/databases/$(database)/documents/appointments/$(request.resource.data.appointmentId))
+        && getAfter(/databases/$(database)/documents/appointments/$(request.resource.data.appointmentId)).data.slotId == slotId
+        && getAfter(/databases/$(database)/documents/appointments/$(request.resource.data.appointmentId)).data.patientId == request.auth.uid;
+      allow update: if false;
+      allow delete: if isAdmin()
+        || (signedIn() && resource.data.patientId == request.auth.uid);
+    }
+
+    match /appointments/{appointmentId} {
+      allow read: if isAdmin()
+        || (signedIn() && resource.data.patientId == request.auth.uid);
+
+      allow create: if signedIn()
+        && request.resource.data.patientId == request.auth.uid
+        && request.resource.data.status == 'upcoming'
+        && request.resource.data.isReviewed == false
+        && existsAfter(/databases/$(database)/documents/bookedSlots/$(request.resource.data.slotId));
+
+      // Admin: upcoming -> completed, or upcoming -> cancelled by admin.
+      allow update: if isAdmin()
+        && resource.data.status == 'upcoming'
+        && changedOnly(['status', 'cancelledBy', 'updatedAt'])
+        && (
+          request.resource.data.status == 'completed'
+          || (
+            request.resource.data.status == 'cancelled'
+            && request.resource.data.cancelledBy == 'admin'
+          )
+        );
+
+      // Patient: cancel own upcoming appointment.
+      allow update: if signedIn()
+        && resource.data.patientId == request.auth.uid
+        && resource.data.status == 'upcoming'
+        && request.resource.data.status == 'cancelled'
+        && request.resource.data.cancelledBy == 'patient'
+        && changedOnly(['status', 'cancelledBy', 'updatedAt']);
+
+      // Patient: mark own completed appointment reviewed, only together with
+      // creating its review (ReviewService.submitReview).
+      allow update: if signedIn()
+        && resource.data.patientId == request.auth.uid
+        && resource.data.status == 'completed'
+        && changedOnly(['isReviewed'])
+        && request.resource.data.isReviewed == true
+        && existsAfter(/databases/$(database)/documents/reviews/$(appointmentId));
+
+      allow delete: if false;
+    }
+
+    // Review id = appointment id, so one review per appointment.
+    match /reviews/{appointmentId} {
+      allow read: if true;
+      allow create: if signedIn()
+        && request.resource.data.patientId == request.auth.uid
+        && request.resource.data.appointmentId == appointmentId
+        && request.resource.data.rating is int
+        && request.resource.data.rating >= 1
+        && request.resource.data.rating <= 5
+        && get(/databases/$(database)/documents/appointments/$(appointmentId)).data.status == 'completed'
+        && get(/databases/$(database)/documents/appointments/$(appointmentId)).data.patientId == request.auth.uid
+        && get(/databases/$(database)/documents/appointments/$(appointmentId)).data.doctorId == request.resource.data.doctorId;
+      allow update, delete: if false;
     }
   }
 }
