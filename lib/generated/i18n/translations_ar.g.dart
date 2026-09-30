@@ -311,6 +311,15 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get statusCancelled => 'ملغي';
 	@override String get retry => 'إعادة المحاولة';
 	@override String get appointmentDetails => 'تفاصيل الموعد';
+	@override String get rateDoctorTitle => 'تقييم الطبيب';
+	@override String get ratingDoctorSubtitle => 'ملاحظاتك تساعد المرضى الآخرين وتسهم في تحسين الرعاية';
+	@override String get selectRatingRequired => 'يرجى تحديد التقييم بالنجوم';
+	@override String get reviewCommentHint => 'اكتب تقييمك (اختياري)...';
+	@override String get reviewCommentLabel => 'تقييمك';
+	@override String get submitReview => 'إرسال';
+	@override String get reviewAddedSuccess => 'تمت إضافة التقييم';
+	@override String get appointmentNotCompleted => 'يمكن تقييم المواعيد المكتملة فقط';
+	@override String get alreadyReviewed => 'لقد قمت بتقييم هذا الموعد بالفعل';
 }
 
 /// The flat map containing all translations for locale <ar>.
@@ -593,6 +602,15 @@ extension on TranslationsAr {
 			'statusCancelled' => 'ملغي',
 			'retry' => 'إعادة المحاولة',
 			'appointmentDetails' => 'تفاصيل الموعد',
+			'rateDoctorTitle' => 'تقييم الطبيب',
+			'ratingDoctorSubtitle' => 'ملاحظاتك تساعد المرضى الآخرين وتسهم في تحسين الرعاية',
+			'selectRatingRequired' => 'يرجى تحديد التقييم بالنجوم',
+			'reviewCommentHint' => 'اكتب تقييمك (اختياري)...',
+			'reviewCommentLabel' => 'تقييمك',
+			'submitReview' => 'إرسال',
+			'reviewAddedSuccess' => 'تمت إضافة التقييم',
+			'appointmentNotCompleted' => 'يمكن تقييم المواعيد المكتملة فقط',
+			'alreadyReviewed' => 'لقد قمت بتقييم هذا الموعد بالفعل',
 			_ => null,
 		};
 	}

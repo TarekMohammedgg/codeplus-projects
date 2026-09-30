@@ -272,5 +272,14 @@
   "statusCompleted": "Completed",
   "statusCancelled": "Cancelled",
   "retry": "Retry",
-  "appointmentDetails": "Appointment Details"
+  "appointmentDetails": "Appointment Details",
+  "rateDoctorTitle": "Rate Doctor",
+  "ratingDoctorSubtitle": "Your feedback helps other patients and improves care",
+  "selectRatingRequired": "Please select a rating",
+  "reviewCommentHint": "Write your review (optional)...",
+  "reviewCommentLabel": "Your Review",
+  "submitReview": "Submit",
+  "reviewAddedSuccess": "Review added",
+  "appointmentNotCompleted": "Only completed appointments can be reviewed",
+  "alreadyReviewed": "You have already reviewed this appointment"
 }

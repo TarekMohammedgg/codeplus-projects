@@ -856,6 +856,33 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// en: 'Appointment Details'
 	String get appointmentDetails => 'Appointment Details';
+
+	/// en: 'Rate Doctor'
+	String get rateDoctorTitle => 'Rate Doctor';
+
+	/// en: 'Your feedback helps other patients and improves care'
+	String get ratingDoctorSubtitle => 'Your feedback helps other patients and improves care';
+
+	/// en: 'Please select a rating'
+	String get selectRatingRequired => 'Please select a rating';
+
+	/// en: 'Write your review (optional)...'
+	String get reviewCommentHint => 'Write your review (optional)...';
+
+	/// en: 'Your Review'
+	String get reviewCommentLabel => 'Your Review';
+
+	/// en: 'Submit'
+	String get submitReview => 'Submit';
+
+	/// en: 'Review added'
+	String get reviewAddedSuccess => 'Review added';
+
+	/// en: 'Only completed appointments can be reviewed'
+	String get appointmentNotCompleted => 'Only completed appointments can be reviewed';
+
+	/// en: 'You have already reviewed this appointment'
+	String get alreadyReviewed => 'You have already reviewed this appointment';
 }
 
 /// The flat map containing all translations for locale <en>.
@@ -1138,6 +1165,15 @@ extension on Translations {
 			'statusCancelled' => 'Cancelled',
 			'retry' => 'Retry',
 			'appointmentDetails' => 'Appointment Details',
+			'rateDoctorTitle' => 'Rate Doctor',
+			'ratingDoctorSubtitle' => 'Your feedback helps other patients and improves care',
+			'selectRatingRequired' => 'Please select a rating',
+			'reviewCommentHint' => 'Write your review (optional)...',
+			'reviewCommentLabel' => 'Your Review',
+			'submitReview' => 'Submit',
+			'reviewAddedSuccess' => 'Review added',
+			'appointmentNotCompleted' => 'Only completed appointments can be reviewed',
+			'alreadyReviewed' => 'You have already reviewed this appointment',
 			_ => null,
 		};
 	}

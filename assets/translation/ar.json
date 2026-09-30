@@ -272,5 +272,14 @@
   "statusCompleted": "مكتمل",
   "statusCancelled": "ملغي",
   "retry": "إعادة المحاولة",
-  "appointmentDetails": "تفاصيل الموعد"
+  "appointmentDetails": "تفاصيل الموعد",
+  "rateDoctorTitle": "تقييم الطبيب",
+  "ratingDoctorSubtitle": "ملاحظاتك تساعد المرضى الآخرين وتسهم في تحسين الرعاية",
+  "selectRatingRequired": "يرجى تحديد التقييم بالنجوم",
+  "reviewCommentHint": "اكتب تقييمك (اختياري)...",
+  "reviewCommentLabel": "تقييمك",
+  "submitReview": "إرسال",
+  "reviewAddedSuccess": "تمت إضافة التقييم",
+  "appointmentNotCompleted": "يمكن تقييم المواعيد المكتملة فقط",
+  "alreadyReviewed": "لقد قمت بتقييم هذا الموعد بالفعل"
 }

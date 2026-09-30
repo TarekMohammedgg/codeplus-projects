@@ -35,6 +35,8 @@ import 'package:doctor_hunt/apps/features/patient/profile/data/repositories/prof
 import 'package:doctor_hunt/apps/features/patient/profile/data/service/profile_service.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/presentation/controller/cubit/change_password_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/presentation/controller/cubit/profile_cubit.dart';
+import 'package:doctor_hunt/apps/features/patient/rate_doctor/data/repositories/rate_doctor_repository.dart';
+import 'package:doctor_hunt/apps/features/patient/rate_doctor/presentation/cubit/rate_doctor_cubit.dart';
 
 final getIt = GetIt.instance;
 
@@ -158,6 +160,13 @@ void setupServiceLocator() {
       specialtyService: getIt<SpecialtyService>(),
     ),
   );
+  getIt.registerLazySingleton<RateDoctorRepository>(
+    () => RateDoctorRepositoryImpl(
+      reviewService: getIt<ReviewService>(),
+      authService: getIt<AuthService>(),
+      specialtyService: getIt<SpecialtyService>(),
+    ),
+  );
 
   // Cubits (registered as factories to return a fresh instance on demand)
   getIt.registerFactory<AuthCubit>(
@@ -198,5 +207,8 @@ void setupServiceLocator() {
       repository: getIt<PatientAppointmentsRepository>(),
       authService: getIt<AuthService>(),
     ),
+  );
+  getIt.registerFactory<RateDoctorCubit>(
+    () => RateDoctorCubit(repository: getIt<RateDoctorRepository>()),
   );
 }

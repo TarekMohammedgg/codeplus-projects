@@ -43,6 +43,7 @@ import 'package:doctor_hunt/apps/features/patient/profile/presentation/screens/c
 import 'package:doctor_hunt/apps/features/patient/profile/presentation/screens/edit_profile_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/presentation/screens/patient_settings_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/presentation/screens/profile_screen.dart';
+import 'package:doctor_hunt/apps/features/patient/rate_doctor/presentation/screens/rate_doctor_screen.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
 part 'routes.g.dart';
@@ -436,6 +437,8 @@ class PatientRateDoctorRoute extends GoRouteData with $PatientRateDoctorRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const Scaffold();
+    final appt = $extra;
+    if (appt == null) return const Scaffold();
+    return RateDoctorScreen(appointment: appt);
   }
 }
