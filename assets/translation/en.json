@@ -155,6 +155,8 @@
   "thankYou": "Thank You !",
   "appointmentSuccessful": "Your Appointment Successful",
   "appointmentBookedWith(name, date, time)": "You booked an appointment with $name on $date, at $time",
+  "bookingStatusUpcoming": "Status: Upcoming",
+  "slotAlreadyBooked": "This time was just booked by someone else. Please choose another slot.",
   "done": "Done",
   "editYourAppointment": "Edit your appointment",
   "userNotFoundError": "No user found with this email. Please check the email or create a new account.",

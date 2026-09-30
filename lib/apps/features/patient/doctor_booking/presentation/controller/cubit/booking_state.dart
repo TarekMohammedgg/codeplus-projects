@@ -1,4 +1,5 @@
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
+import 'package:doctor_hunt/apps/features/patient/doctor_booking/data/models/booking_draft.dart';
 
 sealed class BookingState {
   const BookingState();
@@ -58,4 +59,24 @@ class BookingLoaded extends BookingState {
       isLoadingSlots: isLoadingSlots ?? this.isLoadingSlots,
     );
   }
+}
+
+/// Step 4: the booking transaction is running.
+class BookingSubmitting extends BookingState {
+  const BookingSubmitting();
+}
+
+/// Step 4: the `upcoming` appointment was created.
+class BookingConfirmed extends BookingState {
+  const BookingConfirmed({required this.draft});
+
+  final BookingDraft draft;
+}
+
+enum BookingFailureCode { slotAlreadyBooked, unknown }
+
+class BookingConfirmFailure extends BookingState {
+  const BookingConfirmFailure({required this.code});
+
+  final BookingFailureCode code;
 }

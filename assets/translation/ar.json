@@ -155,6 +155,8 @@
   "thankYou": "شكراً لك !",
   "appointmentSuccessful": "تم حجز موعدك بنجاح",
   "appointmentBookedWith(name, date, time)": "لقد قمت بحجز موعد مع $name في $date، الساعة $time",
+  "bookingStatusUpcoming": "الحالة: قادم",
+  "slotAlreadyBooked": "تم حجز هذا الموعد للتو من شخص آخر. يرجى اختيار موعد آخر.",
   "done": "تم",
   "editYourAppointment": "تعديل الموعد",
   "userNotFoundError": "هذا البريد الإلكتروني غير مسجل لدينا، يرجى التأكد من صحة البريد أو إنشاء حساب جديد.",

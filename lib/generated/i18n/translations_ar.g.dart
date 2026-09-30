@@ -194,6 +194,8 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get thankYou => 'شكراً لك !';
 	@override String get appointmentSuccessful => 'تم حجز موعدك بنجاح';
 	@override String appointmentBookedWith({required Object name, required Object date, required Object time}) => 'لقد قمت بحجز موعد مع ${name} في ${date}، الساعة ${time}';
+	@override String get bookingStatusUpcoming => 'الحالة: قادم';
+	@override String get slotAlreadyBooked => 'تم حجز هذا الموعد للتو من شخص آخر. يرجى اختيار موعد آخر.';
 	@override String get done => 'تم';
 	@override String get editYourAppointment => 'تعديل الموعد';
 	@override String get userNotFoundError => 'هذا البريد الإلكتروني غير مسجل لدينا، يرجى التأكد من صحة البريد أو إنشاء حساب جديد.';
@@ -443,6 +445,8 @@ extension on TranslationsAr {
 			'thankYou' => 'شكراً لك !',
 			'appointmentSuccessful' => 'تم حجز موعدك بنجاح',
 			'appointmentBookedWith' => ({required Object name, required Object date, required Object time}) => 'لقد قمت بحجز موعد مع ${name} في ${date}، الساعة ${time}',
+			'bookingStatusUpcoming' => 'الحالة: قادم',
+			'slotAlreadyBooked' => 'تم حجز هذا الموعد للتو من شخص آخر. يرجى اختيار موعد آخر.',
 			'done' => 'تم',
 			'editYourAppointment' => 'تعديل الموعد',
 			'userNotFoundError' => 'هذا البريد الإلكتروني غير مسجل لدينا، يرجى التأكد من صحة البريد أو إنشاء حساب جديد.',

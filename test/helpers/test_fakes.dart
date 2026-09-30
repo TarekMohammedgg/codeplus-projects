@@ -12,6 +12,7 @@ import 'package:doctor_hunt/apps/features/common/auth/data/repositories/auth_rep
 import 'package:doctor_hunt/apps/features/common/auth/data/service/auth_service.dart';
 import 'package:doctor_hunt/apps/core/models/clinic_model.dart';
 import 'package:doctor_hunt/apps/core/models/review_model.dart';
+import 'package:doctor_hunt/apps/features/patient/doctor_booking/data/models/booking_draft.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_details/data/repositories/doctor_details_repository.dart';
 import 'package:doctor_hunt/apps/features/patient/favorites/data/repositories/favorites_repository.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/data/repositories/doctor_repository.dart';
@@ -268,13 +269,32 @@ class FakeProfileRepository implements ProfileRepository {
 }
 
 class FakeBookingRepository implements BookingRepository {
-  FakeBookingRepository({this.bookedStarts = const {}});
+  FakeBookingRepository({this.booked = const [], this.bookError});
 
-  final Set<DateTime> bookedStarts;
+  /// Booked slot starts; only those on the requested day are returned.
+  final List<DateTime> booked;
+
+  /// Thrown by [book], e.g. `SlotAlreadyBookedException()`.
+  Object? bookError;
+  final bookedDrafts = <BookingDraft>[];
+  final clinic = StreamController<ClinicModel?>.broadcast();
 
   @override
   Future<Set<DateTime>> fetchBookedStarts(String doctorId, DateTime day) async {
-    return bookedStarts;
+    return booked
+        .where(
+          (b) => b.year == day.year && b.month == day.month && b.day == day.day,
+        )
+        .toSet();
+  }
+
+  @override
+  Stream<ClinicModel?> watchClinic() => clinic.stream;
+
+  @override
+  Future<void> book(BookingDraft draft) async {
+    if (bookError != null) throw bookError!;
+    bookedDrafts.add(draft);
   }
 }
 

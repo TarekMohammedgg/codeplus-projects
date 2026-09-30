@@ -506,6 +506,12 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'You booked an appointment with $name on $date, at $time'
 	String appointmentBookedWith({required Object name, required Object date, required Object time}) => 'You booked an appointment with ${name} on ${date}, at ${time}';
 
+	/// en: 'Status: Upcoming'
+	String get bookingStatusUpcoming => 'Status: Upcoming';
+
+	/// en: 'This time was just booked by someone else. Please choose another slot.'
+	String get slotAlreadyBooked => 'This time was just booked by someone else. Please choose another slot.';
+
 	/// en: 'Done'
 	String get done => 'Done';
 
@@ -922,6 +928,8 @@ extension on Translations {
 			'thankYou' => 'Thank You !',
 			'appointmentSuccessful' => 'Your Appointment Successful',
 			'appointmentBookedWith' => ({required Object name, required Object date, required Object time}) => 'You booked an appointment with ${name} on ${date}, at ${time}',
+			'bookingStatusUpcoming' => 'Status: Upcoming',
+			'slotAlreadyBooked' => 'This time was just booked by someone else. Please choose another slot.',
 			'done' => 'Done',
 			'editYourAppointment' => 'Edit your appointment',
 			'userNotFoundError' => 'No user found with this email. Please check the email or create a new account.',

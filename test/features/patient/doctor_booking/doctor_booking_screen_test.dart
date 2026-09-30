@@ -16,23 +16,7 @@ import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/wi
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
 import '../../../helpers/test_app.dart';
-
-class _FakeBookingRepository implements BookingRepository {
-  _FakeBookingRepository({this.booked = const []});
-  final List<DateTime> booked;
-
-  @override
-  Future<Set<DateTime>> fetchBookedStarts(
-    String doctorId,
-    DateTime day,
-  ) async {
-    return booked
-        .where(
-          (b) => b.year == day.year && b.month == day.month && b.day == day.day,
-        )
-        .toSet();
-  }
-}
+import '../../../helpers/test_fakes.dart';
 
 void main() {
   final availability = DoctorAvailability(
@@ -60,7 +44,7 @@ void main() {
     ensureTestServiceLocator();
     getIt.allowReassignment = true;
     getIt.registerLazySingleton<BookingRepository>(
-      () => _FakeBookingRepository(),
+      () => FakeBookingRepository(),
     );
     getIt.allowReassignment = false;
   });
@@ -202,7 +186,7 @@ void main() {
 
     getIt.allowReassignment = true;
     getIt.registerLazySingleton<BookingRepository>(
-      () => _FakeBookingRepository(booked: allSlotsToday),
+      () => FakeBookingRepository(booked: allSlotsToday),
     );
     getIt.allowReassignment = false;
 

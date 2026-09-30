@@ -24,6 +24,7 @@ import 'package:doctor_hunt/apps/features/common/role_selection/presentation/scr
 import 'package:doctor_hunt/apps/features/common/shell/presentation/screens/admin_shell.dart';
 import 'package:doctor_hunt/apps/features/common/shell/presentation/screens/patient_shell.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_booking/data/models/booking_draft.dart';
+import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/controller/cubit/booking_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/screens/booking_review_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/screens/doctor_booking_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_details/presentation/controller/cubit/doctor_details_cubit.dart';
@@ -349,12 +350,16 @@ class BookingReviewRoute extends GoRouteData with $BookingReviewRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    final draft = $extra ??
+    final draft =
+        $extra ??
         BookingDraft(
           doctor: DoctorModel.placeholder(),
           startAt: DateTime.now(),
         );
-    return BookingReviewScreen(draft: draft);
+    return BlocProvider<BookingCubit>(
+      create: (_) => getIt<BookingCubit>(),
+      child: BookingReviewScreen(draft: draft),
+    );
   }
 }
 

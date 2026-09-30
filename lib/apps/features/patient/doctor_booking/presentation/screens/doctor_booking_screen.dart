@@ -199,12 +199,20 @@ class _BookingLoadedBody extends StatelessWidget {
               height: 52,
               onPressed: state.selectedSlot == null
                   ? null
-                  : () {
+                  : () async {
                       final draft = BookingDraft(
                         doctor: state.doctor,
                         startAt: state.selectedSlot!,
                       );
-                      BookingReviewRoute(draft).push(context);
+                      final slotTaken = await BookingReviewRoute(
+                        draft,
+                      ).push<bool>(context);
+                      // Someone booked it meanwhile: refresh this day's slots.
+                      if (slotTaken == true && context.mounted) {
+                        context.read<BookingCubit>().selectDate(
+                          state.selectedDate,
+                        );
+                      }
                     },
             ),
           ),

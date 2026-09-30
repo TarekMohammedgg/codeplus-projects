@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
+import 'package:doctor_hunt/apps/core/models/clinic_model.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_availability.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/core/utils/slot_generator.dart';
+import 'package:doctor_hunt/apps/features/patient/doctor_booking/data/models/booking_draft.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_booking/data/repositories/booking_repository.dart';
 
 import 'booking_state.dart';
 
 class BookingCubit extends Cubit<BookingState> {
-  BookingCubit({
-    required this.repository,
-    this.clock,
-  }) : super(const BookingInitial());
+  BookingCubit({required this.repository, this.clock})
+    : super(const BookingInitial());
 
   final BookingRepository repository;
   final DateTime Function()? clock;
@@ -111,6 +112,30 @@ class BookingCubit extends Cubit<BookingState> {
           isLoadingSlots: false,
         ),
       );
+    }
+  }
+
+  /// Clinic location for the review step (live from `clinic/settings`).
+  Stream<ClinicModel?> watchClinic() => repository.watchClinic();
+
+  /// Step 4: books [draft] in one transaction (appointment + slot lock).
+  Future<void> confirm(BookingDraft draft) async {
+    if (state is BookingSubmitting) return;
+
+    emit(const BookingSubmitting());
+    try {
+      await repository.book(draft);
+      if (isClosed) return;
+      emit(BookingConfirmed(draft: draft));
+    } on SlotAlreadyBookedException {
+      if (isClosed) return;
+      emit(
+        const BookingConfirmFailure(code: BookingFailureCode.slotAlreadyBooked),
+      );
+    } catch (error, stackTrace) {
+      if (isClosed) return;
+      addError(error, stackTrace);
+      emit(const BookingConfirmFailure(code: BookingFailureCode.unknown));
     }
   }
 

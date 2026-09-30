@@ -127,8 +127,12 @@ void setupServiceLocator() {
     ),
   );
   getIt.registerLazySingleton<BookingRepository>(
-    () =>
-        BookingRepositoryImpl(appointmentService: getIt<AppointmentService>()),
+    () => BookingRepositoryImpl(
+      appointmentService: getIt<AppointmentService>(),
+      clinicService: getIt<ClinicService>(),
+      authService: getIt<AuthService>(),
+      profileService: getIt<ProfileService>(),
+    ),
   );
   getIt.registerLazySingleton<DoctorDetailsRepository>(
     () => FirebaseDoctorDetailsRepository(
