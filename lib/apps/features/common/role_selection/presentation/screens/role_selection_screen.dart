@@ -97,7 +97,7 @@ class RoleSelectionScreenState extends State<RoleSelectionScreen> {
     required VoidCallback onTap,
   }) {
     return Material(
-      color: Colors.transparent,
+      color: AppColors.transparent,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(18),
@@ -183,14 +183,14 @@ class RoleSelectionScreenState extends State<RoleSelectionScreen> {
                 Container(
                   width: 22,
                   height: 22,
-                  margin: const EdgeInsets.only(left: 8, top: 2),
+                  margin: const EdgeInsetsDirectional.only(start: 8, top: 2),
                   decoration: const BoxDecoration(
                     color: AppColors.primary,
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
                     Icons.check_rounded,
-                    color: Colors.white,
+                    color: AppColors.white,
                     size: 14,
                   ),
                 )

@@ -292,7 +292,7 @@ class _LoginFooter extends StatelessWidget {
                     }
                   },
             foregroundColor: AppColors.primary,
-            padding: const EdgeInsets.only(left: 6),
+            padding: const EdgeInsetsDirectional.only(start: 6),
             minimumSize: Size.zero,
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             textStyle: context.semiBold14Primary,

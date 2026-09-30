@@ -117,16 +117,16 @@ class LoginScreenState extends State<LoginScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  if (isAdmin) ...[
-                    Align(
-                      alignment: AlignmentDirectional.centerStart,
-                      child: AuthBackButton(
-                        circular: true,
-                        onPressed: () => const RoleSelectionRoute().go(context),
-                      ),
+                  // Login is reached with `go`, so this is the only way
+                  // back to Choose Role for both roles.
+                  Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: AuthBackButton(
+                      circular: true,
+                      onPressed: () => const RoleSelectionRoute().go(context),
                     ),
-                    16.verticalSpace,
-                  ],
+                  ),
+                  16.verticalSpace,
                   28.verticalSpace,
                   AuthHeader(
                     title: isAdmin ? tr.adminLoginTitle : tr.welcomeBack,
@@ -211,7 +211,7 @@ class _ForgotPasswordButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Align(
-      alignment: Alignment.centerRight,
+      alignment: AlignmentDirectional.centerEnd,
       //CR use primary widget (any reuse widget)
       // Solved
       child: AppTextButton(
@@ -249,7 +249,7 @@ class _SignUpFooter extends StatelessWidget {
                 ? null
                 : () => const SignupRoute().push(context),
             foregroundColor: AppColors.primary,
-            padding: const EdgeInsets.only(left: 4),
+            padding: const EdgeInsetsDirectional.only(start: 4),
             minimumSize: Size.zero,
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             textStyle: context.semiBold14Primary,

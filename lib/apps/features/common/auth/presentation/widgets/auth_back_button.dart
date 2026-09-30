@@ -33,7 +33,7 @@ class AuthBackButton extends StatelessWidget {
     );
 
     if (!circular) {
-      return Align(alignment: Alignment.centerLeft, child: button);
+      return Align(alignment: AlignmentDirectional.centerStart, child: button);
     }
 
     return Container(

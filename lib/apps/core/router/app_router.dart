@@ -11,9 +11,8 @@ import 'package:doctor_hunt/apps/features/common/auth/data/repositories/auth_rep
 import 'routes.dart';
 
 class AuthRefreshListenable extends ChangeNotifier {
-  AuthRefreshListenable([FirebaseAuth? auth]) {
-    final firebaseAuth = auth ?? getIt<FirebaseAuth>();
-    _subscription = firebaseAuth.authStateChanges().listen((_) {
+  AuthRefreshListenable(FirebaseAuth auth) {
+    _subscription = auth.authStateChanges().listen((_) {
       notifyListeners();
     });
   }
@@ -30,9 +29,9 @@ class AuthRefreshListenable extends ChangeNotifier {
 Future<String?> appRouterRedirect(
   BuildContext context,
   GoRouterState state, {
-  AuthRepository? authRepository,
+  required AuthRepository authRepository,
 }) async {
-  final authRepo = authRepository ?? getIt<AuthRepository>();
+  final authRepo = authRepository;
   final user = authRepo.currentUser;
   final loc = state.matchedLocation;
 
@@ -66,7 +65,10 @@ Future<String?> appRouterRedirect(
 abstract final class AppRouter {
   static GoRouter? _router;
 
-  static GoRouter get router => _router ??= createRouter();
+  static GoRouter get router => _router ??= createRouter(
+    authRepository: getIt<AuthRepository>(),
+    firebaseAuth: getIt<FirebaseAuth>(),
+  );
 
   @visibleForTesting
   static void resetForTesting() {
@@ -75,8 +77,8 @@ abstract final class AppRouter {
   }
 
   static GoRouter createRouter({
-    AuthRepository? authRepository,
-    FirebaseAuth? firebaseAuth,
+    required AuthRepository authRepository,
+    required FirebaseAuth firebaseAuth,
     String? initialLocation,
     List<RouteBase>? routes,
   }) {
