@@ -22,6 +22,7 @@ class DoctorFilterChips extends StatelessWidget {
   final String? selectedSpecialtyId;
   final bool favoritesOnly;
   final ValueChanged<String?> onSpecialtySelected;
+
   /// Null hides the Favorites chip.
   final VoidCallback? onFavoritesToggled;
 

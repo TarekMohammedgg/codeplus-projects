@@ -36,9 +36,7 @@ void main() {
       });
 
       await tester.pumpWidget(
-        buildTestApp(
-          EditProfileScreen(profile: testProfile),
-        ),
+        buildTestApp(EditProfileScreen(profile: testProfile)),
       );
       await tester.pumpAndSettle();
 
@@ -68,9 +66,7 @@ void main() {
     });
 
     await tester.pumpWidget(
-      buildTestApp(
-        EditProfileScreen(profile: testProfile),
-      ),
+      buildTestApp(EditProfileScreen(profile: testProfile)),
     );
     await tester.pumpAndSettle();
 
@@ -100,10 +96,7 @@ void main() {
 
       await tester.pumpWidget(
         buildTestApp(
-          EditProfileScreen(
-            profile: testProfile,
-            profileRepository: fakeRepo,
-          ),
+          EditProfileScreen(profile: testProfile, profileRepository: fakeRepo),
         ),
       );
       await tester.pumpAndSettle();
@@ -152,10 +145,7 @@ void main() {
 
     await tester.pumpWidget(
       buildTestApp(
-        EditProfileScreen(
-          profile: testProfile,
-          profileRepository: fakeRepo,
-        ),
+        EditProfileScreen(profile: testProfile, profileRepository: fakeRepo),
       ),
     );
     await tester.pumpAndSettle();

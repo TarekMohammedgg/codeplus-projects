@@ -21,6 +21,7 @@ List<RouteBase> get $appRoutes => [
   $bookingReviewRoute,
   $editProfileRoute,
   $patientSettingsRoute,
+  $changePasswordRoute,
 ];
 
 RouteBase get $onboardingRoute => GoRouteData.$route(
@@ -629,6 +630,33 @@ mixin $PatientSettingsRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location('/settings');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $changePasswordRoute => GoRouteData.$route(
+  path: '/settings/change-password',
+  hasOverriddenOnExit: false,
+  factory: $ChangePasswordRoute._fromState,
+);
+
+mixin $ChangePasswordRoute on GoRouteData {
+  static ChangePasswordRoute _fromState(GoRouterState state) =>
+      const ChangePasswordRoute();
+
+  @override
+  String get location => GoRouteData.$location('/settings/change-password');
 
   @override
   void go(BuildContext context) => context.go(location);

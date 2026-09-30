@@ -22,8 +22,29 @@ import 'package:doctor_hunt/apps/features/patient/doctor_booking/data/repositori
 import 'package:doctor_hunt/apps/features/patient/profile/data/models/user_profile_model.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/data/repositories/profile_repository.dart';
 
+class FakeUser extends Fake implements User {
+  FakeUser({
+    this.uid = 'test_uid',
+    this.email = 'test@example.com',
+    this.displayName = 'Test User',
+    this.providerData = const [],
+  });
+
+  @override
+  final String uid;
+
+  @override
+  final String? email;
+
+  @override
+  final String? displayName;
+
+  @override
+  final List<UserInfo> providerData;
+}
+
 class FakeFirebaseAuth extends Fake implements FirebaseAuth {
-  FakeFirebaseAuth({this.mockUser});
+  FakeFirebaseAuth({User? mockUser, User? user}) : mockUser = mockUser ?? user;
 
   User? mockUser;
   final StreamController<User?> _controller =

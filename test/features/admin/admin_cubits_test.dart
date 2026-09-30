@@ -35,18 +35,21 @@ void main() {
     await streamController.close();
   });
 
-  test('AdminDoctorsCubit.setActive deactivates through the repository', () async {
-    // arrange
-    final repository = _FakeAdminDoctorsRepository(const Stream.empty());
-    final cubit = AdminDoctorsCubit(repository: repository);
+  test(
+    'AdminDoctorsCubit.setActive deactivates through the repository',
+    () async {
+      // arrange
+      final repository = _FakeAdminDoctorsRepository(const Stream.empty());
+      final cubit = AdminDoctorsCubit(repository: repository);
 
-    // act
-    await cubit.setActive('doctor-1', false);
+      // act
+      await cubit.setActive('doctor-1', false);
 
-    // assert
-    expect(repository.activeChanges, [('doctor-1', false)]);
-    await cubit.close();
-  });
+      // assert
+      expect(repository.activeChanges, [('doctor-1', false)]);
+      await cubit.close();
+    },
+  );
 
   test('CreateDoctorCubit loads specialties through its repository', () async {
     final cubit = CreateDoctorCubit(

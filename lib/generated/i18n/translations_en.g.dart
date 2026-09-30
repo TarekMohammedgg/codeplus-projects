@@ -398,6 +398,36 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'Language'
 	String get language => 'Language';
 
+	/// en: 'Change Password'
+	String get changePassword => 'Change Password';
+
+	/// en: 'Notifications'
+	String get notifications => 'Notifications';
+
+	/// en: 'Account Settings'
+	String get accountSettings => 'Account Settings';
+
+	/// en: 'More Options'
+	String get moreOptions => 'More Options';
+
+	/// en: 'Current Password'
+	String get currentPassword => 'Current Password';
+
+	/// en: 'New Password'
+	String get newPassword => 'New Password';
+
+	/// en: 'Confirm New Password'
+	String get confirmNewPassword => 'Confirm New Password';
+
+	/// en: 'Password changed successfully'
+	String get passwordChangedSuccess => 'Password changed successfully';
+
+	/// en: 'Passwords do not match'
+	String get passwordsDoNotMatch => 'Passwords do not match';
+
+	/// en: 'Wrong current password. Please try again.'
+	String get wrongCurrentPassword => 'Wrong current password. Please try again.';
+
 	/// en: 'Edit Profile'
 	String get editProfile => 'Edit Profile';
 
@@ -892,6 +922,16 @@ extension on Translations {
 			'addDetails' => 'Add Details',
 			'settings' => 'Settings',
 			'language' => 'Language',
+			'changePassword' => 'Change Password',
+			'notifications' => 'Notifications',
+			'accountSettings' => 'Account Settings',
+			'moreOptions' => 'More Options',
+			'currentPassword' => 'Current Password',
+			'newPassword' => 'New Password',
+			'confirmNewPassword' => 'Confirm New Password',
+			'passwordChangedSuccess' => 'Password changed successfully',
+			'passwordsDoNotMatch' => 'Passwords do not match',
+			'wrongCurrentPassword' => 'Wrong current password. Please try again.',
 			'editProfile' => 'Edit Profile',
 			'save' => 'Save',
 			'male' => 'Male',

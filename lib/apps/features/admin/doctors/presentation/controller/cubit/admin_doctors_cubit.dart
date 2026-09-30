@@ -27,9 +27,8 @@ class AdminDoctorsCubit extends Cubit<AdminDoctorsState> {
     }
     if (isClosed) return;
     _doctorsSubscription = repository.streamDoctors().listen(
-      (doctors) => emit(
-        AdminDoctorsSuccess(doctors: doctors, specialties: specialties),
-      ),
+      (doctors) =>
+          emit(AdminDoctorsSuccess(doctors: doctors, specialties: specialties)),
       onError: (Object error, StackTrace stackTrace) {
         addError(error, stackTrace);
         emit(AdminDoctorsFailure(errorMessage: error.toString()));

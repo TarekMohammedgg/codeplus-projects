@@ -198,10 +198,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         elevation: 0,
         leading: AppIconButton.back(onTap: () => context.pop()),
         centerTitle: true,
-        title: Text(
-          context.tr.editProfile,
-          style: context.bold18TextMain,
-        ),
+        title: Text(context.tr.editProfile, style: context.bold18TextMain),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
