@@ -11,17 +11,11 @@ import '../../../helpers/test_fakes.dart';
 
 List<DoctorModel> testFindDoctors() {
   return const [
-    DoctorModel(
-      id: 'doc_1',
-      name: 'Dr. Shruti Kedia',
-      specialty: 'Dentist',
-      isFavorite: true,
-    ),
+    DoctorModel(id: 'doc_1', name: 'Dr. Shruti Kedia', specialty: 'Dentist'),
     DoctorModel(
       id: 'doc_5',
       name: 'Dr. Fillerup Grab',
       specialty: 'Medicine Specialist',
-      isFavorite: false,
     ),
   ];
 }
@@ -77,7 +71,6 @@ void main() {
     );
     await tester.pump();
 
-    expect(find.byIcon(Icons.favorite_rounded), findsWidgets);
-    expect(find.byIcon(Icons.favorite_border_rounded), findsWidgets);
+    expect(find.byIcon(Icons.favorite_border_rounded), findsNWidgets(2));
   });
 }

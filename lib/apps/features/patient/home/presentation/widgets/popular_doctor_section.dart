@@ -125,13 +125,11 @@ class PopularDoctorCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    child: Icon(
-                      doctor.isFavorite
-                          ? Icons.favorite_rounded
-                          : Icons.favorite_border_rounded,
-                      color: doctor.isFavorite
-                          ? AppColors.error
-                          : AppColors.disabled,
+                    // Filled state comes back with the per-patient
+                    // FavoritesCubit ([Patient] Favorites card).
+                    child: const Icon(
+                      Icons.favorite_border_rounded,
+                      color: AppColors.disabled,
                       size: 16,
                     ),
                   ),

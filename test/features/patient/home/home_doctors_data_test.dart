@@ -10,21 +10,23 @@ void main() {
     LocaleSettings.setLocaleSync(AppLocale.en);
   });
 
-  test('DoctorModel list filters inactive doctors and keeps section order', () {
+  test('DoctorModel list filters inactive doctors', () {
+    // arrange
     final rawDoctors = [
-      _doctor(id: 'second', popularOrder: 2),
-      _doctor(id: 'inactive', popularOrder: 1, isActive: false),
-      _doctor(id: 'first', popularOrder: 1),
+      _doctor(id: 'first'),
+      _doctor(id: 'inactive', isActive: false),
+      _doctor(id: 'second'),
     ];
 
-    final activePopular = [
-      ...rawDoctors.where((d) => d.isActive && d.isPopular),
-    ]..sort((a, b) => a.popularOrder.compareTo(b.popularOrder));
+    // act
+    final active = rawDoctors.where((d) => d.isActive);
 
-    expect(activePopular.map((doctor) => doctor.id), ['first', 'second']);
+    // assert
+    expect(active.map((doctor) => doctor.id), ['first', 'second']);
   });
 
   test('DoctorModel.fromFirestore parses and maps fields properly', () {
+    // act
     final doctor = DoctorModel.fromFirestore('home_doctor', {
       'name': 'Dr. Home',
       'specialtyKey': 'dentist',
@@ -32,18 +34,36 @@ void main() {
       'accentColorHex': '#2B7CEE',
       'rating': 4.9,
       'reviewsCount': 12,
-      'hourlyRate': 30,
-      'isFavorite': true,
-      'isPopular': true,
-      'popularOrder': 1,
+      'consultationFee': 30,
+      'availability': {
+        'workingDays': [1, 3],
+        'startMinutes': 540,
+        'endMinutes': 1020,
+        'slotMinutes': 30,
+      },
     }, specialtyNameEn: AppLocale.en.buildSync().dentist);
 
+    // assert
     expect(doctor.specialty, AppLocale.en.buildSync().dentist);
-    expect(doctor.isFavorite, isTrue);
-    expect(doctor.services, isEmpty);
-    expect(doctor.location, isNull);
-    expect(doctor.nextAvailableTime, isEmpty);
-    expect(doctor.experienceYears, 5);
+    expect(doctor.rating, 4.9);
+    expect(doctor.reviewsCount, 12);
+    expect(doctor.consultationFee, 30);
+    expect(doctor.availability?.workingDays, [1, 3]);
+    expect(doctor.availability?.slotMinutes, 30);
+  });
+
+  test('DoctorModel defaults to no rating, no fee and no availability', () {
+    // act
+    final doctor = DoctorModel.fromFirestore('new_doctor', {
+      'name': 'Dr. New',
+      'specialtyKey': 'dentist',
+    });
+
+    // assert
+    expect(doctor.rating, 0);
+    expect(doctor.reviewsCount, 0);
+    expect(doctor.consultationFee, 0);
+    expect(doctor.availability, isNull);
   });
 
   test('DoctorModel displays the current locale name after data is loaded', () {
@@ -275,17 +295,11 @@ void main() {
   });
 }
 
-DoctorModel _doctor({
-  required String id,
-  required int popularOrder,
-  bool isActive = true,
-}) {
+DoctorModel _doctor({required String id, bool isActive = true}) {
   return DoctorModel.fromFirestore(id, {
     'name': 'Dr. $id',
     'specialtyKey': 'dentist',
     'imageUrl': 'https://res.cloudinary.com/example/$id',
     'isActive': isActive,
-    'isPopular': true,
-    'popularOrder': popularOrder,
   });
 }

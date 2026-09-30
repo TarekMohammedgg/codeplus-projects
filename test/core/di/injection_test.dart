@@ -3,13 +3,16 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:doctor_hunt/apps/core/di/injection.dart';
+import 'package:doctor_hunt/apps/core/services/appointment_service.dart';
+import 'package:doctor_hunt/apps/core/services/clinic_service.dart';
 import 'package:doctor_hunt/apps/core/services/doctor_service.dart';
+import 'package:doctor_hunt/apps/core/services/review_service.dart';
 import 'package:doctor_hunt/apps/core/services/specialty_service.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/data/repositories/admin_doctors_repository.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/data/service/admin_doctor_service.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/presentation/controller/cubit/admin_doctors_cubit.dart';
 import 'package:doctor_hunt/apps/features/admin/create_doctor/data/repositories/create_doctor_repository.dart';
-import 'package:doctor_hunt/apps/features/admin/create_doctor/data/service/cloudinary_upload_service.dart';
+import 'package:doctor_hunt/apps/core/services/cloudinary_upload_service.dart';
 import 'package:doctor_hunt/apps/features/admin/create_doctor/presentation/controller/cubit/create_doctor_cubit.dart';
 import 'package:doctor_hunt/apps/features/common/auth/data/repositories/auth_repository.dart';
 import 'package:doctor_hunt/apps/features/common/auth/data/service/auth_service.dart';
@@ -49,6 +52,9 @@ void main() {
       expect(getIt.isRegistered<SpecialtyService>(), isTrue);
       expect(getIt.isRegistered<AdminDoctorService>(), isTrue);
       expect(getIt.isRegistered<CloudinaryUploadService>(), isTrue);
+      expect(getIt.isRegistered<ClinicService>(), isTrue);
+      expect(getIt.isRegistered<AppointmentService>(), isTrue);
+      expect(getIt.isRegistered<ReviewService>(), isTrue);
     });
 
     test('registers all repositories', () {

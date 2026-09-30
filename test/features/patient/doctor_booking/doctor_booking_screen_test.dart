@@ -15,8 +15,7 @@ void main() {
     name: 'Dr. Test Specialist',
     specialty: 'Cardiologist',
     rating: 4.8,
-    hourlyRate: 35.0,
-    isFavorite: true,
+    consultationFee: 35.0,
   );
 
   testWidgets(
@@ -37,7 +36,7 @@ void main() {
       expect(find.text(tr.selectTime), findsOneWidget);
       expect(find.text('Dr. Test Specialist'), findsOneWidget);
       expect(find.text('Cardiologist'), findsOneWidget);
-      expect(find.text('\$35.00/hour'), findsOneWidget);
+      expect(find.text('\$35.00'), findsOneWidget);
       expect(find.byType(DateSelectorList), findsOneWidget);
       expect(find.text(tr.dateOptionToday), findsWidgets);
       expect(find.byType(NoSlotsAvailableSection), findsOneWidget);

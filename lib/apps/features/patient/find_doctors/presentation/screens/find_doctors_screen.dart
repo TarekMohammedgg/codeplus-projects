@@ -10,6 +10,7 @@ import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_search_bar.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_avatar_placeholder.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_image.dart';
+import 'package:doctor_hunt/apps/core/widgets/doctor_profile_card.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/controller/cubit/find_doctors_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/controller/cubit/find_doctors_state.dart';
@@ -201,15 +202,11 @@ class FindDoctorCard extends StatelessWidget {
                               ),
                             ),
                           ),
-                          Icon(
-                            doctor.isFavorite
-                                ? Icons.favorite_rounded
-                                : Icons.favorite_border_rounded,
-                            color: doctor.isFavorite
-                                //CR hardcode color
-                                // Solved
-                                ? AppColors.favorite
-                                : AppColors.disabled,
+                          // Filled state comes back with the per-patient
+                          // FavoritesCubit ([Patient] Favorites card).
+                          const Icon(
+                            Icons.favorite_border_rounded,
+                            color: AppColors.disabled,
                             size: 20,
                           ),
                         ],
@@ -219,35 +216,13 @@ class FindDoctorCard extends StatelessWidget {
                         doctor.specialty,
                         style: context.regular14Primary.copyWith(fontSize: 13),
                       ),
-                      4.verticalSpace,
-                      Text(
-                        '${doctor.experienceYears} ${tr.yearsExperienceSuffix}',
-                        style: context.regular12TextSecondary.copyWith(
-                          color: AppColors.textSecondary.withValues(alpha: 0.8),
-                        ),
-                      ),
                       8.verticalSpace,
                       Row(
                         children: [
-                          const Icon(
-                            Icons.circle,
-                            size: 8,
-                            color: AppColors.primary,
-                          ),
+                          DoctorStarRating(rating: doctor.rating),
                           5.horizontalSpace,
                           Text(
-                            '${doctor.ratingPercent}%',
-                            style: context.medium11TextSecondary,
-                          ),
-                          14.horizontalSpace,
-                          const Icon(
-                            Icons.circle,
-                            size: 8,
-                            color: AppColors.primary,
-                          ),
-                          5.horizontalSpace,
-                          Text(
-                            '${doctor.patientStoriesCount} ${tr.patientStories}',
+                            '${doctor.reviewsCount} ${tr.reviews}',
                             style: context.medium11TextSecondary,
                           ),
                         ],
@@ -262,19 +237,9 @@ class FindDoctorCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      tr.nextAvailable,
-                      style: context.semiBold14Primary.copyWith(fontSize: 13),
-                    ),
-                    3.verticalSpace,
-                    Text(
-                      doctor.nextAvailableTime,
-                      style: context.semiBold12TextMain,
-                    ),
-                  ],
+                Text(
+                  '\$${doctor.consultationFee.toStringAsFixed(2)}',
+                  style: context.bold16Primary.copyWith(fontSize: 15),
                 ),
                 AppPrimaryButton(
                   label: tr.bookNow,

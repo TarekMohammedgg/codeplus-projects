@@ -2,13 +2,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
 
+import 'package:doctor_hunt/apps/core/services/appointment_service.dart';
+import 'package:doctor_hunt/apps/core/services/clinic_service.dart';
 import 'package:doctor_hunt/apps/core/services/doctor_service.dart';
+import 'package:doctor_hunt/apps/core/services/review_service.dart';
 import 'package:doctor_hunt/apps/core/services/specialty_service.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/data/repositories/admin_doctors_repository.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/data/service/admin_doctor_service.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/presentation/controller/cubit/admin_doctors_cubit.dart';
 import 'package:doctor_hunt/apps/features/admin/create_doctor/data/repositories/create_doctor_repository.dart';
-import 'package:doctor_hunt/apps/features/admin/create_doctor/data/service/cloudinary_upload_service.dart';
+import 'package:doctor_hunt/apps/core/services/cloudinary_upload_service.dart';
 import 'package:doctor_hunt/apps/features/admin/create_doctor/presentation/controller/cubit/create_doctor_cubit.dart';
 import 'package:doctor_hunt/apps/features/common/auth/data/repositories/auth_repository.dart';
 import 'package:doctor_hunt/apps/features/common/auth/data/service/auth_service.dart';
@@ -67,6 +70,15 @@ void setupServiceLocator() {
   );
   getIt.registerLazySingleton<CloudinaryUploadService>(
     () => CloudinaryUploadService(),
+  );
+  getIt.registerLazySingleton<ClinicService>(
+    () => ClinicService(firestore: getIt<FirebaseFirestore>()),
+  );
+  getIt.registerLazySingleton<AppointmentService>(
+    () => AppointmentService(firestore: getIt<FirebaseFirestore>()),
+  );
+  getIt.registerLazySingleton<ReviewService>(
+    () => ReviewService(firestore: getIt<FirebaseFirestore>()),
   );
 
   // Repositories

@@ -74,15 +74,11 @@ class DoctorProfileCard extends StatelessWidget {
                           onTap: onFavoriteToggle,
                           child: Padding(
                             padding: const EdgeInsets.only(left: 4),
-                            child: Icon(
-                              doctor.isFavorite
-                                  ? Icons.favorite_rounded
-                                  : Icons.favorite_border_rounded,
-                              color: doctor.isFavorite
-                                  //CR hardcode color
-                                  // Solved
-                                  ? AppColors.favorite
-                                  : AppColors.disabled,
+                            // Filled state comes back with the per-patient
+                            // FavoritesCubit ([Patient] Favorites card).
+                            child: const Icon(
+                              Icons.favorite_border_rounded,
+                              color: AppColors.disabled,
                               size: 22,
                             ),
                           ),
@@ -101,7 +97,7 @@ class DoctorProfileCard extends StatelessWidget {
                     DoctorStarRating(rating: doctor.rating),
                     8.verticalSpace,
                     Text(
-                      '\$${doctor.hourlyRate.toStringAsFixed(2)}${tr.perHour}',
+                      '\$${doctor.consultationFee.toStringAsFixed(2)}',
                       style: context.bold16Primary.copyWith(fontSize: 15),
                     ),
                   ],

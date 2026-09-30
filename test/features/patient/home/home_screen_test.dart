@@ -296,8 +296,7 @@ Widget testHomeScreen({
   VoidCallback? onSeeAllDoctors,
 }) {
   final doctors = testHomeDoctors();
-  final popularDoctors = doctors.where((d) => d.isPopular).toList()
-    ..sort((a, b) => a.popularOrder.compareTo(b.popularOrder));
+  final popularDoctors = doctors;
 
   final searchController = TextEditingController();
 

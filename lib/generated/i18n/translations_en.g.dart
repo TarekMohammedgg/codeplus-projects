@@ -272,9 +272,6 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'General Surgeon'
 	String get generalSurgeon => 'General Surgeon';
 
-	/// en: '/hour'
-	String get perHour => '/hour';
-
 	/// en: 'Reviews'
 	String get reviews => 'Reviews';
 
@@ -286,15 +283,6 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// en: 'Dentist'
 	String get dentist => 'Dentist';
-
-	/// en: 'Years experience'
-	String get yearsExperienceSuffix => 'Years experience';
-
-	/// en: 'Patient Stories'
-	String get patientStories => 'Patient Stories';
-
-	/// en: 'Next Available'
-	String get nextAvailable => 'Next Available';
 
 	/// en: 'Book Now'
 	String get bookNow => 'Book Now';
@@ -311,20 +299,8 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'tomorrow'
 	String get tomorrow => 'tomorrow';
 
-	/// en: 'Patient care should be the number one priority.'
-	String get serviceOne => 'Patient care should be the number one priority.';
-
-	/// en: 'If you run your practice you know how frustrating.'
-	String get serviceTwo => 'If you run your practice you know how frustrating.';
-
-	/// en: 'That's why some of appointment reminder system.'
-	String get serviceThree => 'That\'s why some of appointment reminder system.';
-
 	/// en: 'Doctor Details'
 	String get doctorDetails => 'Doctor Details';
-
-	/// en: 'Services'
-	String get services => 'Services';
 
 	/// en: 'Profile'
 	String get profile => 'Profile';
@@ -748,24 +724,16 @@ extension on Translations {
 			'heartSpecialist' => 'Heart Specialist',
 			'eyeSpecialist' => 'Eye Specialist',
 			'generalSurgeon' => 'General Surgeon',
-			'perHour' => '/hour',
 			'reviews' => 'Reviews',
 			'findDoctors' => 'Find Doctors',
 			'searchDentistHint' => 'Dentist',
 			'dentist' => 'Dentist',
-			'yearsExperienceSuffix' => 'Years experience',
-			'patientStories' => 'Patient Stories',
-			'nextAvailable' => 'Next Available',
 			'bookNow' => 'Book Now',
 			'noDoctorsFound' => 'No doctors found',
 			'bookingComingSoon' => 'Booking is not available yet.',
 			'bookingMessage' => ({required Object name}) => 'Booking appointment with ${name}...',
 			'tomorrow' => 'tomorrow',
-			'serviceOne' => 'Patient care should be the number one priority.',
-			'serviceTwo' => 'If you run your practice you know how frustrating.',
-			'serviceThree' => 'That\'s why some of appointment reminder system.',
 			'doctorDetails' => 'Doctor Details',
-			'services' => 'Services',
 			'profile' => 'Profile',
 			'setUpYourProfile' => 'Set up your profile',
 			'profileHeaderSubtitle' => 'Update your profile to connect your doctor with\nbetter impression.',

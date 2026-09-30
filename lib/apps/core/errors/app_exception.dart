@@ -96,3 +96,15 @@ class AppException implements Exception {
   @override
   String toString() => message;
 }
+
+/// The chosen slot was booked by someone else first. The UI shows
+/// `tr.slotAlreadyBooked`; no text lives here.
+class SlotAlreadyBookedException implements Exception {
+  const SlotAlreadyBookedException();
+}
+
+/// A review was attempted for an appointment that is not completed or is
+/// already reviewed.
+class ReviewNotAllowedException implements Exception {
+  const ReviewNotAllowedException();
+}

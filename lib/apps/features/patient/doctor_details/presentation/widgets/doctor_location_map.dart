@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 
 class DoctorLocationMap extends StatelessWidget {
-  const DoctorLocationMap({super.key, this.location});
+  const DoctorLocationMap({super.key, required this.location});
 
-  final LatLng? location;
+  final LatLng location;
 
   @override
   Widget build(BuildContext context) {
-    final targetLocation = location ?? DoctorModel.defaultLocation;
-
     return ClipRRect(
       borderRadius: BorderRadius.circular(16),
       child: Container(
@@ -23,7 +20,7 @@ class DoctorLocationMap extends StatelessWidget {
         color: AppColors.mapPlaceholder,
         child: FlutterMap(
           options: MapOptions(
-            initialCenter: targetLocation,
+            initialCenter: location,
             initialZoom: 14.0,
             interactionOptions: const InteractionOptions(
               flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
@@ -37,7 +34,7 @@ class DoctorLocationMap extends StatelessWidget {
             MarkerLayer(
               markers: [
                 Marker(
-                  point: targetLocation,
+                  point: location,
                   width: 44,
                   height: 44,
                   child: Container(
