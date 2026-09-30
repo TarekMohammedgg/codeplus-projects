@@ -36,12 +36,14 @@ class CreateDoctorCubit extends Cubit<CreateDoctorState> {
     required String fullNameAr,
     required String fullNameEn,
     required String specialtyId,
+    required double consultationFee,
     String? imageUrl,
   }) {
     return repository.createDoctor(
       fullNameAr: fullNameAr,
       fullNameEn: fullNameEn,
       specialtyId: specialtyId,
+      consultationFee: consultationFee,
       imageUrl: imageUrl,
     );
   }
@@ -51,6 +53,7 @@ class CreateDoctorCubit extends Cubit<CreateDoctorState> {
     required String fullNameAr,
     required String fullNameEn,
     required String specialtyId,
+    required double consultationFee,
     String? imageUrl,
   }) {
     return repository.updateDoctor(
@@ -58,6 +61,7 @@ class CreateDoctorCubit extends Cubit<CreateDoctorState> {
       fullNameAr: fullNameAr,
       fullNameEn: fullNameEn,
       specialtyId: specialtyId,
+      consultationFee: consultationFee,
       imageUrl: imageUrl,
     );
   }

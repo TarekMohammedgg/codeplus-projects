@@ -17,6 +17,7 @@ abstract interface class CreateDoctorRepository {
     required String fullNameAr,
     required String fullNameEn,
     required String specialtyId,
+    required double consultationFee,
     String? imageUrl,
   });
 
@@ -25,6 +26,7 @@ abstract interface class CreateDoctorRepository {
     required String fullNameAr,
     required String fullNameEn,
     required String specialtyId,
+    required double consultationFee,
     String? imageUrl,
   });
 }
@@ -58,12 +60,14 @@ class FirebaseCreateDoctorRepository implements CreateDoctorRepository {
     required String fullNameAr,
     required String fullNameEn,
     required String specialtyId,
+    required double consultationFee,
     String? imageUrl,
   }) {
     return doctorService.createDoctor(
       fullNameAr: fullNameAr,
       fullNameEn: fullNameEn,
       specialtyId: specialtyId,
+      consultationFee: consultationFee,
       imageUrl: imageUrl,
     );
   }
@@ -74,6 +78,7 @@ class FirebaseCreateDoctorRepository implements CreateDoctorRepository {
     required String fullNameAr,
     required String fullNameEn,
     required String specialtyId,
+    required double consultationFee,
     String? imageUrl,
   }) {
     return doctorService.updateDoctor(
@@ -81,6 +86,7 @@ class FirebaseCreateDoctorRepository implements CreateDoctorRepository {
       fullNameAr: fullNameAr,
       fullNameEn: fullNameEn,
       specialtyId: specialtyId,
+      consultationFee: consultationFee,
       imageUrl: imageUrl,
     );
   }

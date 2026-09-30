@@ -229,6 +229,9 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get removeImage => 'إزالة الصورة المحددة';
 	@override String get createDoctorButton => 'إنشاء طبيب';
 	@override String get doctorCreatedSuccess => 'تم إنشاء الطبيب بنجاح';
+	@override String get doctorFeeLabel => 'رسوم الكشف';
+	@override String get doctorFeeHint => 'أدخل الرسوم، مثال 30';
+	@override String get enterValidFee => 'يرجى إدخال رسوم أكبر من 0';
 	@override String get enterDoctorName => 'يرجى إدخال اسم الطبيب';
 	@override String get selectSpecialtyError => 'يرجى اختيار التخصص';
 	@override String get pickImageError => 'فشل اختيار الصورة، يرجى المحاولة مرة أخرى.';
@@ -458,6 +461,9 @@ extension on TranslationsAr {
 			'removeImage' => 'إزالة الصورة المحددة',
 			'createDoctorButton' => 'إنشاء طبيب',
 			'doctorCreatedSuccess' => 'تم إنشاء الطبيب بنجاح',
+			'doctorFeeLabel' => 'رسوم الكشف',
+			'doctorFeeHint' => 'أدخل الرسوم، مثال 30',
+			'enterValidFee' => 'يرجى إدخال رسوم أكبر من 0',
 			'enterDoctorName' => 'يرجى إدخال اسم الطبيب',
 			'selectSpecialtyError' => 'يرجى اختيار التخصص',
 			'pickImageError' => 'فشل اختيار الصورة، يرجى المحاولة مرة أخرى.',

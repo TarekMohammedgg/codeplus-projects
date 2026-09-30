@@ -1,6 +1,5 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
@@ -34,6 +33,7 @@ class CreateDoctorScreenState extends State<CreateDoctorScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameArController = TextEditingController();
   final _nameEnController = TextEditingController();
+  final _feeController = TextEditingController();
   final _imagePicker = ImagePicker();
   late final CreateDoctorCubit _createDoctorCubit;
 
@@ -63,6 +63,9 @@ class CreateDoctorScreenState extends State<CreateDoctorScreen> {
       final doctor = widget.doctor!;
       _nameArController.text = doctor.nameAr ?? doctor.name;
       _nameEnController.text = doctor.nameEn ?? doctor.name;
+      if (doctor.consultationFee > 0) {
+        _feeController.text = _formatFee(doctor.consultationFee);
+      }
       _imageUrl = doctor.imageUrl;
     }
   }
@@ -71,8 +74,12 @@ class CreateDoctorScreenState extends State<CreateDoctorScreen> {
   void dispose() {
     _nameArController.dispose();
     _nameEnController.dispose();
+    _feeController.dispose();
     super.dispose();
   }
+
+  static String _formatFee(double fee) =>
+      fee == fee.roundToDouble() ? fee.toStringAsFixed(0) : fee.toString();
 
   Future<void> _pickImage() async {
     try {
@@ -112,6 +119,7 @@ class CreateDoctorScreenState extends State<CreateDoctorScreen> {
     try {
       final fullNameAr = _nameArController.text.trim();
       final fullNameEn = _nameEnController.text.trim();
+      final consultationFee = double.parse(_feeController.text.trim());
       var imageUrl = _imageUrl;
       if (_selectedImage != null) {
         setState(() => _isUploadingImage = true);
@@ -135,6 +143,7 @@ class CreateDoctorScreenState extends State<CreateDoctorScreen> {
           fullNameAr: fullNameAr,
           fullNameEn: fullNameEn,
           specialtyId: _specialty!.id,
+          consultationFee: consultationFee,
           imageUrl: imageUrl,
         );
       } else {
@@ -142,6 +151,7 @@ class CreateDoctorScreenState extends State<CreateDoctorScreen> {
           fullNameAr: fullNameAr,
           fullNameEn: fullNameEn,
           specialtyId: _specialty!.id,
+          consultationFee: consultationFee,
           imageUrl: imageUrl,
         );
       }
@@ -227,6 +237,27 @@ class CreateDoctorScreenState extends State<CreateDoctorScreen> {
                         ),
                         8.verticalSpace,
                         _buildSpecialtyField(context, state),
+                        20.verticalSpace,
+                        Text(
+                          tr.doctorFeeLabel,
+                          style: context.semiBold14TextMain,
+                        ),
+                        8.verticalSpace,
+                        AppTextField(
+                          controller: _feeController,
+                          hintText: tr.doctorFeeHint,
+                          prefixIcon: Icons.payments_outlined,
+                          keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true,
+                          ),
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                              RegExp(r'^\d*\.?\d{0,2}'),
+                            ),
+                          ],
+                          textInputAction: TextInputAction.done,
+                          validator: AppValidators.validateFee,
+                        ),
                         20.verticalSpace,
                         Text(
                           tr.doctorImageLabel,

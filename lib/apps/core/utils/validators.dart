@@ -39,6 +39,13 @@ abstract final class AppValidators {
     return null;
   }
 
+  /// Consultation fee: required and greater than zero.
+  static String? validateFee(String? value) {
+    final fee = double.tryParse(value?.trim() ?? '');
+    if (fee == null || fee <= 0) return tr.enterValidFee;
+    return null;
+  }
+
   static String? validateSpecialty(String? value) {
     if (value == null || value.trim().isEmpty) {
       return tr.selectSpecialtyError;

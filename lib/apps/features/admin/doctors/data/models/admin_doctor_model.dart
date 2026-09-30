@@ -11,6 +11,7 @@ class AdminDoctorModel {
     this.nameEn,
     this.specialtyId,
     this.imageUrl,
+    this.consultationFee = 0,
     this.isActive = true,
     this.lastModified,
   });
@@ -22,6 +23,7 @@ class AdminDoctorModel {
   final String specialty;
   final String? specialtyId;
   final String? imageUrl;
+  final double consultationFee;
   final bool isActive;
   final DateTime? lastModified;
 
@@ -63,6 +65,7 @@ class AdminDoctorModel {
           (data['specialtyId'] as String?)?.trim() ??
           (data['specialtyKey'] as String?)?.trim(),
       imageUrl: (data['imageUrl'] as String?)?.trim(),
+      consultationFee: (data['consultationFee'] as num?)?.toDouble() ?? 0,
       isActive: data['isActive'] as bool? ?? true,
       lastModified: lastModified,
     );
@@ -77,6 +80,7 @@ class AdminDoctorModel {
       nameEn: nameEn,
       specialtyId: specialtyId,
       imageUrl: imageUrl,
+      consultationFee: consultationFee,
       isActive: isActive,
     );
   }

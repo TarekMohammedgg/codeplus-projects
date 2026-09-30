@@ -175,6 +175,7 @@ class FakeCreateDoctorRepository implements CreateDoctorRepository {
     required String fullNameAr,
     required String fullNameEn,
     required String specialtyId,
+    required double consultationFee,
     String? imageUrl,
   }) async {}
 
@@ -184,6 +185,7 @@ class FakeCreateDoctorRepository implements CreateDoctorRepository {
     required String fullNameAr,
     required String fullNameEn,
     required String specialtyId,
+    required double consultationFee,
     String? imageUrl,
   }) async {}
 }

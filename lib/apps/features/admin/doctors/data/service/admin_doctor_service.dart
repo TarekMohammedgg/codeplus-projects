@@ -53,38 +53,25 @@ class AdminDoctorService {
     required String fullNameAr,
     required String fullNameEn,
     required String specialtyId,
+    required double consultationFee,
     String? imageUrl,
   }) async {
     final collection = _doctors;
     final id = await _nextDoctorId(collection);
     final reference = collection.doc(id);
     if ((await reference.get()).exists) {
-      throw StateError('A doctor with this English name already exists');
+      throw StateError('Doctor id $id already exists');
     }
 
-    final now = FieldValue.serverTimestamp();
-    await reference.set({
-      'fullName': {'ar': fullNameAr.trim(), 'en': fullNameEn.trim()},
-      'specialtyId': specialtyId,
-      'imageUrl': _cleanUrl(imageUrl),
-      'bio': {'ar': '', 'en': ''},
-      'qualifications': <String>[],
-      'languages': <String>['ar'],
-      'consultationFee': 0,
-      'services': {'ar': <String>[], 'en': <String>[]},
-      'clinic': {
-        'name': {'ar': '', 'en': ''},
-        'address': {'ar': '', 'en': ''},
-      },
-      'rating': 0,
-      'reviewsCount': 0,
-      'isActive': true,
-      'isLive': false,
-      'isPopular': false,
-      'isFeatured': false,
-      'createdAt': now,
-      'updatedAt': now,
-    });
+    await reference.set(
+      newDoctorData(
+        fullNameAr: fullNameAr,
+        fullNameEn: fullNameEn,
+        specialtyId: specialtyId,
+        consultationFee: consultationFee,
+        imageUrl: imageUrl,
+      ),
+    );
   }
 
   Future<void> updateDoctor({
@@ -92,12 +79,14 @@ class AdminDoctorService {
     required String fullNameAr,
     required String fullNameEn,
     required String specialtyId,
+    required double consultationFee,
     String? imageUrl,
   }) async {
     await _doctors.doc(id).update({
       'fullName': {'ar': fullNameAr.trim(), 'en': fullNameEn.trim()},
       'specialtyId': specialtyId,
       'imageUrl': _cleanUrl(imageUrl),
+      'consultationFee': consultationFee,
       'updatedAt': FieldValue.serverTimestamp(),
     });
   }
@@ -128,4 +117,27 @@ class AdminDoctorService {
     final trimmed = value?.trim();
     return trimmed == null || trimmed.isEmpty ? null : trimmed;
   }
+}
+
+/// The only fields a new doctor document gets (see Locked decisions):
+/// no location, no experience, no bio/services/flags.
+Map<String, dynamic> newDoctorData({
+  required String fullNameAr,
+  required String fullNameEn,
+  required String specialtyId,
+  required double consultationFee,
+  String? imageUrl,
+}) {
+  final now = FieldValue.serverTimestamp();
+  return {
+    'fullName': {'ar': fullNameAr.trim(), 'en': fullNameEn.trim()},
+    'specialtyId': specialtyId,
+    'imageUrl': AdminDoctorService._cleanUrl(imageUrl),
+    'consultationFee': consultationFee,
+    'rating': 0,
+    'reviewsCount': 0,
+    'isActive': true,
+    'createdAt': now,
+    'updatedAt': now,
+  };
 }

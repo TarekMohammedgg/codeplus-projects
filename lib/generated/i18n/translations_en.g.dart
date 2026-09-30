@@ -611,6 +611,15 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'Doctor created successfully'
 	String get doctorCreatedSuccess => 'Doctor created successfully';
 
+	/// en: 'Consultation Fee'
+	String get doctorFeeLabel => 'Consultation Fee';
+
+	/// en: 'Enter fee, e.g. 30'
+	String get doctorFeeHint => 'Enter fee, e.g. 30';
+
+	/// en: 'Please enter a fee greater than 0'
+	String get enterValidFee => 'Please enter a fee greater than 0';
+
 	/// en: 'Please enter the doctor's name'
 	String get enterDoctorName => 'Please enter the doctor\'s name';
 
@@ -897,6 +906,9 @@ extension on Translations {
 			'removeImage' => 'Remove selected image',
 			'createDoctorButton' => 'Create Doctor',
 			'doctorCreatedSuccess' => 'Doctor created successfully',
+			'doctorFeeLabel' => 'Consultation Fee',
+			'doctorFeeHint' => 'Enter fee, e.g. 30',
+			'enterValidFee' => 'Please enter a fee greater than 0',
 			'enterDoctorName' => 'Please enter the doctor\'s name',
 			'selectSpecialtyError' => 'Please select a specialty',
 			'pickImageError' => 'Failed to pick image. Please try again.',
