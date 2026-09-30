@@ -976,6 +976,36 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// en: 'No appointments found'
 	String get noAppointmentsFound => 'No appointments found';
+
+	/// en: 'Mark Completed'
+	String get markCompleted => 'Mark Completed';
+
+	/// en: 'Mark Appointment Completed'
+	String get markCompletedTitle => 'Mark Appointment Completed';
+
+	/// en: 'Are you sure you want to mark this appointment as completed?'
+	String get markCompletedMessage => 'Are you sure you want to mark this appointment as completed?';
+
+	/// en: 'Appointment marked as completed successfully'
+	String get appointmentMarkedCompletedSuccess => 'Appointment marked as completed successfully';
+
+	/// en: 'Patient Information'
+	String get patientInfo => 'Patient Information';
+
+	/// en: 'Patient Name'
+	String get patientName => 'Patient Name';
+
+	/// en: 'Phone Number'
+	String get patientPhone => 'Phone Number';
+
+	/// en: 'Email'
+	String get patientEmail => 'Email';
+
+	/// en: 'Cancelled by patient'
+	String get cancelledByPatient => 'Cancelled by patient';
+
+	/// en: 'Cancelled by admin'
+	String get cancelledByAdmin => 'Cancelled by admin';
 }
 
 /// The flat map containing all translations for locale <en>.
@@ -1298,6 +1328,16 @@ extension on Translations {
 			'all' => 'All',
 			'patientNameLabel' => ({required Object name}) => 'Patient: ${name}',
 			'noAppointmentsFound' => 'No appointments found',
+			'markCompleted' => 'Mark Completed',
+			'markCompletedTitle' => 'Mark Appointment Completed',
+			'markCompletedMessage' => 'Are you sure you want to mark this appointment as completed?',
+			'appointmentMarkedCompletedSuccess' => 'Appointment marked as completed successfully',
+			'patientInfo' => 'Patient Information',
+			'patientName' => 'Patient Name',
+			'patientPhone' => 'Phone Number',
+			'patientEmail' => 'Email',
+			'cancelledByPatient' => 'Cancelled by patient',
+			'cancelledByAdmin' => 'Cancelled by admin',
 			_ => null,
 		};
 	}

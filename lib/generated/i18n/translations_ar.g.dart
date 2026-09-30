@@ -351,6 +351,16 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get all => 'الكل';
 	@override String patientNameLabel({required Object name}) => 'المريض: ${name}';
 	@override String get noAppointmentsFound => 'لا توجد مواعيد';
+	@override String get markCompleted => 'تحديد كمكتمل';
+	@override String get markCompletedTitle => 'تحديد الموعد كمكتمل';
+	@override String get markCompletedMessage => 'هل أنت متأكد من رغبتك في تحديد هذا الموعد كمكتمل؟';
+	@override String get appointmentMarkedCompletedSuccess => 'تم تحديد الموعد كمكتمل بنجاح';
+	@override String get patientInfo => 'بيانات المريض';
+	@override String get patientName => 'اسم المريض';
+	@override String get patientPhone => 'رقم الهاتف';
+	@override String get patientEmail => 'البريد الإلكتروني';
+	@override String get cancelledByPatient => 'ألغي بواسطة المريض';
+	@override String get cancelledByAdmin => 'ألغي بواسطة الإدارة';
 }
 
 /// The flat map containing all translations for locale <ar>.
@@ -673,6 +683,16 @@ extension on TranslationsAr {
 			'all' => 'الكل',
 			'patientNameLabel' => ({required Object name}) => 'المريض: ${name}',
 			'noAppointmentsFound' => 'لا توجد مواعيد',
+			'markCompleted' => 'تحديد كمكتمل',
+			'markCompletedTitle' => 'تحديد الموعد كمكتمل',
+			'markCompletedMessage' => 'هل أنت متأكد من رغبتك في تحديد هذا الموعد كمكتمل؟',
+			'appointmentMarkedCompletedSuccess' => 'تم تحديد الموعد كمكتمل بنجاح',
+			'patientInfo' => 'بيانات المريض',
+			'patientName' => 'اسم المريض',
+			'patientPhone' => 'رقم الهاتف',
+			'patientEmail' => 'البريد الإلكتروني',
+			'cancelledByPatient' => 'ألغي بواسطة المريض',
+			'cancelledByAdmin' => 'ألغي بواسطة الإدارة',
 			_ => null,
 		};
 	}

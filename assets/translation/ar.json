@@ -316,5 +316,15 @@
   "adminProfileUpdatedSuccess": "تم تحديث ملف المسؤول وبيانات العيادة بنجاح",
   "all": "الكل",
   "patientNameLabel(name)": "المريض: $name",
-  "noAppointmentsFound": "لا توجد مواعيد"
+  "noAppointmentsFound": "لا توجد مواعيد",
+  "markCompleted": "تحديد كمكتمل",
+  "markCompletedTitle": "تحديد الموعد كمكتمل",
+  "markCompletedMessage": "هل أنت متأكد من رغبتك في تحديد هذا الموعد كمكتمل؟",
+  "appointmentMarkedCompletedSuccess": "تم تحديد الموعد كمكتمل بنجاح",
+  "patientInfo": "بيانات المريض",
+  "patientName": "اسم المريض",
+  "patientPhone": "رقم الهاتف",
+  "patientEmail": "البريد الإلكتروني",
+  "cancelledByPatient": "ألغي بواسطة المريض",
+  "cancelledByAdmin": "ألغي بواسطة الإدارة"
 }

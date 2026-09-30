@@ -316,5 +316,15 @@
   "adminProfileUpdatedSuccess": "Admin profile and clinic updated successfully",
   "all": "All",
   "patientNameLabel(name)": "Patient: $name",
-  "noAppointmentsFound": "No appointments found"
+  "noAppointmentsFound": "No appointments found",
+  "markCompleted": "Mark Completed",
+  "markCompletedTitle": "Mark Appointment Completed",
+  "markCompletedMessage": "Are you sure you want to mark this appointment as completed?",
+  "appointmentMarkedCompletedSuccess": "Appointment marked as completed successfully",
+  "patientInfo": "Patient Information",
+  "patientName": "Patient Name",
+  "patientPhone": "Phone Number",
+  "patientEmail": "Email",
+  "cancelledByPatient": "Cancelled by patient",
+  "cancelledByAdmin": "Cancelled by admin"
 }
