@@ -170,42 +170,6 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'Already have an account?'
 	String get alreadyHaveAccount => 'Already have an account?';
 
-	/// en: 'Verify your number'
-	String get verifyYourNumber => 'Verify your number';
-
-	/// en: 'We sent a 6-digit code to '
-	String get otpSentTo => 'We sent a 6-digit code to ';
-
-	/// en: '+20 10 1234 5678'
-	String get defaultPhoneNumber => '+20 10 1234 5678';
-
-	/// en: '0:60'
-	String get resendTimerDefault => '0:60';
-
-	/// en: 'Resend code'
-	String get resendCode => 'Resend code';
-
-	/// en: 'A new code was sent.'
-	String get codeSentAgain => 'A new code was sent.';
-
-	/// en: 'Enter 6 Digits Code'
-	String get otpCodeTitle => 'Enter 6 Digits Code';
-
-	/// en: 'Enter the 6 digits code that you received on your phone.'
-	String get otpCodeDescription => 'Enter the 6 digits code that you received on your phone.';
-
-	/// en: 'Reset your password'
-	String get resetYourPassword => 'Reset your password';
-
-	/// en: 'Enter your email and we'll send you a secure link to reset it.'
-	String get resetPasswordSubtitle => 'Enter your email and we\'ll send you a\nsecure link to reset it.';
-
-	/// en: 'Send reset link'
-	String get sendResetLink => 'Send reset link';
-
-	/// en: 'Remembered your password?'
-	String get rememberedPassword => 'Remembered your password?';
-
 	/// en: 'Password reset link sent to your email.'
 	String get passwordResetSuccess => 'Password reset link sent to your email.';
 
@@ -269,17 +233,11 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'LIVE'
 	String get live => 'LIVE';
 
-	/// en: 'Live Doctor'
-	String get liveDoctor => 'Live Doctor';
-
 	/// en: 'See all'
 	String get seeAll => 'See all';
 
 	/// en: 'Popular Doctor'
 	String get popularDoctor => 'Popular Doctor';
-
-	/// en: 'Featured Doctor'
-	String get featuredDoctor => 'Featured Doctor';
 
 	/// en: 'Dental'
 	String get dental => 'Dental';
@@ -347,26 +305,11 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'Booking is not available yet.'
 	String get bookingComingSoon => 'Booking is not available yet.';
 
-	/// en: 'Coming Soon'
-	String get comingSoon => 'Coming Soon';
-
 	/// en: 'Booking appointment with $name...'
 	String bookingMessage({required Object name}) => 'Booking appointment with ${name}...';
 
 	/// en: 'tomorrow'
 	String get tomorrow => 'tomorrow';
-
-	/// en: 'Cardiologist'
-	String get liveCardiologist => 'Cardiologist';
-
-	/// en: 'Dentist'
-	String get liveDentist => 'Dentist';
-
-	/// en: 'Pediatrician'
-	String get livePediatrician => 'Pediatrician';
-
-	/// en: 'Neurologist'
-	String get liveNeurologist => 'Neurologist';
 
 	/// en: 'Patient care should be the number one priority.'
 	String get serviceOne => 'Patient care should be the number one priority.';
@@ -382,15 +325,6 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// en: 'Services'
 	String get services => 'Services';
-
-	/// en: 'Running'
-	String get statRunning => 'Running';
-
-	/// en: 'Ongoing'
-	String get statOngoing => 'Ongoing';
-
-	/// en: 'Patient'
-	String get statPatient => 'Patient';
 
 	/// en: 'Profile'
 	String get profile => 'Profile';
@@ -430,15 +364,6 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// en: 'Log Out'
 	String get logOut => 'Log Out';
-
-	/// en: 'Favourite Doctors'
-	String get favouriteDoctors => 'Favourite Doctors';
-
-	/// en: 'Your saved and trusted medical specialists'
-	String get favouriteDoctorsSubtitle => 'Your saved and trusted medical specialists';
-
-	/// en: 'Feature Doctor'
-	String get featureDoctor => 'Feature Doctor';
 
 	/// en: 'Select Time'
 	String get selectTime => 'Select Time';
@@ -589,12 +514,6 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// en: 'Google sign-in failed.'
 	String get googleSignInFailedError => 'Google sign-in failed.';
-
-	/// en: 'Please enter the 6-digit verification code.'
-	String get enterSixDigitOtp => 'Please enter the 6-digit verification code.';
-
-	/// en: 'Phone number verified successfully!'
-	String get phoneVerifiedSuccess => 'Phone number verified successfully!';
 
 	/// en: 'Please agree to the Terms of Service and Privacy Policy to continue.'
 	String get acceptTermsAndPrivacyWarning => 'Please agree to the Terms of Service and Privacy Policy to continue.';
@@ -795,18 +714,6 @@ extension on Translations {
 			'andText' => ' and ',
 			'privacyPolicy' => 'Privacy Policy',
 			'alreadyHaveAccount' => 'Already have an account?',
-			'verifyYourNumber' => 'Verify your number',
-			'otpSentTo' => 'We sent a 6-digit code to ',
-			'defaultPhoneNumber' => '+20 10 1234 5678',
-			'resendTimerDefault' => '0:60',
-			'resendCode' => 'Resend code',
-			'codeSentAgain' => 'A new code was sent.',
-			'otpCodeTitle' => 'Enter 6 Digits Code',
-			'otpCodeDescription' => 'Enter the 6 digits code that you received on your phone.',
-			'resetYourPassword' => 'Reset your password',
-			'resetPasswordSubtitle' => 'Enter your email and we\'ll send you a\nsecure link to reset it.',
-			'sendResetLink' => 'Send reset link',
-			'rememberedPassword' => 'Remembered your password?',
 			'passwordResetSuccess' => 'Password reset link sent to your email.',
 			'roleSelectionTitle' => 'Choose your role',
 			'roleSelectionSubtitle' => 'The selected role determines the experience and\navailable features.',
@@ -828,10 +735,8 @@ extension on Translations {
 			'findYourDoctor' => 'Find Your Doctor',
 			'searchDoctorHint' => 'Search.... ',
 			'live' => 'LIVE',
-			'liveDoctor' => 'Live Doctor',
 			'seeAll' => 'See all',
 			'popularDoctor' => 'Popular Doctor',
-			'featuredDoctor' => 'Featured Doctor',
 			'dental' => 'Dental',
 			'cardiology' => 'Cardiology',
 			'eyeCare' => 'Eye Care',
@@ -854,21 +759,13 @@ extension on Translations {
 			'bookNow' => 'Book Now',
 			'noDoctorsFound' => 'No doctors found',
 			'bookingComingSoon' => 'Booking is not available yet.',
-			'comingSoon' => 'Coming Soon',
 			'bookingMessage' => ({required Object name}) => 'Booking appointment with ${name}...',
 			'tomorrow' => 'tomorrow',
-			'liveCardiologist' => 'Cardiologist',
-			'liveDentist' => 'Dentist',
-			'livePediatrician' => 'Pediatrician',
-			'liveNeurologist' => 'Neurologist',
 			'serviceOne' => 'Patient care should be the number one priority.',
 			'serviceTwo' => 'If you run your practice you know how frustrating.',
 			'serviceThree' => 'That\'s why some of appointment reminder system.',
 			'doctorDetails' => 'Doctor Details',
 			'services' => 'Services',
-			'statRunning' => 'Running',
-			'statOngoing' => 'Ongoing',
-			'statPatient' => 'Patient',
 			'profile' => 'Profile',
 			'setUpYourProfile' => 'Set up your profile',
 			'profileHeaderSubtitle' => 'Update your profile to connect your doctor with\nbetter impression.',
@@ -882,9 +779,6 @@ extension on Translations {
 			'language' => 'Language',
 			'profileUpdatedSuccess' => 'Profile updated successfully',
 			'logOut' => 'Log Out',
-			'favouriteDoctors' => 'Favourite Doctors',
-			'favouriteDoctorsSubtitle' => 'Your saved and trusted medical specialists',
-			'featureDoctor' => 'Feature Doctor',
 			'selectTime' => 'Select Time',
 			'selectDate' => 'Select Date',
 			'today' => 'Today',
@@ -935,8 +829,6 @@ extension on Translations {
 			'googleSignInConfigError' => 'Google Sign-In configuration error. Please check SHA-1 and serverClientId.',
 			'googleSignInInterruptedError' => 'Sign-in was interrupted. Please try again.',
 			'googleSignInFailedError' => 'Google sign-in failed.',
-			'enterSixDigitOtp' => 'Please enter the 6-digit verification code.',
-			'phoneVerifiedSuccess' => 'Phone number verified successfully!',
 			'acceptTermsAndPrivacyWarning' => 'Please agree to the Terms of Service and Privacy Policy to continue.',
 			'accountCreatedSuccess' => 'Account created successfully!',
 			'adminPermissionDenied' => 'This account does not have admin permissions.',

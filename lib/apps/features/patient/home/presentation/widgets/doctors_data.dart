@@ -2,8 +2,6 @@
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/features/patient/home/data/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/features/patient/home/presentation/widgets/doctor_category_section.dart';
-import 'package:doctor_hunt/apps/features/patient/home/presentation/widgets/featured_doctor_section.dart';
-import 'package:doctor_hunt/apps/features/patient/home/presentation/widgets/live_doctor_section.dart';
 import 'package:doctor_hunt/apps/features/patient/home/presentation/widgets/popular_doctor_section.dart';
 import 'package:doctor_hunt/apps/core/models/specialty_model.dart';
 import 'package:flutter/material.dart';
@@ -23,13 +21,6 @@ class DoctorsData extends StatelessWidget {
     return Column(
       children: [
         const SizedBox(height: 24),
-        if (doctors.isNotEmpty) ...[
-          LiveDoctorSection(
-            liveDoctors: doctors,
-            onSeeAllPressed: () => const FindDoctorsRoute().push(context),
-          ),
-          const SizedBox(height: 24),
-        ],
         DoctorCategorySection(
           categories: specialties
               .map(
@@ -47,11 +38,6 @@ class DoctorsData extends StatelessWidget {
         if (doctors.isNotEmpty) ...[
           const SizedBox(height: 24),
           PopularDoctorSection(
-            doctors: doctors,
-            onSeeAllPressed: () => const FindDoctorsRoute().push(context),
-          ),
-          const SizedBox(height: 24),
-          FeaturedDoctorSection(
             doctors: doctors,
             onSeeAllPressed: () => const FindDoctorsRoute().push(context),
           ),

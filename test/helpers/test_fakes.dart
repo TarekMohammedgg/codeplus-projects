@@ -10,7 +10,6 @@ import 'package:doctor_hunt/apps/features/admin/create_doctor/data/repositories/
 import 'package:doctor_hunt/apps/features/common/auth/data/repositories/auth_repository.dart';
 import 'package:doctor_hunt/apps/features/common/auth/data/service/auth_service.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/data/repositories/doctor_repository.dart';
-import 'package:doctor_hunt/apps/features/patient/favourite_doctors/data/repositories/favourite_doctors_repository.dart';
 import 'package:doctor_hunt/apps/features/patient/home/data/models/home_data.dart';
 import 'package:doctor_hunt/apps/features/patient/home/data/repositories/home_repository.dart';
 
@@ -92,22 +91,6 @@ class FakeDoctorRepository implements DoctorRepository {
 
   @override
   Future<List<DoctorModel>> fetchDoctors() async => doctors;
-}
-
-class FakeFavouriteDoctorsRepository implements FavouriteDoctorsRepository {
-  FakeFavouriteDoctorsRepository({
-    this.favouriteDoctors = const [],
-    this.featuredDoctors = const [],
-  });
-
-  final List<DoctorModel> favouriteDoctors;
-  final List<DoctorModel> featuredDoctors;
-
-  @override
-  Future<List<DoctorModel>> fetchFavouriteDoctors() async => favouriteDoctors;
-
-  @override
-  Future<List<DoctorModel>> fetchFeaturedDoctors() async => featuredDoctors;
 }
 
 class FakeHomeRepository implements HomeRepository {

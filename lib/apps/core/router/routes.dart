@@ -8,7 +8,6 @@ import 'package:doctor_hunt/apps/features/admin/create_doctor/presentation/contr
 import 'package:doctor_hunt/apps/features/admin/doctors/presentation/controller/cubit/admin_doctors_cubit.dart';
 import 'package:doctor_hunt/apps/features/common/auth/data/repositories/auth_repository.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/controller/cubit/auth_cubit.dart';
-import 'package:doctor_hunt/apps/features/patient/favourite_doctors/presentation/controller/cubit/favourite_doctors_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/controller/cubit/find_doctors_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/home/presentation/controller/cubit/home_cubit.dart';
 
@@ -18,20 +17,16 @@ import 'package:doctor_hunt/apps/features/admin/doctors/data/models/admin_doctor
 import 'package:doctor_hunt/apps/features/admin/doctors/presentation/screens/admin_doctors_screen.dart';
 import 'package:doctor_hunt/apps/features/admin/settings/presentation/screens/admin_settings_screen.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/screens/login_screen.dart';
-import 'package:doctor_hunt/apps/features/common/auth/presentation/screens/otp_verification_screen.dart';
-import 'package:doctor_hunt/apps/features/common/auth/presentation/screens/reset_password_screen.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/screens/signup_screen.dart';
 import 'package:doctor_hunt/apps/features/common/role_selection/data/models/user_role.dart';
 import 'package:doctor_hunt/apps/features/common/role_selection/presentation/screens/role_selection_screen.dart';
 import 'package:doctor_hunt/apps/features/admin/create_doctor/presentation/screens/create_doctor_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_details/presentation/screens/patient_doctor_details_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/screens/find_doctors_screen.dart';
-import 'package:doctor_hunt/apps/features/patient/favourite_doctors/presentation/screens/favourite_doctors_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/home/presentation/screens/patient_home_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/screens/doctor_booking_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/data/models/user_profile_model.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/presentation/screens/profile_screen.dart';
-import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
 part 'routes.g.dart';
 
@@ -69,31 +64,6 @@ class SignupRoute extends GoRouteData with $SignupRoute {
     return BlocProvider<AuthCubit>(
       create: (_) => getIt<AuthCubit>(),
       child: const SignupScreen(),
-    );
-  }
-}
-
-@TypedGoRoute<OtpVerificationRoute>(path: AppRoutePaths.otpVerification)
-class OtpVerificationRoute extends GoRouteData with $OtpVerificationRoute {
-  const OtpVerificationRoute([this.$extra]);
-
-  final String? $extra;
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) {
-    return OtpVerificationScreen(phoneNumber: $extra ?? tr.defaultPhoneNumber);
-  }
-}
-
-@TypedGoRoute<ResetPasswordRoute>(path: AppRoutePaths.resetPassword)
-class ResetPasswordRoute extends GoRouteData with $ResetPasswordRoute {
-  const ResetPasswordRoute();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) {
-    return BlocProvider<AuthCubit>(
-      create: (_) => getIt<AuthCubit>(),
-      child: const ResetPasswordScreen(),
     );
   }
 }
@@ -184,19 +154,6 @@ class DoctorDetailsRoute extends GoRouteData with $DoctorDetailsRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return DoctorDetailsScreen(doctor: $extra ?? DoctorModel.placeholder());
-  }
-}
-
-@TypedGoRoute<FavouriteDoctorsRoute>(path: AppRoutePaths.favouriteDoctors)
-class FavouriteDoctorsRoute extends GoRouteData with $FavouriteDoctorsRoute {
-  const FavouriteDoctorsRoute();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) {
-    return BlocProvider<FavouriteDoctorsCubit>(
-      create: (_) => getIt<FavouriteDoctorsCubit>(),
-      child: const FavouriteDoctorsScreen(),
-    );
   }
 }
 

@@ -1,16 +1,13 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_header_section.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_search_bar.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_avatar_placeholder.dart';
-import 'package:doctor_hunt/apps/core/widgets/doctor_image.dart';
 import 'package:doctor_hunt/apps/features/patient/home/data/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/features/patient/home/presentation/widgets/doctor_category_section.dart';
-import 'package:doctor_hunt/apps/features/patient/home/presentation/widgets/featured_doctor_section.dart';
 import 'package:doctor_hunt/apps/features/common/bottom_navigation_bar/presentation/widgets/main_bottom_navigation_bar.dart';
-import 'package:doctor_hunt/apps/features/patient/home/presentation/widgets/live_doctor_section.dart';
 import 'package:doctor_hunt/apps/features/patient/home/presentation/widgets/popular_doctor_section.dart';
 import 'package:doctor_hunt/generated/app_image.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
@@ -36,9 +33,7 @@ void main() {
 
     expect(find.text(tr.searchDoctorHint), findsOneWidget);
 
-    expect(find.text(tr.liveDoctor), findsOneWidget);
     expect(find.text(tr.popularDoctor), findsOneWidget);
-    expect(find.text(tr.featuredDoctor), findsOneWidget);
 
     expect(find.byType(DoctorCategorySection), findsOneWidget);
     expect(find.byType(DoctorCategoryCard), findsWidgets);
@@ -46,11 +41,8 @@ void main() {
     expect(find.text('Dr. Fillerup Grab'), findsOneWidget);
     expect(find.text('Dr. Blessing'), findsOneWidget);
 
-    expect(find.byType(LiveDoctorCard), findsWidgets);
     expect(find.byType(PopularDoctorCard), findsWidgets);
     expect(find.byType(Image), findsWidgets);
-
-    expect(find.text('Dr. Cric'), findsOneWidget);
 
     expect(find.byType(MainBottomNavigationBar), findsOneWidget);
     expect(find.byIcon(Icons.home_rounded), findsOneWidget);
@@ -166,38 +158,6 @@ void main() {
     expect(currentIndex, 0);
   });
 
-  testWidgets('LiveDoctorCard doctor image fills the full container', (
-    WidgetTester tester,
-  ) async {
-    tester.view.physicalSize = const Size(1080, 2400);
-    tester.view.devicePixelRatio = 1.0;
-    addTearDown(() {
-      tester.view.resetPhysicalSize();
-      tester.view.resetDevicePixelRatio();
-    });
-
-    await tester.pumpWidget(buildTestApp(testHomeScreen()));
-    await tester.pump();
-
-    final liveDoctorCardFinder = find.byType(LiveDoctorCard).first;
-    expect(liveDoctorCardFinder, findsOneWidget);
-
-    final imageFinder = find.descendant(
-      of: liveDoctorCardFinder,
-      matching: find.byType(DoctorImage),
-    );
-    expect(imageFinder, findsOneWidget);
-
-    final imageWidget = tester.widget<DoctorImage>(imageFinder);
-    expect(
-      imageWidget.imageUrl,
-      startsWith('https://res.cloudinary.com/diexaortk/image/upload/'),
-    );
-    expect(imageWidget.fit, BoxFit.cover);
-    expect(imageWidget.width, double.infinity);
-    expect(imageWidget.height, double.infinity);
-  });
-
   testWidgets(
     'AppSearchBar in HomeScreen shows clear X button only when text is entered and clears text on tap',
     (WidgetTester tester) async {
@@ -239,23 +199,22 @@ void main() {
     },
   );
 
-  testWidgets(
-    'PopularDoctorCard and FeaturedDoctorCard render favorite icons properly',
-    (WidgetTester tester) async {
-      tester.view.physicalSize = const Size(1080, 2400);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(() {
-        tester.view.resetPhysicalSize();
-        tester.view.resetDevicePixelRatio();
-      });
+  testWidgets('PopularDoctorCard renders favorite icons properly', (
+    WidgetTester tester,
+  ) async {
+    tester.view.physicalSize = const Size(1080, 2400);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
 
-      await tester.pumpWidget(buildTestApp(testHomeScreen()));
-      await tester.pump();
+    await tester.pumpWidget(buildTestApp(testHomeScreen()));
+    await tester.pump();
 
-      expect(find.byIcon(Icons.favorite_rounded), findsWidgets);
-      expect(find.byIcon(Icons.favorite_border_rounded), findsWidgets);
-    },
-  );
+    expect(find.byIcon(Icons.favorite_rounded), findsWidgets);
+    expect(find.byIcon(Icons.favorite_border_rounded), findsWidgets);
+  });
 
   testWidgets(
     'HomeScreen language toggle toggles locale between English and Arabic',
@@ -337,12 +296,8 @@ Widget testHomeScreen({
   VoidCallback? onSeeAllDoctors,
 }) {
   final doctors = testHomeDoctors();
-  final liveDoctors = doctors.where((d) => d.isLive).toList()
-    ..sort((a, b) => a.liveOrder.compareTo(b.liveOrder));
   final popularDoctors = doctors.where((d) => d.isPopular).toList()
     ..sort((a, b) => a.popularOrder.compareTo(b.popularOrder));
-  final featuredDoctors = doctors.where((d) => d.isFeatured).toList()
-    ..sort((a, b) => a.featuredOrder.compareTo(b.featuredOrder));
 
   final searchController = TextEditingController();
 
@@ -365,13 +320,6 @@ Widget testHomeScreen({
               ),
               Column(
                 children: [
-                  if (liveDoctors.isNotEmpty) ...[
-                    const SizedBox(height: 24),
-                    LiveDoctorSection(
-                      liveDoctors: liveDoctors,
-                      onSeeAllPressed: onSeeAllDoctors ?? () {},
-                    ),
-                  ],
                   const SizedBox(height: 24),
                   DoctorCategorySection(
                     categories: categories(),
@@ -383,14 +331,6 @@ Widget testHomeScreen({
                       doctors: popularDoctors,
                       onSeeAllPressed: onSeeAllDoctors ?? () {},
                     ),
-                  ],
-                  if (featuredDoctors.isNotEmpty) ...[
-                    const SizedBox(height: 24),
-                    FeaturedDoctorSection(
-                      doctors: featuredDoctors,
-                      onSeeAllPressed: onSeeAllDoctors ?? () {},
-                    ),
-                    const SizedBox(height: 32),
                   ],
                 ],
               ),
@@ -408,13 +348,6 @@ Widget testHomeScreen({
 
 List<DoctorModel> testHomeDoctors() {
   return [
-    DoctorModel.fromFirestore('live_1', {
-      'name': 'Dr. Stephanie',
-      'specialtyKey': 'live_cardiologist',
-      'imageUrl': 'https://res.cloudinary.com/diexaortk/image/upload/live_1',
-      'isLive': true,
-      'liveOrder': 1,
-    }),
     DoctorModel.fromFirestore('doc_5', {
       'name': 'Dr. Fillerup Grab',
       'specialtyKey': 'medicine_specialist',
@@ -432,14 +365,6 @@ List<DoctorModel> testHomeDoctors() {
       'isFavorite': true,
       'isPopular': true,
       'popularOrder': 2,
-    }),
-    DoctorModel.fromFirestore('feat_1', {
-      'name': 'Dr. Cric',
-      'specialtyKey': 'general_surgeon',
-      'imageUrl':
-          'https://res.cloudinary.com/diexaortk/image/upload/featured_1',
-      'isFeatured': true,
-      'featuredOrder': 1,
     }),
   ];
 }

@@ -10,8 +10,6 @@ List<RouteBase> get $appRoutes => [
   $onboardingRoute,
   $loginRoute,
   $signupRoute,
-  $otpVerificationRoute,
-  $resetPasswordRoute,
   $roleSelectionRoute,
   $adminDoctorsRoute,
   $createDoctorRoute,
@@ -19,7 +17,6 @@ List<RouteBase> get $appRoutes => [
   $homeRoute,
   $findDoctorsRoute,
   $doctorDetailsRoute,
-  $favouriteDoctorsRoute,
   $selectTimeRoute,
   $profileRoute,
 ];
@@ -93,64 +90,6 @@ mixin $SignupRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location('/signup');
-
-  @override
-  void go(BuildContext context) => context.go(location);
-
-  @override
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
-
-  @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
-
-  @override
-  void replace(BuildContext context) => context.replace(location);
-}
-
-RouteBase get $otpVerificationRoute => GoRouteData.$route(
-  path: '/otp-verification',
-  hasOverriddenOnExit: false,
-  factory: $OtpVerificationRoute._fromState,
-);
-
-mixin $OtpVerificationRoute on GoRouteData {
-  static OtpVerificationRoute _fromState(GoRouterState state) =>
-      OtpVerificationRoute(state.extra as String?);
-
-  OtpVerificationRoute get _self => this as OtpVerificationRoute;
-
-  @override
-  String get location => GoRouteData.$location('/otp-verification');
-
-  @override
-  void go(BuildContext context) => context.go(location, extra: _self.$extra);
-
-  @override
-  Future<T?> push<T>(BuildContext context) =>
-      context.push<T>(location, extra: _self.$extra);
-
-  @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location, extra: _self.$extra);
-
-  @override
-  void replace(BuildContext context) =>
-      context.replace(location, extra: _self.$extra);
-}
-
-RouteBase get $resetPasswordRoute => GoRouteData.$route(
-  path: '/reset-password',
-  hasOverriddenOnExit: false,
-  factory: $ResetPasswordRoute._fromState,
-);
-
-mixin $ResetPasswordRoute on GoRouteData {
-  static ResetPasswordRoute _fromState(GoRouterState state) =>
-      const ResetPasswordRoute();
-
-  @override
-  String get location => GoRouteData.$location('/reset-password');
 
   @override
   void go(BuildContext context) => context.go(location);
@@ -360,33 +299,6 @@ mixin $DoctorDetailsRoute on GoRouteData {
   @override
   void replace(BuildContext context) =>
       context.replace(location, extra: _self.$extra);
-}
-
-RouteBase get $favouriteDoctorsRoute => GoRouteData.$route(
-  path: '/favourite-doctors',
-  hasOverriddenOnExit: false,
-  factory: $FavouriteDoctorsRoute._fromState,
-);
-
-mixin $FavouriteDoctorsRoute on GoRouteData {
-  static FavouriteDoctorsRoute _fromState(GoRouterState state) =>
-      const FavouriteDoctorsRoute();
-
-  @override
-  String get location => GoRouteData.$location('/favourite-doctors');
-
-  @override
-  void go(BuildContext context) => context.go(location);
-
-  @override
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
-
-  @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
-
-  @override
-  void replace(BuildContext context) => context.replace(location);
 }
 
 RouteBase get $selectTimeRoute => GoRouteData.$route(

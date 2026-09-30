@@ -16,9 +16,6 @@ import 'package:doctor_hunt/apps/features/common/auth/presentation/controller/cu
 import 'package:doctor_hunt/apps/features/patient/find_doctors/data/repositories/doctor_repository.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/data/service/find_doctors_service.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/controller/cubit/find_doctors_cubit.dart';
-import 'package:doctor_hunt/apps/features/patient/favourite_doctors/data/repositories/favourite_doctors_repository.dart';
-import 'package:doctor_hunt/apps/features/patient/favourite_doctors/data/service/favourite_doctors_service.dart';
-import 'package:doctor_hunt/apps/features/patient/favourite_doctors/presentation/controller/cubit/favourite_doctors_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/home/data/repositories/home_repository.dart';
 import 'package:doctor_hunt/apps/features/patient/home/data/service/home_service.dart';
 import 'package:doctor_hunt/apps/features/patient/home/presentation/controller/cubit/home_cubit.dart';
@@ -62,9 +59,6 @@ void setupServiceLocator() {
   getIt.registerLazySingleton<FindDoctorsService>(
     () => FindDoctorsService(doctorService: getIt<DoctorService>()),
   );
-  getIt.registerLazySingleton<FavouriteDoctorsService>(
-    () => FavouriteDoctorsService(doctorService: getIt<DoctorService>()),
-  );
   getIt.registerLazySingleton<AdminDoctorService>(
     () => AdminDoctorService(
       firestore: getIt<FirebaseFirestore>(),
@@ -82,11 +76,6 @@ void setupServiceLocator() {
   getIt.registerLazySingleton<DoctorRepository>(
     () => FirebaseDoctorRepository(
       findDoctorsService: getIt<FindDoctorsService>(),
-    ),
-  );
-  getIt.registerLazySingleton<FavouriteDoctorsRepository>(
-    () => FirebaseFavouriteDoctorsRepository(
-      favouriteDoctorsService: getIt<FavouriteDoctorsService>(),
     ),
   );
   getIt.registerLazySingleton<HomeRepository>(
@@ -117,10 +106,6 @@ void setupServiceLocator() {
   );
   getIt.registerFactory<FindDoctorsCubit>(
     () => FindDoctorsCubit(repository: getIt<DoctorRepository>()),
-  );
-  getIt.registerFactory<FavouriteDoctorsCubit>(
-    () =>
-        FavouriteDoctorsCubit(repository: getIt<FavouriteDoctorsRepository>()),
   );
   getIt.registerFactory<AdminDoctorsCubit>(
     () => AdminDoctorsCubit(repository: getIt<AdminDoctorsRepository>()),

@@ -9,7 +9,6 @@ import 'package:doctor_hunt/apps/features/patient/home/presentation/controller/c
 import 'package:doctor_hunt/apps/features/patient/home/presentation/controller/cubit/home_state.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
-import '../widgets/coming_soon_view.dart';
 import '../widgets/doctors_data.dart';
 import '../widgets/doctors_is_empty.dart';
 import '../widgets/doctors_loading.dart';
@@ -56,17 +55,6 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  void _onNavTap(BuildContext context, int index) {
-    setState(() => _selectedNavIndex = index);
-    if (index == 1) {
-      const FavouriteDoctorsRoute().push<int>(context).then((selected) {
-        if (mounted) {
-          setState(() => _selectedNavIndex = selected ?? 0);
-        }
-      });
-    }
-  }
-
   String _greeting(User? user) {
     final rawName = user?.displayName?.trim();
     final name = (rawName != null && rawName.isNotEmpty)
@@ -85,8 +73,9 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (context, state) {
         return Scaffold(
           backgroundColor: AppColors.background,
-          body: (_selectedNavIndex == 2 || _selectedNavIndex == 3)
-              ? const ComingSoonView()
+          // Other tabs stay empty until the patient shell replaces this bar.
+          body: _selectedNavIndex != 0
+              ? const SizedBox.shrink()
               : SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,7 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
           bottomNavigationBar: MainBottomNavigationBar(
             currentIndex: _selectedNavIndex,
-            onTap: (index) => _onNavTap(context, index),
+            onTap: (index) => setState(() => _selectedNavIndex = index),
           ),
         );
       },
