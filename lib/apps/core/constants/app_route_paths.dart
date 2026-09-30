@@ -8,6 +8,7 @@ abstract final class AppRoutePaths {
   static const String createDoctor = '/admin/doctors/create';
   static const String adminDoctorDetails = '/admin/doctors/details';
   static const String adminSettings = '/admin/settings';
+  static const String adminProfile = '/admin/profile';
   static const String home = '/home';
   static const String doctors = '/doctors';
   static const String appointments = '/appointments';

@@ -159,6 +159,8 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get settings => 'الإعدادات';
 	@override String get language => 'اللغة';
 	@override String get profileUpdatedSuccess => 'تم تحديث الملف الشخصي بنجاح';
+	@override String get logOutConfirmTitle => 'تسجيل الخروج؟';
+	@override String get logOutConfirmMessage => 'ستحتاج إلى تسجيل الدخول مرة أخرى لاستخدام التطبيق.';
 	@override String get logOut => 'تسجيل الخروج';
 	@override String get selectTime => 'اختيار الموعد';
 	@override String get selectDate => 'اختر التاريخ';
@@ -401,6 +403,8 @@ extension on TranslationsAr {
 			'settings' => 'الإعدادات',
 			'language' => 'اللغة',
 			'profileUpdatedSuccess' => 'تم تحديث الملف الشخصي بنجاح',
+			'logOutConfirmTitle' => 'تسجيل الخروج؟',
+			'logOutConfirmMessage' => 'ستحتاج إلى تسجيل الدخول مرة أخرى لاستخدام التطبيق.',
 			'logOut' => 'تسجيل الخروج',
 			'selectTime' => 'اختيار الموعد',
 			'selectDate' => 'اختر التاريخ',

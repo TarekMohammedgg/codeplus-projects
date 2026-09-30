@@ -119,6 +119,8 @@
   "settings": "Settings",
   "language": "Language",
   "profileUpdatedSuccess": "Profile updated successfully",
+  "logOutConfirmTitle": "Log out?",
+  "logOutConfirmMessage": "You will need to sign in again to use the app.",
   "logOut": "Log Out",
   "selectTime": "Select Time",
   "selectDate": "Select Date",

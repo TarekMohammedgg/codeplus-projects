@@ -119,6 +119,8 @@
   "settings": "الإعدادات",
   "language": "اللغة",
   "profileUpdatedSuccess": "تم تحديث الملف الشخصي بنجاح",
+  "logOutConfirmTitle": "تسجيل الخروج؟",
+  "logOutConfirmMessage": "ستحتاج إلى تسجيل الدخول مرة أخرى لاستخدام التطبيق.",
   "logOut": "تسجيل الخروج",
   "selectTime": "اختيار الموعد",
   "selectDate": "اختر التاريخ",

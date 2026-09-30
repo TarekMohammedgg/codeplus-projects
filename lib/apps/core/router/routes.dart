@@ -8,6 +8,7 @@ import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/core/utils/doctor_sort.dart';
 import 'package:doctor_hunt/apps/features/admin/doctor_details/presentation/screens/admin_doctor_details.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/data/models/admin_doctor_model.dart';
+import 'package:doctor_hunt/apps/features/admin/profile/presentation/screens/admin_profile_screen.dart';
 import 'package:doctor_hunt/apps/features/admin/create_doctor/presentation/controller/cubit/create_doctor_cubit.dart';
 import 'package:doctor_hunt/apps/features/admin/create_doctor/presentation/screens/create_doctor_screen.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/presentation/controller/cubit/admin_doctors_cubit.dart';
@@ -286,6 +287,16 @@ class CreateDoctorRoute extends GoRouteData with $CreateDoctorRoute {
       create: (_) => getIt<CreateDoctorCubit>(),
       child: CreateDoctorScreen(doctor: $extra),
     );
+  }
+}
+
+@TypedGoRoute<AdminProfileRoute>(path: AppRoutePaths.adminProfile)
+class AdminProfileRoute extends GoRouteData with $AdminProfileRoute {
+  const AdminProfileRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const AdminProfileScreen();
   }
 }
 

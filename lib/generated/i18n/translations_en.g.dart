@@ -401,6 +401,12 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'Profile updated successfully'
 	String get profileUpdatedSuccess => 'Profile updated successfully';
 
+	/// en: 'Log out?'
+	String get logOutConfirmTitle => 'Log out?';
+
+	/// en: 'You will need to sign in again to use the app.'
+	String get logOutConfirmMessage => 'You will need to sign in again to use the app.';
+
 	/// en: 'Log Out'
 	String get logOut => 'Log Out';
 
@@ -866,6 +872,8 @@ extension on Translations {
 			'settings' => 'Settings',
 			'language' => 'Language',
 			'profileUpdatedSuccess' => 'Profile updated successfully',
+			'logOutConfirmTitle' => 'Log out?',
+			'logOutConfirmMessage' => 'You will need to sign in again to use the app.',
 			'logOut' => 'Log Out',
 			'selectTime' => 'Select Time',
 			'selectDate' => 'Select Date',
