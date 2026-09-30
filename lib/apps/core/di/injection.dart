@@ -19,6 +19,8 @@ import 'package:doctor_hunt/apps/features/common/auth/presentation/controller/cu
 import 'package:doctor_hunt/apps/features/patient/find_doctors/data/repositories/doctor_repository.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/data/service/find_doctors_service.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/controller/cubit/find_doctors_cubit.dart';
+import 'package:doctor_hunt/apps/features/patient/doctor_booking/data/repositories/booking_repository.dart';
+import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/controller/cubit/booking_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/home/data/repositories/home_repository.dart';
 import 'package:doctor_hunt/apps/features/patient/home/data/service/home_service.dart';
 import 'package:doctor_hunt/apps/features/patient/home/presentation/controller/cubit/home_cubit.dart';
@@ -108,6 +110,10 @@ void setupServiceLocator() {
       uploadService: getIt<CloudinaryUploadService>(),
     ),
   );
+  getIt.registerLazySingleton<BookingRepository>(
+    () =>
+        BookingRepositoryImpl(appointmentService: getIt<AppointmentService>()),
+  );
 
   // Cubits (registered as factories to return a fresh instance on demand)
   getIt.registerFactory<AuthCubit>(
@@ -124,5 +130,8 @@ void setupServiceLocator() {
   );
   getIt.registerFactory<CreateDoctorCubit>(
     () => CreateDoctorCubit(repository: getIt<CreateDoctorRepository>()),
+  );
+  getIt.registerFactory<BookingCubit>(
+    () => BookingCubit(repository: getIt<BookingRepository>()),
   );
 }

@@ -83,6 +83,7 @@
   "bookNow": "Book Now",
   "noDoctorsFound": "No doctors found",
   "bookingComingSoon": "Booking is not available yet.",
+  "doctorNoAvailableTimes": "Doctor has no available times yet",
   "bookingMessage(name)": "Booking appointment with $name...",
   "tomorrow": "tomorrow",
   "doctorDetails": "Doctor Details",

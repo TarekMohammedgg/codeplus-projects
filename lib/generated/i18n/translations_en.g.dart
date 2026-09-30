@@ -293,6 +293,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'Booking is not available yet.'
 	String get bookingComingSoon => 'Booking is not available yet.';
 
+	/// en: 'Doctor has no available times yet'
+	String get doctorNoAvailableTimes => 'Doctor has no available times yet';
+
 	/// en: 'Booking appointment with $name...'
 	String bookingMessage({required Object name}) => 'Booking appointment with ${name}...';
 
@@ -746,6 +749,7 @@ extension on Translations {
 			'bookNow' => 'Book Now',
 			'noDoctorsFound' => 'No doctors found',
 			'bookingComingSoon' => 'Booking is not available yet.',
+			'doctorNoAvailableTimes' => 'Doctor has no available times yet',
 			'bookingMessage' => ({required Object name}) => 'Booking appointment with ${name}...',
 			'tomorrow' => 'tomorrow',
 			'doctorDetails' => 'Doctor Details',

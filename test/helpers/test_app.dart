@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/date_symbol_data_local.dart';
+
 import 'package:doctor_hunt/apps/core/di/injection.dart';
 import 'package:doctor_hunt/apps/features/common/auth/data/service/auth_service.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
@@ -41,6 +44,7 @@ void ensureTestServiceLocator() {
 Widget buildTestApp(Widget child) {
   LocaleSettings.setLocaleSync(AppLocale.en);
   ensureTestServiceLocator();
+  initializeDateFormatting('en', null);
   return TranslationProvider(
     child: Builder(
       builder: (context) {
@@ -48,6 +52,8 @@ Widget buildTestApp(Widget child) {
         return MaterialApp(
           key: ValueKey(locale),
           locale: locale.flutterLocale,
+          localizationsDelegates: GlobalMaterialLocalizations.delegates,
+          supportedLocales: AppLocaleUtils.supportedLocales,
           home: child,
         );
       },
@@ -58,6 +64,7 @@ Widget buildTestApp(Widget child) {
 Widget buildTestRouterApp(GoRouter router) {
   LocaleSettings.setLocaleSync(AppLocale.en);
   ensureTestServiceLocator();
+  initializeDateFormatting('en', null);
   return TranslationProvider(
     child: Builder(
       builder: (context) {
@@ -65,6 +72,8 @@ Widget buildTestRouterApp(GoRouter router) {
         return MaterialApp.router(
           key: ValueKey(locale),
           locale: locale.flutterLocale,
+          localizationsDelegates: GlobalMaterialLocalizations.delegates,
+          supportedLocales: AppLocaleUtils.supportedLocales,
           routerConfig: router,
         );
       },

@@ -20,6 +20,7 @@ import 'package:doctor_hunt/apps/features/common/role_selection/data/models/user
 import 'package:doctor_hunt/apps/features/common/role_selection/presentation/screens/role_selection_screen.dart';
 import 'package:doctor_hunt/apps/features/common/shell/presentation/screens/admin_shell.dart';
 import 'package:doctor_hunt/apps/features/common/shell/presentation/screens/patient_shell.dart';
+import 'package:doctor_hunt/apps/features/patient/doctor_booking/data/models/booking_draft.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/screens/doctor_booking_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_details/presentation/screens/patient_doctor_details_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/controller/cubit/find_doctors_cubit.dart';
@@ -301,5 +302,17 @@ class SelectTimeRoute extends GoRouteData with $SelectTimeRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return DoctorBookingScreen(doctor: $extra ?? DoctorModel.placeholder());
+  }
+}
+
+@TypedGoRoute<BookingReviewRoute>(path: AppRoutePaths.bookingReview)
+class BookingReviewRoute extends GoRouteData with $BookingReviewRoute {
+  const BookingReviewRoute([this.$extra]);
+
+  final BookingDraft? $extra;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const Scaffold();
   }
 }

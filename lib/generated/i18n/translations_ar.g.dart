@@ -123,6 +123,7 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get bookNow => 'احجز الآن';
 	@override String get noDoctorsFound => 'لم يتم العثور على أطباء';
 	@override String get bookingComingSoon => 'الحجز غير متاح حاليًا.';
+	@override String get doctorNoAvailableTimes => 'ليس لدى الطبيب مواعيد متاحة بعد';
 	@override String bookingMessage({required Object name}) => 'حجز موعد مع ${name}...';
 	@override String get tomorrow => 'غدًا';
 	@override String get doctorDetails => 'تفاصيل الطبيب';
@@ -337,6 +338,7 @@ extension on TranslationsAr {
 			'bookNow' => 'احجز الآن',
 			'noDoctorsFound' => 'لم يتم العثور على أطباء',
 			'bookingComingSoon' => 'الحجز غير متاح حاليًا.',
+			'doctorNoAvailableTimes' => 'ليس لدى الطبيب مواعيد متاحة بعد',
 			'bookingMessage' => ({required Object name}) => 'حجز موعد مع ${name}...',
 			'tomorrow' => 'غدًا',
 			'doctorDetails' => 'تفاصيل الطبيب',

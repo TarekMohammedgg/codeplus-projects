@@ -83,6 +83,7 @@
   "bookNow": "احجز الآن",
   "noDoctorsFound": "لم يتم العثور على أطباء",
   "bookingComingSoon": "الحجز غير متاح حاليًا.",
+  "doctorNoAvailableTimes": "ليس لدى الطبيب مواعيد متاحة بعد",
   "bookingMessage(name)": "حجز موعد مع $name...",
   "tomorrow": "غدًا",
   "doctorDetails": "تفاصيل الطبيب",

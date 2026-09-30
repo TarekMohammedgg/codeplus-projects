@@ -16,6 +16,7 @@ List<RouteBase> get $appRoutes => [
   $createDoctorRoute,
   $doctorDetailsRoute,
   $selectTimeRoute,
+  $bookingReviewRoute,
 ];
 
 RouteBase get $onboardingRoute => GoRouteData.$route(
@@ -440,6 +441,37 @@ mixin $SelectTimeRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location('/select-time');
+
+  @override
+  void go(BuildContext context) => context.go(location, extra: _self.$extra);
+
+  @override
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: _self.$extra);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: _self.$extra);
+
+  @override
+  void replace(BuildContext context) =>
+      context.replace(location, extra: _self.$extra);
+}
+
+RouteBase get $bookingReviewRoute => GoRouteData.$route(
+  path: '/booking-review',
+  hasOverriddenOnExit: false,
+  factory: $BookingReviewRoute._fromState,
+);
+
+mixin $BookingReviewRoute on GoRouteData {
+  static BookingReviewRoute _fromState(GoRouterState state) =>
+      BookingReviewRoute(state.extra as BookingDraft?);
+
+  BookingReviewRoute get _self => this as BookingReviewRoute;
+
+  @override
+  String get location => GoRouteData.$location('/booking-review');
 
   @override
   void go(BuildContext context) => context.go(location, extra: _self.$extra);
