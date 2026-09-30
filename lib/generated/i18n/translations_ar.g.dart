@@ -310,6 +310,7 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get statusCompleted => 'مكتمل';
 	@override String get statusCancelled => 'ملغي';
 	@override String get retry => 'إعادة المحاولة';
+	@override String get appointmentDetails => 'تفاصيل الموعد';
 }
 
 /// The flat map containing all translations for locale <ar>.
@@ -591,6 +592,7 @@ extension on TranslationsAr {
 			'statusCompleted' => 'مكتمل',
 			'statusCancelled' => 'ملغي',
 			'retry' => 'إعادة المحاولة',
+			'appointmentDetails' => 'تفاصيل الموعد',
 			_ => null,
 		};
 	}

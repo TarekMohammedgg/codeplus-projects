@@ -271,5 +271,6 @@
   "statusUpcoming": "Upcoming",
   "statusCompleted": "Completed",
   "statusCancelled": "Cancelled",
-  "retry": "Retry"
+  "retry": "Retry",
+  "appointmentDetails": "Appointment Details"
 }

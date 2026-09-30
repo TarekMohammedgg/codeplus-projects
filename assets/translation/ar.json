@@ -271,5 +271,6 @@
   "statusUpcoming": "قادم",
   "statusCompleted": "مكتمل",
   "statusCancelled": "ملغي",
-  "retry": "إعادة المحاولة"
+  "retry": "إعادة المحاولة",
+  "appointmentDetails": "تفاصيل الموعد"
 }

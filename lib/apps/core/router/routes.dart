@@ -25,6 +25,7 @@ import 'package:doctor_hunt/apps/features/common/shell/presentation/screens/admi
 import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
 import 'package:doctor_hunt/apps/features/common/shell/presentation/screens/patient_shell.dart';
 import 'package:doctor_hunt/apps/features/patient/appointments/presentation/controller/cubit/patient_appointments_cubit.dart';
+import 'package:doctor_hunt/apps/features/patient/appointments/presentation/screens/patient_appointment_details_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/appointments/presentation/screens/patient_appointments_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_booking/data/models/booking_draft.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/controller/cubit/booking_cubit.dart';
@@ -421,7 +422,9 @@ class PatientAppointmentDetailsRoute extends GoRouteData
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const Scaffold();
+    final appt = $extra;
+    if (appt == null) return const Scaffold();
+    return PatientAppointmentDetailsScreen(appointment: appt);
   }
 }
 

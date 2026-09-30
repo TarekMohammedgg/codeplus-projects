@@ -853,6 +853,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// en: 'Retry'
 	String get retry => 'Retry';
+
+	/// en: 'Appointment Details'
+	String get appointmentDetails => 'Appointment Details';
 }
 
 /// The flat map containing all translations for locale <en>.
@@ -1134,6 +1137,7 @@ extension on Translations {
 			'statusCompleted' => 'Completed',
 			'statusCancelled' => 'Cancelled',
 			'retry' => 'Retry',
+			'appointmentDetails' => 'Appointment Details',
 			_ => null,
 		};
 	}
