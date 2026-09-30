@@ -5,6 +5,7 @@ abstract final class AppRoutePaths {
   static const String roleSelection = '/role-selection';
   static const String adminDoctors = '/admin/doctors';
   static const String adminAppointments = '/admin/appointments';
+  static const String adminAppointmentDetails = '/admin/appointments/details';
   static const String createDoctor = '/admin/doctors/create';
   static const String adminDoctorDetails = '/admin/doctors/details';
   static const String doctorAvailability = '/admin/doctors/availability';

@@ -313,5 +313,8 @@
   "clinicLocationRequired": "يرجى تحديد موقع العيادة على الخريطة",
   "emailVerificationSent(email)": "تم إرسال بريد التحقق إلى $email",
   "requiresRecentLogin": "يرجى تسجيل الدخول مجدداً لتغيير البريد الإلكتروني",
-  "adminProfileUpdatedSuccess": "تم تحديث ملف المسؤول وبيانات العيادة بنجاح"
+  "adminProfileUpdatedSuccess": "تم تحديث ملف المسؤول وبيانات العيادة بنجاح",
+  "all": "الكل",
+  "patientNameLabel(name)": "المريض: $name",
+  "noAppointmentsFound": "لا توجد مواعيد"
 }

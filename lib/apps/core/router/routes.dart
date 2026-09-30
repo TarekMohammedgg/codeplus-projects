@@ -9,6 +9,9 @@ import 'package:doctor_hunt/apps/core/utils/doctor_sort.dart';
 import 'package:doctor_hunt/apps/features/admin/doctor_details/presentation/screens/admin_doctor_details.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/data/models/admin_doctor_model.dart';
 import 'package:doctor_hunt/apps/features/admin/profile/presentation/screens/admin_profile_screen.dart';
+import 'package:doctor_hunt/apps/features/admin/appointments/presentation/controller/cubit/admin_appointments_cubit.dart';
+import 'package:doctor_hunt/apps/features/admin/appointments/presentation/screens/admin_appointments_screen.dart';
+import 'package:doctor_hunt/apps/features/admin/appointments/presentation/screens/admin_appointment_details_screen.dart';
 import 'package:doctor_hunt/apps/features/admin/availability/presentation/screens/doctor_availability_screen.dart';
 import 'package:doctor_hunt/apps/features/admin/create_doctor/presentation/controller/cubit/create_doctor_cubit.dart';
 import 'package:doctor_hunt/apps/features/admin/create_doctor/presentation/screens/create_doctor_screen.dart';
@@ -45,7 +48,6 @@ import 'package:doctor_hunt/apps/features/patient/profile/presentation/screens/e
 import 'package:doctor_hunt/apps/features/patient/profile/presentation/screens/patient_settings_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/presentation/screens/profile_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/rate_doctor/presentation/screens/rate_doctor_screen.dart';
-import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
 part 'routes.g.dart';
 
@@ -270,7 +272,10 @@ class AdminAppointmentsRoute extends GoRouteData with $AdminAppointmentsRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return Scaffold(body: Center(child: Text(tr.tabAppointments)));
+    return BlocProvider<AdminAppointmentsCubit>(
+      create: (_) => getIt<AdminAppointmentsCubit>()..init(),
+      child: const AdminAppointmentsScreen(),
+    );
   }
 }
 
@@ -324,6 +329,23 @@ class AdminDoctorDetailsRoute extends GoRouteData
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return AdminDoctorDetails(doctor: $extra);
+  }
+}
+
+@TypedGoRoute<AdminAppointmentDetailsRoute>(
+  path: AppRoutePaths.adminAppointmentDetails,
+)
+class AdminAppointmentDetailsRoute extends GoRouteData
+    with $AdminAppointmentDetailsRoute {
+  const AdminAppointmentDetailsRoute([this.$extra]);
+
+  final AppointmentModel? $extra;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    final appt = $extra;
+    if (appt == null) return const Scaffold();
+    return AdminAppointmentDetailsScreen(appointment: appt);
   }
 }
 

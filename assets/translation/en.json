@@ -313,5 +313,8 @@
   "clinicLocationRequired": "Please select clinic location on the map",
   "emailVerificationSent(email)": "Verification email sent to $email",
   "requiresRecentLogin": "Please re-login before updating your email",
-  "adminProfileUpdatedSuccess": "Admin profile and clinic updated successfully"
+  "adminProfileUpdatedSuccess": "Admin profile and clinic updated successfully",
+  "all": "All",
+  "patientNameLabel(name)": "Patient: $name",
+  "noAppointmentsFound": "No appointments found"
 }

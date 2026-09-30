@@ -967,6 +967,15 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// en: 'Admin profile and clinic updated successfully'
 	String get adminProfileUpdatedSuccess => 'Admin profile and clinic updated successfully';
+
+	/// en: 'All'
+	String get all => 'All';
+
+	/// en: 'Patient: $name'
+	String patientNameLabel({required Object name}) => 'Patient: ${name}';
+
+	/// en: 'No appointments found'
+	String get noAppointmentsFound => 'No appointments found';
 }
 
 /// The flat map containing all translations for locale <en>.
@@ -1286,6 +1295,9 @@ extension on Translations {
 			'emailVerificationSent' => ({required Object email}) => 'Verification email sent to ${email}',
 			'requiresRecentLogin' => 'Please re-login before updating your email',
 			'adminProfileUpdatedSuccess' => 'Admin profile and clinic updated successfully',
+			'all' => 'All',
+			'patientNameLabel' => ({required Object name}) => 'Patient: ${name}',
+			'noAppointmentsFound' => 'No appointments found',
 			_ => null,
 		};
 	}

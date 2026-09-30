@@ -348,6 +348,9 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String emailVerificationSent({required Object email}) => 'تم إرسال بريد التحقق إلى ${email}';
 	@override String get requiresRecentLogin => 'يرجى تسجيل الدخول مجدداً لتغيير البريد الإلكتروني';
 	@override String get adminProfileUpdatedSuccess => 'تم تحديث ملف المسؤول وبيانات العيادة بنجاح';
+	@override String get all => 'الكل';
+	@override String patientNameLabel({required Object name}) => 'المريض: ${name}';
+	@override String get noAppointmentsFound => 'لا توجد مواعيد';
 }
 
 /// The flat map containing all translations for locale <ar>.
@@ -667,6 +670,9 @@ extension on TranslationsAr {
 			'emailVerificationSent' => ({required Object email}) => 'تم إرسال بريد التحقق إلى ${email}',
 			'requiresRecentLogin' => 'يرجى تسجيل الدخول مجدداً لتغيير البريد الإلكتروني',
 			'adminProfileUpdatedSuccess' => 'تم تحديث ملف المسؤول وبيانات العيادة بنجاح',
+			'all' => 'الكل',
+			'patientNameLabel' => ({required Object name}) => 'المريض: ${name}',
+			'noAppointmentsFound' => 'لا توجد مواعيد',
 			_ => null,
 		};
 	}
