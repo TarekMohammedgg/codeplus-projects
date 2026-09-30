@@ -113,8 +113,12 @@ void main() {
         firestore: fakeFirestore,
         specialtyService: specialtyService,
       );
-      final repo = FirebaseAdminDoctorsRepository(doctorService: service);
+      final repo = FirebaseAdminDoctorsRepository(
+        doctorService: service,
+        specialtyService: specialtyService,
+      );
       expect(repo.doctorService, same(service));
+      expect(repo.specialtyService, same(specialtyService));
     });
   });
 }

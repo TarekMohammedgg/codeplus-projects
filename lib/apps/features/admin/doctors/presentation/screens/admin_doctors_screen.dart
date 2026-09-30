@@ -8,6 +8,7 @@ import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_header_section.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_text_button.dart';
+import 'package:doctor_hunt/apps/core/widgets/doctor_filter_chips.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/data/models/admin_doctor_model.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/presentation/controller/cubit/admin_doctors_cubit.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/presentation/controller/cubit/admin_doctors_state.dart';
@@ -28,6 +29,9 @@ class AdminDoctorsScreenState extends State<AdminDoctorsScreen> {
 
   String _query = '';
 
+  /// Null = "All".
+  String? _specialtyId;
+
   @override
   void initState() {
     super.initState();
@@ -46,56 +50,61 @@ class AdminDoctorsScreenState extends State<AdminDoctorsScreen> {
   }
 
   List<AdminDoctorModel> _filter(List<AdminDoctorModel> doctors) {
-    if (_query.trim().isEmpty) return doctors;
     final query = _query.trim().toLowerCase();
-    return doctors
-        .where(
-          (doctor) =>
-              doctor.name.toLowerCase().contains(query) ||
-              doctor.specialty.toLowerCase().contains(query),
-        )
-        .toList();
+    return doctors.where((doctor) {
+      if (_specialtyId != null && doctor.specialtyId != _specialtyId) {
+        return false;
+      }
+      if (query.isEmpty) return true;
+      return [
+        doctor.name,
+        doctor.nameAr,
+        doctor.nameEn,
+        doctor.specialty,
+      ].any((text) => text?.toLowerCase().contains(query) ?? false);
+    }).toList();
   }
 
-  Future<void> _confirmDeleteDoctor(AdminDoctorModel doctor) async {
+  Future<void> _confirmToggleActive(AdminDoctorModel doctor) async {
+    final activate = !doctor.isActive;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
         backgroundColor: AppColors.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(tr.deleteDoctorTitle, style: context.semiBold16TextMain),
+        title: Text(
+          activate ? tr.activateDoctorTitle : tr.deactivateDoctorTitle,
+          style: context.semiBold16TextMain,
+        ),
         content: Text(
-          tr.deleteDoctorConfirm,
+          activate ? tr.activateDoctorConfirm : tr.deactivateDoctorConfirm,
           style: context.regular14TextSecondary,
         ),
         actions: [
-          //CR use primary widget (any reuse widget)
-          // Solved
           AppTextButton(
             label: tr.cancel,
             onPressed: () => Navigator.of(dialogContext).pop(false),
             textStyle: context.medium14TextSecondary,
           ),
-          //CR use primary widget (any reuse widget)
-          // Solved
           AppTextButton(
-            label: tr.delete,
+            label: activate ? tr.activate : tr.deactivate,
             onPressed: () => Navigator.of(dialogContext).pop(true),
-            foregroundColor: AppColors.error,
+            foregroundColor: activate ? AppColors.success : AppColors.error,
           ),
         ],
       ),
     );
 
-    if (confirmed == true && mounted) {
-      try {
-        await _adminDoctorsCubit.deleteDoctor(doctor.id);
-        if (!mounted) return;
-        context.showSuccessSnackBar(tr.doctorDeletedSuccess);
-      } catch (e) {
-        if (!mounted) return;
-        context.showErrorSnackBar(AppException.from(e).message);
-      }
+    if (confirmed != true || !mounted) return;
+    try {
+      await _adminDoctorsCubit.setActive(doctor.id, activate);
+      if (!mounted) return;
+      context.showSuccessSnackBar(
+        activate ? tr.doctorActivatedSuccess : tr.doctorDeactivatedSuccess,
+      );
+    } catch (e) {
+      if (!mounted) return;
+      context.showErrorSnackBar(AppException.from(e).message);
     }
   }
 
@@ -144,28 +153,35 @@ class AdminDoctorsScreenState extends State<AdminDoctorsScreen> {
       AdminDoctorsFailure() => Center(
         child: Text(tr.serviceError, style: context.semiBold16TextMain),
       ),
-      AdminDoctorsSuccess(:final doctors) => _buildDoctorsList(
-        context,
-        doctors,
-      ),
+      AdminDoctorsSuccess() => _buildDoctorsList(context, state),
     };
   }
 
-  Widget _buildDoctorsList(
-    BuildContext context,
-    List<AdminDoctorModel> doctors,
-  ) {
+  Widget _buildDoctorsList(BuildContext context, AdminDoctorsSuccess state) {
+    final doctors = state.doctors;
     final filtered = _filter(doctors);
     final activeCount = doctors.where((doctor) => doctor.isActive).length;
 
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          AdminStatsRow(totalCount: doctors.length, activeCount: activeCount),
-          16.verticalSpace,
-          Expanded(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+          child: AdminStatsRow(
+            totalCount: doctors.length,
+            activeCount: activeCount,
+          ),
+        ),
+        12.verticalSpace,
+        DoctorFilterChips(
+          specialties: state.specialties,
+          selectedSpecialtyId: _specialtyId,
+          onSpecialtySelected: (id) => setState(() => _specialtyId = id),
+        ),
+        12.verticalSpace,
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: filtered.isEmpty
                 ? Center(
                     child: Text(
@@ -182,17 +198,16 @@ class AdminDoctorsScreenState extends State<AdminDoctorsScreen> {
                       final doctor = filtered[index];
                       return AdminDoctorListTile(
                         doctor: doctor,
-                        onTap: () => DoctorDetailsRoute(
-                          doctor.toDoctorModel(),
-                        ).push(context),
+                        onTap: () =>
+                            AdminDoctorDetailsRoute(doctor).push(context),
                         onEdit: () => CreateDoctorRoute(doctor).push(context),
-                        onDelete: () => _confirmDeleteDoctor(doctor),
+                        onToggleActive: () => _confirmToggleActive(doctor),
                       );
                     },
                   ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

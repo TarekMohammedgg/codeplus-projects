@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:doctor_hunt/apps/core/constants/app_route_paths.dart';
 import 'package:doctor_hunt/apps/core/di/injection.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_availability.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
@@ -141,7 +142,7 @@ void main() {
           ),
         ),
         GoRoute(
-          path: '/booking-review',
+          path: AppRoutePaths.bookingReview,
           builder: (context, state) =>
               const Scaffold(body: Text('Booking Review Screen')),
         ),

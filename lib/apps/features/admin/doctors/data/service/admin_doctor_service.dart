@@ -91,8 +91,13 @@ class AdminDoctorService {
     });
   }
 
-  Future<void> deleteDoctor(String id) async {
-    await _doctors.doc(id).delete();
+  /// Doctors are never deleted (booking history keeps them); patients only
+  /// see active ones.
+  Future<void> setActive(String id, bool isActive) {
+    return _doctors.doc(id).update({
+      'isActive': isActive,
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
   }
 
   static Future<String> _nextDoctorId(

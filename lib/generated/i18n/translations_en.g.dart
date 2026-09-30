@@ -293,6 +293,24 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'Clinic location has not been set yet'
 	String get clinicLocationNotSet => 'Clinic location has not been set yet';
 
+	/// en: 'Booking Review'
+	String get bookingReview => 'Booking Review';
+
+	/// en: 'Confirm Booking'
+	String get confirmBooking => 'Confirm Booking';
+
+	/// en: 'Appointment Date'
+	String get appointmentDate => 'Appointment Date';
+
+	/// en: 'Appointment Time'
+	String get appointmentTime => 'Appointment Time';
+
+	/// en: 'Consultation Fee'
+	String get consultationFee => 'Consultation Fee';
+
+	/// en: 'Clinic Address'
+	String get clinicAddress => 'Clinic Address';
+
 	/// en: 'Reviews'
 	String get reviews => 'Reviews';
 
@@ -620,6 +638,30 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'Please enter a fee greater than 0'
 	String get enterValidFee => 'Please enter a fee greater than 0';
 
+	/// en: 'Activate'
+	String get activate => 'Activate';
+
+	/// en: 'Deactivate'
+	String get deactivate => 'Deactivate';
+
+	/// en: 'Activate doctor?'
+	String get activateDoctorTitle => 'Activate doctor?';
+
+	/// en: 'Patients will see this doctor and can book again.'
+	String get activateDoctorConfirm => 'Patients will see this doctor and can book again.';
+
+	/// en: 'Deactivate doctor?'
+	String get deactivateDoctorTitle => 'Deactivate doctor?';
+
+	/// en: 'Patients will no longer see or book this doctor. Booking history is kept.'
+	String get deactivateDoctorConfirm => 'Patients will no longer see or book this doctor. Booking history is kept.';
+
+	/// en: 'Doctor activated'
+	String get doctorActivatedSuccess => 'Doctor activated';
+
+	/// en: 'Doctor deactivated'
+	String get doctorDeactivatedSuccess => 'Doctor deactivated';
+
 	/// en: 'Please enter the doctor's name'
 	String get enterDoctorName => 'Please enter the doctor\'s name';
 
@@ -662,9 +704,6 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'Edit'
 	String get edit => 'Edit';
 
-	/// en: 'Delete'
-	String get delete => 'Delete';
-
 	/// en: 'Cancel'
 	String get cancel => 'Cancel';
 
@@ -676,15 +715,6 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// en: 'Doctor updated successfully'
 	String get doctorUpdatedSuccess => 'Doctor updated successfully';
-
-	/// en: 'Delete Doctor'
-	String get deleteDoctorTitle => 'Delete Doctor';
-
-	/// en: 'Are you sure you want to delete this doctor?'
-	String get deleteDoctorConfirm => 'Are you sure you want to delete this doctor?';
-
-	/// en: 'Doctor deleted successfully'
-	String get doctorDeletedSuccess => 'Doctor deleted successfully';
 
 	/// en: 'Change image'
 	String get changeImage => 'Change image';
@@ -800,6 +830,12 @@ extension on Translations {
 			'noReviewsYet' => 'No reviews yet',
 			'clinicLocation' => 'Clinic Location',
 			'clinicLocationNotSet' => 'Clinic location has not been set yet',
+			'bookingReview' => 'Booking Review',
+			'confirmBooking' => 'Confirm Booking',
+			'appointmentDate' => 'Appointment Date',
+			'appointmentTime' => 'Appointment Time',
+			'consultationFee' => 'Consultation Fee',
+			'clinicAddress' => 'Clinic Address',
 			'reviews' => 'Reviews',
 			'findDoctors' => 'Find Doctors',
 			'searchDentistHint' => 'Dentist',
@@ -909,6 +945,14 @@ extension on Translations {
 			'doctorFeeLabel' => 'Consultation Fee',
 			'doctorFeeHint' => 'Enter fee, e.g. 30',
 			'enterValidFee' => 'Please enter a fee greater than 0',
+			'activate' => 'Activate',
+			'deactivate' => 'Deactivate',
+			'activateDoctorTitle' => 'Activate doctor?',
+			'activateDoctorConfirm' => 'Patients will see this doctor and can book again.',
+			'deactivateDoctorTitle' => 'Deactivate doctor?',
+			'deactivateDoctorConfirm' => 'Patients will no longer see or book this doctor. Booking history is kept.',
+			'doctorActivatedSuccess' => 'Doctor activated',
+			'doctorDeactivatedSuccess' => 'Doctor deactivated',
 			'enterDoctorName' => 'Please enter the doctor\'s name',
 			'selectSpecialtyError' => 'Please select a specialty',
 			'pickImageError' => 'Failed to pick image. Please try again.',
@@ -923,14 +967,10 @@ extension on Translations {
 			'specialtyMedicineSpecialist' => 'Medicine Specialist',
 			'specialtyGeneralSurgeon' => 'General Surgeon',
 			'edit' => 'Edit',
-			'delete' => 'Delete',
 			'cancel' => 'Cancel',
 			'editDoctorTitle' => 'Edit Doctor',
 			'updateDoctorButton' => 'Update Doctor',
 			'doctorUpdatedSuccess' => 'Doctor updated successfully',
-			'deleteDoctorTitle' => 'Delete Doctor',
-			'deleteDoctorConfirm' => 'Are you sure you want to delete this doctor?',
-			'doctorDeletedSuccess' => 'Doctor deleted successfully',
 			'changeImage' => 'Change image',
 			'placeholderDoctorName' => 'Dr. Pediatrician',
 			'tabHome' => 'Home',

@@ -145,15 +145,25 @@ class FakeHomeRepository implements HomeRepository {
 }
 
 class FakeAdminDoctorsRepository implements AdminDoctorsRepository {
-  FakeAdminDoctorsRepository({this.doctors = const []});
+  FakeAdminDoctorsRepository({
+    this.doctors = const [],
+    this.specialties = const [],
+  });
 
   final List<AdminDoctorModel> doctors;
+  final List<SpecialtyModel> specialties;
+  final activeChanges = <(String id, bool isActive)>[];
 
   @override
   Stream<List<AdminDoctorModel>> streamDoctors() => Stream.value(doctors);
 
   @override
-  Future<void> deleteDoctor(String id) async {}
+  Future<List<SpecialtyModel>> fetchSpecialties() async => specialties;
+
+  @override
+  Future<void> setActive(String id, bool isActive) async {
+    activeChanges.add((id, isActive));
+  }
 }
 
 class FakeCreateDoctorRepository implements CreateDoctorRepository {

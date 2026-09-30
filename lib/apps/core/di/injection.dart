@@ -116,6 +116,7 @@ void setupServiceLocator() {
   getIt.registerLazySingleton<AdminDoctorsRepository>(
     () => FirebaseAdminDoctorsRepository(
       doctorService: getIt<AdminDoctorService>(),
+      specialtyService: getIt<SpecialtyService>(),
     ),
   );
   getIt.registerLazySingleton<CreateDoctorRepository>(

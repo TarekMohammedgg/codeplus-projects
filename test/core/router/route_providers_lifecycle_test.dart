@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:doctor_hunt/apps/core/di/injection.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
+import 'package:doctor_hunt/apps/core/services/clinic_service.dart';
 import 'package:doctor_hunt/apps/features/admin/create_doctor/data/repositories/create_doctor_repository.dart';
 import 'package:doctor_hunt/apps/features/admin/create_doctor/presentation/controller/cubit/create_doctor_cubit.dart';
 import 'package:doctor_hunt/apps/features/admin/create_doctor/presentation/screens/create_doctor_screen.dart';
@@ -48,6 +49,9 @@ Future<void> setupFakeServiceLocator({
   await getIt.reset();
   getIt.registerLazySingleton<FirebaseAuth>(() => FakeFirebaseAuth());
   getIt.registerLazySingleton<FirebaseFirestore>(() => FakeFirebaseFirestore());
+  getIt.registerLazySingleton<ClinicService>(
+    () => ClinicService(firestore: getIt<FirebaseFirestore>()),
+  );
 
   final fakeAuthService = FakeAuthService();
   getIt.registerLazySingleton<AuthService>(() => fakeAuthService);

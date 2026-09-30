@@ -22,15 +22,30 @@ void main() {
       emitsInOrder([isA<AdminDoctorsLoading>(), isA<AdminDoctorsSuccess>()]),
     );
 
-    cubit.load();
+    await cubit.load();
     streamController.add(const [
       AdminDoctorModel(id: 'doctor-1', name: 'Dr. One', specialty: 'Dentist'),
     ]);
     await states;
 
-    expect((cubit.state as AdminDoctorsSuccess).doctors.single.id, 'doctor-1');
+    final state = cubit.state as AdminDoctorsSuccess;
+    expect(state.doctors.single.id, 'doctor-1');
+    expect(state.specialties.single.id, 'dentistry');
     await cubit.close();
     await streamController.close();
+  });
+
+  test('AdminDoctorsCubit.setActive deactivates through the repository', () async {
+    // arrange
+    final repository = _FakeAdminDoctorsRepository(const Stream.empty());
+    final cubit = AdminDoctorsCubit(repository: repository);
+
+    // act
+    await cubit.setActive('doctor-1', false);
+
+    // assert
+    expect(repository.activeChanges, [('doctor-1', false)]);
+    await cubit.close();
   });
 
   test('CreateDoctorCubit loads specialties through its repository', () async {
@@ -61,12 +76,20 @@ class _FakeAdminDoctorsRepository implements AdminDoctorsRepository {
   _FakeAdminDoctorsRepository(this.doctorsStream);
 
   final Stream<List<AdminDoctorModel>> doctorsStream;
+  final activeChanges = <(String, bool)>[];
 
   @override
   Stream<List<AdminDoctorModel>> streamDoctors() => doctorsStream;
 
   @override
-  Future<void> deleteDoctor(String id) async {}
+  Future<List<SpecialtyModel>> fetchSpecialties() async => const [
+    SpecialtyModel(id: 'dentistry', nameAr: 'أسنان', nameEn: 'Dentistry'),
+  ];
+
+  @override
+  Future<void> setActive(String id, bool isActive) async {
+    activeChanges.add((id, isActive));
+  }
 }
 
 class _FakeCreateDoctorRepository implements CreateDoctorRepository {

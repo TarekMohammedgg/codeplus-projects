@@ -6,6 +6,7 @@ import 'package:doctor_hunt/apps/core/constants/app_route_paths.dart';
 import 'package:doctor_hunt/apps/core/di/injection.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/core/utils/doctor_sort.dart';
+import 'package:doctor_hunt/apps/features/admin/doctor_details/presentation/screens/admin_doctor_details.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/data/models/admin_doctor_model.dart';
 import 'package:doctor_hunt/apps/features/admin/create_doctor/presentation/controller/cubit/create_doctor_cubit.dart';
 import 'package:doctor_hunt/apps/features/admin/create_doctor/presentation/screens/create_doctor_screen.dart';
@@ -22,6 +23,7 @@ import 'package:doctor_hunt/apps/features/common/role_selection/presentation/scr
 import 'package:doctor_hunt/apps/features/common/shell/presentation/screens/admin_shell.dart';
 import 'package:doctor_hunt/apps/features/common/shell/presentation/screens/patient_shell.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_booking/data/models/booking_draft.dart';
+import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/screens/booking_review_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/screens/doctor_booking_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_details/presentation/controller/cubit/doctor_details_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_details/presentation/screens/patient_doctor_details_screen.dart';
@@ -287,6 +289,19 @@ class CreateDoctorRoute extends GoRouteData with $CreateDoctorRoute {
   }
 }
 
+@TypedGoRoute<AdminDoctorDetailsRoute>(path: AppRoutePaths.adminDoctorDetails)
+class AdminDoctorDetailsRoute extends GoRouteData
+    with $AdminDoctorDetailsRoute {
+  const AdminDoctorDetailsRoute(this.$extra);
+
+  final AdminDoctorModel $extra;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return AdminDoctorDetails(doctor: $extra);
+  }
+}
+
 @TypedGoRoute<DoctorDetailsRoute>(path: AppRoutePaths.doctorDetails)
 class DoctorDetailsRoute extends GoRouteData with $DoctorDetailsRoute {
   const DoctorDetailsRoute([this.$extra]);
@@ -322,7 +337,12 @@ class BookingReviewRoute extends GoRouteData with $BookingReviewRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const Scaffold();
+    final draft = $extra ??
+        BookingDraft(
+          doctor: DoctorModel.placeholder(),
+          startAt: DateTime.now(),
+        );
+    return BookingReviewScreen(draft: draft);
   }
 }
 

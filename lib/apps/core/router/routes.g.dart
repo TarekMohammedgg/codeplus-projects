@@ -14,6 +14,7 @@ List<RouteBase> get $appRoutes => [
   $patientShellRoute,
   $adminShellRoute,
   $createDoctorRoute,
+  $adminDoctorDetailsRoute,
   $doctorDetailsRoute,
   $selectTimeRoute,
   $bookingReviewRoute,
@@ -433,6 +434,37 @@ mixin $CreateDoctorRoute on GoRouteData {
       context.replace(location, extra: _self.$extra);
 }
 
+RouteBase get $adminDoctorDetailsRoute => GoRouteData.$route(
+  path: '/admin/doctors/details',
+  hasOverriddenOnExit: false,
+  factory: $AdminDoctorDetailsRoute._fromState,
+);
+
+mixin $AdminDoctorDetailsRoute on GoRouteData {
+  static AdminDoctorDetailsRoute _fromState(GoRouterState state) =>
+      AdminDoctorDetailsRoute(state.extra as AdminDoctorModel);
+
+  AdminDoctorDetailsRoute get _self => this as AdminDoctorDetailsRoute;
+
+  @override
+  String get location => GoRouteData.$location('/admin/doctors/details');
+
+  @override
+  void go(BuildContext context) => context.go(location, extra: _self.$extra);
+
+  @override
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: _self.$extra);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: _self.$extra);
+
+  @override
+  void replace(BuildContext context) =>
+      context.replace(location, extra: _self.$extra);
+}
+
 RouteBase get $doctorDetailsRoute => GoRouteData.$route(
   path: '/doctor-details',
   hasOverriddenOnExit: false,
@@ -496,7 +528,7 @@ mixin $SelectTimeRoute on GoRouteData {
 }
 
 RouteBase get $bookingReviewRoute => GoRouteData.$route(
-  path: '/booking-review',
+  path: '/booking/review',
   hasOverriddenOnExit: false,
   factory: $BookingReviewRoute._fromState,
 );
@@ -508,7 +540,7 @@ mixin $BookingReviewRoute on GoRouteData {
   BookingReviewRoute get _self => this as BookingReviewRoute;
 
   @override
-  String get location => GoRouteData.$location('/booking-review');
+  String get location => GoRouteData.$location('/booking/review');
 
   @override
   void go(BuildContext context) => context.go(location, extra: _self.$extra);

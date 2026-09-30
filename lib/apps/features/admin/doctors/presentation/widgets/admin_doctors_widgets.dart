@@ -14,13 +14,15 @@ class AdminDoctorListTile extends StatelessWidget {
     required this.doctor,
     this.onTap,
     this.onEdit,
-    this.onDelete,
+    this.onToggleActive,
   });
 
   final AdminDoctorModel doctor;
   final VoidCallback? onTap;
   final VoidCallback? onEdit;
-  final VoidCallback? onDelete;
+
+  /// Activate or deactivate; doctors are never deleted.
+  final VoidCallback? onToggleActive;
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +65,7 @@ class AdminDoctorListTile extends StatelessWidget {
                   ],
                 ),
               ),
-              PopupMenuButton<String>(
+              PopupMenuButton<_DoctorAction>(
                 icon: const Icon(
                   Icons.more_vert_rounded,
                   color: AppColors.textSecondary,
@@ -73,16 +75,13 @@ class AdminDoctorListTile extends StatelessWidget {
                 ),
                 color: AppColors.surface,
                 elevation: 4,
-                onSelected: (value) {
-                  if (value == 'edit') {
-                    onEdit?.call();
-                  } else if (value == 'delete') {
-                    onDelete?.call();
-                  }
+                onSelected: (action) => switch (action) {
+                  _DoctorAction.edit => onEdit?.call(),
+                  _DoctorAction.toggleActive => onToggleActive?.call(),
                 },
                 itemBuilder: (context) => [
-                  PopupMenuItem<String>(
-                    value: 'edit',
+                  PopupMenuItem(
+                    value: _DoctorAction.edit,
                     child: Row(
                       children: [
                         const Icon(
@@ -95,20 +94,26 @@ class AdminDoctorListTile extends StatelessWidget {
                       ],
                     ),
                   ),
-                  PopupMenuItem<String>(
-                    value: 'delete',
+                  PopupMenuItem(
+                    value: _DoctorAction.toggleActive,
                     child: Row(
                       children: [
-                        const Icon(
-                          Icons.delete_outline_rounded,
+                        Icon(
+                          doctor.isActive
+                              ? Icons.block_rounded
+                              : Icons.check_circle_outline_rounded,
                           size: 20,
-                          color: AppColors.error,
+                          color: doctor.isActive
+                              ? AppColors.error
+                              : AppColors.success,
                         ),
                         10.horizontalSpace,
                         Text(
-                          tr.delete,
+                          doctor.isActive ? tr.deactivate : tr.activate,
                           style: context.medium14TextMain.copyWith(
-                            color: AppColors.error,
+                            color: doctor.isActive
+                                ? AppColors.error
+                                : AppColors.success,
                           ),
                         ),
                       ],
@@ -123,6 +128,8 @@ class AdminDoctorListTile extends StatelessWidget {
     );
   }
 }
+
+enum _DoctorAction { edit, toggleActive }
 
 class _ActiveBadge extends StatelessWidget {
   const _ActiveBadge({required this.isActive});
