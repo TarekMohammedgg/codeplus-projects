@@ -260,9 +260,9 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get enterValidFee => 'يرجى إدخال رسوم أكبر من 0';
 	@override String get activate => 'تفعيل';
 	@override String get deactivate => 'إيقاف';
-	@override String get activateDoctorTitle => 'تفعيل الطبيب؟';
+	@override String get activateDoctorTitle => 'تفعيل الطبيب';
 	@override String get activateDoctorConfirm => 'سيظهر الطبيب للمرضى ويمكن الحجز معه مرة أخرى.';
-	@override String get deactivateDoctorTitle => 'إيقاف الطبيب؟';
+	@override String get deactivateDoctorTitle => 'إلغاء تفعيل الطبيب';
 	@override String get deactivateDoctorConfirm => 'لن يظهر الطبيب للمرضى ولن يمكن الحجز معه. يتم الاحتفاظ بسجل الحجوزات.';
 	@override String get doctorActivatedSuccess => 'تم تفعيل الطبيب';
 	@override String get doctorDeactivatedSuccess => 'تم إيقاف الطبيب';
@@ -320,6 +320,10 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get reviewAddedSuccess => 'تمت إضافة التقييم';
 	@override String get appointmentNotCompleted => 'يمكن تقييم المواعيد المكتملة فقط';
 	@override String get alreadyReviewed => 'لقد قمت بتقييم هذا الموعد بالفعل';
+	@override String get availability => 'المواعيد المتاحة';
+	@override String get confirmActivateDoctor => 'هل أنت متأكد من تفعيل هذا الطبيب؟';
+	@override String get confirmDeactivateDoctor => 'هل أنت متأكد من إلغاء تفعيل هذا الطبيب؟';
+	@override String get doctorStatusUpdated => 'تم تحديث حالة الطبيب';
 }
 
 /// The flat map containing all translations for locale <ar>.
@@ -551,9 +555,9 @@ extension on TranslationsAr {
 			'enterValidFee' => 'يرجى إدخال رسوم أكبر من 0',
 			'activate' => 'تفعيل',
 			'deactivate' => 'إيقاف',
-			'activateDoctorTitle' => 'تفعيل الطبيب؟',
+			'activateDoctorTitle' => 'تفعيل الطبيب',
 			'activateDoctorConfirm' => 'سيظهر الطبيب للمرضى ويمكن الحجز معه مرة أخرى.',
-			'deactivateDoctorTitle' => 'إيقاف الطبيب؟',
+			'deactivateDoctorTitle' => 'إلغاء تفعيل الطبيب',
 			'deactivateDoctorConfirm' => 'لن يظهر الطبيب للمرضى ولن يمكن الحجز معه. يتم الاحتفاظ بسجل الحجوزات.',
 			'doctorActivatedSuccess' => 'تم تفعيل الطبيب',
 			'doctorDeactivatedSuccess' => 'تم إيقاف الطبيب',
@@ -611,6 +615,10 @@ extension on TranslationsAr {
 			'reviewAddedSuccess' => 'تمت إضافة التقييم',
 			'appointmentNotCompleted' => 'يمكن تقييم المواعيد المكتملة فقط',
 			'alreadyReviewed' => 'لقد قمت بتقييم هذا الموعد بالفعل',
+			'availability' => 'المواعيد المتاحة',
+			'confirmActivateDoctor' => 'هل أنت متأكد من تفعيل هذا الطبيب؟',
+			'confirmDeactivateDoctor' => 'هل أنت متأكد من إلغاء تفعيل هذا الطبيب؟',
+			'doctorStatusUpdated' => 'تم تحديث حالة الطبيب',
 			_ => null,
 		};
 	}

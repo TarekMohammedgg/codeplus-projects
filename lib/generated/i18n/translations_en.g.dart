@@ -704,14 +704,14 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'Deactivate'
 	String get deactivate => 'Deactivate';
 
-	/// en: 'Activate doctor?'
-	String get activateDoctorTitle => 'Activate doctor?';
+	/// en: 'Activate Doctor'
+	String get activateDoctorTitle => 'Activate Doctor';
 
 	/// en: 'Patients will see this doctor and can book again.'
 	String get activateDoctorConfirm => 'Patients will see this doctor and can book again.';
 
-	/// en: 'Deactivate doctor?'
-	String get deactivateDoctorTitle => 'Deactivate doctor?';
+	/// en: 'Deactivate Doctor'
+	String get deactivateDoctorTitle => 'Deactivate Doctor';
 
 	/// en: 'Patients will no longer see or book this doctor. Booking history is kept.'
 	String get deactivateDoctorConfirm => 'Patients will no longer see or book this doctor. Booking history is kept.';
@@ -883,6 +883,18 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// en: 'You have already reviewed this appointment'
 	String get alreadyReviewed => 'You have already reviewed this appointment';
+
+	/// en: 'Availability'
+	String get availability => 'Availability';
+
+	/// en: 'Are you sure you want to activate this doctor?'
+	String get confirmActivateDoctor => 'Are you sure you want to activate this doctor?';
+
+	/// en: 'Are you sure you want to deactivate this doctor?'
+	String get confirmDeactivateDoctor => 'Are you sure you want to deactivate this doctor?';
+
+	/// en: 'Doctor status updated'
+	String get doctorStatusUpdated => 'Doctor status updated';
 }
 
 /// The flat map containing all translations for locale <en>.
@@ -1114,9 +1126,9 @@ extension on Translations {
 			'enterValidFee' => 'Please enter a fee greater than 0',
 			'activate' => 'Activate',
 			'deactivate' => 'Deactivate',
-			'activateDoctorTitle' => 'Activate doctor?',
+			'activateDoctorTitle' => 'Activate Doctor',
 			'activateDoctorConfirm' => 'Patients will see this doctor and can book again.',
-			'deactivateDoctorTitle' => 'Deactivate doctor?',
+			'deactivateDoctorTitle' => 'Deactivate Doctor',
 			'deactivateDoctorConfirm' => 'Patients will no longer see or book this doctor. Booking history is kept.',
 			'doctorActivatedSuccess' => 'Doctor activated',
 			'doctorDeactivatedSuccess' => 'Doctor deactivated',
@@ -1174,6 +1186,10 @@ extension on Translations {
 			'reviewAddedSuccess' => 'Review added',
 			'appointmentNotCompleted' => 'Only completed appointments can be reviewed',
 			'alreadyReviewed' => 'You have already reviewed this appointment',
+			'availability' => 'Availability',
+			'confirmActivateDoctor' => 'Are you sure you want to activate this doctor?',
+			'confirmDeactivateDoctor' => 'Are you sure you want to deactivate this doctor?',
+			'doctorStatusUpdated' => 'Doctor status updated',
 			_ => null,
 		};
 	}

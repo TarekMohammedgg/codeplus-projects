@@ -281,5 +281,12 @@
   "submitReview": "إرسال",
   "reviewAddedSuccess": "تمت إضافة التقييم",
   "appointmentNotCompleted": "يمكن تقييم المواعيد المكتملة فقط",
-  "alreadyReviewed": "لقد قمت بتقييم هذا الموعد بالفعل"
+  "alreadyReviewed": "لقد قمت بتقييم هذا الموعد بالفعل",
+  "availability": "المواعيد المتاحة",
+  "notSet": "غير محدد",
+  "activateDoctorTitle": "تفعيل الطبيب",
+  "deactivateDoctorTitle": "إلغاء تفعيل الطبيب",
+  "confirmActivateDoctor": "هل أنت متأكد من تفعيل هذا الطبيب؟",
+  "confirmDeactivateDoctor": "هل أنت متأكد من إلغاء تفعيل هذا الطبيب؟",
+  "doctorStatusUpdated": "تم تحديث حالة الطبيب"
 }

@@ -10,6 +10,8 @@ import 'package:doctor_hunt/apps/core/models/specialty_model.dart';
 import 'package:doctor_hunt/apps/features/admin/create_doctor/data/repositories/create_doctor_repository.dart';
 import 'package:doctor_hunt/apps/features/admin/create_doctor/presentation/controller/cubit/create_doctor_cubit.dart';
 import 'package:doctor_hunt/apps/features/admin/create_doctor/presentation/controller/cubit/create_doctor_state.dart';
+import 'package:doctor_hunt/apps/features/admin/doctor_details/presentation/controller/cubit/admin_doctor_details_cubit.dart';
+import 'package:doctor_hunt/apps/features/admin/doctors/data/service/admin_doctor_service.dart';
 
 void main() {
   test('AdminDoctorsCubit emits doctors from the Firestore stream', () async {
@@ -73,6 +75,59 @@ void main() {
     );
     await cubit.close();
   });
+
+  test(
+    'AdminDoctorDetailsCubit streams updates and toggles active state',
+    () async {
+      final streamController = StreamController<AdminDoctorModel?>();
+      final service = _FakeAdminDoctorService(streamController.stream);
+      const initialDoctor = AdminDoctorModel(
+        id: 'doc-1',
+        name: 'Dr. Gregory House',
+        specialty: 'Diagnostics',
+        isActive: true,
+        consultationFee: 100,
+      );
+
+      final cubit = AdminDoctorDetailsCubit(
+        initialDoctor: initialDoctor,
+        doctorService: service,
+      );
+
+      expect(cubit.state.doctor.id, 'doc-1');
+      expect(cubit.state.doctor.name, 'Dr. Gregory House');
+
+      // Test stream update
+      final updateDoctor = initialDoctor.copyWith(consultationFee: 150);
+      streamController.add(updateDoctor);
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+
+      expect(cubit.state.doctor.consultationFee, 150);
+
+      // Test toggle active
+      await cubit.toggleActive(false);
+      expect(service.activeChanges, [('doc-1', false)]);
+      expect(cubit.state.doctor.isActive, false);
+
+      await cubit.close();
+      await streamController.close();
+    },
+  );
+}
+
+class _FakeAdminDoctorService extends Fake implements AdminDoctorService {
+  _FakeAdminDoctorService(this.doctorStream);
+
+  final Stream<AdminDoctorModel?> doctorStream;
+  final activeChanges = <(String, bool)>[];
+
+  @override
+  Stream<AdminDoctorModel?> streamDoctor(String id) => doctorStream;
+
+  @override
+  Future<void> setActive(String id, bool isActive) async {
+    activeChanges.add((id, isActive));
+  }
 }
 
 class _FakeAdminDoctorsRepository implements AdminDoctorsRepository {

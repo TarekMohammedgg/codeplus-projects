@@ -281,5 +281,12 @@
   "submitReview": "Submit",
   "reviewAddedSuccess": "Review added",
   "appointmentNotCompleted": "Only completed appointments can be reviewed",
-  "alreadyReviewed": "You have already reviewed this appointment"
+  "alreadyReviewed": "You have already reviewed this appointment",
+  "availability": "Availability",
+  "notSet": "Not set",
+  "activateDoctorTitle": "Activate Doctor",
+  "deactivateDoctorTitle": "Deactivate Doctor",
+  "confirmActivateDoctor": "Are you sure you want to activate this doctor?",
+  "confirmDeactivateDoctor": "Are you sure you want to deactivate this doctor?",
+  "doctorStatusUpdated": "Doctor status updated"
 }

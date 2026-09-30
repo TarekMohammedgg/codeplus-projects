@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 /// Weekly working hours of a doctor, stored as `doctors/{id}.availability`.
 ///
 /// Times are minutes from midnight (540 = 09:00) so slot math stays integer.
@@ -57,5 +59,49 @@ class DoctorAvailability {
       'endMinutes': endMinutes,
       'slotMinutes': slotMinutes,
     };
+  }
+
+  String formatSummary({String? locale}) {
+    if (workingDays.isEmpty) return 'Not set';
+    final sortedDays = List<int>.from(workingDays)..sort();
+    const enDays = {
+      1: 'Mon',
+      2: 'Tue',
+      3: 'Wed',
+      4: 'Thu',
+      5: 'Fri',
+      6: 'Sat',
+      7: 'Sun',
+    };
+    const arDays = {
+      1: 'الإثنين',
+      2: 'الثلاثاء',
+      3: 'الأربعاء',
+      4: 'الخميس',
+      5: 'الجمعة',
+      6: 'السبت',
+      7: 'الأحد',
+    };
+
+    final dayNames = sortedDays
+        .map((w) {
+          try {
+            final sample = DateTime(2026, 9, 27 + w);
+            return DateFormat.E(locale).format(sample);
+          } catch (_) {
+            if (locale?.startsWith('ar') ?? false) {
+              return arDays[w] ?? '';
+            }
+            return enDays[w] ?? '';
+          }
+        })
+        .join(', ');
+
+    final startH = (startMinutes ~/ 60).toString().padLeft(2, '0');
+    final startM = (startMinutes % 60).toString().padLeft(2, '0');
+    final endH = (endMinutes ~/ 60).toString().padLeft(2, '0');
+    final endM = (endMinutes % 60).toString().padLeft(2, '0');
+
+    return '$dayNames · $startH:$startM–$endH:$endM · $slotMinutes min';
   }
 }

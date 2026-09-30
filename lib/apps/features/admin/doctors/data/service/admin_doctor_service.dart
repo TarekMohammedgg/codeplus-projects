@@ -49,6 +49,20 @@ class AdminDoctorService {
     });
   }
 
+  Stream<AdminDoctorModel?> streamDoctor(String id) {
+    return _doctors.doc(id).snapshots().asyncMap((doc) async {
+      final data = doc.data();
+      if (!doc.exists || data == null) return null;
+      final specialtyNames = await _specialtyService.fetchSpecialtyNames();
+      return AdminDoctorModel.fromFirestore(
+        doc.id,
+        data,
+        specialtyNameAr: specialtyNames[data['specialtyId']]?.$1,
+        specialtyNameEn: specialtyNames[data['specialtyId']]?.$2,
+      );
+    });
+  }
+
   Future<void> createDoctor({
     required String fullNameAr,
     required String fullNameEn,

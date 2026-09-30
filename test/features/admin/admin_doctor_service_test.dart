@@ -32,6 +32,33 @@ void main() {
 
       expect(modelNoTimestamp.lastModified, isNull);
     });
+
+    test('parses rating, reviewsCount, and availability correctly', () {
+      final model = AdminDoctorModel.fromFirestore('doc4', {
+        'name': 'Dr. David',
+        'specialty': 'Cardiologist',
+        'rating': 4.8,
+        'reviewsCount': 35,
+        'availability': {
+          'workingDays': [1, 2, 3],
+          'startMinutes': 540,
+          'endMinutes': 1020,
+          'slotMinutes': 30,
+        },
+      });
+
+      expect(model.rating, 4.8);
+      expect(model.reviewsCount, 35);
+      expect(model.availability, isNotNull);
+      expect(model.availability!.workingDays, [1, 2, 3]);
+      expect(model.availability!.startMinutes, 540);
+      expect(model.availability!.endMinutes, 1020);
+      expect(model.availability!.slotMinutes, 30);
+
+      final summary = model.availability!.formatSummary(locale: 'en');
+      expect(summary, contains('09:00–17:00'));
+      expect(summary, contains('30 min'));
+    });
   });
 
   group('Admin doctor list sorting', () {

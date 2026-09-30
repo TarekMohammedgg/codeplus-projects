@@ -326,6 +326,19 @@ class AdminDoctorDetailsRoute extends GoRouteData
   }
 }
 
+@TypedGoRoute<DoctorAvailabilityRoute>(path: AppRoutePaths.doctorAvailability)
+class DoctorAvailabilityRoute extends GoRouteData
+    with $DoctorAvailabilityRoute {
+  const DoctorAvailabilityRoute(this.$extra);
+
+  final AdminDoctorModel $extra;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const Scaffold();
+  }
+}
+
 @TypedGoRoute<DoctorDetailsRoute>(path: AppRoutePaths.doctorDetails)
 class DoctorDetailsRoute extends GoRouteData with $DoctorDetailsRoute {
   const DoctorDetailsRoute([this.$extra]);
