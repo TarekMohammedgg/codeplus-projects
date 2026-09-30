@@ -102,6 +102,7 @@ void setupServiceLocator() {
   getIt.registerLazySingleton<DoctorRepository>(
     () => FirebaseDoctorRepository(
       findDoctorsService: getIt<FindDoctorsService>(),
+      specialtyService: getIt<SpecialtyService>(),
     ),
   );
   getIt.registerLazySingleton<HomeRepository>(

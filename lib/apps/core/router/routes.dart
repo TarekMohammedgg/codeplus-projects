@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:doctor_hunt/apps/core/constants/app_route_paths.dart';
 import 'package:doctor_hunt/apps/core/di/injection.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
+import 'package:doctor_hunt/apps/core/utils/doctor_sort.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/data/models/admin_doctor_model.dart';
 import 'package:doctor_hunt/apps/features/admin/create_doctor/presentation/controller/cubit/create_doctor_cubit.dart';
 import 'package:doctor_hunt/apps/features/admin/create_doctor/presentation/screens/create_doctor_screen.dart';
@@ -146,13 +147,17 @@ class HomeRoute extends GoRouteData with $HomeRoute {
 }
 
 class FindDoctorsRoute extends GoRouteData with $FindDoctorsRoute {
-  const FindDoctorsRoute();
+  const FindDoctorsRoute({this.q, this.specialtyId, this.sort});
+
+  final String? q;
+  final String? specialtyId;
+  final DoctorSort? sort;
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return BlocProvider<FindDoctorsCubit>(
       create: (_) => getIt<FindDoctorsCubit>(),
-      child: const FindDoctorsScreen(),
+      child: FindDoctorsScreen(query: q, specialtyId: specialtyId, sort: sort),
     );
   }
 }

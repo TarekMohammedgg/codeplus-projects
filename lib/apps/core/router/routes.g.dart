@@ -200,11 +200,27 @@ mixin $HomeRoute on GoRouteData {
 }
 
 mixin $FindDoctorsRoute on GoRouteData {
-  static FindDoctorsRoute _fromState(GoRouterState state) =>
-      const FindDoctorsRoute();
+  static FindDoctorsRoute _fromState(GoRouterState state) => FindDoctorsRoute(
+    q: state.uri.queryParameters['q'],
+    specialtyId: state.uri.queryParameters['specialty-id'],
+    sort: _$convertMapValue(
+      'sort',
+      state.uri.queryParameters,
+      _$DoctorSortEnumMap._$fromName,
+    ),
+  );
+
+  FindDoctorsRoute get _self => this as FindDoctorsRoute;
 
   @override
-  String get location => GoRouteData.$location('/doctors');
+  String get location => GoRouteData.$location(
+    '/doctors',
+    queryParams: {
+      if (_self.q != null) 'q': _self.q,
+      if (_self.specialtyId != null) 'specialty-id': _self.specialtyId,
+      if (_self.sort != null) 'sort': _$DoctorSortEnumMap[_self.sort!],
+    },
+  );
 
   @override
   void go(BuildContext context) => context.go(location);
@@ -219,6 +235,11 @@ mixin $FindDoctorsRoute on GoRouteData {
   @override
   void replace(BuildContext context) => context.replace(location);
 }
+
+const _$DoctorSortEnumMap = {
+  DoctorSort.popular: 'popular',
+  DoctorSort.topRated: 'top-rated',
+};
 
 mixin $PatientAppointmentsRoute on GoRouteData {
   static PatientAppointmentsRoute _fromState(GoRouterState state) =>
@@ -264,6 +285,20 @@ mixin $ProfileRoute on GoRouteData {
   @override
   void replace(BuildContext context) =>
       context.replace(location, extra: _self.$extra);
+}
+
+T? _$convertMapValue<T>(
+  String key,
+  Map<String, String> map,
+  T? Function(String) converter,
+) {
+  final value = map[key];
+  return value == null ? null : converter(value);
+}
+
+extension<T extends Enum> on Map<T, String> {
+  T? _$fromName(String? value) =>
+      entries.where((element) => element.value == value).firstOrNull?.key;
 }
 
 RouteBase get $adminShellRoute => StatefulShellRouteData.$route(

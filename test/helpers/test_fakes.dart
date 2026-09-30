@@ -111,12 +111,16 @@ class FakeAuthRepository implements AuthRepository {
 }
 
 class FakeDoctorRepository implements DoctorRepository {
-  FakeDoctorRepository({this.doctors = const []});
+  FakeDoctorRepository({this.doctors = const [], this.specialties = const []});
 
   final List<DoctorModel> doctors;
+  final List<SpecialtyModel> specialties;
 
   @override
   Future<List<DoctorModel>> fetchDoctors() async => doctors;
+
+  @override
+  Future<List<SpecialtyModel>> fetchSpecialties() async => specialties;
 }
 
 class FakeHomeRepository implements HomeRepository {

@@ -123,6 +123,10 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get searchDentistHint => 'طبيب أسنان';
 	@override String get dentist => 'طبيب أسنان';
 	@override String get bookNow => 'احجز الآن';
+	@override String get filterAll => 'الكل';
+	@override String get favorites => 'المفضلة';
+	@override String get sortPopular => 'الأكثر شعبية';
+	@override String get sortTopRated => 'الأعلى تقييماً';
 	@override String get noDoctorsFound => 'لم يتم العثور على أطباء';
 	@override String get bookingComingSoon => 'الحجز غير متاح حاليًا.';
 	@override String get doctorNoAvailableTimes => 'ليس لدى الطبيب مواعيد متاحة بعد';
@@ -343,6 +347,10 @@ extension on TranslationsAr {
 			'searchDentistHint' => 'طبيب أسنان',
 			'dentist' => 'طبيب أسنان',
 			'bookNow' => 'احجز الآن',
+			'filterAll' => 'الكل',
+			'favorites' => 'المفضلة',
+			'sortPopular' => 'الأكثر شعبية',
+			'sortTopRated' => 'الأعلى تقييماً',
 			'noDoctorsFound' => 'لم يتم العثور على أطباء',
 			'bookingComingSoon' => 'الحجز غير متاح حاليًا.',
 			'doctorNoAvailableTimes' => 'ليس لدى الطبيب مواعيد متاحة بعد',

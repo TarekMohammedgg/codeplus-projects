@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
-import 'package:doctor_hunt/apps/features/patient/home/data/repositories/home_repository.dart';
+import 'package:doctor_hunt/apps/core/utils/doctor_sort.dart';
 
 void main() {
   const mostReviewed = DoctorModel(
@@ -70,5 +70,15 @@ void main() {
 
     // assert
     expect(input.map((d) => d.id), ['new', 'best-rated', 'most-reviewed']);
+  });
+
+  test('sortDoctors picks the order for each DoctorSort', () {
+    // act
+    final popular = sortDoctors(doctors, DoctorSort.popular);
+    final topRated = sortDoctors(doctors, DoctorSort.topRated);
+
+    // assert
+    expect(popular.first.id, 'most-reviewed');
+    expect(topRated.first.id, 'best-rated');
   });
 }

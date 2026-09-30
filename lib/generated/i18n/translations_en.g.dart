@@ -293,6 +293,18 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'Book Now'
 	String get bookNow => 'Book Now';
 
+	/// en: 'All'
+	String get filterAll => 'All';
+
+	/// en: 'Favorites'
+	String get favorites => 'Favorites';
+
+	/// en: 'Popular'
+	String get sortPopular => 'Popular';
+
+	/// en: 'Top Rated'
+	String get sortTopRated => 'Top Rated';
+
 	/// en: 'No doctors found'
 	String get noDoctorsFound => 'No doctors found';
 
@@ -764,6 +776,10 @@ extension on Translations {
 			'searchDentistHint' => 'Dentist',
 			'dentist' => 'Dentist',
 			'bookNow' => 'Book Now',
+			'filterAll' => 'All',
+			'favorites' => 'Favorites',
+			'sortPopular' => 'Popular',
+			'sortTopRated' => 'Top Rated',
 			'noDoctorsFound' => 'No doctors found',
 			'bookingComingSoon' => 'Booking is not available yet.',
 			'doctorNoAvailableTimes' => 'Doctor has no available times yet',

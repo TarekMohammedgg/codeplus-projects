@@ -79,6 +79,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   greeting: _greeting(user),
                   title: tr.findYourDoctor,
                   searchController: searchController,
+                  onSearchSubmitted: (query) =>
+                      FindDoctorsRoute(q: query.trim()).go(context),
                   showLanguageToggle: true,
                   showProfile: true,
                   profileImage: user?.photoURL,

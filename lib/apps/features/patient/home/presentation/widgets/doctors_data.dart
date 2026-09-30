@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:doctor_hunt/apps/core/models/specialty_model.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
+import 'package:doctor_hunt/apps/core/utils/doctor_sort.dart';
 import 'package:doctor_hunt/apps/features/patient/favorites/presentation/controller/cubit/favorites_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/home/data/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/features/patient/home/presentation/widgets/doctor_category_section.dart';
@@ -43,7 +44,8 @@ class DoctorsData extends StatelessWidget {
                 ),
               )
               .toList(),
-          onCategoryTap: (_) => const FindDoctorsRoute().go(context),
+          onCategoryTap: (category) =>
+              FindDoctorsRoute(specialtyId: category.id).go(context),
         ),
         const SizedBox(height: 24),
         DoctorsSection(
@@ -51,7 +53,8 @@ class DoctorsData extends StatelessWidget {
           doctors: popularDoctors,
           favoriteIds: favoriteIds,
           onFavoriteTap: toggleFavorite,
-          onSeeAllPressed: () => const FindDoctorsRoute().go(context),
+          onSeeAllPressed: () =>
+              const FindDoctorsRoute(sort: DoctorSort.popular).go(context),
         ),
         const SizedBox(height: 24),
         DoctorsSection(
@@ -59,7 +62,8 @@ class DoctorsData extends StatelessWidget {
           doctors: topRatedDoctors,
           favoriteIds: favoriteIds,
           onFavoriteTap: toggleFavorite,
-          onSeeAllPressed: () => const FindDoctorsRoute().go(context),
+          onSeeAllPressed: () =>
+              const FindDoctorsRoute(sort: DoctorSort.topRated).go(context),
         ),
         const SizedBox(height: 32),
       ],
