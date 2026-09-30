@@ -13,11 +13,13 @@ class DoctorProfileCard extends StatelessWidget {
     super.key,
     required this.doctor,
     this.onBookNow,
+    this.isFavorite = false,
     this.onFavoriteToggle,
   });
 
   final DoctorModel doctor;
   final VoidCallback? onBookNow;
+  final bool isFavorite;
   final VoidCallback? onFavoriteToggle;
 
   @override
@@ -73,12 +75,14 @@ class DoctorProfileCard extends StatelessWidget {
                         GestureDetector(
                           onTap: onFavoriteToggle,
                           child: Padding(
-                            padding: const EdgeInsets.only(left: 4),
-                            // Filled state comes back with the per-patient
-                            // FavoritesCubit ([Patient] Favorites card).
-                            child: const Icon(
-                              Icons.favorite_border_rounded,
-                              color: AppColors.disabled,
+                            padding: const EdgeInsetsDirectional.only(start: 4),
+                            child: Icon(
+                              isFavorite
+                                  ? Icons.favorite_rounded
+                                  : Icons.favorite_border_rounded,
+                              color: isFavorite
+                                  ? AppColors.favorite
+                                  : AppColors.disabled,
                               size: 22,
                             ),
                           ),

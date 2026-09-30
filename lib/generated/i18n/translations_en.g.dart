@@ -278,6 +278,21 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'General Surgeon'
 	String get generalSurgeon => 'General Surgeon';
 
+	/// en: '$rating · $count Reviews'
+	String ratingSummary({required Object rating, required Object count}) => '${rating} · ${count} Reviews';
+
+	/// en: 'Recent Reviews'
+	String get recentReviews => 'Recent Reviews';
+
+	/// en: 'No reviews yet'
+	String get noReviewsYet => 'No reviews yet';
+
+	/// en: 'Clinic Location'
+	String get clinicLocation => 'Clinic Location';
+
+	/// en: 'Clinic location has not been set yet'
+	String get clinicLocationNotSet => 'Clinic location has not been set yet';
+
 	/// en: 'Reviews'
 	String get reviews => 'Reviews';
 
@@ -771,6 +786,11 @@ extension on Translations {
 			'heartSpecialist' => 'Heart Specialist',
 			'eyeSpecialist' => 'Eye Specialist',
 			'generalSurgeon' => 'General Surgeon',
+			'ratingSummary' => ({required Object rating, required Object count}) => '${rating} · ${count} Reviews',
+			'recentReviews' => 'Recent Reviews',
+			'noReviewsYet' => 'No reviews yet',
+			'clinicLocation' => 'Clinic Location',
+			'clinicLocationNotSet' => 'Clinic location has not been set yet',
 			'reviews' => 'Reviews',
 			'findDoctors' => 'Find Doctors',
 			'searchDentistHint' => 'Dentist',

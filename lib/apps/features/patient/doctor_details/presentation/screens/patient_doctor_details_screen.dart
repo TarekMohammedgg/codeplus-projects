@@ -1,51 +1,107 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
+import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_profile_card.dart';
+import 'package:doctor_hunt/apps/features/patient/doctor_details/presentation/controller/cubit/doctor_details_cubit.dart';
+import 'package:doctor_hunt/apps/features/patient/doctor_details/presentation/controller/cubit/doctor_details_state.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_details/presentation/widgets/doctor_details_app_bar.dart';
+import 'package:doctor_hunt/apps/features/patient/doctor_details/presentation/widgets/doctor_details_sections.dart';
+import 'package:doctor_hunt/apps/features/patient/favorites/presentation/controller/cubit/favorites_cubit.dart';
+import 'package:doctor_hunt/apps/features/patient/favorites/presentation/controller/cubit/favorites_state.dart';
+import 'package:doctor_hunt/generated/i18n/translations.g.dart';
+import 'package:doctor_hunt/generated/style_atoms.dart';
 
-class DoctorDetailsScreen extends StatelessWidget {
+class DoctorDetailsScreen extends StatefulWidget {
   const DoctorDetailsScreen({super.key, required this.doctor});
 
   final DoctorModel doctor;
 
-  void openFindDoctors(BuildContext context) {
-    const FindDoctorsRoute().go(context);
-  }
+  @override
+  State<DoctorDetailsScreen> createState() => _DoctorDetailsScreenState();
+}
 
-  void openDoctorBooking(BuildContext context) {
-    SelectTimeRoute(doctor).push(context);
+class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<DoctorDetailsCubit>().load(widget.doctor.id);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          DoctorDetailsAppBar(
-            onBack: () => context.pop(),
-            onSearch: () => openFindDoctors(context),
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  20.verticalSpace,
-                  DoctorProfileCard(
-                    doctor: doctor,
-                    onBookNow: () => openDoctorBooking(context),
-                  ),
-                  24.verticalSpace,
-                ],
+    final doctor = widget.doctor;
+    final isFavorite = context.select<FavoritesCubit, bool>(
+      (cubit) => cubit.state.isFavorite(doctor.id),
+    );
+
+    // Full-screen route, outside PatientShell's listener.
+    return BlocListener<FavoritesCubit, FavoritesState>(
+      listenWhen: (_, current) => current is FavoritesFailure,
+      listener: (context, _) => context.showCustomSnackBar(
+        message: context.tr.favoriteUpdateFailed,
+        status: SnackBarStatus.error,
+      ),
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        body: Column(
+          children: [
+            DoctorDetailsAppBar(
+              onBack: () => context.pop(),
+              onSearch: () => const FindDoctorsRoute().go(context),
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    DoctorProfileCard(
+                      doctor: doctor,
+                      isFavorite: isFavorite,
+                      onFavoriteToggle: () =>
+                          context.read<FavoritesCubit>().toggle(doctor.id),
+                      onBookNow: () => SelectTimeRoute(doctor).push(context),
+                    ),
+                    20.verticalSpace,
+                    DoctorRatingSummary(doctor: doctor),
+                    24.verticalSpace,
+                    BlocBuilder<DoctorDetailsCubit, DoctorDetailsState>(
+                      builder: (context, state) => switch (state) {
+                        DoctorDetailsInitial() ||
+                        DoctorDetailsLoading() => const Center(
+                          child: CircularProgressIndicator(
+                            color: AppColors.primary,
+                          ),
+                        ),
+                        DoctorDetailsFailure() => Center(
+                          child: Text(
+                            context.tr.serviceError,
+                            style: context.regular14TextSecondary,
+                          ),
+                        ),
+                        DoctorDetailsSuccess(:final reviews, :final clinic) =>
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              RecentReviewsSection(reviews: reviews),
+                              24.verticalSpace,
+                              ClinicLocationSection(clinic: clinic),
+                            ],
+                          ),
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

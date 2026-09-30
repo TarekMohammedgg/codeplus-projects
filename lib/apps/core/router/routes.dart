@@ -23,6 +23,7 @@ import 'package:doctor_hunt/apps/features/common/shell/presentation/screens/admi
 import 'package:doctor_hunt/apps/features/common/shell/presentation/screens/patient_shell.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_booking/data/models/booking_draft.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/screens/doctor_booking_screen.dart';
+import 'package:doctor_hunt/apps/features/patient/doctor_details/presentation/controller/cubit/doctor_details_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_details/presentation/screens/patient_doctor_details_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/controller/cubit/find_doctors_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/screens/find_doctors_screen.dart';
@@ -294,7 +295,10 @@ class DoctorDetailsRoute extends GoRouteData with $DoctorDetailsRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return DoctorDetailsScreen(doctor: $extra ?? DoctorModel.placeholder());
+    return BlocProvider<DoctorDetailsCubit>(
+      create: (_) => getIt<DoctorDetailsCubit>(),
+      child: DoctorDetailsScreen(doctor: $extra ?? DoctorModel.placeholder()),
+    );
   }
 }
 

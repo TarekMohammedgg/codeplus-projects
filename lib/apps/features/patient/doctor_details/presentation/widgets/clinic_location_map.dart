@@ -3,8 +3,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 
-class DoctorLocationMap extends StatelessWidget {
-  const DoctorLocationMap({super.key, required this.location});
+class ClinicLocationMap extends StatelessWidget {
+  const ClinicLocationMap({super.key, required this.location});
 
   final LatLng location;
 
@@ -51,7 +51,7 @@ class DoctorLocationMap extends StatelessWidget {
                     ),
                     child: const Icon(
                       Icons.location_on_rounded,
-                      color: Colors.white,
+                      color: AppColors.white,
                       size: 24,
                     ),
                   ),

@@ -118,6 +118,11 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get heartSpecialist => 'أخصائي قلب';
 	@override String get eyeSpecialist => 'أخصائي عيون';
 	@override String get generalSurgeon => 'جراح عام';
+	@override String ratingSummary({required Object rating, required Object count}) => '${rating} · ${count} تقييم';
+	@override String get recentReviews => 'أحدث التقييمات';
+	@override String get noReviewsYet => 'لا توجد تقييمات بعد';
+	@override String get clinicLocation => 'موقع العيادة';
+	@override String get clinicLocationNotSet => 'لم يتم تحديد موقع العيادة بعد';
 	@override String get reviews => 'تقييمات';
 	@override String get findDoctors => 'اعثر على أطباء';
 	@override String get searchDentistHint => 'طبيب أسنان';
@@ -342,6 +347,11 @@ extension on TranslationsAr {
 			'heartSpecialist' => 'أخصائي قلب',
 			'eyeSpecialist' => 'أخصائي عيون',
 			'generalSurgeon' => 'جراح عام',
+			'ratingSummary' => ({required Object rating, required Object count}) => '${rating} · ${count} تقييم',
+			'recentReviews' => 'أحدث التقييمات',
+			'noReviewsYet' => 'لا توجد تقييمات بعد',
+			'clinicLocation' => 'موقع العيادة',
+			'clinicLocationNotSet' => 'لم يتم تحديد موقع العيادة بعد',
 			'reviews' => 'تقييمات',
 			'findDoctors' => 'اعثر على أطباء',
 			'searchDentistHint' => 'طبيب أسنان',

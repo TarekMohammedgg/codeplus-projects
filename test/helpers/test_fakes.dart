@@ -10,6 +10,9 @@ import 'package:doctor_hunt/apps/features/admin/doctors/data/repositories/admin_
 import 'package:doctor_hunt/apps/features/admin/create_doctor/data/repositories/create_doctor_repository.dart';
 import 'package:doctor_hunt/apps/features/common/auth/data/repositories/auth_repository.dart';
 import 'package:doctor_hunt/apps/features/common/auth/data/service/auth_service.dart';
+import 'package:doctor_hunt/apps/core/models/clinic_model.dart';
+import 'package:doctor_hunt/apps/core/models/review_model.dart';
+import 'package:doctor_hunt/apps/features/patient/doctor_details/data/repositories/doctor_details_repository.dart';
 import 'package:doctor_hunt/apps/features/patient/favorites/data/repositories/favorites_repository.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/data/repositories/doctor_repository.dart';
 import 'package:doctor_hunt/apps/features/patient/home/data/models/home_data.dart';
@@ -248,4 +251,25 @@ class FakeBookingRepository implements BookingRepository {
   Future<Set<DateTime>> fetchBookedStarts(String doctorId, DateTime day) async {
     return bookedStarts;
   }
+}
+
+class FakeDoctorDetailsRepository implements DoctorDetailsRepository {
+  FakeDoctorDetailsRepository({
+    this.reviews = const [],
+    this.clinic,
+    this.error,
+  });
+
+  final List<ReviewModel> reviews;
+  final ClinicModel? clinic;
+  final Object? error;
+
+  @override
+  Future<List<ReviewModel>> fetchRecentReviews(String doctorId) async {
+    if (error != null) throw error!;
+    return reviews;
+  }
+
+  @override
+  Future<ClinicModel?> fetchClinic() async => clinic;
 }

@@ -20,6 +20,8 @@ import 'package:doctor_hunt/apps/features/patient/find_doctors/data/repositories
 import 'package:doctor_hunt/apps/features/patient/find_doctors/data/service/find_doctors_service.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/controller/cubit/find_doctors_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_booking/data/repositories/booking_repository.dart';
+import 'package:doctor_hunt/apps/features/patient/doctor_details/data/repositories/doctor_details_repository.dart';
+import 'package:doctor_hunt/apps/features/patient/doctor_details/presentation/controller/cubit/doctor_details_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/favorites/data/repositories/favorites_repository.dart';
 import 'package:doctor_hunt/apps/features/patient/favorites/data/service/favorites_service.dart';
 import 'package:doctor_hunt/apps/features/patient/favorites/presentation/controller/cubit/favorites_cubit.dart';
@@ -127,6 +129,12 @@ void setupServiceLocator() {
     () =>
         BookingRepositoryImpl(appointmentService: getIt<AppointmentService>()),
   );
+  getIt.registerLazySingleton<DoctorDetailsRepository>(
+    () => FirebaseDoctorDetailsRepository(
+      reviewService: getIt<ReviewService>(),
+      clinicService: getIt<ClinicService>(),
+    ),
+  );
   getIt.registerLazySingleton<FavoritesRepository>(
     () => FirebaseFavoritesRepository(
       favoritesService: getIt<FavoritesService>(),
@@ -155,6 +163,9 @@ void setupServiceLocator() {
   );
   getIt.registerFactory<BookingCubit>(
     () => BookingCubit(repository: getIt<BookingRepository>()),
+  );
+  getIt.registerFactory<DoctorDetailsCubit>(
+    () => DoctorDetailsCubit(repository: getIt<DoctorDetailsRepository>()),
   );
   getIt.registerFactory<FavoritesCubit>(
     () => FavoritesCubit(repository: getIt<FavoritesRepository>()),
