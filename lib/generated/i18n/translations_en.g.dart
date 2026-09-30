@@ -937,6 +937,36 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// en: 'Save Availability'
 	String get saveAvailability => 'Save Availability';
+
+	/// en: 'Admin Profile'
+	String get adminProfile => 'Admin Profile';
+
+	/// en: 'Clinic Address (Arabic)'
+	String get clinicAddressAr => 'Clinic Address (Arabic)';
+
+	/// en: 'Clinic Address (English)'
+	String get clinicAddressEn => 'Clinic Address (English)';
+
+	/// en: 'Tap anywhere on the map to set clinic location pin'
+	String get tapMapToSetLocation => 'Tap anywhere on the map to set clinic location pin';
+
+	/// en: 'Please enter clinic address in Arabic'
+	String get clinicAddressArRequired => 'Please enter clinic address in Arabic';
+
+	/// en: 'Please enter clinic address in English'
+	String get clinicAddressEnRequired => 'Please enter clinic address in English';
+
+	/// en: 'Please select clinic location on the map'
+	String get clinicLocationRequired => 'Please select clinic location on the map';
+
+	/// en: 'Verification email sent to $email'
+	String emailVerificationSent({required Object email}) => 'Verification email sent to ${email}';
+
+	/// en: 'Please re-login before updating your email'
+	String get requiresRecentLogin => 'Please re-login before updating your email';
+
+	/// en: 'Admin profile and clinic updated successfully'
+	String get adminProfileUpdatedSuccess => 'Admin profile and clinic updated successfully';
 }
 
 /// The flat map containing all translations for locale <en>.
@@ -1246,6 +1276,16 @@ extension on Translations {
 			'errorSlotDurationTooLong' => 'Slot duration cannot exceed working hours',
 			'availabilityUpdatedSuccess' => 'Availability updated successfully',
 			'saveAvailability' => 'Save Availability',
+			'adminProfile' => 'Admin Profile',
+			'clinicAddressAr' => 'Clinic Address (Arabic)',
+			'clinicAddressEn' => 'Clinic Address (English)',
+			'tapMapToSetLocation' => 'Tap anywhere on the map to set clinic location pin',
+			'clinicAddressArRequired' => 'Please enter clinic address in Arabic',
+			'clinicAddressEnRequired' => 'Please enter clinic address in English',
+			'clinicLocationRequired' => 'Please select clinic location on the map',
+			'emailVerificationSent' => ({required Object email}) => 'Verification email sent to ${email}',
+			'requiresRecentLogin' => 'Please re-login before updating your email',
+			'adminProfileUpdatedSuccess' => 'Admin profile and clinic updated successfully',
 			_ => null,
 		};
 	}

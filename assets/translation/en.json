@@ -302,5 +302,16 @@
   "errorStartMustBeBeforeEnd": "Start time must be before end time",
   "errorSlotDurationTooLong": "Slot duration cannot exceed working hours",
   "availabilityUpdatedSuccess": "Availability updated successfully",
-  "saveAvailability": "Save Availability"
+  "saveAvailability": "Save Availability",
+  "adminProfile": "Admin Profile",
+  "clinicAddressAr": "Clinic Address (Arabic)",
+  "clinicAddressEn": "Clinic Address (English)",
+  "clinicLocation": "Clinic Location",
+  "tapMapToSetLocation": "Tap anywhere on the map to set clinic location pin",
+  "clinicAddressArRequired": "Please enter clinic address in Arabic",
+  "clinicAddressEnRequired": "Please enter clinic address in English",
+  "clinicLocationRequired": "Please select clinic location on the map",
+  "emailVerificationSent(email)": "Verification email sent to $email",
+  "requiresRecentLogin": "Please re-login before updating your email",
+  "adminProfileUpdatedSuccess": "Admin profile and clinic updated successfully"
 }

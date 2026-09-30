@@ -302,5 +302,16 @@
   "errorStartMustBeBeforeEnd": "يجب أن يكون وقت البدء قبل وقت الانتهاء",
   "errorSlotDurationTooLong": "مدة الموعد لا يمكن أن تتجاوز وقت العمل",
   "availabilityUpdatedSuccess": "تم تحديث جدول المواعيد بنجاح",
-  "saveAvailability": "حفظ جدول المواعيد"
+  "saveAvailability": "حفظ جدول المواعيد",
+  "adminProfile": "الملف الشخصي للمسؤول",
+  "clinicAddressAr": "عنوان العيادة (عربي)",
+  "clinicAddressEn": "عنوان العيادة (إنجليزي)",
+  "clinicLocation": "موقع العيادة",
+  "tapMapToSetLocation": "اضغط في أي مكان على الخريطة لتحديد دبوس موقع العيادة",
+  "clinicAddressArRequired": "يرجى إدخال عنوان العيادة بالعربية",
+  "clinicAddressEnRequired": "يرجى إدخال عنوان العيادة بالإنجليزية",
+  "clinicLocationRequired": "يرجى تحديد موقع العيادة على الخريطة",
+  "emailVerificationSent(email)": "تم إرسال بريد التحقق إلى $email",
+  "requiresRecentLogin": "يرجى تسجيل الدخول مجدداً لتغيير البريد الإلكتروني",
+  "adminProfileUpdatedSuccess": "تم تحديث ملف المسؤول وبيانات العيادة بنجاح"
 }

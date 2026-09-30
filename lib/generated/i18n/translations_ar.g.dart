@@ -338,6 +338,16 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get errorSlotDurationTooLong => 'مدة الموعد لا يمكن أن تتجاوز وقت العمل';
 	@override String get availabilityUpdatedSuccess => 'تم تحديث جدول المواعيد بنجاح';
 	@override String get saveAvailability => 'حفظ جدول المواعيد';
+	@override String get adminProfile => 'الملف الشخصي للمسؤول';
+	@override String get clinicAddressAr => 'عنوان العيادة (عربي)';
+	@override String get clinicAddressEn => 'عنوان العيادة (إنجليزي)';
+	@override String get tapMapToSetLocation => 'اضغط في أي مكان على الخريطة لتحديد دبوس موقع العيادة';
+	@override String get clinicAddressArRequired => 'يرجى إدخال عنوان العيادة بالعربية';
+	@override String get clinicAddressEnRequired => 'يرجى إدخال عنوان العيادة بالإنجليزية';
+	@override String get clinicLocationRequired => 'يرجى تحديد موقع العيادة على الخريطة';
+	@override String emailVerificationSent({required Object email}) => 'تم إرسال بريد التحقق إلى ${email}';
+	@override String get requiresRecentLogin => 'يرجى تسجيل الدخول مجدداً لتغيير البريد الإلكتروني';
+	@override String get adminProfileUpdatedSuccess => 'تم تحديث ملف المسؤول وبيانات العيادة بنجاح';
 }
 
 /// The flat map containing all translations for locale <ar>.
@@ -647,6 +657,16 @@ extension on TranslationsAr {
 			'errorSlotDurationTooLong' => 'مدة الموعد لا يمكن أن تتجاوز وقت العمل',
 			'availabilityUpdatedSuccess' => 'تم تحديث جدول المواعيد بنجاح',
 			'saveAvailability' => 'حفظ جدول المواعيد',
+			'adminProfile' => 'الملف الشخصي للمسؤول',
+			'clinicAddressAr' => 'عنوان العيادة (عربي)',
+			'clinicAddressEn' => 'عنوان العيادة (إنجليزي)',
+			'tapMapToSetLocation' => 'اضغط في أي مكان على الخريطة لتحديد دبوس موقع العيادة',
+			'clinicAddressArRequired' => 'يرجى إدخال عنوان العيادة بالعربية',
+			'clinicAddressEnRequired' => 'يرجى إدخال عنوان العيادة بالإنجليزية',
+			'clinicLocationRequired' => 'يرجى تحديد موقع العيادة على الخريطة',
+			'emailVerificationSent' => ({required Object email}) => 'تم إرسال بريد التحقق إلى ${email}',
+			'requiresRecentLogin' => 'يرجى تسجيل الدخول مجدداً لتغيير البريد الإلكتروني',
+			'adminProfileUpdatedSuccess' => 'تم تحديث ملف المسؤول وبيانات العيادة بنجاح',
 			_ => null,
 		};
 	}

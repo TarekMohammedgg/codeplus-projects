@@ -13,6 +13,8 @@ import 'package:doctor_hunt/apps/features/admin/doctors/presentation/controller/
 import 'package:doctor_hunt/apps/features/admin/create_doctor/data/repositories/create_doctor_repository.dart';
 import 'package:doctor_hunt/apps/features/admin/availability/data/repositories/doctor_availability_repository.dart';
 import 'package:doctor_hunt/apps/features/admin/availability/presentation/controller/cubit/doctor_availability_cubit.dart';
+import 'package:doctor_hunt/apps/features/admin/profile/data/repositories/admin_profile_repository.dart';
+import 'package:doctor_hunt/apps/features/admin/profile/presentation/controller/cubit/admin_profile_cubit.dart';
 import 'package:doctor_hunt/apps/core/services/cloudinary_upload_service.dart';
 import 'package:doctor_hunt/apps/features/admin/create_doctor/presentation/controller/cubit/create_doctor_cubit.dart';
 import 'package:doctor_hunt/apps/features/common/auth/data/repositories/auth_repository.dart';
@@ -174,6 +176,13 @@ void setupServiceLocator() {
       doctorService: getIt<AdminDoctorService>(),
     ),
   );
+  getIt.registerLazySingleton<AdminProfileRepository>(
+    () => AdminProfileRepositoryImpl(
+      auth: getIt<FirebaseAuth>(),
+      profileService: getIt<ProfileService>(),
+      clinicService: getIt<ClinicService>(),
+    ),
+  );
 
   // Cubits (registered as factories to return a fresh instance on demand)
   getIt.registerFactory<AuthCubit>(
@@ -221,6 +230,12 @@ void setupServiceLocator() {
   getIt.registerFactory<DoctorAvailabilityCubit>(
     () => DoctorAvailabilityCubit(
       repository: getIt<DoctorAvailabilityRepository>(),
+    ),
+  );
+  getIt.registerFactory<AdminProfileCubit>(
+    () => AdminProfileCubit(
+      repository: getIt<AdminProfileRepository>(),
+      uploadService: getIt<CloudinaryUploadService>(),
     ),
   );
 }
