@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:doctor_hunt/apps/core/models/doctor_availability.dart';
 import 'package:doctor_hunt/apps/core/services/specialty_service.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/data/models/admin_doctor_model.dart';
 
@@ -110,6 +111,16 @@ class AdminDoctorService {
   Future<void> setActive(String id, bool isActive) {
     return _doctors.doc(id).update({
       'isActive': isActive,
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  Future<void> updateAvailability(
+    String id,
+    DoctorAvailability availability,
+  ) async {
+    await _doctors.doc(id).update({
+      'availability': availability.toMap(),
       'updatedAt': FieldValue.serverTimestamp(),
     });
   }

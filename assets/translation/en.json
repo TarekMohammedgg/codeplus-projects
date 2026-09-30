@@ -288,5 +288,19 @@
   "deactivateDoctorTitle": "Deactivate Doctor",
   "confirmActivateDoctor": "Are you sure you want to activate this doctor?",
   "confirmDeactivateDoctor": "Are you sure you want to deactivate this doctor?",
-  "doctorStatusUpdated": "Doctor status updated"
+  "doctorStatusUpdated": "Doctor status updated",
+  "doctorAvailability": "Doctor Availability",
+  "doctorAvailabilitySubtitle": "Set weekly working days, hours and appointment duration",
+  "workingDays": "Working Days",
+  "workingHours": "Working Hours",
+  "startTime": "Start Time",
+  "endTime": "End Time",
+  "slotDuration": "Slot Duration",
+  "slotsPerDay(count)": "$count slots per day",
+  "minutesDuration(count)": "$count min",
+  "errorSelectAtLeastOneDay": "Please select at least one working day",
+  "errorStartMustBeBeforeEnd": "Start time must be before end time",
+  "errorSlotDurationTooLong": "Slot duration cannot exceed working hours",
+  "availabilityUpdatedSuccess": "Availability updated successfully",
+  "saveAvailability": "Save Availability"
 }

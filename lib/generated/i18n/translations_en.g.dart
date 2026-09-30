@@ -895,6 +895,48 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// en: 'Doctor status updated'
 	String get doctorStatusUpdated => 'Doctor status updated';
+
+	/// en: 'Doctor Availability'
+	String get doctorAvailability => 'Doctor Availability';
+
+	/// en: 'Set weekly working days, hours and appointment duration'
+	String get doctorAvailabilitySubtitle => 'Set weekly working days, hours and appointment duration';
+
+	/// en: 'Working Days'
+	String get workingDays => 'Working Days';
+
+	/// en: 'Working Hours'
+	String get workingHours => 'Working Hours';
+
+	/// en: 'Start Time'
+	String get startTime => 'Start Time';
+
+	/// en: 'End Time'
+	String get endTime => 'End Time';
+
+	/// en: 'Slot Duration'
+	String get slotDuration => 'Slot Duration';
+
+	/// en: '$count slots per day'
+	String slotsPerDay({required Object count}) => '${count} slots per day';
+
+	/// en: '$count min'
+	String minutesDuration({required Object count}) => '${count} min';
+
+	/// en: 'Please select at least one working day'
+	String get errorSelectAtLeastOneDay => 'Please select at least one working day';
+
+	/// en: 'Start time must be before end time'
+	String get errorStartMustBeBeforeEnd => 'Start time must be before end time';
+
+	/// en: 'Slot duration cannot exceed working hours'
+	String get errorSlotDurationTooLong => 'Slot duration cannot exceed working hours';
+
+	/// en: 'Availability updated successfully'
+	String get availabilityUpdatedSuccess => 'Availability updated successfully';
+
+	/// en: 'Save Availability'
+	String get saveAvailability => 'Save Availability';
 }
 
 /// The flat map containing all translations for locale <en>.
@@ -1190,6 +1232,20 @@ extension on Translations {
 			'confirmActivateDoctor' => 'Are you sure you want to activate this doctor?',
 			'confirmDeactivateDoctor' => 'Are you sure you want to deactivate this doctor?',
 			'doctorStatusUpdated' => 'Doctor status updated',
+			'doctorAvailability' => 'Doctor Availability',
+			'doctorAvailabilitySubtitle' => 'Set weekly working days, hours and appointment duration',
+			'workingDays' => 'Working Days',
+			'workingHours' => 'Working Hours',
+			'startTime' => 'Start Time',
+			'endTime' => 'End Time',
+			'slotDuration' => 'Slot Duration',
+			'slotsPerDay' => ({required Object count}) => '${count} slots per day',
+			'minutesDuration' => ({required Object count}) => '${count} min',
+			'errorSelectAtLeastOneDay' => 'Please select at least one working day',
+			'errorStartMustBeBeforeEnd' => 'Start time must be before end time',
+			'errorSlotDurationTooLong' => 'Slot duration cannot exceed working hours',
+			'availabilityUpdatedSuccess' => 'Availability updated successfully',
+			'saveAvailability' => 'Save Availability',
 			_ => null,
 		};
 	}

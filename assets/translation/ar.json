@@ -288,5 +288,19 @@
   "deactivateDoctorTitle": "إلغاء تفعيل الطبيب",
   "confirmActivateDoctor": "هل أنت متأكد من تفعيل هذا الطبيب؟",
   "confirmDeactivateDoctor": "هل أنت متأكد من إلغاء تفعيل هذا الطبيب؟",
-  "doctorStatusUpdated": "تم تحديث حالة الطبيب"
+  "doctorStatusUpdated": "تم تحديث حالة الطبيب",
+  "doctorAvailability": "جدول مواعيد الطبيب",
+  "doctorAvailabilitySubtitle": "حدد أيام العمل وساعات العمل الأسبوعية ومدة الكشف",
+  "workingDays": "أيام العمل",
+  "workingHours": "ساعات العمل",
+  "startTime": "وقت البدء",
+  "endTime": "وقت الانتهاء",
+  "slotDuration": "مدة الموعد",
+  "slotsPerDay(count)": "$count موعد في اليوم",
+  "minutesDuration(count)": "$count دقيقة",
+  "errorSelectAtLeastOneDay": "يرجى تحديد يوم عمل واحد على الأقل",
+  "errorStartMustBeBeforeEnd": "يجب أن يكون وقت البدء قبل وقت الانتهاء",
+  "errorSlotDurationTooLong": "مدة الموعد لا يمكن أن تتجاوز وقت العمل",
+  "availabilityUpdatedSuccess": "تم تحديث جدول المواعيد بنجاح",
+  "saveAvailability": "حفظ جدول المواعيد"
 }

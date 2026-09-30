@@ -324,6 +324,20 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get confirmActivateDoctor => 'هل أنت متأكد من تفعيل هذا الطبيب؟';
 	@override String get confirmDeactivateDoctor => 'هل أنت متأكد من إلغاء تفعيل هذا الطبيب؟';
 	@override String get doctorStatusUpdated => 'تم تحديث حالة الطبيب';
+	@override String get doctorAvailability => 'جدول مواعيد الطبيب';
+	@override String get doctorAvailabilitySubtitle => 'حدد أيام العمل وساعات العمل الأسبوعية ومدة الكشف';
+	@override String get workingDays => 'أيام العمل';
+	@override String get workingHours => 'ساعات العمل';
+	@override String get startTime => 'وقت البدء';
+	@override String get endTime => 'وقت الانتهاء';
+	@override String get slotDuration => 'مدة الموعد';
+	@override String slotsPerDay({required Object count}) => '${count} موعد في اليوم';
+	@override String minutesDuration({required Object count}) => '${count} دقيقة';
+	@override String get errorSelectAtLeastOneDay => 'يرجى تحديد يوم عمل واحد على الأقل';
+	@override String get errorStartMustBeBeforeEnd => 'يجب أن يكون وقت البدء قبل وقت الانتهاء';
+	@override String get errorSlotDurationTooLong => 'مدة الموعد لا يمكن أن تتجاوز وقت العمل';
+	@override String get availabilityUpdatedSuccess => 'تم تحديث جدول المواعيد بنجاح';
+	@override String get saveAvailability => 'حفظ جدول المواعيد';
 }
 
 /// The flat map containing all translations for locale <ar>.
@@ -619,6 +633,20 @@ extension on TranslationsAr {
 			'confirmActivateDoctor' => 'هل أنت متأكد من تفعيل هذا الطبيب؟',
 			'confirmDeactivateDoctor' => 'هل أنت متأكد من إلغاء تفعيل هذا الطبيب؟',
 			'doctorStatusUpdated' => 'تم تحديث حالة الطبيب',
+			'doctorAvailability' => 'جدول مواعيد الطبيب',
+			'doctorAvailabilitySubtitle' => 'حدد أيام العمل وساعات العمل الأسبوعية ومدة الكشف',
+			'workingDays' => 'أيام العمل',
+			'workingHours' => 'ساعات العمل',
+			'startTime' => 'وقت البدء',
+			'endTime' => 'وقت الانتهاء',
+			'slotDuration' => 'مدة الموعد',
+			'slotsPerDay' => ({required Object count}) => '${count} موعد في اليوم',
+			'minutesDuration' => ({required Object count}) => '${count} دقيقة',
+			'errorSelectAtLeastOneDay' => 'يرجى تحديد يوم عمل واحد على الأقل',
+			'errorStartMustBeBeforeEnd' => 'يجب أن يكون وقت البدء قبل وقت الانتهاء',
+			'errorSlotDurationTooLong' => 'مدة الموعد لا يمكن أن تتجاوز وقت العمل',
+			'availabilityUpdatedSuccess' => 'تم تحديث جدول المواعيد بنجاح',
+			'saveAvailability' => 'حفظ جدول المواعيد',
 			_ => null,
 		};
 	}
