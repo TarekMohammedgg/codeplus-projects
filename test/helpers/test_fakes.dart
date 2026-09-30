@@ -14,6 +14,9 @@ import 'package:doctor_hunt/apps/features/patient/favorites/data/repositories/fa
 import 'package:doctor_hunt/apps/features/patient/find_doctors/data/repositories/doctor_repository.dart';
 import 'package:doctor_hunt/apps/features/patient/home/data/models/home_data.dart';
 import 'package:doctor_hunt/apps/features/patient/home/data/repositories/home_repository.dart';
+import 'package:doctor_hunt/apps/features/patient/doctor_booking/data/repositories/booking_repository.dart';
+import 'package:doctor_hunt/apps/features/patient/profile/data/models/user_profile_model.dart';
+import 'package:doctor_hunt/apps/features/patient/profile/data/repositories/profile_repository.dart';
 
 class FakeFirebaseAuth extends Fake implements FirebaseAuth {
   FakeFirebaseAuth({this.mockUser});
@@ -125,7 +128,12 @@ class FakeHomeRepository implements HomeRepository {
   @override
   Future<HomeData> fetchHomeData() async {
     if (error != null) throw error!;
-    return data ?? const HomeData(doctors: [], specialties: []);
+    return data ??
+        const HomeData(
+          popularDoctors: [],
+          topRatedDoctors: [],
+          specialties: [],
+        );
   }
 }
 
@@ -200,5 +208,40 @@ class FakeFavoritesRepository implements FavoritesRepository {
   }) async {
     if (setFavoriteError != null) throw setFavoriteError!;
     writes.add((userId, doctorId, isFavorite));
+  }
+}
+
+class FakeProfileRepository implements ProfileRepository {
+  FakeProfileRepository({this.profile});
+
+  final UserProfileModel? profile;
+
+  @override
+  Stream<UserProfileModel> streamProfile(String uid) {
+    if (profile != null) return Stream.value(profile!);
+    return const Stream.empty();
+  }
+
+  @override
+  Future<void> updateProfile({
+    required String uid,
+    String? displayName,
+    String? phone,
+    DateTime? dob,
+    String? gender,
+    String? photoUrl,
+    String? language,
+    bool? notificationsEnabled,
+  }) async {}
+}
+
+class FakeBookingRepository implements BookingRepository {
+  FakeBookingRepository({this.bookedStarts = const {}});
+
+  final Set<DateTime> bookedStarts;
+
+  @override
+  Future<Set<DateTime>> fetchBookedStarts(String doctorId, DateTime day) async {
+    return bookedStarts;
   }
 }

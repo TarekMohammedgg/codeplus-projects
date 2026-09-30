@@ -316,3 +316,23 @@ class BookingReviewRoute extends GoRouteData with $BookingReviewRoute {
     return const Scaffold();
   }
 }
+
+@TypedGoRoute<EditProfileRoute>(path: AppRoutePaths.editProfile)
+class EditProfileRoute extends GoRouteData with $EditProfileRoute {
+  const EditProfileRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const Scaffold();
+  }
+}
+
+@TypedGoRoute<PatientSettingsRoute>(path: AppRoutePaths.patientSettings)
+class PatientSettingsRoute extends GoRouteData with $PatientSettingsRoute {
+  const PatientSettingsRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const Scaffold();
+  }
+}

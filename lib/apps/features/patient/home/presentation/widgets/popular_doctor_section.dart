@@ -10,26 +10,29 @@ import 'package:doctor_hunt/apps/features/patient/home/presentation/widgets/sect
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
-class PopularDoctorSection extends StatelessWidget {
-  const PopularDoctorSection({
+/// Horizontal doctor carousel used by the Popular and Top Rated sections.
+class DoctorsSection extends StatelessWidget {
+  const DoctorsSection({
     super.key,
+    required this.title,
     required this.doctors,
-    this.onSeeAllPressed,
+    required this.favoriteIds,
+    required this.onFavoriteTap,
+    required this.onSeeAllPressed,
   });
 
+  final String title;
   final List<DoctorModel> doctors;
-  final VoidCallback? onSeeAllPressed;
+  final Set<String> favoriteIds;
+  final ValueChanged<DoctorModel> onFavoriteTap;
+  final VoidCallback onSeeAllPressed;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SectionHeader(
-          title: tr.popularDoctor,
-          onSeeAllPressed:
-              onSeeAllPressed ?? () => const FindDoctorsRoute().go(context),
-        ),
+        SectionHeader(title: title, onSeeAllPressed: onSeeAllPressed),
         14.verticalSpace,
         SizedBox(
           height: 240,
@@ -42,6 +45,8 @@ class PopularDoctorSection extends StatelessWidget {
               final doctor = doctors[index];
               return PopularDoctorCard(
                 doctor: doctor,
+                isFavorite: favoriteIds.contains(doctor.id),
+                onFavoriteTap: () => onFavoriteTap(doctor),
                 onTap: () => DoctorDetailsRoute(doctor).push(context),
               );
             },
@@ -53,9 +58,17 @@ class PopularDoctorSection extends StatelessWidget {
 }
 
 class PopularDoctorCard extends StatelessWidget {
-  const PopularDoctorCard({super.key, required this.doctor, this.onTap});
+  const PopularDoctorCard({
+    super.key,
+    required this.doctor,
+    this.isFavorite = false,
+    this.onFavoriteTap,
+    this.onTap,
+  });
 
   final DoctorModel doctor;
+  final bool isFavorite;
+  final VoidCallback? onFavoriteTap;
   final VoidCallback? onTap;
 
   @override
@@ -107,30 +120,35 @@ class PopularDoctorCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                Positioned(
+                PositionedDirectional(
                   top: 8,
-                  right: 8,
-                  child: Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          //CR hardcode color
-                          // Solved
-                          color: AppColors.shadowImage,
-                          blurRadius: 6,
-                          offset: Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    // Filled state comes back with the per-patient
-                    // FavoritesCubit ([Patient] Favorites card).
-                    child: const Icon(
-                      Icons.favorite_border_rounded,
-                      color: AppColors.disabled,
-                      size: 16,
+                  end: 8,
+                  child: GestureDetector(
+                    onTap: onFavoriteTap,
+                    child: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: const BoxDecoration(
+                        color: AppColors.surface,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            //CR hardcode color
+                            // Solved
+                            color: AppColors.shadowImage,
+                            blurRadius: 6,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Icon(
+                        isFavorite
+                            ? Icons.favorite_rounded
+                            : Icons.favorite_border_rounded,
+                        color: isFavorite
+                            ? AppColors.favorite
+                            : AppColors.disabled,
+                        size: 16,
+                      ),
                     ),
                   ),
                 ),

@@ -104,6 +104,8 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get searchDoctorHint => 'ابحث.... ';
 	@override String get live => 'مباشر';
 	@override String get seeAll => 'عرض الكل';
+	@override String get favoriteUpdateFailed => 'تعذر تحديث المفضلة. حاول مرة أخرى.';
+	@override String get topRatedDoctors => 'الأطباء الأعلى تقييماً';
 	@override String get popularDoctor => 'الأطباء الأكثر شعبية';
 	@override String get dental => 'أسنان';
 	@override String get cardiology => 'قلب';
@@ -131,9 +133,12 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get setUpYourProfile => 'إعداد ملفك الشخصي';
 	@override String get profileHeaderSubtitle => 'قم بتحديث ملفك الشخصي للتواصل مع طبيبك\nبشكل أفضل.';
 	@override String get personalInformation => 'المعلومات الشخصية';
+	@override String get email => 'البريد الإلكتروني';
 	@override String get contactNumber => 'رقم الهاتف';
 	@override String get dateOfBirth => 'تاريخ الميلاد';
 	@override String get dateOfBirthPlaceholder => 'يوم شهر سنة';
+	@override String get gender => 'الجنس';
+	@override String get notSet => 'غير محدد';
 	@override String get location => 'الموقع';
 	@override String get addDetails => 'إضافة تفاصيل';
 	@override String get settings => 'الإعدادات';
@@ -319,6 +324,8 @@ extension on TranslationsAr {
 			'searchDoctorHint' => 'ابحث.... ',
 			'live' => 'مباشر',
 			'seeAll' => 'عرض الكل',
+			'favoriteUpdateFailed' => 'تعذر تحديث المفضلة. حاول مرة أخرى.',
+			'topRatedDoctors' => 'الأطباء الأعلى تقييماً',
 			'popularDoctor' => 'الأطباء الأكثر شعبية',
 			'dental' => 'أسنان',
 			'cardiology' => 'قلب',
@@ -346,9 +353,12 @@ extension on TranslationsAr {
 			'setUpYourProfile' => 'إعداد ملفك الشخصي',
 			'profileHeaderSubtitle' => 'قم بتحديث ملفك الشخصي للتواصل مع طبيبك\nبشكل أفضل.',
 			'personalInformation' => 'المعلومات الشخصية',
+			'email' => 'البريد الإلكتروني',
 			'contactNumber' => 'رقم الهاتف',
 			'dateOfBirth' => 'تاريخ الميلاد',
 			'dateOfBirthPlaceholder' => 'يوم شهر سنة',
+			'gender' => 'الجنس',
+			'notSet' => 'غير محدد',
 			'location' => 'الموقع',
 			'addDetails' => 'إضافة تفاصيل',
 			'settings' => 'الإعدادات',

@@ -89,10 +89,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   HomeFailure() => HomeLoadError(
                     onRetry: () => context.read<HomeCubit>().load(),
                   ),
-                  HomeSuccess(:final doctors) when doctors.isEmpty =>
+                  HomeSuccess(:final popularDoctors)
+                      when popularDoctors.isEmpty =>
                     const DoctorsIsEmpty(),
-                  HomeSuccess(:final doctors, :final specialties) =>
-                    DoctorsData(doctors: doctors, specialties: specialties),
+                  HomeSuccess() => DoctorsData(
+                    popularDoctors: state.popularDoctors,
+                    topRatedDoctors: state.topRatedDoctors,
+                    specialties: state.specialties,
+                  ),
                 },
               ],
             ),

@@ -14,4 +14,6 @@ abstract final class AppRoutePaths {
   static const String selectTime = '/select-time';
   static const String bookingReview = '/booking-review';
   static const String profile = '/profile';
+  static const String editProfile = '/profile/edit';
+  static const String patientSettings = '/settings';
 }

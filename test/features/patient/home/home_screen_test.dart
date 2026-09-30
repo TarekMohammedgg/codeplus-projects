@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:doctor_hunt/apps/features/patient/favorites/presentation/controller/cubit/favorites_cubit.dart';
+import 'package:doctor_hunt/apps/features/patient/home/data/models/home_data.dart';
+import 'package:doctor_hunt/apps/features/patient/home/presentation/controller/cubit/home_cubit.dart';
+import 'package:doctor_hunt/apps/features/patient/home/presentation/screens/patient_home_screen.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_header_section.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_search_bar.dart';
@@ -12,8 +17,61 @@ import 'package:doctor_hunt/apps/features/patient/home/presentation/widgets/popu
 import 'package:doctor_hunt/generated/app_image.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import '../../../helpers/test_app.dart';
+import '../../../helpers/test_fakes.dart';
 
 void main() {
+  testWidgets(
+    'HomeScreen shows Popular and Top Rated sections and toggles a favorite',
+    (WidgetTester tester) async {
+      // arrange
+      tester.view.physicalSize = const Size(1080, 2400);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+      final doctors = testHomeDoctors();
+      final favoritesRepository = FakeFavoritesRepository();
+      final favoritesCubit = FavoritesCubit(repository: favoritesRepository);
+      addTearDown(favoritesCubit.close);
+      await tester.pumpWidget(
+        buildTestApp(
+          BlocProvider<FavoritesCubit>.value(
+            value: favoritesCubit,
+            child: BlocProvider<HomeCubit>(
+              create: (_) => HomeCubit(
+                repository: FakeHomeRepository(
+                  data: HomeData(
+                    popularDoctors: doctors,
+                    topRatedDoctors: doctors.reversed.toList(),
+                    specialties: const [],
+                  ),
+                ),
+              ),
+              child: const HomeScreen(),
+            ),
+          ),
+        ),
+      );
+      favoritesRepository.userIds.add('patient-1');
+      await tester.pump();
+      favoritesRepository.favoriteIds.add({});
+      await tester.pump();
+      expect(find.text(tr.popularDoctor), findsOneWidget);
+      expect(find.text(tr.topRatedDoctors), findsOneWidget);
+      expect(find.byIcon(Icons.favorite_rounded), findsNothing);
+
+      // act
+      await tester.tap(find.byIcon(Icons.favorite_border_rounded).first);
+      await tester.pump();
+
+      // assert
+      expect(favoritesRepository.writes, [('patient-1', 'doc_5', true)]);
+      // The same doctor appears in both sections, so both hearts fill.
+      expect(find.byIcon(Icons.favorite_rounded), findsNWidgets(2));
+    },
+  );
+
   testWidgets('HomeScreen renders Doctor Hunt home UI elements properly', (
     WidgetTester tester,
   ) async {
@@ -346,8 +404,11 @@ Widget testHomeScreen({
                   ),
                   if (popularDoctors.isNotEmpty) ...[
                     const SizedBox(height: 24),
-                    PopularDoctorSection(
+                    DoctorsSection(
+                      title: tr.popularDoctor,
                       doctors: popularDoctors,
+                      favoriteIds: const {},
+                      onFavoriteTap: (_) {},
                       onSeeAllPressed: onSeeAllDoctors ?? () {},
                     ),
                   ],

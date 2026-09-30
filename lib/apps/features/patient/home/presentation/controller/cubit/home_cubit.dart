@@ -14,7 +14,13 @@ class HomeCubit extends Cubit<HomeState> {
     try {
       final data = await repository.fetchHomeData();
       if (isClosed) return;
-      emit(HomeSuccess(doctors: data.doctors, specialties: data.specialties));
+      emit(
+        HomeSuccess(
+          popularDoctors: data.popularDoctors,
+          topRatedDoctors: data.topRatedDoctors,
+          specialties: data.specialties,
+        ),
+      );
     } catch (error, stackTrace) {
       if (isClosed) return;
       addError(error, stackTrace);

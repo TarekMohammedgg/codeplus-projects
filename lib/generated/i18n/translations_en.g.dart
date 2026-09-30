@@ -236,6 +236,12 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'See all'
 	String get seeAll => 'See all';
 
+	/// en: 'Couldn't update favorites. Try again.'
+	String get favoriteUpdateFailed => 'Couldn\'t update favorites. Try again.';
+
+	/// en: 'Top Rated Doctors'
+	String get topRatedDoctors => 'Top Rated Doctors';
+
 	/// en: 'Popular Doctor'
 	String get popularDoctor => 'Popular Doctor';
 
@@ -317,6 +323,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'Personal information'
 	String get personalInformation => 'Personal information';
 
+	/// en: 'Email'
+	String get email => 'Email';
+
 	/// en: 'Contact Number'
 	String get contactNumber => 'Contact Number';
 
@@ -325,6 +334,12 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// en: 'DD MM YYYY'
 	String get dateOfBirthPlaceholder => 'DD MM YYYY';
+
+	/// en: 'Gender'
+	String get gender => 'Gender';
+
+	/// en: 'Not set'
+	String get notSet => 'Not set';
 
 	/// en: 'Location'
 	String get location => 'Location';
@@ -730,6 +745,8 @@ extension on Translations {
 			'searchDoctorHint' => 'Search.... ',
 			'live' => 'LIVE',
 			'seeAll' => 'See all',
+			'favoriteUpdateFailed' => 'Couldn\'t update favorites. Try again.',
+			'topRatedDoctors' => 'Top Rated Doctors',
 			'popularDoctor' => 'Popular Doctor',
 			'dental' => 'Dental',
 			'cardiology' => 'Cardiology',
@@ -757,9 +774,12 @@ extension on Translations {
 			'setUpYourProfile' => 'Set up your profile',
 			'profileHeaderSubtitle' => 'Update your profile to connect your doctor with\nbetter impression.',
 			'personalInformation' => 'Personal information',
+			'email' => 'Email',
 			'contactNumber' => 'Contact Number',
 			'dateOfBirth' => 'Date of birth',
 			'dateOfBirthPlaceholder' => 'DD MM YYYY',
+			'gender' => 'Gender',
+			'notSet' => 'Not set',
 			'location' => 'Location',
 			'addDetails' => 'Add Details',
 			'settings' => 'Settings',

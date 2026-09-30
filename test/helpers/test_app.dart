@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
@@ -9,6 +10,7 @@ import 'package:intl/date_symbol_data_local.dart';
 
 import 'package:doctor_hunt/apps/core/di/injection.dart';
 import 'package:doctor_hunt/apps/features/common/auth/data/service/auth_service.dart';
+import 'package:doctor_hunt/apps/features/patient/favorites/presentation/controller/cubit/favorites_cubit.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
 class _FakeFirebaseAuth extends Fake implements FirebaseAuth {
@@ -49,12 +51,14 @@ Widget buildTestApp(Widget child) {
     child: Builder(
       builder: (context) {
         final locale = context.tr.$meta.locale;
-        return MaterialApp(
-          key: ValueKey(locale),
-          locale: locale.flutterLocale,
-          localizationsDelegates: GlobalMaterialLocalizations.delegates,
-          supportedLocales: AppLocaleUtils.supportedLocales,
-          home: child,
+        return _withAppProviders(
+          MaterialApp(
+            key: ValueKey(locale),
+            locale: locale.flutterLocale,
+            localizationsDelegates: GlobalMaterialLocalizations.delegates,
+            supportedLocales: AppLocaleUtils.supportedLocales,
+            home: child,
+          ),
         );
       },
     ),
@@ -69,14 +73,24 @@ Widget buildTestRouterApp(GoRouter router) {
     child: Builder(
       builder: (context) {
         final locale = context.tr.$meta.locale;
-        return MaterialApp.router(
-          key: ValueKey(locale),
-          locale: locale.flutterLocale,
-          localizationsDelegates: GlobalMaterialLocalizations.delegates,
-          supportedLocales: AppLocaleUtils.supportedLocales,
-          routerConfig: router,
+        return _withAppProviders(
+          MaterialApp.router(
+            key: ValueKey(locale),
+            locale: locale.flutterLocale,
+            localizationsDelegates: GlobalMaterialLocalizations.delegates,
+            supportedLocales: AppLocaleUtils.supportedLocales,
+            routerConfig: router,
+          ),
         );
       },
     ),
+  );
+}
+
+/// Mirrors the app-wide providers `DoctorHuntApp` puts above the router.
+Widget _withAppProviders(Widget app) {
+  return BlocProvider<FavoritesCubit>(
+    create: (_) => getIt<FavoritesCubit>(),
+    child: app,
   );
 }

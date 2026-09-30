@@ -21,13 +21,18 @@ import 'package:doctor_hunt/apps/features/common/auth/presentation/screens/login
 import 'package:doctor_hunt/apps/features/common/auth/presentation/screens/signup_screen.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/widgets/forgot_password_bottom_sheet.dart';
 import 'package:doctor_hunt/apps/features/common/role_selection/data/models/user_role.dart';
+import 'package:doctor_hunt/apps/features/patient/favorites/presentation/controller/cubit/favorites_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/data/repositories/doctor_repository.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/controller/cubit/find_doctors_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/screens/find_doctors_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/home/data/repositories/home_repository.dart';
 import 'package:doctor_hunt/apps/features/patient/home/presentation/controller/cubit/home_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/home/presentation/screens/patient_home_screen.dart';
+import 'package:doctor_hunt/apps/features/patient/doctor_booking/data/repositories/booking_repository.dart';
+import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/controller/cubit/booking_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/data/models/user_profile_model.dart';
+import 'package:doctor_hunt/apps/features/patient/profile/data/repositories/profile_repository.dart';
+import 'package:doctor_hunt/apps/features/patient/profile/presentation/controller/cubit/profile_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/presentation/screens/profile_screen.dart';
 
 import '../../helpers/test_app.dart';
@@ -66,6 +71,9 @@ Future<void> setupFakeServiceLocator({
     () => fakeCreateDoctorRepo,
   );
 
+  getIt.registerFactory<FavoritesCubit>(
+    () => FavoritesCubit(repository: FakeFavoritesRepository()),
+  );
   getIt.registerFactory<AuthCubit>(() {
     final cubit = AuthCubit(repository: getIt<AuthRepository>());
     onAuthCubitCreated?.call(cubit);
@@ -95,6 +103,21 @@ Future<void> setupFakeServiceLocator({
     onCreateDoctorCubitCreated?.call(cubit);
     return cubit;
   });
+
+  final fakeProfileRepo = FakeProfileRepository();
+  getIt.registerLazySingleton<ProfileRepository>(() => fakeProfileRepo);
+  getIt.registerFactory<ProfileCubit>(
+    () => ProfileCubit(
+      repository: getIt<ProfileRepository>(),
+      authRepository: getIt<AuthRepository>(),
+    ),
+  );
+
+  final fakeBookingRepo = FakeBookingRepository();
+  getIt.registerLazySingleton<BookingRepository>(() => fakeBookingRepo);
+  getIt.registerFactory<BookingCubit>(
+    () => BookingCubit(repository: getIt<BookingRepository>()),
+  );
 }
 
 void main() {

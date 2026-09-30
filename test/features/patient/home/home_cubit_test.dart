@@ -1,4 +1,4 @@
-﻿import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/features/patient/home/data/models/home_data.dart';
 import 'package:doctor_hunt/apps/features/patient/home/data/repositories/home_repository.dart';
@@ -10,7 +10,14 @@ void main() {
   test('load emits loading then success with repository data', () async {
     final repository = _FakeHomeRepository(
       data: HomeData(
-        doctors: [
+        popularDoctors: [
+          const DoctorModel(
+            id: 'doctor-1',
+            name: 'Dr. One',
+            specialty: 'Dentist',
+          ),
+        ],
+        topRatedDoctors: [
           const DoctorModel(
             id: 'doctor-1',
             name: 'Dr. One',
@@ -35,7 +42,8 @@ void main() {
     await cubit.load();
     await stateExpectation;
     final state = cubit.state as HomeSuccess;
-    expect(state.doctors.single.id, 'doctor-1');
+    expect(state.popularDoctors.single.id, 'doctor-1');
+    expect(state.topRatedDoctors.single.id, 'doctor-1');
     expect(state.specialties.single.id, 'dentistry');
     await cubit.close();
   });
@@ -65,6 +73,11 @@ class _FakeHomeRepository implements HomeRepository {
   @override
   Future<HomeData> fetchHomeData() async {
     if (error != null) throw error!;
-    return data ?? const HomeData(doctors: [], specialties: []);
+    return data ??
+        const HomeData(
+          popularDoctors: [],
+          topRatedDoctors: [],
+          specialties: [],
+        );
   }
 }
