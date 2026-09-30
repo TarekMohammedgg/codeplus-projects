@@ -34,6 +34,8 @@ import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/scre
 import 'package:doctor_hunt/apps/features/patient/home/presentation/controller/cubit/home_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/home/presentation/screens/patient_home_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/data/models/user_profile_model.dart';
+import 'package:doctor_hunt/apps/features/patient/profile/presentation/controller/cubit/change_password_cubit.dart';
+import 'package:doctor_hunt/apps/features/patient/profile/presentation/screens/change_password_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/presentation/screens/edit_profile_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/presentation/screens/patient_settings_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/presentation/screens/profile_screen.dart';
@@ -395,6 +397,9 @@ class ChangePasswordRoute extends GoRouteData with $ChangePasswordRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const Scaffold();
+    return BlocProvider<ChangePasswordCubit>(
+      create: (_) => getIt<ChangePasswordCubit>(),
+      child: const ChangePasswordScreen(),
+    );
   }
 }

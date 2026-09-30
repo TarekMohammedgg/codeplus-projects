@@ -127,6 +127,7 @@
   "confirmNewPassword": "Confirm New Password",
   "passwordChangedSuccess": "Password changed successfully",
   "passwordsDoNotMatch": "Passwords do not match",
+  "passwordMinLength": "Password must be at least 6 characters",
   "wrongCurrentPassword": "Wrong current password. Please try again.",
   "editProfile": "Edit Profile",
   "save": "Save",

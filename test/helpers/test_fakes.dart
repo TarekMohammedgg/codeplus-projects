@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/core/models/specialty_model.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/data/models/admin_doctor_model.dart';
@@ -80,11 +81,16 @@ class FakeAuthRepository implements AuthRepository {
     User? currentUser,
     this.auth,
     this.isAdmin = false,
+    this.changePasswordError,
   }) : _currentUser = currentUser ?? auth?.currentUser;
 
   final bool shouldFail;
   final FirebaseAuth? auth;
   final bool isAdmin;
+  final String? changePasswordError;
+  bool changePasswordCalled = false;
+  String? lastCurrentPassword;
+  String? lastNewPassword;
   User? _currentUser;
 
   @override
@@ -126,6 +132,20 @@ class FakeAuthRepository implements AuthRepository {
 
   @override
   Future<bool> isCurrentUserAdmin() async => isAdmin;
+
+  @override
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    if (changePasswordError != null) {
+      throw AppException(message: changePasswordError!);
+    }
+    _throwIfNeeded();
+    changePasswordCalled = true;
+    lastCurrentPassword = currentPassword;
+    lastNewPassword = newPassword;
+  }
 
   @override
   Future<void> signOut() async {

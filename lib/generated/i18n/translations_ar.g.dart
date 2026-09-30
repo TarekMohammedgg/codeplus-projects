@@ -167,6 +167,7 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get confirmNewPassword => 'تأكيد كلمة المرور الجديدة';
 	@override String get passwordChangedSuccess => 'تم تغيير كلمة المرور بنجاح';
 	@override String get passwordsDoNotMatch => 'كلمات المرور غير متطابقة';
+	@override String get passwordMinLength => 'يجب أن تتكون كلمة المرور من 6 أحرف على الأقل';
 	@override String get wrongCurrentPassword => 'كلمة المرور الحالية غير صحيحة. يرجى المحاولة مرة أخرى.';
 	@override String get editProfile => 'تعديل الملف الشخصي';
 	@override String get save => 'حفظ';
@@ -428,6 +429,7 @@ extension on TranslationsAr {
 			'confirmNewPassword' => 'تأكيد كلمة المرور الجديدة',
 			'passwordChangedSuccess' => 'تم تغيير كلمة المرور بنجاح',
 			'passwordsDoNotMatch' => 'كلمات المرور غير متطابقة',
+			'passwordMinLength' => 'يجب أن تتكون كلمة المرور من 6 أحرف على الأقل',
 			'wrongCurrentPassword' => 'كلمة المرور الحالية غير صحيحة. يرجى المحاولة مرة أخرى.',
 			'editProfile' => 'تعديل الملف الشخصي',
 			'save' => 'حفظ',

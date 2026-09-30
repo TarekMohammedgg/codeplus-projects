@@ -21,6 +21,11 @@ abstract interface class AuthRepository {
 
   Future<void> signOut();
 
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  });
+
   User? get currentUser;
 }
 
@@ -28,6 +33,17 @@ class FirebaseAuthRepository implements AuthRepository {
   FirebaseAuthRepository({required this.authService});
 
   final AuthService authService;
+
+  @override
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) {
+    return authService.changePassword(
+      currentPassword: currentPassword,
+      newPassword: newPassword,
+    );
+  }
 
   @override
   Future<UserCredential> signInWithEmailAndPassword({

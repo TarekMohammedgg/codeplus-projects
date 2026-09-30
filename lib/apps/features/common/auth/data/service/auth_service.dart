@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
+import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
 class AuthService {
   static String get serverClientId =>
@@ -147,6 +148,31 @@ class AuthService {
     try {
       await _auth.sendPasswordResetEmail(email: email.trim());
     } on FirebaseAuthException catch (e) {
+      throw AppException.fromFirebaseAuth(e);
+    } catch (e) {
+      throw AppException.from(e);
+    }
+  }
+
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    final user = currentUser;
+    if (user == null || user.email == null || user.email!.isEmpty) {
+      throw AppException(message: tr.userNotFoundError);
+    }
+    try {
+      final credential = EmailAuthProvider.credential(
+        email: user.email!,
+        password: currentPassword,
+      );
+      await user.reauthenticateWithCredential(credential);
+      await user.updatePassword(newPassword);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'wrong-password' || e.code == 'invalid-credential') {
+        throw AppException(message: tr.wrongCurrentPassword, code: e.code);
+      }
       throw AppException.fromFirebaseAuth(e);
     } catch (e) {
       throw AppException.from(e);

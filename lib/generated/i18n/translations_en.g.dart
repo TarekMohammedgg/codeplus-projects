@@ -425,6 +425,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'Passwords do not match'
 	String get passwordsDoNotMatch => 'Passwords do not match';
 
+	/// en: 'Password must be at least 6 characters'
+	String get passwordMinLength => 'Password must be at least 6 characters';
+
 	/// en: 'Wrong current password. Please try again.'
 	String get wrongCurrentPassword => 'Wrong current password. Please try again.';
 
@@ -931,6 +934,7 @@ extension on Translations {
 			'confirmNewPassword' => 'Confirm New Password',
 			'passwordChangedSuccess' => 'Password changed successfully',
 			'passwordsDoNotMatch' => 'Passwords do not match',
+			'passwordMinLength' => 'Password must be at least 6 characters',
 			'wrongCurrentPassword' => 'Wrong current password. Please try again.',
 			'editProfile' => 'Edit Profile',
 			'save' => 'Save',

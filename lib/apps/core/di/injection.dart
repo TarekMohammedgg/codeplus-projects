@@ -31,6 +31,7 @@ import 'package:doctor_hunt/apps/features/patient/home/data/service/home_service
 import 'package:doctor_hunt/apps/features/patient/home/presentation/controller/cubit/home_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/data/repositories/profile_repository.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/data/service/profile_service.dart';
+import 'package:doctor_hunt/apps/features/patient/profile/presentation/controller/cubit/change_password_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/presentation/controller/cubit/profile_cubit.dart';
 
 final getIt = GetIt.instance;
@@ -180,5 +181,8 @@ void setupServiceLocator() {
       repository: getIt<ProfileRepository>(),
       authRepository: getIt<AuthRepository>(),
     ),
+  );
+  getIt.registerFactory<ChangePasswordCubit>(
+    () => ChangePasswordCubit(repository: getIt<AuthRepository>()),
   );
 }
