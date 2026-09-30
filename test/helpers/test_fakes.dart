@@ -20,6 +20,8 @@ import 'package:doctor_hunt/apps/features/patient/find_doctors/data/repositories
 import 'package:doctor_hunt/apps/features/patient/home/data/models/home_data.dart';
 import 'package:doctor_hunt/apps/features/patient/home/data/repositories/home_repository.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_booking/data/repositories/booking_repository.dart';
+import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
+import 'package:doctor_hunt/apps/features/patient/appointments/data/repositories/patient_appointments_repository.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/data/models/user_profile_model.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/data/repositories/profile_repository.dart';
 
@@ -358,4 +360,45 @@ class FakeDoctorDetailsRepository implements DoctorDetailsRepository {
 
   @override
   Future<ClinicModel?> fetchClinic() async => clinic;
+}
+
+class FakePatientAppointmentsRepository
+    implements PatientAppointmentsRepository {
+  FakePatientAppointmentsRepository({
+    this.appointments = const [],
+    this.specialties = const [],
+    this.streamError,
+    this.cancelError,
+  }) {
+    _controller = StreamController<List<AppointmentModel>>.broadcast();
+  }
+
+  final List<AppointmentModel> appointments;
+  final List<SpecialtyModel> specialties;
+  final Object? streamError;
+  final Object? cancelError;
+  late final StreamController<List<AppointmentModel>> _controller;
+  final List<AppointmentModel> cancelledAppointments = [];
+
+  void emitAppointments(List<AppointmentModel> appts) {
+    if (!_controller.isClosed) _controller.add(appts);
+  }
+
+  @override
+  Stream<List<AppointmentModel>> watchPatientAppointments(String patientId) {
+    if (streamError != null) return Stream.error(streamError!);
+    scheduleMicrotask(() {
+      if (!_controller.isClosed) _controller.add(appointments);
+    });
+    return _controller.stream;
+  }
+
+  @override
+  Future<void> cancelAppointment(AppointmentModel appointment) async {
+    if (cancelError != null) throw cancelError!;
+    cancelledAppointments.add(appointment);
+  }
+
+  @override
+  Future<List<SpecialtyModel>> getSpecialties() async => specialties;
 }

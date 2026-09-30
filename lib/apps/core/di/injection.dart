@@ -26,6 +26,8 @@ import 'package:doctor_hunt/apps/features/patient/favorites/data/repositories/fa
 import 'package:doctor_hunt/apps/features/patient/favorites/data/service/favorites_service.dart';
 import 'package:doctor_hunt/apps/features/patient/favorites/presentation/controller/cubit/favorites_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/controller/cubit/booking_cubit.dart';
+import 'package:doctor_hunt/apps/features/patient/appointments/data/repositories/patient_appointments_repository.dart';
+import 'package:doctor_hunt/apps/features/patient/appointments/presentation/controller/cubit/patient_appointments_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/home/data/repositories/home_repository.dart';
 import 'package:doctor_hunt/apps/features/patient/home/data/service/home_service.dart';
 import 'package:doctor_hunt/apps/features/patient/home/presentation/controller/cubit/home_cubit.dart';
@@ -150,6 +152,12 @@ void setupServiceLocator() {
   getIt.registerLazySingleton<ProfileRepository>(
     () => FirebaseProfileRepository(profileService: getIt<ProfileService>()),
   );
+  getIt.registerLazySingleton<PatientAppointmentsRepository>(
+    () => PatientAppointmentsRepositoryImpl(
+      appointmentService: getIt<AppointmentService>(),
+      specialtyService: getIt<SpecialtyService>(),
+    ),
+  );
 
   // Cubits (registered as factories to return a fresh instance on demand)
   getIt.registerFactory<AuthCubit>(
@@ -184,5 +192,11 @@ void setupServiceLocator() {
   );
   getIt.registerFactory<ChangePasswordCubit>(
     () => ChangePasswordCubit(repository: getIt<AuthRepository>()),
+  );
+  getIt.registerFactory<PatientAppointmentsCubit>(
+    () => PatientAppointmentsCubit(
+      repository: getIt<PatientAppointmentsRepository>(),
+      authService: getIt<AuthService>(),
+    ),
   );
 }

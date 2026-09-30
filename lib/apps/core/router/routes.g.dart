@@ -22,6 +22,8 @@ List<RouteBase> get $appRoutes => [
   $editProfileRoute,
   $patientSettingsRoute,
   $changePasswordRoute,
+  $patientAppointmentDetailsRoute,
+  $patientRateDoctorRoute,
 ];
 
 RouteBase get $onboardingRoute => GoRouteData.$route(
@@ -670,4 +672,67 @@ mixin $ChangePasswordRoute on GoRouteData {
 
   @override
   void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $patientAppointmentDetailsRoute => GoRouteData.$route(
+  path: '/appointments/details',
+  hasOverriddenOnExit: false,
+  factory: $PatientAppointmentDetailsRoute._fromState,
+);
+
+mixin $PatientAppointmentDetailsRoute on GoRouteData {
+  static PatientAppointmentDetailsRoute _fromState(GoRouterState state) =>
+      PatientAppointmentDetailsRoute(state.extra as AppointmentModel?);
+
+  PatientAppointmentDetailsRoute get _self =>
+      this as PatientAppointmentDetailsRoute;
+
+  @override
+  String get location => GoRouteData.$location('/appointments/details');
+
+  @override
+  void go(BuildContext context) => context.go(location, extra: _self.$extra);
+
+  @override
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: _self.$extra);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: _self.$extra);
+
+  @override
+  void replace(BuildContext context) =>
+      context.replace(location, extra: _self.$extra);
+}
+
+RouteBase get $patientRateDoctorRoute => GoRouteData.$route(
+  path: '/appointments/rate',
+  hasOverriddenOnExit: false,
+  factory: $PatientRateDoctorRoute._fromState,
+);
+
+mixin $PatientRateDoctorRoute on GoRouteData {
+  static PatientRateDoctorRoute _fromState(GoRouterState state) =>
+      PatientRateDoctorRoute(state.extra as AppointmentModel?);
+
+  PatientRateDoctorRoute get _self => this as PatientRateDoctorRoute;
+
+  @override
+  String get location => GoRouteData.$location('/appointments/rate');
+
+  @override
+  void go(BuildContext context) => context.go(location, extra: _self.$extra);
+
+  @override
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: _self.$extra);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: _self.$extra);
+
+  @override
+  void replace(BuildContext context) =>
+      context.replace(location, extra: _self.$extra);
 }

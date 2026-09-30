@@ -22,7 +22,10 @@ import 'package:doctor_hunt/apps/features/common/onboarding/presentation/screens
 import 'package:doctor_hunt/apps/features/common/role_selection/data/models/user_role.dart';
 import 'package:doctor_hunt/apps/features/common/role_selection/presentation/screens/role_selection_screen.dart';
 import 'package:doctor_hunt/apps/features/common/shell/presentation/screens/admin_shell.dart';
+import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
 import 'package:doctor_hunt/apps/features/common/shell/presentation/screens/patient_shell.dart';
+import 'package:doctor_hunt/apps/features/patient/appointments/presentation/controller/cubit/patient_appointments_cubit.dart';
+import 'package:doctor_hunt/apps/features/patient/appointments/presentation/screens/patient_appointments_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_booking/data/models/booking_draft.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/controller/cubit/booking_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/screens/booking_review_screen.dart';
@@ -177,7 +180,10 @@ class PatientAppointmentsRoute extends GoRouteData
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return Scaffold(body: Center(child: Text(tr.tabAppointments)));
+    return BlocProvider<PatientAppointmentsCubit>(
+      create: (_) => getIt<PatientAppointmentsCubit>()..init(),
+      child: const PatientAppointmentsScreen(),
+    );
   }
 }
 
@@ -401,5 +407,32 @@ class ChangePasswordRoute extends GoRouteData with $ChangePasswordRoute {
       create: (_) => getIt<ChangePasswordCubit>(),
       child: const ChangePasswordScreen(),
     );
+  }
+}
+
+@TypedGoRoute<PatientAppointmentDetailsRoute>(
+  path: AppRoutePaths.patientAppointmentDetails,
+)
+class PatientAppointmentDetailsRoute extends GoRouteData
+    with $PatientAppointmentDetailsRoute {
+  const PatientAppointmentDetailsRoute([this.$extra]);
+
+  final AppointmentModel? $extra;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const Scaffold();
+  }
+}
+
+@TypedGoRoute<PatientRateDoctorRoute>(path: AppRoutePaths.rateDoctor)
+class PatientRateDoctorRoute extends GoRouteData with $PatientRateDoctorRoute {
+  const PatientRateDoctorRoute([this.$extra]);
+
+  final AppointmentModel? $extra;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const Scaffold();
   }
 }

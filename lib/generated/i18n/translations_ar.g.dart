@@ -291,6 +291,25 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get tabAppointments => 'المواعيد';
 	@override String get tabProfile => 'الملف الشخصي';
 	@override String get appointments => 'المواعيد';
+	@override String get upcoming => 'القادمة';
+	@override String get completed => 'المكتملة';
+	@override String get cancelled => 'الملغاة';
+	@override String get cancelAppointment => 'إلغاء الموعد';
+	@override String get rateDoctor => 'تقييم الطبيب';
+	@override String get reviewed => 'تم التقييم';
+	@override String get cancelledByYou => 'تم الإلغاء بواسطتك';
+	@override String get cancelledByClinic => 'تم الإلغاء بواسطة العيادة';
+	@override String get cancelAppointmentTitle => 'إلغاء الموعد';
+	@override String get cancelAppointmentMessage => 'هل أنت متأكد من رغبتك في إلغاء هذا الموعد؟';
+	@override String get appointmentCancelledSuccess => 'تم إلغاء الموعد بنجاح';
+	@override String get noUpcomingAppointments => 'لا توجد مواعيد قادمة';
+	@override String get noCompletedAppointments => 'لا توجد مواعيد مكتملة';
+	@override String get noCancelledAppointments => 'لا توجد مواعيد ملغاة';
+	@override String get noAppointmentsDescription => 'ستظهر مواعيدك هنا.';
+	@override String get statusUpcoming => 'قادم';
+	@override String get statusCompleted => 'مكتمل';
+	@override String get statusCancelled => 'ملغي';
+	@override String get retry => 'إعادة المحاولة';
 }
 
 /// The flat map containing all translations for locale <ar>.
@@ -553,6 +572,25 @@ extension on TranslationsAr {
 			'tabAppointments' => 'المواعيد',
 			'tabProfile' => 'الملف الشخصي',
 			'appointments' => 'المواعيد',
+			'upcoming' => 'القادمة',
+			'completed' => 'المكتملة',
+			'cancelled' => 'الملغاة',
+			'cancelAppointment' => 'إلغاء الموعد',
+			'rateDoctor' => 'تقييم الطبيب',
+			'reviewed' => 'تم التقييم',
+			'cancelledByYou' => 'تم الإلغاء بواسطتك',
+			'cancelledByClinic' => 'تم الإلغاء بواسطة العيادة',
+			'cancelAppointmentTitle' => 'إلغاء الموعد',
+			'cancelAppointmentMessage' => 'هل أنت متأكد من رغبتك في إلغاء هذا الموعد؟',
+			'appointmentCancelledSuccess' => 'تم إلغاء الموعد بنجاح',
+			'noUpcomingAppointments' => 'لا توجد مواعيد قادمة',
+			'noCompletedAppointments' => 'لا توجد مواعيد مكتملة',
+			'noCancelledAppointments' => 'لا توجد مواعيد ملغاة',
+			'noAppointmentsDescription' => 'ستظهر مواعيدك هنا.',
+			'statusUpcoming' => 'قادم',
+			'statusCompleted' => 'مكتمل',
+			'statusCancelled' => 'ملغي',
+			'retry' => 'إعادة المحاولة',
 			_ => null,
 		};
 	}

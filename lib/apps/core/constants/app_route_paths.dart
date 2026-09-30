@@ -19,4 +19,6 @@ abstract final class AppRoutePaths {
   static const String editProfile = '/profile/edit';
   static const String patientSettings = '/settings';
   static const String changePassword = '/settings/change-password';
+  static const String patientAppointmentDetails = '/appointments/details';
+  static const String rateDoctor = '/appointments/rate';
 }

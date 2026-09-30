@@ -796,6 +796,63 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// en: 'Appointments'
 	String get appointments => 'Appointments';
+
+	/// en: 'Upcoming'
+	String get upcoming => 'Upcoming';
+
+	/// en: 'Completed'
+	String get completed => 'Completed';
+
+	/// en: 'Cancelled'
+	String get cancelled => 'Cancelled';
+
+	/// en: 'Cancel Appointment'
+	String get cancelAppointment => 'Cancel Appointment';
+
+	/// en: 'Rate Doctor'
+	String get rateDoctor => 'Rate Doctor';
+
+	/// en: 'Reviewed'
+	String get reviewed => 'Reviewed';
+
+	/// en: 'Cancelled by you'
+	String get cancelledByYou => 'Cancelled by you';
+
+	/// en: 'Cancelled by clinic'
+	String get cancelledByClinic => 'Cancelled by clinic';
+
+	/// en: 'Cancel Appointment'
+	String get cancelAppointmentTitle => 'Cancel Appointment';
+
+	/// en: 'Are you sure you want to cancel this appointment?'
+	String get cancelAppointmentMessage => 'Are you sure you want to cancel this appointment?';
+
+	/// en: 'Appointment cancelled successfully'
+	String get appointmentCancelledSuccess => 'Appointment cancelled successfully';
+
+	/// en: 'No upcoming appointments'
+	String get noUpcomingAppointments => 'No upcoming appointments';
+
+	/// en: 'No completed appointments'
+	String get noCompletedAppointments => 'No completed appointments';
+
+	/// en: 'No cancelled appointments'
+	String get noCancelledAppointments => 'No cancelled appointments';
+
+	/// en: 'Your appointments will appear here.'
+	String get noAppointmentsDescription => 'Your appointments will appear here.';
+
+	/// en: 'Upcoming'
+	String get statusUpcoming => 'Upcoming';
+
+	/// en: 'Completed'
+	String get statusCompleted => 'Completed';
+
+	/// en: 'Cancelled'
+	String get statusCancelled => 'Cancelled';
+
+	/// en: 'Retry'
+	String get retry => 'Retry';
 }
 
 /// The flat map containing all translations for locale <en>.
@@ -1058,6 +1115,25 @@ extension on Translations {
 			'tabAppointments' => 'Appointments',
 			'tabProfile' => 'Profile',
 			'appointments' => 'Appointments',
+			'upcoming' => 'Upcoming',
+			'completed' => 'Completed',
+			'cancelled' => 'Cancelled',
+			'cancelAppointment' => 'Cancel Appointment',
+			'rateDoctor' => 'Rate Doctor',
+			'reviewed' => 'Reviewed',
+			'cancelledByYou' => 'Cancelled by you',
+			'cancelledByClinic' => 'Cancelled by clinic',
+			'cancelAppointmentTitle' => 'Cancel Appointment',
+			'cancelAppointmentMessage' => 'Are you sure you want to cancel this appointment?',
+			'appointmentCancelledSuccess' => 'Appointment cancelled successfully',
+			'noUpcomingAppointments' => 'No upcoming appointments',
+			'noCompletedAppointments' => 'No completed appointments',
+			'noCancelledAppointments' => 'No cancelled appointments',
+			'noAppointmentsDescription' => 'Your appointments will appear here.',
+			'statusUpcoming' => 'Upcoming',
+			'statusCompleted' => 'Completed',
+			'statusCancelled' => 'Cancelled',
+			'retry' => 'Retry',
 			_ => null,
 		};
 	}

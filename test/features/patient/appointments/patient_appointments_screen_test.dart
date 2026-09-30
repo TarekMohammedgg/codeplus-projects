@@ -1,0 +1,315 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
+import 'package:doctor_hunt/apps/features/patient/appointments/presentation/controller/cubit/patient_appointments_cubit.dart';
+import 'package:doctor_hunt/apps/features/patient/appointments/presentation/screens/patient_appointments_screen.dart';
+import 'package:doctor_hunt/apps/features/patient/appointments/presentation/widgets/patient_appointment_card.dart';
+import 'package:doctor_hunt/generated/i18n/translations.g.dart';
+
+import '../../../helpers/test_app.dart';
+import '../../../helpers/test_fakes.dart';
+
+AppointmentModel _buildTestAppt({
+  required String id,
+  required AppointmentStatus status,
+  required DateTime startAt,
+  CancelledBy? cancelledBy,
+  bool isReviewed = false,
+  String doctorName = 'Dr. Sarah Connor',
+}) {
+  return AppointmentModel(
+    id: id,
+    patientId: 'patient_123',
+    patientName: 'Jane Doe',
+    patientEmail: 'jane@example.com',
+    patientPhone: '01011112222',
+    doctorId: 'doctor_abc',
+    doctorNameAr: doctorName,
+    doctorNameEn: doctorName,
+    startAt: startAt,
+    slotId: 'slot_$id',
+    status: status,
+    cancelledBy: cancelledBy,
+    isReviewed: isReviewed,
+    fee: 40,
+  );
+}
+
+void main() {
+  setUp(() {
+    LocaleSettings.setLocaleSync(AppLocale.en);
+    ensureTestServiceLocator();
+  });
+
+  group('PatientAppointmentsCubit', () {
+    test('emits loaded state when appointments stream emits', () async {
+      final appt = _buildTestAppt(
+        id: 'appt_1',
+        status: AppointmentStatus.upcoming,
+        startAt: DateTime(2026, 10, 5, 10, 0),
+      );
+      final repo = FakePatientAppointmentsRepository(appointments: [appt]);
+      final fakeUser = FakeUser(uid: 'patient_123');
+      final authService = FakeAuthService(user: fakeUser);
+      final cubit = PatientAppointmentsCubit(
+        repository: repo,
+        authService: authService,
+      );
+
+      await cubit.init();
+      await pumpEventQueue();
+
+      expect(cubit.state, isA<PatientAppointmentsLoaded>());
+      final loaded = cubit.state as PatientAppointmentsLoaded;
+      expect(loaded.grouped.upcoming.length, 1);
+      expect(loaded.grouped.upcoming.first.id, 'appt_1');
+      await cubit.close();
+    });
+
+    test('cancels appointment through repository', () async {
+      final appt = _buildTestAppt(
+        id: 'appt_1',
+        status: AppointmentStatus.upcoming,
+        startAt: DateTime(2026, 10, 5, 10, 0),
+      );
+      final repo = FakePatientAppointmentsRepository();
+      final fakeUser = FakeUser(uid: 'patient_123');
+      final authService = FakeAuthService(user: fakeUser);
+      final cubit = PatientAppointmentsCubit(
+        repository: repo,
+        authService: authService,
+      );
+
+      await cubit.cancelAppointment(appt);
+      expect(repo.cancelledAppointments, contains(appt));
+      await cubit.close();
+    });
+  });
+
+  group('PatientAppointmentsScreen', () {
+    testWidgets('renders 3 tabs and no back button', (
+      WidgetTester tester,
+    ) async {
+      final repo = FakePatientAppointmentsRepository();
+      final fakeUser = FakeUser(uid: 'patient_123');
+      final authService = FakeAuthService(user: fakeUser);
+      final cubit = PatientAppointmentsCubit(
+        repository: repo,
+        authService: authService,
+      );
+      await cubit.init();
+
+      await tester.pumpWidget(
+        buildTestApp(
+          BlocProvider<PatientAppointmentsCubit>.value(
+            value: cubit,
+            child: const PatientAppointmentsScreen(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text(tr.appointments), findsOneWidget);
+      expect(find.text(tr.upcoming), findsOneWidget);
+      expect(find.text(tr.completed), findsOneWidget);
+      expect(find.text(tr.cancelled), findsOneWidget);
+      // Main shell tab: no back button
+      expect(find.byType(BackButton), findsNothing);
+      expect(find.byIcon(Icons.arrow_back_ios_new_rounded), findsNothing);
+      await cubit.close();
+    });
+
+    testWidgets('Upcoming tab shows appointment card with cancel action', (
+      WidgetTester tester,
+    ) async {
+      final appt = _buildTestAppt(
+        id: 'upcoming_1',
+        status: AppointmentStatus.upcoming,
+        startAt: DateTime(2026, 10, 5, 10, 0),
+      );
+      final repo = FakePatientAppointmentsRepository(appointments: [appt]);
+      final fakeUser = FakeUser(uid: 'patient_123');
+      final authService = FakeAuthService(user: fakeUser);
+      final cubit = PatientAppointmentsCubit(
+        repository: repo,
+        authService: authService,
+      );
+      await cubit.init();
+
+      await tester.pumpWidget(
+        buildTestApp(
+          BlocProvider<PatientAppointmentsCubit>.value(
+            value: cubit,
+            child: const PatientAppointmentsScreen(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byType(PatientAppointmentCard), findsOneWidget);
+      expect(find.text('Dr. Sarah Connor'), findsOneWidget);
+      expect(find.text(tr.cancelAppointment), findsOneWidget);
+
+      // Tap Cancel -> opens confirmation dialog
+      await tester.tap(
+        find.byKey(const Key('cancel_appointment_button_upcoming_1')),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.descendant(
+          of: find.byType(AlertDialog),
+          matching: find.text(tr.cancelAppointmentTitle),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byType(AlertDialog),
+          matching: find.text(tr.cancelAppointmentMessage),
+        ),
+        findsOneWidget,
+      );
+
+      // Confirm cancel
+      await tester.tap(find.widgetWithText(TextButton, tr.confirm));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(repo.cancelledAppointments.length, 1);
+      expect(repo.cancelledAppointments.first.id, 'upcoming_1');
+      await cubit.close();
+    });
+
+    testWidgets('Completed tab shows Rate Doctor or Reviewed', (
+      WidgetTester tester,
+    ) async {
+      final apptNotReviewed = _buildTestAppt(
+        id: 'comp_not_reviewed',
+        status: AppointmentStatus.completed,
+        startAt: DateTime(2026, 9, 10, 10, 0),
+        isReviewed: false,
+        doctorName: 'Dr. Not Reviewed',
+      );
+      final apptReviewed = _buildTestAppt(
+        id: 'comp_reviewed',
+        status: AppointmentStatus.completed,
+        startAt: DateTime(2026, 9, 12, 10, 0),
+        isReviewed: true,
+        doctorName: 'Dr. Reviewed',
+      );
+
+      final repo = FakePatientAppointmentsRepository(
+        appointments: [apptNotReviewed, apptReviewed],
+      );
+      final fakeUser = FakeUser(uid: 'patient_123');
+      final authService = FakeAuthService(user: fakeUser);
+      final cubit = PatientAppointmentsCubit(
+        repository: repo,
+        authService: authService,
+      );
+      await cubit.init();
+
+      await tester.pumpWidget(
+        buildTestApp(
+          BlocProvider<PatientAppointmentsCubit>.value(
+            value: cubit,
+            child: const PatientAppointmentsScreen(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Switch to Completed tab
+      await tester.tap(find.text(tr.completed));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Dr. Not Reviewed'), findsOneWidget);
+      expect(find.text('Dr. Reviewed'), findsOneWidget);
+      expect(find.text(tr.rateDoctor), findsOneWidget);
+      expect(find.text(tr.reviewed), findsOneWidget);
+      await cubit.close();
+    });
+
+    testWidgets('Cancelled tab shows cancelledBy and no Rate button', (
+      WidgetTester tester,
+    ) async {
+      final apptPatient = _buildTestAppt(
+        id: 'canc_patient',
+        status: AppointmentStatus.cancelled,
+        startAt: DateTime(2026, 8, 1, 10, 0),
+        cancelledBy: CancelledBy.patient,
+        doctorName: 'Dr. Patient Cancelled',
+      );
+      final apptAdmin = _buildTestAppt(
+        id: 'canc_admin',
+        status: AppointmentStatus.cancelled,
+        startAt: DateTime(2026, 8, 2, 10, 0),
+        cancelledBy: CancelledBy.admin,
+        doctorName: 'Dr. Clinic Cancelled',
+      );
+
+      final repo = FakePatientAppointmentsRepository(
+        appointments: [apptPatient, apptAdmin],
+      );
+      final fakeUser = FakeUser(uid: 'patient_123');
+      final authService = FakeAuthService(user: fakeUser);
+      final cubit = PatientAppointmentsCubit(
+        repository: repo,
+        authService: authService,
+      );
+      await cubit.init();
+
+      await tester.pumpWidget(
+        buildTestApp(
+          BlocProvider<PatientAppointmentsCubit>.value(
+            value: cubit,
+            child: const PatientAppointmentsScreen(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Switch to Cancelled tab
+      await tester.tap(find.text(tr.cancelled));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Dr. Patient Cancelled'), findsOneWidget);
+      expect(find.text('Dr. Clinic Cancelled'), findsOneWidget);
+      expect(find.text(tr.cancelledByYou), findsOneWidget);
+      expect(find.text(tr.cancelledByClinic), findsOneWidget);
+      expect(find.text(tr.rateDoctor), findsNothing);
+      expect(find.text(tr.cancelAppointment), findsNothing);
+      await cubit.close();
+    });
+
+    testWidgets('Empty state appears when no appointments in tab', (
+      WidgetTester tester,
+    ) async {
+      final repo = FakePatientAppointmentsRepository(appointments: []);
+      final fakeUser = FakeUser(uid: 'patient_123');
+      final authService = FakeAuthService(user: fakeUser);
+      final cubit = PatientAppointmentsCubit(
+        repository: repo,
+        authService: authService,
+      );
+      await cubit.init();
+
+      await tester.pumpWidget(
+        buildTestApp(
+          BlocProvider<PatientAppointmentsCubit>.value(
+            value: cubit,
+            child: const PatientAppointmentsScreen(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text(tr.noUpcomingAppointments), findsOneWidget);
+      expect(find.text(tr.noAppointmentsDescription), findsOneWidget);
+      await cubit.close();
+    });
+  });
+}
