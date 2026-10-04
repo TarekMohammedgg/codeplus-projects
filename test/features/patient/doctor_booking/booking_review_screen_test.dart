@@ -118,7 +118,6 @@ void main() {
       await tester.pumpAndSettle();
       expect(repository.bookedDrafts.single.doctor.id, 'doc_review_1');
       expect(find.byType(BookingSuccessDialog), findsOneWidget);
-      expect(find.text(tr.bookingStatusUpcoming), findsOneWidget);
 
       // act
       await tester.tap(find.text(tr.done));

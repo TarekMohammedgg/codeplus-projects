@@ -25,47 +25,42 @@ class BookingSuccessDialog extends StatelessWidget {
     final locale = context.tr.$meta.locale.languageCode;
     return Dialog(
       backgroundColor: AppColors.surface,
-      insetPadding: const EdgeInsets.all(24),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 20),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(24, 32, 24, 24),
+        padding: const EdgeInsets.fromLTRB(20, 26, 20, 73),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.asset(Assets.assetsDesignThanks, width: 120, height: 120),
-            24.verticalSpace,
-            Text(
-              context.tr.thankYou,
-              style: context.bold28TextMain,
-              textAlign: TextAlign.center,
-            ),
-            8.verticalSpace,
-            Text(
-              context.tr.appointmentSuccessful,
-              style: context.semiBold16TextSecondary,
-              textAlign: TextAlign.center,
-            ),
-            18.verticalSpace,
-            Text(
-              context.tr.appointmentBookedWith(
-                name: draft.doctor.name,
-                date: DateFormat.yMMMEd(locale).format(draft.startAt),
-                time: DateFormat.jm(locale).format(draft.startAt),
-              ),
-              style: context.regular14TextSecondary.copyWith(height: 1.45),
-              textAlign: TextAlign.center,
-            ),
+            Image.asset(Assets.assetsDesignThanks, width: 156, height: 156),
             12.verticalSpace,
             Text(
-              context.tr.bookingStatusUpcoming,
-              style: context.semiBold14Primary,
+              context.tr.thankYou,
+              style: context.medium36TextMain.copyWith(fontSize: 38),
+              textAlign: TextAlign.center,
+            ),
+            5.verticalSpace,
+            Text(
+              context.tr.appointmentSuccessful,
+              style: context.regular20TextSecondary,
               textAlign: TextAlign.center,
             ),
             28.verticalSpace,
+            Text(
+              context.tr.appointmentBookedWith(
+                name: draft.doctor.name,
+                date: DateFormat.MMMMd(locale).format(draft.startAt),
+                time: DateFormat('hh:mm a', locale).format(draft.startAt),
+              ),
+              style: context.regular14TextSecondary.copyWith(height: 1.5),
+              textAlign: TextAlign.center,
+            ),
+            32.verticalSpace,
             AppPrimaryButton(
               label: context.tr.done,
               onPressed: onDone,
-              height: 52,
+              textStyle: context.medium18White,
+              borderRadius: BorderRadius.circular(6),
             ),
           ],
         ),

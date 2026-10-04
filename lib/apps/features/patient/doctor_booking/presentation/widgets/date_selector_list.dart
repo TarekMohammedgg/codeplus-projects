@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
@@ -12,6 +13,7 @@ class DateSelectorList extends StatelessWidget {
     required this.bookableDates,
     required this.slotsCount,
     required this.isLoadingSlots,
+    this.slotsCountByDate = const {},
     this.onSelectDate,
   });
 
@@ -19,6 +21,7 @@ class DateSelectorList extends StatelessWidget {
   final List<DateTime> bookableDates;
   final int slotsCount;
   final bool isLoadingSlots;
+  final Map<DateTime, int> slotsCountByDate;
   final ValueChanged<DateTime>? onSelectDate;
 
   String _formatDayLabel(BuildContext context, DateTime date) {
@@ -45,37 +48,46 @@ class DateSelectorList extends StatelessWidget {
     return DateFormat('E, d MMM', locale).format(date);
   }
 
+  int? _findSlotsCount(DateTime date) {
+    for (final entry in slotsCountByDate.entries) {
+      if (DateUtils.isSameDay(entry.key, date)) {
+        return entry.value;
+      }
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     if (bookableDates.isEmpty) return const SizedBox.shrink();
 
-    final borderRadius = BorderRadius.circular(8);
-    final locale = TranslationProvider.of(
-      context,
-    ).translations.$meta.locale.languageCode;
+    final borderRadius = BorderRadius.circular(6);
 
     return SizedBox(
-      height: 64,
+      height: 54,
       child: ListView.separated(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         scrollDirection: Axis.horizontal,
         itemCount: bookableDates.length,
-        separatorBuilder: (_, _) => const SizedBox(width: 12),
+        separatorBuilder: (_, _) => 16.horizontalSpace,
         itemBuilder: (context, index) {
           final date = bookableDates[index];
           final isSelected = DateUtils.isSameDay(date, selectedDate);
           final dayLabel = _formatDayLabel(context, date);
 
+          final count = isSelected ? slotsCount : _findSlotsCount(date);
+
           final String subtitle;
-          if (isSelected) {
-            if (isLoadingSlots) {
-              subtitle = '...';
-            } else if (slotsCount > 0) {
-              subtitle = context.tr.slotsAvailable(count: slotsCount);
+          if (isSelected && isLoadingSlots && count == 0) {
+            subtitle = '...';
+          } else if (count != null) {
+            if (count > 0) {
+              subtitle = context.tr.slotsAvailable(count: count);
             } else {
               subtitle = context.tr.noSlotsAvailable;
             }
           } else {
-            subtitle = DateFormat('EEEE', locale).format(date);
+            subtitle = isLoadingSlots ? '...' : context.tr.noSlotsAvailable;
           }
 
           return Material(
@@ -85,17 +97,13 @@ class DateSelectorList extends StatelessWidget {
               onTap: () => onSelectDate?.call(date),
               borderRadius: borderRadius,
               child: Container(
-                width: 152,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 8,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 11),
                 decoration: BoxDecoration(
                   borderRadius: borderRadius,
                   border: Border.all(
                     color: isSelected
                         ? AppColors.primary
-                        : AppColors.dateOutline,
+                        : AppColors.textSecondary.withValues(alpha: 0.1),
                   ),
                 ),
                 child: Column(
@@ -104,21 +112,17 @@ class DateSelectorList extends StatelessWidget {
                     Text(
                       dayLabel,
                       maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: context.bold14.copyWith(
-                        color: isSelected ? Colors.white : AppColors.textStrong,
-                      ),
+                      style: isSelected
+                          ? context.medium16White
+                          : context.medium16TextMain,
                     ),
-                    const SizedBox(height: 4),
+                    4.verticalSpace,
                     Text(
                       subtitle,
                       maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: context.regular10.copyWith(
-                        color: isSelected
-                            ? Colors.white.withValues(alpha: 0.9)
-                            : AppColors.textSecondary,
-                      ),
+                      style: isSelected
+                          ? context.light10White
+                          : context.light10TextSecondary,
                     ),
                   ],
                 ),

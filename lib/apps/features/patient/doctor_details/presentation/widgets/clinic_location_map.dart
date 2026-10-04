@@ -4,61 +4,71 @@ import 'package:latlong2/latlong.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 
 class ClinicLocationMap extends StatelessWidget {
-  const ClinicLocationMap({super.key, required this.location});
+  const ClinicLocationMap({super.key, this.location});
 
-  final LatLng location;
+  static const LatLng defaultLocation = LatLng(30.0444, 31.2357);
+
+  final LatLng? location;
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        height: 180,
-        width: double.infinity,
-        //CR hardcode color
-        // Solved
-        color: AppColors.mapPlaceholder,
-        child: FlutterMap(
-          options: MapOptions(
-            initialCenter: location,
-            initialZoom: 14.0,
-            interactionOptions: const InteractionOptions(
-              flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
+    final targetLocation = location ?? defaultLocation;
+
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: const [
+          BoxShadow(color: AppColors.shadowElevated, blurRadius: 30),
+        ],
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: Container(
+          height: 190,
+          width: double.infinity,
+          //CR hardcode color
+          // Solved
+          color: AppColors.mapPlaceholder,
+          child: FlutterMap(
+            options: MapOptions(
+              initialCenter: targetLocation,
+              initialZoom: 14.5,
+              interactionOptions: const InteractionOptions(
+                flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
+              ),
             ),
-          ),
-          children: [
-            TileLayer(
-              urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-              userAgentPackageName: 'doctor_hunt',
-            ),
-            MarkerLayer(
-              markers: [
-                Marker(
-                  point: location,
-                  width: 44,
-                  height: 44,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.primary,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primary.withValues(alpha: 0.35),
-                          blurRadius: 10,
-                          spreadRadius: 2,
+            children: [
+              TileLayer(
+                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                userAgentPackageName: 'doctor_hunt',
+              ),
+              MarkerLayer(
+                markers: [
+                  Marker(
+                    point: targetLocation,
+                    width: 40,
+                    height: 40,
+                    alignment: Alignment.topCenter,
+                    child: const Icon(
+                      Icons.location_on_rounded,
+                      color: AppColors.error,
+                      size: 38,
+                      shadows: [
+                        Shadow(
+                          color: AppColors.shadowStrong,
+                          blurRadius: 6,
+                          offset: Offset(0, 2),
                         ),
                       ],
                     ),
-                    child: const Icon(
-                      Icons.location_on_rounded,
-                      color: AppColors.white,
-                      size: 24,
-                    ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -8,6 +8,7 @@ import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_empty_state.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_icon_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_profile_card.dart';
@@ -17,6 +18,7 @@ import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/co
 import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/widgets/date_selector_list.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/widgets/no_slots_available_section.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/widgets/time_slots_section.dart';
+import 'package:doctor_hunt/apps/features/patient/favorites/presentation/controller/cubit/favorites_cubit.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
@@ -37,30 +39,34 @@ class DoctorBookingScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(
-          leading: AppIconButton.back(
-            onTap: () {
-              if (context.canPop()) {
-                context.pop();
-              } else {
-                const HomeRoute().go(context);
-              }
-            },
+          backgroundColor: AppColors.transparent,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          centerTitle: false,
+          leadingWidth: 50,
+          leading: Padding(
+            padding: const EdgeInsetsDirectional.only(start: 20),
+            child: Center(
+              child: AppIconButton.back(
+                width: 30,
+                height: 30,
+                onTap: () {
+                  if (context.canPop()) {
+                    context.pop();
+                  } else {
+                    const HomeRoute().go(context);
+                  }
+                },
+              ),
+            ),
           ),
-          title: Text(context.tr.selectTime, style: context.bold18TextMain),
+          titleSpacing: 19,
+          title: Text(context.tr.selectTime, style: context.medium18TextMain),
         ),
         body: BlocBuilder<BookingCubit, BookingState>(
           builder: (context, state) {
             if (state is BookingUnavailable) {
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Text(
-                    context.tr.doctorNoAvailableTimes,
-                    style: context.semiBold16TextSecondary,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              );
+              return AppEmptyState(title: context.tr.doctorNoAvailableTimes);
             }
 
             if (state is! BookingLoaded) {
@@ -107,6 +113,9 @@ class _BookingLoadedBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<BookingCubit>();
+    final isFavorite = context.select<FavoritesCubit, bool>(
+      (c) => c.state.isFavorite(state.doctor.id),
+    );
     final morningSlots = state.slots.where((s) => s.hour < 12).toList();
     final afternoonSlots = state.slots
         .where((s) => s.hour >= 12 && s.hour < 17)
@@ -117,106 +126,120 @@ class _BookingLoadedBody extends StatelessWidget {
       children: [
         Expanded(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                12.verticalSpace,
-                DoctorProfileCard(doctor: state.doctor),
-                20.verticalSpace,
+                24.verticalSpace,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: DoctorProfileCard(
+                    doctor: state.doctor,
+                    isFavorite: isFavorite,
+                    compact: true,
+                    onFavoriteToggle: () =>
+                        context.read<FavoritesCubit>().toggle(state.doctor.id),
+                  ),
+                ),
+                24.verticalSpace,
                 DateSelectorList(
                   selectedDate: state.selectedDate,
                   bookableDates: state.bookableDates,
                   slotsCount: state.slots.length,
+                  slotsCountByDate: state.slotsCountByDate,
                   isLoadingSlots: state.isLoadingSlots,
                   onSelectDate: cubit.selectDate,
                 ),
-                24.verticalSpace,
+                19.verticalSpace,
                 Center(
                   child: Text(
                     _formatDayLabel(context, state.selectedDate),
-                    style: context.bold18TextMain,
+                    style: context.medium18TextMain,
                   ),
                 ),
-                16.verticalSpace,
+                34.verticalSpace,
                 if (state.isLoadingSlots)
                   const Padding(
                     padding: EdgeInsets.symmetric(vertical: 32),
                     child: Center(child: CircularProgressIndicator()),
                   )
                 else if (state.slots.isEmpty)
-                  NoSlotsAvailableSection(
-                    nextAvailableDateLabel: state.nextAvailableDate != null
-                        ? _formatDayLabel(context, state.nextAvailableDate!)
-                        : null,
-                    onNextAvailabilityTap: state.nextAvailableDate != null
-                        ? () => cubit.selectDate(state.nextAvailableDate!)
-                        : null,
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: NoSlotsAvailableSection(),
                   )
-                else ...[
-                  if (morningSlots.isNotEmpty) ...[
-                    TimeSlotsSection(
-                      title:
-                          '${context.tr.morningSlots} ${context.tr.slotsCount(count: morningSlots.length)}',
-                      slots: morningSlots,
-                      selectedSlot: state.selectedSlot,
-                      onSelectSlot: cubit.selectSlot,
+                else
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (morningSlots.isNotEmpty) ...[
+                          TimeSlotsSection(
+                            title:
+                                '${context.tr.morningSlots} ${context.tr.slotsCount(count: morningSlots.length)}',
+                            slots: morningSlots,
+                            selectedSlot: state.selectedSlot,
+                            onSelectSlot: cubit.selectSlot,
+                          ),
+                          21.verticalSpace,
+                        ],
+                        if (afternoonSlots.isNotEmpty) ...[
+                          TimeSlotsSection(
+                            title:
+                                '${context.tr.afternoonSlots} ${context.tr.slotsCount(count: afternoonSlots.length)}',
+                            slots: afternoonSlots,
+                            selectedSlot: state.selectedSlot,
+                            onSelectSlot: cubit.selectSlot,
+                          ),
+                          21.verticalSpace,
+                        ],
+                        if (eveningSlots.isNotEmpty) ...[
+                          TimeSlotsSection(
+                            title:
+                                '${context.tr.eveningSlots} ${context.tr.slotsCount(count: eveningSlots.length)}',
+                            slots: eveningSlots,
+                            selectedSlot: state.selectedSlot,
+                            onSelectSlot: cubit.selectSlot,
+                          ),
+                          21.verticalSpace,
+                        ],
+                      ],
                     ),
-                    20.verticalSpace,
-                  ],
-                  if (afternoonSlots.isNotEmpty) ...[
-                    TimeSlotsSection(
-                      title:
-                          '${context.tr.afternoonSlots} ${context.tr.slotsCount(count: afternoonSlots.length)}',
-                      slots: afternoonSlots,
-                      selectedSlot: state.selectedSlot,
-                      onSelectSlot: cubit.selectSlot,
-                    ),
-                    20.verticalSpace,
-                  ],
-                  if (eveningSlots.isNotEmpty) ...[
-                    TimeSlotsSection(
-                      title:
-                          '${context.tr.eveningSlots} ${context.tr.slotsCount(count: eveningSlots.length)}',
-                      slots: eveningSlots,
-                      selectedSlot: state.selectedSlot,
-                      onSelectSlot: cubit.selectSlot,
-                    ),
-                    20.verticalSpace,
-                  ],
-                ],
+                  ),
                 24.verticalSpace,
               ],
             ),
           ),
         ),
-        SafeArea(
-          top: false,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
-            child: AppPrimaryButton(
-              label: context.tr.next,
-              height: 52,
-              onPressed: state.selectedSlot == null
-                  ? null
-                  : () async {
-                      final draft = BookingDraft(
-                        doctor: state.doctor,
-                        startAt: state.selectedSlot!,
-                      );
-                      final slotTaken = await BookingReviewRoute(
-                        draft,
-                      ).push<bool>(context);
-                      // Someone booked it meanwhile: refresh this day's slots.
-                      if (slotTaken == true && context.mounted) {
-                        context.read<BookingCubit>().selectDate(
-                          state.selectedDate,
+        if (state.slots.isNotEmpty)
+          SafeArea(
+            top: false,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(40, 8, 40, 24),
+              child: AppPrimaryButton(
+                label: context.tr.confirm,
+                textStyle: context.medium18White,
+                borderRadius: BorderRadius.circular(6),
+                onPressed: state.selectedSlot == null
+                    ? null
+                    : () async {
+                        final draft = BookingDraft(
+                          doctor: state.doctor,
+                          startAt: state.selectedSlot!,
                         );
-                      }
-                    },
+                        final slotTaken = await BookingReviewRoute(
+                          draft,
+                        ).push<bool>(context);
+                        // Someone booked it meanwhile: refresh this day's slots.
+                        if (slotTaken == true && context.mounted) {
+                          context.read<BookingCubit>().selectDate(
+                            state.selectedDate,
+                          );
+                        }
+                      },
+              ),
             ),
           ),
-        ),
       ],
     );
   }

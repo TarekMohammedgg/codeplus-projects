@@ -205,7 +205,6 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get thankYou => 'شكراً لك !';
 	@override String get appointmentSuccessful => 'تم حجز موعدك بنجاح';
 	@override String appointmentBookedWith({required Object name, required Object date, required Object time}) => 'لقد قمت بحجز موعد مع ${name} في ${date}، الساعة ${time}';
-	@override String get bookingStatusUpcoming => 'الحالة: قادم';
 	@override String get slotAlreadyBooked => 'تم حجز هذا الموعد للتو من شخص آخر. يرجى اختيار موعد آخر.';
 	@override String get done => 'تم';
 	@override String get editYourAppointment => 'تعديل الموعد';
@@ -287,9 +286,11 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get changeImage => 'تغيير الصورة';
 	@override String get placeholderDoctorName => 'د. طبيب أطفال';
 	@override String get tabHome => 'الرئيسية';
+	@override String get tabFavorites => 'المفضلة';
 	@override String get tabDoctors => 'الأطباء';
 	@override String get tabAppointments => 'المواعيد';
 	@override String get tabProfile => 'الملف الشخصي';
+	@override String get noFavoritesFound => 'لا يوجد أطباء في المفضلة بعد';
 	@override String get appointments => 'المواعيد';
 	@override String get upcoming => 'القادمة';
 	@override String get completed => 'المكتملة';
@@ -537,7 +538,6 @@ extension on TranslationsAr {
 			'thankYou' => 'شكراً لك !',
 			'appointmentSuccessful' => 'تم حجز موعدك بنجاح',
 			'appointmentBookedWith' => ({required Object name, required Object date, required Object time}) => 'لقد قمت بحجز موعد مع ${name} في ${date}، الساعة ${time}',
-			'bookingStatusUpcoming' => 'الحالة: قادم',
 			'slotAlreadyBooked' => 'تم حجز هذا الموعد للتو من شخص آخر. يرجى اختيار موعد آخر.',
 			'done' => 'تم',
 			'editYourAppointment' => 'تعديل الموعد',
@@ -619,9 +619,11 @@ extension on TranslationsAr {
 			'changeImage' => 'تغيير الصورة',
 			'placeholderDoctorName' => 'د. طبيب أطفال',
 			'tabHome' => 'الرئيسية',
+			'tabFavorites' => 'المفضلة',
 			'tabDoctors' => 'الأطباء',
 			'tabAppointments' => 'المواعيد',
 			'tabProfile' => 'الملف الشخصي',
+			'noFavoritesFound' => 'لا يوجد أطباء في المفضلة بعد',
 			'appointments' => 'المواعيد',
 			'upcoming' => 'القادمة',
 			'completed' => 'المكتملة',

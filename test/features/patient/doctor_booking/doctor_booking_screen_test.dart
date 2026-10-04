@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
@@ -13,6 +14,7 @@ import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/sc
 import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/widgets/date_selector_list.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/widgets/no_slots_available_section.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/widgets/time_slots_section.dart';
+import 'package:doctor_hunt/apps/features/patient/favorites/presentation/controller/cubit/favorites_cubit.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
 import '../../../helpers/test_app.dart';
@@ -137,12 +139,17 @@ void main() {
     await tester.pumpAndSettle();
 
     // Find the Next button
-    final nextButtonFinder = find.widgetWithText(AppPrimaryButton, tr.next);
-    expect(nextButtonFinder, findsOneWidget);
+    final confirmButtonFinder = find.widgetWithText(
+      AppPrimaryButton,
+      tr.confirm,
+    );
+    expect(confirmButtonFinder, findsOneWidget);
 
-    // Initially next button is disabled
-    final nextButtonBefore = tester.widget<AppPrimaryButton>(nextButtonFinder);
-    expect(nextButtonBefore.onPressed, isNull);
+    // Initially confirm button is disabled
+    final confirmButtonBefore = tester.widget<AppPrimaryButton>(
+      confirmButtonFinder,
+    );
+    expect(confirmButtonBefore.onPressed, isNull);
 
     // Tap the first slot chip inside TimeSlotsSection
     final firstSlotFinder = find
@@ -155,11 +162,13 @@ void main() {
     await tester.pumpAndSettle();
 
     // Button is now enabled
-    final nextButtonAfter = tester.widget<AppPrimaryButton>(nextButtonFinder);
-    expect(nextButtonAfter.onPressed, isNotNull);
+    final confirmButtonAfter = tester.widget<AppPrimaryButton>(
+      confirmButtonFinder,
+    );
+    expect(confirmButtonAfter.onPressed, isNotNull);
 
     // Tap Next and verify navigation to booking review screen
-    await tester.tap(nextButtonFinder);
+    await tester.tap(confirmButtonFinder);
     await tester.pumpAndSettle();
 
     expect(find.text('Booking Review Screen'), findsOneWidget);
@@ -200,6 +209,76 @@ void main() {
     );
     await tester.pumpAndSettle();
 
+    final tr = AppLocale.en.buildSync();
     expect(find.byType(NoSlotsAvailableSection), findsOneWidget);
+    expect(find.text(tr.noSlotsAvailable), findsWidgets);
+    expect(find.widgetWithText(AppPrimaryButton, tr.confirm), findsNothing);
+  });
+
+  testWidgets('DateSelectorList displays slots available on date cards', (
+    WidgetTester tester,
+  ) async {
+    final tr = AppLocale.en.buildSync();
+    tester.view.physicalSize = const Size(1080, 2400);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+
+    final now = DateTime.now();
+    final todayAt8Am = DateTime(now.year, now.month, now.day, 8, 0);
+
+    await tester.pumpWidget(
+      buildTestApp(
+        DoctorBookingScreen(
+          doctor: testDoctorWithAvail,
+          initialTime: todayAt8Am,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text(tr.slotsAvailable(count: 8)), findsWidgets);
+  });
+
+  testWidgets('Tapping favorite heart toggles favorite in FavoritesCubit', (
+    WidgetTester tester,
+  ) async {
+    tester.view.physicalSize = const Size(1080, 2400);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+
+    final favoritesRepo = FakeFavoritesRepository();
+    final favoritesCubit = FavoritesCubit(repository: favoritesRepo);
+    addTearDown(() => favoritesCubit.close());
+    favoritesRepo.userIds.add('patient-1');
+
+    final now = DateTime.now();
+    final todayAt8Am = DateTime(now.year, now.month, now.day, 8, 0);
+
+    await tester.pumpWidget(
+      buildTestApp(
+        BlocProvider<FavoritesCubit>.value(
+          value: favoritesCubit,
+          child: DoctorBookingScreen(
+            doctor: testDoctorWithAvail,
+            initialTime: todayAt8Am,
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byIcon(Icons.favorite_border_rounded), findsOneWidget);
+
+    await tester.tap(find.byIcon(Icons.favorite_border_rounded));
+    await tester.pumpAndSettle();
+
+    expect(find.byIcon(Icons.favorite_rounded), findsOneWidget);
+    expect(favoritesRepo.writes.isNotEmpty, isTrue);
   });
 }

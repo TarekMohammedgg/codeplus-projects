@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_icon_button.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
@@ -17,26 +18,22 @@ class DoctorDetailsAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 48, 24, 16),
+      padding: const EdgeInsets.fromLTRB(20, 48, 20, 16),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          AppIconButton(
-            onTap: onBack,
-            child: const Icon(
-              Icons.arrow_back_ios_new_rounded,
-              size: 16,
-              color: AppColors.textSecondary,
-            ),
+          AppIconButton.back(onTap: onBack, width: 30, height: 30),
+          19.horizontalSpace,
+          Expanded(
+            child: Text(tr.doctorDetails, style: context.medium18TextMain),
           ),
-          Text(tr.doctorDetails, style: context.bold18TextMain),
           AppIconButton(
             onTap: onSearch,
-            child: const Icon(
-              Icons.search_rounded,
-              size: 20,
-              color: AppColors.textSecondary,
-            ),
+            width: 30,
+            height: 30,
+            backgroundColor: AppColors.transparent,
+            boxShadow: const [],
+            icon: Icons.search_rounded,
+            iconSize: 24,
           ),
         ],
       ),

@@ -57,7 +57,7 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
             ),
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
+                padding: const EdgeInsets.fromLTRB(20, 18, 20, 32),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

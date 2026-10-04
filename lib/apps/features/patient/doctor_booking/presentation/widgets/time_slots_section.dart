@@ -40,17 +40,17 @@ class TimeSlotsSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: context.bold16TextMain),
-        12.verticalSpace,
+        Text(title, style: context.medium16TextMain),
+        16.verticalSpace,
         GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           itemCount: slots.length,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 4,
-            mainAxisSpacing: 12,
-            crossAxisSpacing: 12,
-            childAspectRatio: 2.4,
+            mainAxisSpacing: 10,
+            crossAxisSpacing: 10,
+            childAspectRatio: 76 / 40,
           ),
           itemBuilder: (context, index) {
             final slot = slots[index];
@@ -73,9 +73,9 @@ class TimeSlotsSection extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 4),
                       child: Text(
                         formattedTime,
-                        style: context.semiBold13.copyWith(
-                          color: isSelected ? Colors.white : AppColors.primary,
-                        ),
+                        style: isSelected
+                            ? context.medium13White
+                            : context.medium13Primary,
                       ),
                     ),
                   ),

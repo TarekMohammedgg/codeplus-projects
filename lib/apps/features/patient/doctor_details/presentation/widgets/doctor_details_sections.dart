@@ -45,7 +45,7 @@ class RecentReviewsSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(context.tr.recentReviews, style: context.bold18TextMain),
+        Text(context.tr.recentReviews, style: context.medium18TextMain),
         12.verticalSpace,
         if (reviews.isEmpty)
           Text(context.tr.noReviewsYet, style: context.regular14TextSecondary)
@@ -121,7 +121,7 @@ class ClinicLocationSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(context.tr.clinicLocation, style: context.bold18TextMain),
+        Text(context.tr.clinicLocation, style: context.medium18TextMain),
         12.verticalSpace,
         if (location == null)
           Text(

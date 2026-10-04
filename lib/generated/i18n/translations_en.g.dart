@@ -539,9 +539,6 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'You booked an appointment with $name on $date, at $time'
 	String appointmentBookedWith({required Object name, required Object date, required Object time}) => 'You booked an appointment with ${name} on ${date}, at ${time}';
 
-	/// en: 'Status: Upcoming'
-	String get bookingStatusUpcoming => 'Status: Upcoming';
-
 	/// en: 'This time was just booked by someone else. Please choose another slot.'
 	String get slotAlreadyBooked => 'This time was just booked by someone else. Please choose another slot.';
 
@@ -785,6 +782,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'Home'
 	String get tabHome => 'Home';
 
+	/// en: 'Favorites'
+	String get tabFavorites => 'Favorites';
+
 	/// en: 'Doctors'
 	String get tabDoctors => 'Doctors';
 
@@ -793,6 +793,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// en: 'Profile'
 	String get tabProfile => 'Profile';
+
+	/// en: 'No favorite doctors yet'
+	String get noFavoritesFound => 'No favorite doctors yet';
 
 	/// en: 'Appointments'
 	String get appointments => 'Appointments';
@@ -1182,7 +1185,6 @@ extension on Translations {
 			'thankYou' => 'Thank You !',
 			'appointmentSuccessful' => 'Your Appointment Successful',
 			'appointmentBookedWith' => ({required Object name, required Object date, required Object time}) => 'You booked an appointment with ${name} on ${date}, at ${time}',
-			'bookingStatusUpcoming' => 'Status: Upcoming',
 			'slotAlreadyBooked' => 'This time was just booked by someone else. Please choose another slot.',
 			'done' => 'Done',
 			'editYourAppointment' => 'Edit your appointment',
@@ -1264,9 +1266,11 @@ extension on Translations {
 			'changeImage' => 'Change image',
 			'placeholderDoctorName' => 'Dr. Pediatrician',
 			'tabHome' => 'Home',
+			'tabFavorites' => 'Favorites',
 			'tabDoctors' => 'Doctors',
 			'tabAppointments' => 'Appointments',
 			'tabProfile' => 'Profile',
+			'noFavoritesFound' => 'No favorite doctors yet',
 			'appointments' => 'Appointments',
 			'upcoming' => 'Upcoming',
 			'completed' => 'Completed',
