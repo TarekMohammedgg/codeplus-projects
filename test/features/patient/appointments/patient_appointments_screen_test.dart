@@ -89,7 +89,7 @@ void main() {
   });
 
   group('PatientAppointmentsScreen', () {
-    testWidgets('renders 3 tabs and no back button', (
+    testWidgets('renders 3 tabs and the Figma back button', (
       WidgetTester tester,
     ) async {
       final repo = FakePatientAppointmentsRepository();
@@ -115,9 +115,7 @@ void main() {
       expect(find.text(tr.upcoming), findsOneWidget);
       expect(find.text(tr.completed), findsOneWidget);
       expect(find.text(tr.cancelled), findsOneWidget);
-      // Main shell tab: no back button
-      expect(find.byType(BackButton), findsNothing);
-      expect(find.byIcon(Icons.arrow_back_ios_new_rounded), findsNothing);
+      expect(find.byIcon(Icons.arrow_back_ios_new_rounded), findsOneWidget);
       await cubit.close();
     });
 
@@ -151,6 +149,10 @@ void main() {
       expect(find.byType(PatientAppointmentCard), findsOneWidget);
       expect(find.text('Dr. Sarah Connor'), findsOneWidget);
       expect(find.text(tr.cancelAppointment), findsOneWidget);
+      expect(
+        find.byKey(const Key('view_details_button_upcoming_1')),
+        findsOneWidget,
+      );
 
       // Tap Cancel -> opens confirmation dialog
       await tester.tap(
@@ -229,6 +231,7 @@ void main() {
       expect(find.text('Dr. Not Reviewed'), findsOneWidget);
       expect(find.text('Dr. Reviewed'), findsOneWidget);
       expect(find.text(tr.rateDoctor), findsOneWidget);
+      expect(find.text(tr.tapToRateYourVisit), findsOneWidget);
       expect(find.text(tr.reviewed), findsOneWidget);
       await cubit.close();
     });

@@ -298,6 +298,7 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get cancelAppointment => 'إلغاء الموعد';
 	@override String get rateDoctor => 'تقييم الطبيب';
 	@override String get reviewed => 'تم التقييم';
+	@override String get tapToRateYourVisit => 'اضغط لتقييم زيارتك';
 	@override String get cancelledByYou => 'تم الإلغاء بواسطتك';
 	@override String get cancelledByClinic => 'تم الإلغاء بواسطة العيادة';
 	@override String get cancelAppointmentTitle => 'إلغاء الموعد';
@@ -631,6 +632,7 @@ extension on TranslationsAr {
 			'cancelAppointment' => 'إلغاء الموعد',
 			'rateDoctor' => 'تقييم الطبيب',
 			'reviewed' => 'تم التقييم',
+			'tapToRateYourVisit' => 'اضغط لتقييم زيارتك',
 			'cancelledByYou' => 'تم الإلغاء بواسطتك',
 			'cancelledByClinic' => 'تم الإلغاء بواسطة العيادة',
 			'cancelAppointmentTitle' => 'إلغاء الموعد',

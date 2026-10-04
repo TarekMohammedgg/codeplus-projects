@@ -818,6 +818,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'Reviewed'
 	String get reviewed => 'Reviewed';
 
+	/// en: 'Tap to rate your visit'
+	String get tapToRateYourVisit => 'Tap to rate your visit';
+
 	/// en: 'Cancelled by you'
 	String get cancelledByYou => 'Cancelled by you';
 
@@ -1278,6 +1281,7 @@ extension on Translations {
 			'cancelAppointment' => 'Cancel Appointment',
 			'rateDoctor' => 'Rate Doctor',
 			'reviewed' => 'Reviewed',
+			'tapToRateYourVisit' => 'Tap to rate your visit',
 			'cancelledByYou' => 'Cancelled by you',
 			'cancelledByClinic' => 'Cancelled by clinic',
 			'cancelAppointmentTitle' => 'Cancel Appointment',

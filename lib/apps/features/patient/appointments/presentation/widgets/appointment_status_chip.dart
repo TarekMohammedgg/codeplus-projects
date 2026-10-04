@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
@@ -12,33 +13,37 @@ class AppointmentStatusChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (label, bgColor, textColor) = switch (status) {
+    final (label, bgColor, color) = switch (status) {
       AppointmentStatus.upcoming => (
         context.tr.statusUpcoming,
-        AppColors.primary.withValues(alpha: 0.12),
+        AppColors.primaryLight,
         AppColors.primary,
       ),
       AppointmentStatus.completed => (
         context.tr.statusCompleted,
-        const Color(0xFFE8F5E9),
-        const Color(0xFF2E7D32),
+        AppColors.primaryLight,
+        AppColors.primary,
       ),
       AppointmentStatus.cancelled => (
         context.tr.statusCancelled,
-        AppColors.error.withValues(alpha: 0.12),
+        AppColors.errorLight,
         AppColors.error,
       ),
     };
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Text(
-        label,
-        style: context.semiBold12TextMain.copyWith(color: textColor),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+      decoration: ShapeDecoration(color: bgColor, shape: const StadiumBorder()),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          CircleAvatar(radius: 3, backgroundColor: color),
+          5.horizontalSpace,
+          Text(
+            label,
+            style: context.medium10TextMain.copyWith(color: color, fontSize: 9),
+          ),
+        ],
       ),
     );
   }

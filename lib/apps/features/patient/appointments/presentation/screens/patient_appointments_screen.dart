@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
@@ -7,6 +8,7 @@ import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_empty_state.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_icon_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_text_button.dart';
 import 'package:doctor_hunt/apps/features/patient/appointments/presentation/controller/cubit/patient_appointments_cubit.dart';
@@ -104,35 +106,60 @@ class _PatientAppointmentsScreenState extends State<PatientAppointmentsScreen>
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.transparent,
         elevation: 0,
-        automaticallyImplyLeading: false, // Shell tab: no back button
-        centerTitle: true,
-        title: Text(context.tr.appointments, style: context.bold18TextMain),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(48),
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20),
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(12),
+        scrolledUnderElevation: 0,
+        centerTitle: false,
+        leadingWidth: 50,
+        leading: Padding(
+          padding: const EdgeInsetsDirectional.only(start: 20),
+          child: Center(
+            child: AppIconButton.back(
+              width: 30,
+              height: 30,
+              onTap: () => context.canPop()
+                  ? context.pop()
+                  : const HomeRoute().go(context),
             ),
-            child: TabBar(
-              controller: _tabController,
-              indicatorSize: TabBarIndicatorSize.tab,
-              indicator: BoxDecoration(
-                color: AppColors.primary,
-                borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+        titleSpacing: 19,
+        title: Text(context.tr.appointments, style: context.medium18TextMain),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(46),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+            child: ListenableBuilder(
+              listenable: _tabController,
+              builder: (context, _) => Row(
+                spacing: 8,
+                children: [
+                  for (final (index, label) in [
+                    context.tr.upcoming,
+                    context.tr.completed,
+                    context.tr.cancelled,
+                  ].indexed)
+                    Expanded(
+                      child: AppPrimaryButton(
+                        label: label,
+                        height: 38,
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(6),
+                        ),
+                        backgroundColor: _tabController.index == index
+                            ? AppColors.primary
+                            : AppColors.primaryLight,
+                        textStyle: _tabController.index == index
+                            ? context.medium12White
+                            : context.regular12Primary,
+                        foregroundColor: _tabController.index == index
+                            ? AppColors.white
+                            : AppColors.primary,
+                        onPressed: () => _tabController.animateTo(index),
+                      ),
+                    ),
+                ],
               ),
-              labelColor: AppColors.surface,
-              unselectedLabelColor: AppColors.textSecondary,
-              labelStyle: context.semiBold14TextMain,
-              unselectedLabelStyle: context.regular14TextSecondary,
-              tabs: [
-                Tab(text: context.tr.upcoming),
-                Tab(text: context.tr.completed),
-                Tab(text: context.tr.cancelled),
-              ],
             ),
           ),
         ),
@@ -141,7 +168,7 @@ class _PatientAppointmentsScreenState extends State<PatientAppointmentsScreen>
         builder: (context, state) {
           if (state is PatientAppointmentsLoading) {
             return AppListSkeleton(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              padding: const EdgeInsets.fromLTRB(20, 18, 20, 16),
               itemBuilder: (_) =>
                   PatientAppointmentCard(appointment: skeletonAppointment()),
             );
@@ -250,7 +277,7 @@ class _AppointmentsList extends StatelessWidget {
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      padding: const EdgeInsets.fromLTRB(20, 18, 20, 16),
       itemCount: appointments.length,
       itemBuilder: (context, index) {
         final appointment = appointments[index];
@@ -263,7 +290,7 @@ class _AppointmentsList extends StatelessWidget {
           key: Key('patient_appointment_card_${appointment.id}'),
           appointment: appointment,
           specialtyName: specialtyName,
-          onTap: () =>
+          onViewDetails: () =>
               PatientAppointmentDetailsRoute(appointment).push(context),
           onCancel: onCancel != null ? () => onCancel!(appointment) : null,
           onRate: onRate != null ? () => onRate!(appointment) : null,
