@@ -169,6 +169,7 @@ class _BookingLoadedBody extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Skeletonizer(
+                      containersColor: AppColors.surfaceMuted,
                       child: TimeSlotsSection(
                         title: BoneMock.title,
                         slots: List.generate(
