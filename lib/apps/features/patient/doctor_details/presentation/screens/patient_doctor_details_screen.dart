@@ -16,6 +16,8 @@ import 'package:doctor_hunt/apps/features/patient/favorites/presentation/control
 import 'package:doctor_hunt/apps/features/patient/favorites/presentation/controller/cubit/favorites_state.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
+import 'package:skeletonizer/skeletonizer.dart';
+import 'package:doctor_hunt/apps/core/widgets/skeleton_placeholders.dart';
 
 class DoctorDetailsScreen extends StatefulWidget {
   const DoctorDetailsScreen({super.key, required this.doctor});
@@ -74,9 +76,16 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
                     BlocBuilder<DoctorDetailsCubit, DoctorDetailsState>(
                       builder: (context, state) => switch (state) {
                         DoctorDetailsInitial() ||
-                        DoctorDetailsLoading() => const Center(
-                          child: CircularProgressIndicator(
-                            color: AppColors.primary,
+                        DoctorDetailsLoading() => Skeletonizer(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              RecentReviewsSection(
+                                reviews: [skeletonReview(), skeletonReview()],
+                              ),
+                              24.verticalSpace,
+                              const ClinicLocationSection(clinic: null),
+                            ],
                           ),
                         ),
                         DoctorDetailsFailure() => Center(

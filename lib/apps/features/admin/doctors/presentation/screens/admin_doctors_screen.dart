@@ -15,6 +15,8 @@ import 'package:doctor_hunt/apps/features/admin/doctors/presentation/controller/
 import 'package:doctor_hunt/apps/features/admin/doctors/presentation/widgets/admin_doctors_widgets.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
+import 'package:skeletonizer/skeletonizer.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_list_skeleton.dart';
 
 class AdminDoctorsScreen extends StatefulWidget {
   const AdminDoctorsScreen({super.key});
@@ -148,8 +150,17 @@ class AdminDoctorsScreenState extends State<AdminDoctorsScreen> {
 
   Widget _buildDoctorsContent(BuildContext context, AdminDoctorsState state) {
     return switch (state) {
-      AdminDoctorsInitial() ||
-      AdminDoctorsLoading() => const Center(child: CircularProgressIndicator()),
+      AdminDoctorsInitial() || AdminDoctorsLoading() => AppListSkeleton(
+        padding: const EdgeInsets.fromLTRB(20, 16, 20, 88),
+        spacing: 12,
+        itemBuilder: (_) => AdminDoctorListTile(
+          doctor: AdminDoctorModel(
+            id: '',
+            name: BoneMock.fullName,
+            specialty: BoneMock.name,
+          ),
+        ),
+      ),
       AdminDoctorsFailure() => Center(
         child: Text(tr.serviceError, style: context.semiBold16TextMain),
       ),

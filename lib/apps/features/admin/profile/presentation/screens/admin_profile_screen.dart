@@ -23,6 +23,7 @@ import 'package:doctor_hunt/apps/features/admin/profile/presentation/controller/
 import 'package:doctor_hunt/apps/features/admin/profile/presentation/controller/cubit/admin_profile_state.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class AdminProfileScreen extends StatelessWidget {
   const AdminProfileScreen({
@@ -238,16 +239,11 @@ class _AdminProfileViewState extends State<_AdminProfileView> {
                   ),
                 ),
 
-                if (state.status == AdminProfileStatus.loading && !_initialized)
-                  const Expanded(
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        color: AppColors.primary,
-                      ),
-                    ),
-                  )
-                else
-                  Expanded(
+                Expanded(
+                  child: Skeletonizer(
+                    enabled:
+                        state.status == AdminProfileStatus.loading &&
+                        !_initialized,
                     child: SingleChildScrollView(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Form(
@@ -511,6 +507,7 @@ class _AdminProfileViewState extends State<_AdminProfileView> {
                       ),
                     ),
                   ),
+                ),
               ],
             ),
           ),

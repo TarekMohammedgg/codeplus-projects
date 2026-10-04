@@ -21,6 +21,7 @@ import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/wi
 import 'package:doctor_hunt/apps/features/patient/favorites/presentation/controller/cubit/favorites_cubit.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class DoctorBookingScreen extends StatelessWidget {
   const DoctorBookingScreen({
@@ -69,11 +70,18 @@ class DoctorBookingScreen extends StatelessWidget {
               return AppEmptyState(title: context.tr.doctorNoAvailableTimes);
             }
 
-            if (state is! BookingLoaded) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            return _BookingLoadedBody(state: state);
+            // Before the first emit, reuse the "loading slots" skeleton.
+            return _BookingLoadedBody(
+              state: state is BookingLoaded
+                  ? state
+                  : BookingLoaded(
+                      doctor: doctor,
+                      bookableDates: const [],
+                      selectedDate: DateTime.now(),
+                      slots: const [],
+                      isLoadingSlots: true,
+                    ),
+            );
           },
         ),
       ),
@@ -158,9 +166,19 @@ class _BookingLoadedBody extends StatelessWidget {
                 ),
                 34.verticalSpace,
                 if (state.isLoadingSlots)
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 32),
-                    child: Center(child: CircularProgressIndicator()),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Skeletonizer(
+                      child: TimeSlotsSection(
+                        title: BoneMock.title,
+                        slots: List.generate(
+                          8,
+                          (index) => state.selectedDate.add(
+                            Duration(minutes: 30 * index),
+                          ),
+                        ),
+                      ),
+                    ),
                   )
                 else if (state.slots.isEmpty)
                   const Padding(

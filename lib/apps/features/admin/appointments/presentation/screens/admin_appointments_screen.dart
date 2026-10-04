@@ -5,6 +5,7 @@ import 'package:doctor_hunt/apps/core/di/injection.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_empty_state.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/features/admin/appointments/data/repositories/admin_appointments_repository.dart';
 import 'package:doctor_hunt/apps/features/admin/appointments/presentation/controller/cubit/admin_appointments_cubit.dart';
@@ -12,6 +13,8 @@ import 'package:doctor_hunt/apps/features/admin/appointments/presentation/contro
 import 'package:doctor_hunt/apps/features/admin/appointments/presentation/widgets/admin_appointment_card.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_list_skeleton.dart';
+import 'package:doctor_hunt/apps/core/widgets/skeleton_placeholders.dart';
 
 class AdminAppointmentsScreen extends StatefulWidget {
   const AdminAppointmentsScreen({super.key, this.cubit, this.repository});
@@ -134,9 +137,10 @@ class _AdminAppointmentsView extends StatelessWidget {
                   BlocBuilder<AdminAppointmentsCubit, AdminAppointmentsState>(
                     builder: (context, state) {
                       if (state.status == AdminAppointmentsStatus.loading) {
-                        return const Center(
-                          child: CircularProgressIndicator(
-                            color: AppColors.primary,
+                        return AppListSkeleton(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          itemBuilder: (_) => AdminAppointmentCard(
+                            appointment: skeletonAppointment(),
                           ),
                         );
                       }
@@ -170,45 +174,12 @@ class _AdminAppointmentsView extends StatelessWidget {
                       final appointments = state.currentAppointments;
 
                       if (appointments.isEmpty) {
-                        return Center(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 32),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                  width: 80,
-                                  height: 80,
-                                  decoration: BoxDecoration(
-                                    color: AppColors.primary.withValues(
-                                      alpha: 0.1,
-                                    ),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: const Icon(
-                                    Icons.calendar_today_outlined,
-                                    size: 36,
-                                    color: AppColors.primary,
-                                  ),
-                                ),
-                                20.verticalSpace,
-                                Text(
-                                  _emptyMessageForTab(
-                                    context,
-                                    state.selectedTab,
-                                  ),
-                                  style: context.semiBold16TextMain,
-                                  textAlign: TextAlign.center,
-                                ),
-                                8.verticalSpace,
-                                Text(
-                                  context.tr.noAppointmentsDescription,
-                                  style: context.regular14TextSecondary,
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                            ),
+                        return AppEmptyState(
+                          title: _emptyMessageForTab(
+                            context,
+                            state.selectedTab,
                           ),
+                          subtitle: context.tr.noAppointmentsDescription,
                         );
                       }
 

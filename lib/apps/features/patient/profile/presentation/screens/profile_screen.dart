@@ -6,7 +6,6 @@ import 'package:doctor_hunt/apps/core/di/injection.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
-import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/data/models/user_profile_model.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/presentation/controller/cubit/profile_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/presentation/controller/cubit/profile_state.dart';
@@ -14,6 +13,7 @@ import 'package:doctor_hunt/apps/features/patient/profile/presentation/widgets/p
 import 'package:doctor_hunt/apps/features/patient/profile/presentation/widgets/profile_info_card.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key, this.profile});
@@ -29,8 +29,14 @@ class ProfileScreen extends StatelessWidget {
         body: BlocBuilder<ProfileCubit, ProfileState>(
           builder: (context, state) {
             return switch (state) {
-              ProfileLoading() => const Center(
-                child: CircularProgressIndicator(),
+              ProfileInitial() || ProfileLoading() => Skeletonizer(
+                child: _ProfileContent(
+                  profile: UserProfileModel(
+                    name: BoneMock.fullName,
+                    email: BoneMock.email,
+                    phone: BoneMock.phone,
+                  ),
+                ),
               ),
               ProfileError(:final message) => Center(
                 child: Padding(
@@ -44,9 +50,6 @@ class ProfileScreen extends StatelessWidget {
               ),
               ProfileLoaded(:final profile) => _ProfileContent(
                 profile: profile,
-              ),
-              ProfileInitial() => const Center(
-                child: CircularProgressIndicator(),
               ),
             };
           },
@@ -68,9 +71,16 @@ class _ProfileContent extends StatelessWidget {
       context,
     ).translations.$meta.locale.languageCode;
 
-    final dobFormatted = profile.dob != null
-        ? DateFormat('d MMM yyyy', locale).format(profile.dob!)
-        : tr.notSet;
+    String dobFormatted;
+    if (profile.dob != null) {
+      try {
+        dobFormatted = DateFormat('d MMM yyyy', locale).format(profile.dob!);
+      } catch (_) {
+        dobFormatted = DateFormat('d MMM yyyy', 'en').format(profile.dob!);
+      }
+    } else {
+      dobFormatted = tr.notSet;
+    }
 
     final genderFormatted =
         (profile.gender != null && profile.gender!.isNotEmpty)
@@ -88,7 +98,8 @@ class _ProfileContent extends StatelessWidget {
           ProfileHeaderSection(
             avatarUrl: profile.avatarUrl,
             onBackTap: null,
-            onCameraTap: () => const EditProfileRoute().push(context),
+            onEditTap: () => EditProfileRoute(profile).push(context),
+            onCameraTap: () => EditProfileRoute(profile).push(context),
           ),
           24.verticalSpace,
           Padding(
@@ -113,11 +124,6 @@ class _ProfileContent extends StatelessWidget {
                 10.verticalSpace,
                 ProfileInfoCard(label: tr.gender, value: genderFormatted),
                 24.verticalSpace,
-                AppPrimaryButton(
-                  label: tr.edit,
-                  onPressed: () => EditProfileRoute(profile).push(context),
-                ),
-                16.verticalSpace,
                 _SettingsTile(
                   onTap: () => const PatientSettingsRoute().push(context),
                 ),

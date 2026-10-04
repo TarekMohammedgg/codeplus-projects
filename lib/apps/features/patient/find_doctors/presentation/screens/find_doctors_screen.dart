@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/utils/doctor_sort.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_icon_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_search_bar.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_filter_chips.dart';
 import 'package:doctor_hunt/apps/features/patient/favorites/presentation/controller/cubit/favorites_cubit.dart';
@@ -13,6 +15,8 @@ import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/cont
 import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/widgets/find_doctors_widgets.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_list_skeleton.dart';
+import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 
 class FindDoctorsScreen extends StatefulWidget {
   const FindDoctorsScreen({super.key, this.query, this.specialtyId, this.sort});
@@ -63,67 +67,89 @@ class _FindDoctorsScreenState extends State<FindDoctorsScreen> {
     super.dispose();
   }
 
+  void _handleBack(BuildContext context) {
+    if (context.canPop()) {
+      context.pop();
+    } else {
+      const HomeRoute().go(context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<FindDoctorsCubit>();
-    return BlocBuilder<FindDoctorsCubit, FindDoctorsState>(
-      builder: (context, state) {
-        return Scaffold(
-          backgroundColor: AppColors.background,
-          body: SafeArea(
-            child: Column(
-              children: [
-                16.verticalSpace,
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          context.tr.findDoctors,
-                          style: context.bold18TextMain,
-                        ),
-                      ),
-                      if (state is FindDoctorsSuccess)
-                        DoctorSortMenu(
-                          sort: state.sort,
-                          onSelected: cubit.sortBy,
-                        ),
-                    ],
-                  ),
-                ),
-                16.verticalSpace,
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: AppSearchBar(
-                    controller: _searchController,
-                    onChanged: cubit.search,
-                  ),
-                ),
-                if (state is FindDoctorsSuccess) ...[
-                  14.verticalSpace,
-                  DoctorFilterChips(
-                    specialties: state.specialties,
-                    selectedSpecialtyId: state.specialtyId,
-                    favoritesOnly: state.favoritesOnly,
-                    onSpecialtySelected: cubit.selectSpecialty,
-                    onFavoritesToggled: cubit.toggleFavoritesOnly,
-                  ),
-                ],
-                14.verticalSpace,
-                Expanded(child: _buildDoctorsContent(context, state)),
-              ],
-            ),
-          ),
-        );
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) return;
+        _handleBack(context);
       },
+      child: BlocBuilder<FindDoctorsCubit, FindDoctorsState>(
+        builder: (context, state) {
+          return Scaffold(
+            backgroundColor: AppColors.background,
+            body: SafeArea(
+              child: Column(
+                children: [
+                  16.verticalSpace,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Row(
+                      children: [
+                        AppIconButton.back(onTap: () => _handleBack(context)),
+                        12.horizontalSpace,
+                        Expanded(
+                          child: Text(
+                            context.tr.findDoctors,
+                            style: context.bold18TextMain,
+                          ),
+                        ),
+                        if (state is FindDoctorsSuccess)
+                          DoctorSortMenu(
+                            sort: state.sort,
+                            onSelected: cubit.sortBy,
+                          ),
+                      ],
+                    ),
+                  ),
+                  16.verticalSpace,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: AppSearchBar(
+                      controller: _searchController,
+                      onChanged: cubit.search,
+                    ),
+                  ),
+                  if (state is FindDoctorsSuccess) ...[
+                    14.verticalSpace,
+                    DoctorFilterChips(
+                      specialties: state.specialties,
+                      selectedSpecialtyId: state.specialtyId,
+                      onSpecialtySelected: cubit.selectSpecialty,
+                    ),
+                  ],
+                  14.verticalSpace,
+                  Expanded(child: _buildDoctorsContent(context, state)),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 
   Widget _buildDoctorsContent(BuildContext context, FindDoctorsState state) {
     return switch (state) {
-      FindDoctorsInitial() || FindDoctorsLoading() => const Center(
-        child: CircularProgressIndicator(color: AppColors.primary),
+      FindDoctorsInitial() || FindDoctorsLoading() => AppListSkeleton(
+        padding: const EdgeInsets.fromLTRB(24, 6, 24, 32),
+        spacing: 14,
+        itemBuilder: (_) => FindDoctorCard(
+          doctor: DoctorModel.placeholder(),
+          isFavorite: false,
+          onFavoriteTap: () {},
+          onBookNow: () {},
+        ),
       ),
       FindDoctorsFailure() => Center(
         child: Text(context.tr.serviceError, style: context.semiBold16TextMain),

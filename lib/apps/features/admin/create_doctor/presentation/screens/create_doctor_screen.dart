@@ -19,6 +19,7 @@ import 'package:doctor_hunt/apps/features/admin/create_doctor/presentation/contr
 import 'package:doctor_hunt/apps/features/admin/create_doctor/presentation/widgets/create_doctor_widgets.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class CreateDoctorScreen extends StatefulWidget {
   const CreateDoctorScreen({super.key, this.doctor});
@@ -298,9 +299,12 @@ class CreateDoctorScreenState extends State<CreateDoctorScreen> {
 
   Widget _buildSpecialtyField(BuildContext context, CreateDoctorState state) {
     return switch (state) {
-      CreateDoctorInitial() || CreateDoctorLoading() => const Padding(
-        padding: EdgeInsets.symmetric(vertical: 18),
-        child: Center(child: CircularProgressIndicator()),
+      CreateDoctorInitial() || CreateDoctorLoading() => Skeletonizer(
+        child: SpecialtyDropdownField(
+          specialties: const [],
+          value: null,
+          onChanged: (_) {},
+        ),
       ),
       CreateDoctorFailure() => Text(
         tr.serviceError,

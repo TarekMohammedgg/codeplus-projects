@@ -6,12 +6,15 @@ import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_empty_state.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_text_button.dart';
 import 'package:doctor_hunt/apps/features/patient/appointments/presentation/controller/cubit/patient_appointments_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/appointments/presentation/widgets/patient_appointment_card.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_list_skeleton.dart';
+import 'package:doctor_hunt/apps/core/widgets/skeleton_placeholders.dart';
 
 class PatientAppointmentsScreen extends StatefulWidget {
   const PatientAppointmentsScreen({super.key});
@@ -137,7 +140,11 @@ class _PatientAppointmentsScreenState extends State<PatientAppointmentsScreen>
       body: BlocBuilder<PatientAppointmentsCubit, PatientAppointmentsState>(
         builder: (context, state) {
           if (state is PatientAppointmentsLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return AppListSkeleton(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              itemBuilder: (_) =>
+                  PatientAppointmentCard(appointment: skeletonAppointment()),
+            );
           }
 
           if (state is PatientAppointmentsError) {
@@ -182,7 +189,12 @@ class _PatientAppointmentsScreenState extends State<PatientAppointmentsScreen>
                   appointments: state.grouped.upcoming,
                   specialties: state.specialties,
                   emptyTitle: context.tr.noUpcomingAppointments,
-                  emptyIcon: Icons.event_available_rounded,
+                  emptyAction: AppPrimaryButton(
+                    label: context.tr.bookAppointment,
+                    width: 200,
+                    height: 48,
+                    onPressed: () => const FindDoctorsRoute().go(context),
+                  ),
                   onCancel: (appt) => _confirmCancel(context, appt),
                 ),
                 _AppointmentsList(
@@ -190,7 +202,6 @@ class _PatientAppointmentsScreenState extends State<PatientAppointmentsScreen>
                   appointments: state.grouped.completed,
                   specialties: state.specialties,
                   emptyTitle: context.tr.noCompletedAppointments,
-                  emptyIcon: Icons.event_note_rounded,
                   onRate: (appt) => PatientRateDoctorRoute(appt).push(context),
                 ),
                 _AppointmentsList(
@@ -198,7 +209,6 @@ class _PatientAppointmentsScreenState extends State<PatientAppointmentsScreen>
                   appointments: state.grouped.cancelled,
                   specialties: state.specialties,
                   emptyTitle: context.tr.noCancelledAppointments,
-                  emptyIcon: Icons.event_busy_rounded,
                 ),
               ],
             );
@@ -217,7 +227,7 @@ class _AppointmentsList extends StatelessWidget {
     required this.appointments,
     required this.specialties,
     required this.emptyTitle,
-    required this.emptyIcon,
+    this.emptyAction,
     this.onCancel,
     this.onRate,
   });
@@ -225,42 +235,17 @@ class _AppointmentsList extends StatelessWidget {
   final List<AppointmentModel> appointments;
   final Map<String, dynamic> specialties;
   final String emptyTitle;
-  final IconData emptyIcon;
+  final Widget? emptyAction;
   final ValueChanged<AppointmentModel>? onCancel;
   final ValueChanged<AppointmentModel>? onRate;
 
   @override
   Widget build(BuildContext context) {
     if (appointments.isEmpty) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(18),
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(emptyIcon, size: 40, color: AppColors.primary),
-              ),
-              16.verticalSpace,
-              Text(
-                emptyTitle,
-                style: context.semiBold16TextMain,
-                textAlign: TextAlign.center,
-              ),
-              8.verticalSpace,
-              Text(
-                context.tr.noAppointmentsDescription,
-                style: context.regular12TextSecondary,
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ),
+      return AppEmptyState(
+        title: emptyTitle,
+        subtitle: context.tr.noAppointmentsDescription,
+        action: emptyAction,
       );
     }
 
