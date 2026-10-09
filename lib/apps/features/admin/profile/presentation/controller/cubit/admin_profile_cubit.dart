@@ -18,7 +18,6 @@ class AdminProfileCubit extends Cubit<AdminProfileState> {
   final AdminProfileRepository repository;
   final CloudinaryUploadService uploadService;
 
-  /// Loads the signed-in admin; does nothing when nobody is signed in.
   Future<void> loadCurrentProfile() async {
     final uid = repository.currentUid;
     if (uid == null) return;
@@ -65,7 +64,6 @@ class AdminProfileCubit extends Cubit<AdminProfileState> {
     Uint8List? newImageBytes,
     String? newImageName,
   }) async {
-    // Never fall back to a made-up uid: that would write another document.
     final uid = repository.currentUid;
     if (uid == null) {
       emit(

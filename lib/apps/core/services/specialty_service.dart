@@ -63,8 +63,6 @@ class SpecialtyService {
     throw FormatException('Specialty $id has an invalid localized name');
   }
 
-  /// Localized (ar, en) specialty names keyed by specialty id, used to
-  /// resolve a doctor's `specialtyId` into display text.
   Future<Map<String, (String, String)>> fetchSpecialtyNames() async {
     final snapshot = await _specialties.get();
     return {

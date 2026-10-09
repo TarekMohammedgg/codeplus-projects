@@ -8,14 +8,12 @@ void main() {
   testWidgets('AppEmptyState renders title and empty state image', (
     WidgetTester tester,
   ) async {
-    // arrange & act
     await tester.pumpWidget(
       const MaterialApp(
         home: Scaffold(body: AppEmptyState(title: 'No Data Available')),
       ),
     );
 
-    // assert
     expect(find.text('No Data Available'), findsOneWidget);
     final imageFinder = find.byType(Image);
     expect(imageFinder, findsOneWidget);
@@ -28,10 +26,8 @@ void main() {
   testWidgets(
     'AppEmptyState renders subtitle and action widget when provided',
     (WidgetTester tester) async {
-      // arrange
       var actionTapped = false;
 
-      // act
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -47,16 +43,13 @@ void main() {
         ),
       );
 
-      // assert
       expect(find.text('Empty List'), findsOneWidget);
       expect(find.text('Try adding new items.'), findsOneWidget);
       expect(find.text('Add Item'), findsOneWidget);
 
-      // act
       await tester.tap(find.text('Add Item'));
       await tester.pump();
 
-      // assert
       expect(actionTapped, isTrue);
     },
   );

@@ -6,8 +6,6 @@ import 'package:doctor_hunt/apps/core/widgets/app_card.dart';
 import 'package:doctor_hunt/apps/core/widgets/appointment_detail_row.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
-/// Date, time and fee of an appointment, separated by dividers.
-/// [extraRows] (e.g. "cancelled by") are appended with the same spacing.
 class AppointmentSummaryCard extends StatelessWidget {
   const AppointmentSummaryCard({
     super.key,

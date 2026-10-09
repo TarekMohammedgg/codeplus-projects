@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-/// One patient review in `reviews/{appointmentId}` (max one per appointment).
 class ReviewModel {
   const ReviewModel({
     required this.appointmentId,

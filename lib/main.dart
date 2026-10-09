@@ -32,8 +32,6 @@ void main() async {
   final preferences = await SharedPreferences.getInstance();
   setupServiceLocator(preferences: preferences);
 
-  // Warm up the current user's role while splash is preserved so that
-  // GoRouter's initial redirect resolves instantly without any black screen.
   final currentUser = getIt<AuthRepository>().currentUser;
   if (currentUser != null) {
     try {
@@ -66,8 +64,7 @@ class _DoctorHuntAppState extends State<DoctorHuntApp> {
   @override
   Widget build(BuildContext context) {
     final locale = context.tr.$meta.locale;
-    // App-wide so tabs and full-screen routes share the same hearts. Lazy:
-    // created on the first patient screen that reads it, never for admins.
+
     return BlocProvider<FavoritesCubit>(
       create: (_) => getIt<FavoritesCubit>(),
       child: MaterialApp.router(

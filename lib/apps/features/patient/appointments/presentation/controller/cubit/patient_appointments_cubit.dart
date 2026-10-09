@@ -35,7 +35,6 @@ class PatientAppointmentsCubit extends Cubit<PatientAppointmentsState> {
       final specialties = await repository.getSpecialties();
       _specialtiesMap = {for (final s in specialties) s.id: s};
     } catch (error, stackTrace) {
-      // Specialty names are optional; the list still loads without them.
       addError(error, stackTrace);
     }
 

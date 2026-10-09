@@ -48,10 +48,8 @@ void main() {
   testWidgets('shows the profile card, rating summary and empty reviews', (
     WidgetTester tester,
   ) async {
-    // act
     await pumpDetails(tester, FakeDoctorDetailsRepository());
 
-    // assert
     final tr = AppLocale.en.buildSync();
     expect(find.byType(DoctorProfileCard), findsOneWidget);
     expect(
@@ -65,7 +63,6 @@ void main() {
   testWidgets('shows recent reviews and the clinic address with a map', (
     WidgetTester tester,
   ) async {
-    // act
     await pumpDetails(
       tester,
       FakeDoctorDetailsRepository(
@@ -87,7 +84,6 @@ void main() {
       ),
     );
 
-    // assert
     expect(find.text('Mona'), findsOneWidget);
     expect(find.text('Great doctor'), findsOneWidget);
     expect(find.text('12 Nile St, Cairo'), findsOneWidget);
@@ -97,7 +93,6 @@ void main() {
   testWidgets('ClinicLocationMap renders a map with one marker', (
     WidgetTester tester,
   ) async {
-    // act
     await tester.pumpWidget(
       buildTestApp(
         const Scaffold(
@@ -106,7 +101,6 @@ void main() {
       ),
     );
 
-    // assert
     expect(find.byType(FlutterMap), findsOneWidget);
     expect(find.byType(TileLayer), findsOneWidget);
     expect(find.byType(MarkerLayer), findsOneWidget);

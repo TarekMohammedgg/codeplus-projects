@@ -7,7 +7,7 @@ import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_empty_state.dart';
-import 'package:doctor_hunt/apps/core/widgets/app_initial_avatar.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_profile_avatar.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_search_bar.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_confirm_dialog.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_filter_chips.dart';
@@ -21,10 +21,9 @@ import 'package:skeletonizer/skeletonizer.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_list_skeleton.dart';
 
 class AdminDoctorsScreen extends StatefulWidget {
-  const AdminDoctorsScreen({super.key, this.adminName});
+  const AdminDoctorsScreen({super.key, this.adminPhotoUrl});
 
-  /// Shown as the initial badge in the header.
-  final String? adminName;
+  final String? adminPhotoUrl;
 
   @override
   State<AdminDoctorsScreen> createState() => AdminDoctorsScreenState();
@@ -36,7 +35,6 @@ class AdminDoctorsScreenState extends State<AdminDoctorsScreen> {
 
   String _query = '';
 
-  /// Null = "All".
   String? _specialtyId;
 
   @override
@@ -130,8 +128,8 @@ class AdminDoctorsScreenState extends State<AdminDoctorsScreen> {
       child: Row(
         children: [
           Expanded(child: Text(tr.doctorsTitle, style: context.bold18TextMain)),
-          AppInitialAvatar(
-            name: widget.adminName ?? tr.adminRoleTitle,
+          AppProfileAvatar(
+            imageUrl: widget.adminPhotoUrl,
             onTap: () => const AdminProfileRoute().push(context),
           ),
         ],

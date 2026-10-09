@@ -341,7 +341,6 @@ void main() {
 
       expect(find.byType(AdminAppointmentCard), findsNWidgets(3));
 
-      // Tap on Upcoming tab
       await tester.tap(find.widgetWithText(AppPrimaryButton, 'Upcoming'));
       await tester.pumpAndSettle();
 
@@ -350,7 +349,6 @@ void main() {
       expect(find.textContaining('Jane Patient'), findsOneWidget);
       expect(find.textContaining('Bob Smith'), findsNothing);
 
-      // Tap on Completed tab
       await tester.tap(find.widgetWithText(AppPrimaryButton, 'Completed'));
       await tester.pumpAndSettle();
 
@@ -358,7 +356,6 @@ void main() {
       expect(find.byType(AdminAppointmentCard), findsOneWidget);
       expect(find.textContaining('Bob Smith'), findsOneWidget);
 
-      // Tap on Cancelled tab
       await tester.tap(find.widgetWithText(AppPrimaryButton, 'Cancelled'));
       await tester.pumpAndSettle();
 
@@ -372,7 +369,6 @@ void main() {
     testWidgets('Mark as Completed confirms, then calls the repository', (
       tester,
     ) async {
-      // arrange
       final tr = AppLocale.en.buildSync();
       final cubit = AdminAppointmentsCubit(
         repository: repo,
@@ -394,11 +390,9 @@ void main() {
       await tester.tap(find.byKey(const Key('admin_complete_button_appt_1')));
       await tester.pumpAndSettle();
 
-      // act
       await tester.tap(find.text(tr.confirm));
       await tester.pumpAndSettle();
 
-      // assert
       expect(repo.completed, ['appt_1']);
       await cubit.close();
     });

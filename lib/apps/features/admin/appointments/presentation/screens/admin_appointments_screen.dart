@@ -5,7 +5,7 @@ import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_confirm_dialog.dart';
-import 'package:doctor_hunt/apps/core/widgets/app_initial_avatar.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_profile_avatar.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
@@ -20,10 +20,9 @@ import 'package:doctor_hunt/apps/core/widgets/app_list_skeleton.dart';
 import 'package:doctor_hunt/apps/core/widgets/skeleton_placeholders.dart';
 
 class AdminAppointmentsScreen extends StatefulWidget {
-  const AdminAppointmentsScreen({super.key, this.adminName});
+  const AdminAppointmentsScreen({super.key, this.adminPhotoUrl});
 
-  /// Shown as the initial badge in the header.
-  final String? adminName;
+  final String? adminPhotoUrl;
 
   @override
   State<AdminAppointmentsScreen> createState() =>
@@ -48,10 +47,9 @@ class _AdminAppointmentsScreenState extends State<AdminAppointmentsScreen>
 
   @override
   Widget build(BuildContext context) {
-    // The cubit is provided by AdminAppointmentsRoute.
     return _AdminAppointmentsView(
       tabController: _tabController,
-      adminName: widget.adminName,
+      adminPhotoUrl: widget.adminPhotoUrl,
     );
   }
 }
@@ -59,11 +57,11 @@ class _AdminAppointmentsScreenState extends State<AdminAppointmentsScreen>
 class _AdminAppointmentsView extends StatelessWidget {
   const _AdminAppointmentsView({
     required this.tabController,
-    required this.adminName,
+    required this.adminPhotoUrl,
   });
 
   final TabController tabController;
-  final String? adminName;
+  final String? adminPhotoUrl;
 
   String _emptyMessageForTab(BuildContext context, AdminAppointmentTab tab) {
     return switch (tab) {
@@ -134,8 +132,8 @@ class _AdminAppointmentsView extends StatelessWidget {
                       style: context.bold20TextMain,
                     ),
                   ),
-                  AppInitialAvatar(
-                    name: adminName ?? context.tr.adminRoleTitle,
+                  AppProfileAvatar(
+                    imageUrl: adminPhotoUrl,
                     onTap: () => const AdminProfileRoute().push(context),
                   ),
                 ],

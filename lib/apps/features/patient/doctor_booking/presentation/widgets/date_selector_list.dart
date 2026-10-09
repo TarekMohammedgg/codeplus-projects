@@ -7,7 +7,6 @@ import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
-/// "Today, 7 Oct", "Tomorrow, 8 Oct", or "Fri, 9 Oct".
 String formatBookingDayLabel(BuildContext context, DateTime date) {
   final now = DateTime.now();
   final locale = context.localeCode;

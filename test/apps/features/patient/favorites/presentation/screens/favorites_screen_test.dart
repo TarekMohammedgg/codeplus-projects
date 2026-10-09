@@ -78,10 +78,8 @@ void main() {
   testWidgets(
     'FavoritesScreen renders title, search bar, and empty state initially',
     (WidgetTester tester) async {
-      // act
       await pumpScreen(tester, favorites: {});
 
-      // assert
       final tr = AppLocale.en.buildSync();
       expect(find.text(tr.tabFavorites), findsOneWidget);
       expect(find.byType(AppSearchBar), findsOneWidget);
@@ -93,10 +91,8 @@ void main() {
   testWidgets(
     'FavoritesScreen renders favorite doctor cards when patient has favorites',
     (WidgetTester tester) async {
-      // act
       await pumpScreen(tester, favorites: {'doc_1'});
 
-      // assert
       expect(find.byType(FindDoctorCard), findsOneWidget);
       expect(find.text('Dr. Sarah Smith'), findsOneWidget);
       expect(find.text('Dr. John Doe'), findsNothing);
@@ -106,29 +102,23 @@ void main() {
   testWidgets('FavoritesScreen toggling heart icon calls repository', (
     WidgetTester tester,
   ) async {
-    // arrange
     await pumpScreen(tester, favorites: {'doc_1'});
 
-    // act
     await tester.tap(find.byIcon(Icons.favorite_rounded).first);
     await tester.pump();
 
-    // assert
     expect(favoritesRepository.writes, [('patient-1', 'doc_1', false)]);
   });
 
   testWidgets('FavoritesScreen search bar filters the favorite doctors', (
     WidgetTester tester,
   ) async {
-    // arrange
     await pumpScreen(tester, favorites: {'doc_1', 'doc_2'});
     expect(find.byType(FindDoctorCard), findsNWidgets(2));
 
-    // act
     await tester.enterText(find.byType(TextField), 'John');
     await tester.pump();
 
-    // assert
     expect(find.text('Dr. John Doe'), findsOneWidget);
     expect(find.text('Dr. Sarah Smith'), findsNothing);
   });

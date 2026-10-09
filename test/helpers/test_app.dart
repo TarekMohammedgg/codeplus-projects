@@ -25,17 +25,8 @@ class _FakeFirebaseAuth extends Fake implements FirebaseAuth {
 
 class _FakeFirebaseFirestore extends Fake implements FirebaseFirestore {}
 
-// Widget tests call [buildTestApp]/[buildTestRouterApp] synchronously from
-// many `testWidgets` bodies, and other test files reset `getIt` in their
-// own setUp/tearDown, so this checks the live registry each call rather
-// than a module-level flag that could go stale. This is test bootstrapping,
-// not the production isRegistered fallback-instantiation pattern the //CR
-// comments flag.
 void ensureTestServiceLocator({SharedPreferences? preferences}) {
   if (getIt.isRegistered<AuthService>()) return;
-  // Registers everything, including the real FirebaseAuth/FirebaseFirestore
-  // singletons — but nothing under test resolves them yet (they're lazy),
-  // so overriding them with fakes below is safe.
   setupServiceLocator(preferences: preferences ?? FakeSharedPreferences());
   getIt.allowReassignment = true;
   getIt.registerLazySingleton<FirebaseAuth>(() => _FakeFirebaseAuth());
@@ -89,7 +80,6 @@ Widget buildTestRouterApp(GoRouter router) {
   );
 }
 
-/// Mirrors the app-wide providers `DoctorHuntApp` puts above the router.
 Widget _withAppProviders(Widget app) {
   return BlocProvider<FavoritesCubit>(
     create: (_) => getIt<FavoritesCubit>(),

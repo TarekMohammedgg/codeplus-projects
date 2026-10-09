@@ -53,17 +53,14 @@ Future<String?> appRouterRedirect(
 
   final isOnboardingOrRole =
       loc == AppRoutePaths.onboarding || loc == AppRoutePaths.roleSelection;
-  if (isOnboardingOrRole) {
-    final isAdmin = await authRepo.isCurrentUserAdmin();
-    return isAdmin ? AppRoutePaths.adminDoctors : AppRoutePaths.home;
-  }
+  final isAuthScreen =
+      loc == AppRoutePaths.login || loc == AppRoutePaths.signup;
+  if (isAuthScreen) return null;
 
-  if (loc.startsWith('/admin')) {
-    final isAdmin = await authRepo.isCurrentUserAdmin();
-    if (!isAdmin) {
-      return AppRoutePaths.home;
-    }
-  }
+  final isAdmin = await authRepo.isCurrentUserAdmin();
+  final home = isAdmin ? AppRoutePaths.adminDoctors : AppRoutePaths.home;
+  if (isOnboardingOrRole) return home;
+  if (isAdmin != loc.startsWith('/admin')) return home;
 
   return null;
 }

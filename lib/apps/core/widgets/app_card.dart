@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 
-/// White rounded card with the soft shadow used across details screens.
 class AppCard extends StatelessWidget {
   const AppCard({
     super.key,

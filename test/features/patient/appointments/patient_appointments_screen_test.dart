@@ -124,7 +124,6 @@ void main() {
     testWidgets('pill follows the swipe before the page settles', (
       WidgetTester tester,
     ) async {
-      // arrange
       final cubit = PatientAppointmentsCubit(
         repository: FakePatientAppointmentsRepository(),
         authService: FakeAuthService(user: FakeUser(uid: 'patient_123')),
@@ -143,13 +142,11 @@ void main() {
         tester.getCenter(find.byType(TabBarView)),
       );
 
-      // act: drag past half the page, finger still down
       await gesture.moveBy(
         Offset(-tester.getSize(find.byType(TabBarView)).width * 0.6, 0),
       );
       await tester.pump();
 
-      // assert
       final completedPill = tester.widget<AppPrimaryButton>(
         find.widgetWithText(AppPrimaryButton, tr.completed),
       );
@@ -194,7 +191,6 @@ void main() {
         findsOneWidget,
       );
 
-      // Tap Cancel -> opens confirmation dialog
       await tester.tap(
         find.byKey(const Key('cancel_appointment_button_upcoming_1')),
       );
@@ -215,7 +211,6 @@ void main() {
         findsOneWidget,
       );
 
-      // Confirm cancel
       await tester.tap(find.widgetWithText(TextButton, tr.confirm));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
@@ -264,7 +259,6 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Switch to Completed tab
       await tester.tap(find.text(tr.completed));
       await tester.pumpAndSettle();
 
@@ -315,7 +309,6 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Switch to Cancelled tab
       await tester.tap(find.text(tr.cancelled));
       await tester.pumpAndSettle();
 

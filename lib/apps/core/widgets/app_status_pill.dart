@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
-/// Small rounded status label with a leading dot (appointment status,
-/// doctor active/inactive).
 class AppStatusPill extends StatelessWidget {
   const AppStatusPill({
     super.key,
@@ -19,7 +17,6 @@ class AppStatusPill extends StatelessWidget {
   final Color color;
   final Color backgroundColor;
 
-  /// Color is always [color]; defaults to the 9pt medium label.
   final TextStyle? textStyle;
   final EdgeInsetsGeometry padding;
 

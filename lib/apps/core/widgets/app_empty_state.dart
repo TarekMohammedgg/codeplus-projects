@@ -22,7 +22,6 @@ class AppEmptyState extends StatelessWidget {
   final String? subtitle;
   final TextStyle? titleStyle;
 
-  /// Replaces the [imagePath] illustration when set.
   final Widget? image;
   final String imagePath;
   final double imageWidth;

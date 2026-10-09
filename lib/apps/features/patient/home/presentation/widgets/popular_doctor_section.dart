@@ -11,7 +11,6 @@ import 'package:doctor_hunt/apps/features/patient/home/presentation/widgets/sect
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
-/// Horizontal doctor carousel used by the Popular and Top Rated sections.
 class DoctorsSection extends StatelessWidget {
   const DoctorsSection({
     super.key,

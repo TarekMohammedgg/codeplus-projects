@@ -17,7 +17,6 @@ import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
-/// Needs a [DoctorAvailabilityCubit] above it (provided by the route).
 class DoctorAvailabilityScreen extends StatelessWidget {
   const DoctorAvailabilityScreen({super.key, required this.doctor});
 
@@ -69,7 +68,6 @@ class DoctorAvailabilityScreen extends StatelessWidget {
           body: SafeArea(
             child: Column(
               children: [
-                // Top App Bar
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
@@ -97,7 +95,6 @@ class DoctorAvailabilityScreen extends StatelessWidget {
                       children: [
                         8.verticalSpace,
 
-                        // Doctor info card
                         SizedBox(
                           width: double.infinity,
                           child: AppCard(
@@ -149,7 +146,6 @@ class DoctorAvailabilityScreen extends StatelessWidget {
 
                         24.verticalSpace,
 
-                        // Working Days Section
                         Text(
                           context.tr.workingDays,
                           style: context.bold16TextMain,
@@ -161,7 +157,6 @@ class DoctorAvailabilityScreen extends StatelessWidget {
                         ),
                         14.verticalSpace,
 
-                        // 7 Day Toggles
                         Wrap(
                           spacing: 8,
                           runSpacing: 8,
@@ -209,7 +204,6 @@ class DoctorAvailabilityScreen extends StatelessWidget {
 
                         28.verticalSpace,
 
-                        // Working Hours Section
                         Text(
                           context.tr.workingHours,
                           style: context.bold16TextMain,
@@ -218,7 +212,6 @@ class DoctorAvailabilityScreen extends StatelessWidget {
 
                         Row(
                           children: [
-                            // Start Time
                             Expanded(
                               child: _TimePickerCard(
                                 key: const Key('availability_start_time'),
@@ -245,7 +238,6 @@ class DoctorAvailabilityScreen extends StatelessWidget {
                               ),
                             ),
                             12.horizontalSpace,
-                            // End Time
                             Expanded(
                               child: _TimePickerCard(
                                 key: const Key('availability_end_time'),
@@ -276,7 +268,6 @@ class DoctorAvailabilityScreen extends StatelessWidget {
 
                         28.verticalSpace,
 
-                        // Slot Duration Section
                         Text(
                           context.tr.slotDuration,
                           style: context.bold16TextMain,
@@ -333,7 +324,6 @@ class DoctorAvailabilityScreen extends StatelessWidget {
 
                         24.verticalSpace,
 
-                        // Live Preview Card
                         Container(
                           key: const Key('availability_preview_card'),
                           width: double.infinity,
@@ -387,7 +377,6 @@ class DoctorAvailabilityScreen extends StatelessWidget {
 
                         32.verticalSpace,
 
-                        // Save Button
                         SizedBox(
                           width: double.infinity,
                           child: AppPrimaryButton(

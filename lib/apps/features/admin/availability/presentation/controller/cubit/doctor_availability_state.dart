@@ -15,8 +15,8 @@ class DoctorAvailabilityState {
   const DoctorAvailabilityState({
     this.status = DoctorAvailabilityStatus.initial,
     this.workingDays = const {1, 2, 3, 4, 5},
-    this.startMinutes = 540, // 09:00
-    this.endMinutes = 1020, // 17:00
+    this.startMinutes = 540,
+    this.endMinutes = 1020,
     this.slotMinutes = 30,
     this.errorMessage,
   });
@@ -32,7 +32,6 @@ class DoctorAvailabilityState {
         slotMinutes: availability.slotMinutes,
       );
     }
-    // Default: Mon-Fri (1..5), 09:00-17:00, 30 min
     return const DoctorAvailabilityState();
   }
 

@@ -685,7 +685,6 @@ void main() {
         final parentCubit = createdCubits.first;
         expect(parentCubit.isClosed, isFalse);
 
-        // Open ForgotPasswordBottomSheet via its static show method
         final loginContext = tester.element(find.byType(LoginScreen));
         ForgotPasswordBottomSheet.show(loginContext);
         await tester.pumpAndSettle();
@@ -694,12 +693,10 @@ void main() {
         expect(createdCubits.length, 2);
         final sheetCubit = createdCubits.last;
 
-        // Verify cubits are completely separate instances
         expect(identical(parentCubit, sheetCubit), isFalse);
         expect(sheetCubit.isClosed, isFalse);
         expect(parentCubit.isClosed, isFalse);
 
-        // Dismiss the bottom sheet
         Navigator.of(
           tester.element(find.byType(ForgotPasswordBottomSheet)),
         ).pop();

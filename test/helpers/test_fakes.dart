@@ -289,7 +289,6 @@ class FakeCreateDoctorRepository implements CreateDoctorRepository {
   }) async {}
 }
 
-/// Drive auth and favorites by adding to [userIds] / [favoriteIds].
 class FakeFavoritesRepository implements FavoritesRepository {
   FakeFavoritesRepository({
     this.setFavoriteError,
@@ -394,10 +393,8 @@ class FakeProfileRepository implements ProfileRepository {
 class FakeBookingRepository implements BookingRepository {
   FakeBookingRepository({this.booked = const [], this.bookError});
 
-  /// Booked slot starts; only those on the requested day are returned.
   final List<DateTime> booked;
 
-  /// Thrown by [book], e.g. `SlotAlreadyBookedException()`.
   Object? bookError;
   final bookedDrafts = <BookingDraft>[];
   final clinic = StreamController<ClinicModel?>.broadcast();

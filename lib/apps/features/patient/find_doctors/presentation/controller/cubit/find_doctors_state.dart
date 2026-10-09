@@ -25,12 +25,10 @@ final class FindDoctorsSuccess extends FindDoctorsState {
   }) : doctors = List.unmodifiable(doctors),
        specialties = List.unmodifiable(specialties);
 
-  /// Every loaded active doctor; filters never refetch.
   final List<DoctorModel> doctors;
   final List<SpecialtyModel> specialties;
   final String query;
 
-  /// Null = "All".
   final String? specialtyId;
   final bool favoritesOnly;
   final DoctorSort sort;

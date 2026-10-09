@@ -11,9 +11,9 @@ import '../../../helpers/test_fakes.dart';
 void main() {
   final availability = DoctorAvailability(
     workingDays: const [1, 2, 3, 4, 5, 6, 7],
-    startMinutes: 9 * 60, // 09:00
-    endMinutes: 12 * 60, // 12:00
-    slotMinutes: 60, // 3 slots: 9, 10, 11
+    startMinutes: 9 * 60,
+    endMinutes: 12 * 60,
+    slotMinutes: 60,
   );
 
   final testDoctorWithAvail = DoctorModel(
@@ -45,7 +45,7 @@ void main() {
       () async {
         final repo = FakeBookingRepository();
         final cubit = BookingCubit(repository: repo);
-        final testNow = DateTime(2026, 3, 2, 8, 0); // Monday 08:00
+        final testNow = DateTime(2026, 3, 2, 8, 0);
 
         await cubit.init(testDoctorWithAvail, now: testNow);
 
@@ -80,7 +80,6 @@ void main() {
     test(
       'when selected date is fully booked, finds nextAvailableDate',
       () async {
-        // 2026-03-02 slots are 9:00, 10:00, 11:00
         final fullyBookedDay = [
           DateTime(2026, 3, 2, 9, 0),
           DateTime(2026, 3, 2, 10, 0),
@@ -109,7 +108,6 @@ void main() {
     );
 
     test('emits submitting then confirmed and books the draft', () async {
-      // arrange
       final repo = FakeBookingRepository();
       final cubit = BookingCubit(repository: repo);
       final states = expectLater(
@@ -117,40 +115,32 @@ void main() {
         emitsInOrder([isA<BookingSubmitting>(), isA<BookingConfirmed>()]),
       );
 
-      // act
       await cubit.confirm(draft);
 
-      // assert
       await states;
       expect(repo.bookedDrafts.single.startAt, draft.startAt);
       await cubit.close();
     });
 
     test('second patient on the same slot gets slotAlreadyBooked', () async {
-      // arrange
       final repo = FakeBookingRepository(
         bookError: const SlotAlreadyBookedException(),
       );
       final cubit = BookingCubit(repository: repo);
 
-      // act
       await cubit.confirm(draft);
 
-      // assert
       final state = cubit.state as BookingConfirmFailure;
       expect(state.code, BookingFailureCode.slotAlreadyBooked);
       await cubit.close();
     });
 
     test('any other error maps to unknown', () async {
-      // arrange
       final repo = FakeBookingRepository(bookError: StateError('offline'));
       final cubit = BookingCubit(repository: repo);
 
-      // act
       await cubit.confirm(draft);
 
-      // assert
       final state = cubit.state as BookingConfirmFailure;
       expect(state.code, BookingFailureCode.unknown);
       await cubit.close();

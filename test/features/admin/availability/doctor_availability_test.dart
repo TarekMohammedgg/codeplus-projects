@@ -42,18 +42,18 @@ void main() {
     test('initial state defaults to Mon-Fri 09:00-17:00 30 min', () {
       final state = const DoctorAvailabilityState();
       expect(state.workingDays, {1, 2, 3, 4, 5});
-      expect(state.startMinutes, 540); // 09:00
-      expect(state.endMinutes, 1020); // 17:00
+      expect(state.startMinutes, 540);
+      expect(state.endMinutes, 1020);
       expect(state.slotMinutes, 30);
-      expect(state.slotsPerDay, 16); // (1020 - 540) ~/ 30 = 480 ~/ 30 = 16
+      expect(state.slotsPerDay, 16);
       expect(state.isValid, isTrue);
     });
 
     test('prefills from existing DoctorAvailability', () {
       const availability = DoctorAvailability(
         workingDays: [1, 3, 5],
-        startMinutes: 600, // 10:00
-        endMinutes: 900, // 15:00
+        startMinutes: 600,
+        endMinutes: 900,
         slotMinutes: 60,
       );
       final state = DoctorAvailabilityState.fromAvailability(availability);
@@ -69,10 +69,10 @@ void main() {
       final repo = _FakeDoctorAvailabilityRepository();
       final cubit = DoctorAvailabilityCubit(repository: repo);
 
-      cubit.toggleDay(6); // Add Saturday
+      cubit.toggleDay(6);
       expect(cubit.state.workingDays.contains(6), isTrue);
 
-      cubit.toggleDay(6); // Remove Saturday
+      cubit.toggleDay(6);
       expect(cubit.state.workingDays.contains(6), isFalse);
     });
 
@@ -108,8 +108,8 @@ void main() {
       final cubit = DoctorAvailabilityCubit(repository: repo);
 
       cubit.setStartMinutes(540);
-      cubit.setEndMinutes(550); // 10 min window
-      cubit.setSlotMinutes(30); // 30 min slot
+      cubit.setEndMinutes(550);
+      cubit.setSlotMinutes(30);
       expect(cubit.state.isSlotFitsValid, isFalse);
       expect(cubit.state.isValid, isFalse);
       expect(
@@ -125,7 +125,7 @@ void main() {
         final cubit = DoctorAvailabilityCubit(repository: repo);
 
         cubit.setStartMinutes(1000);
-        cubit.setEndMinutes(800); // Invalid range
+        cubit.setEndMinutes(800);
 
         final result = await cubit.saveAvailability('doc_1');
         expect(result, isFalse);
@@ -176,12 +176,10 @@ void main() {
       expect(find.text(tr.slotDuration), findsOneWidget);
       expect(find.byKey(const Key('availability_save_button')), findsOneWidget);
 
-      // Verify all 7 weekday chips exist
       for (var day = 1; day <= 7; day++) {
         expect(find.byKey(Key('availability_day_$day')), findsOneWidget);
       }
 
-      // Verify live preview shows 16 slots per day
       expect(
         find.byKey(const Key('availability_preview_card')),
         findsOneWidget,
@@ -205,12 +203,10 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Tap Saturday (day 6) to add it
       await tester.tap(find.byKey(const Key('availability_day_6')));
       await tester.pumpAndSettle();
       expect(cubit.state.workingDays.contains(6), isTrue);
 
-      // Tap Monday (day 1) to remove it
       await tester.tap(find.byKey(const Key('availability_day_1')));
       await tester.pumpAndSettle();
       expect(cubit.state.workingDays.contains(1), isFalse);
@@ -232,21 +228,17 @@ void main() {
         );
         await tester.pumpAndSettle();
 
-        // Set invalid range: start (1020 = 17:00) >= end (540 = 09:00)
         cubit.setStartMinutes(1020);
         cubit.setEndMinutes(540);
         await tester.pumpAndSettle();
 
-        // Tap Save button
         final saveBtn = find.byKey(const Key('availability_save_button'));
         await tester.ensureVisible(saveBtn);
         await tester.tap(saveBtn);
         await tester.pumpAndSettle();
 
-        // Verify repository was NOT called
         expect(repo.savedAvailabilities, isEmpty);
 
-        // Verify error SnackBar is displayed with translated message
         expect(find.text(tr.errorStartMustBeBeforeEnd), findsOneWidget);
       },
     );
@@ -267,7 +259,6 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Deselect all days
       cubit.setWorkingDays({});
       await tester.pumpAndSettle();
 

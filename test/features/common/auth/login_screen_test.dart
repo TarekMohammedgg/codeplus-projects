@@ -46,7 +46,6 @@ void main() {
   testWidgets('patient login can go back to Choose Role', (
     WidgetTester tester,
   ) async {
-    // arrange
     final router = GoRouter(
       initialLocation: '/login',
       routes: [
@@ -64,11 +63,9 @@ void main() {
     await tester.pumpWidget(buildTestRouterApp(router));
     await tester.pumpAndSettle();
 
-    // act
     await tester.tap(find.byType(AppBackButton));
     await tester.pumpAndSettle();
 
-    // assert
     expect(router.state.matchedLocation, '/role-selection');
   });
 }

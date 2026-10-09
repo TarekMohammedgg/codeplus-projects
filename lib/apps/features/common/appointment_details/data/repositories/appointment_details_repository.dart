@@ -4,7 +4,6 @@ import 'package:doctor_hunt/apps/core/services/appointment_service.dart';
 import 'package:doctor_hunt/apps/core/services/clinic_service.dart';
 import 'package:doctor_hunt/apps/core/services/specialty_service.dart';
 
-/// Shared by the patient and admin appointment details screens.
 abstract interface class AppointmentDetailsRepository {
   Future<String?> fetchSpecialtyName(String? specialtyId);
   Stream<ClinicModel?> watchClinic();

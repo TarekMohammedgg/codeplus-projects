@@ -23,8 +23,8 @@ import '../../../helpers/test_fakes.dart';
 void main() {
   final availability = DoctorAvailability(
     workingDays: const [1, 2, 3, 4, 5, 6, 7],
-    startMinutes: 9 * 60, // 09:00
-    endMinutes: 17 * 60, // 17:00
+    startMinutes: 9 * 60,
+    endMinutes: 17 * 60,
     slotMinutes: 60,
   );
 
@@ -138,20 +138,17 @@ void main() {
     await tester.pumpWidget(buildTestRouterApp(router));
     await tester.pumpAndSettle();
 
-    // Find the Next button
     final confirmButtonFinder = find.widgetWithText(
       AppPrimaryButton,
       tr.confirm,
     );
     expect(confirmButtonFinder, findsOneWidget);
 
-    // Initially confirm button is disabled
     final confirmButtonBefore = tester.widget<AppPrimaryButton>(
       confirmButtonFinder,
     );
     expect(confirmButtonBefore.onPressed, isNull);
 
-    // Tap the first slot chip inside TimeSlotsSection
     final firstSlotFinder = find
         .descendant(
           of: find.byType(TimeSlotsSection).first,
@@ -161,13 +158,11 @@ void main() {
     await tester.tap(firstSlotFinder);
     await tester.pumpAndSettle();
 
-    // Button is now enabled
     final confirmButtonAfter = tester.widget<AppPrimaryButton>(
       confirmButtonFinder,
     );
     expect(confirmButtonAfter.onPressed, isNotNull);
 
-    // Tap Next and verify navigation to booking review screen
     await tester.tap(confirmButtonFinder);
     await tester.pumpAndSettle();
 
@@ -187,7 +182,6 @@ void main() {
     final now = DateTime.now();
     final todayAt8Am = DateTime(now.year, now.month, now.day, 8, 0);
 
-    // Generate all slots for today so it's fully booked
     final allSlotsToday = List.generate(
       8,
       (i) => DateTime(now.year, now.month, now.day, 9 + i),

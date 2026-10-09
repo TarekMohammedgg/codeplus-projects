@@ -1,5 +1,3 @@
-/// Every state carries the favorite doctor ids so hearts keep rendering
-/// while a toggle fails.
 sealed class FavoritesState {
   const FavoritesState({this.doctorIds = const {}});
 

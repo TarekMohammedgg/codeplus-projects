@@ -4,11 +4,8 @@ import 'package:doctor_hunt/apps/core/services/clinic_service.dart';
 import 'package:doctor_hunt/apps/core/services/review_service.dart';
 
 abstract interface class DoctorDetailsRepository {
-  /// Newest first.
   Future<List<ReviewModel>> fetchRecentReviews(String doctorId);
 
-  /// The one clinic location shown for every doctor; null until the admin
-  /// sets it.
   Future<ClinicModel?> fetchClinic();
 }
 

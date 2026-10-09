@@ -61,17 +61,13 @@ void main() {
         ),
       );
 
-      // Initially obscureText is true, so visibility_outlined icon is shown
       expect(find.byIcon(Icons.visibility_outlined), findsOneWidget);
 
-      // Tap suffix icon button to show password
       await tester.tap(find.byIcon(Icons.visibility_outlined));
       await tester.pumpAndSettle();
 
-      // Now visibility_off_outlined icon is shown
       expect(find.byIcon(Icons.visibility_off_outlined), findsOneWidget);
 
-      // Tap again to hide
       await tester.tap(find.byIcon(Icons.visibility_off_outlined));
       await tester.pumpAndSettle();
 

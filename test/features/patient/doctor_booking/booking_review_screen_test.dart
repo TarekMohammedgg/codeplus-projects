@@ -42,7 +42,6 @@ void main() {
 
   tearDown(() => repository.clinic.close());
 
-  /// Review screen pushed on top of a slot screen, like the real flow.
   Future<GoRouter> pumpReview(WidgetTester tester) async {
     tester.view.physicalSize = const Size(1080, 2400);
     tester.view.devicePixelRatio = 1.0;
@@ -87,11 +86,9 @@ void main() {
   testWidgets('renders doctor, booking info and the live clinic location', (
     WidgetTester tester,
   ) async {
-    // arrange
     await pumpReview(tester);
     expect(find.text(tr.clinicLocationNotSet), findsOneWidget);
 
-    // act
     repository.clinic.add(
       const ClinicModel(
         addressAr: 'القاهرة',
@@ -101,7 +98,6 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    // assert
     expect(find.byType(DoctorProfileCard), findsOneWidget);
     expect(find.text(tr.appointmentDate), findsOneWidget);
     expect(find.text(tr.appointmentTime), findsOneWidget);
@@ -112,18 +108,15 @@ void main() {
   testWidgets(
     'confirm books the slot, shows success, Done opens appointments',
     (WidgetTester tester) async {
-      // arrange
       final router = await pumpReview(tester);
       await tester.tap(find.text(tr.confirmBooking));
       await tester.pumpAndSettle();
       expect(repository.bookedDrafts.single.doctor.id, 'doc_review_1');
       expect(find.byType(BookingSuccessDialog), findsOneWidget);
 
-      // act
       await tester.tap(find.text(tr.done));
       await tester.pumpAndSettle();
 
-      // assert
       expect(router.state.matchedLocation, '/appointments');
     },
   );
@@ -131,15 +124,12 @@ void main() {
   testWidgets('slot taken shows the message and returns to reload slots', (
     WidgetTester tester,
   ) async {
-    // arrange
     repository.bookError = const SlotAlreadyBookedException();
     await pumpReview(tester);
 
-    // act
     await tester.tap(find.text(tr.confirmBooking));
     await tester.pumpAndSettle();
 
-    // assert
     expect(find.text(tr.slotAlreadyBooked), findsOneWidget);
     expect(find.byType(BookingReviewScreen), findsNothing);
     expect(poppedWith, isTrue);

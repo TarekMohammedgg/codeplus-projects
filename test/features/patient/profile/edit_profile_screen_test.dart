@@ -68,11 +68,9 @@ void main() {
     await tester.pumpWidget(buildTestApp(_editScreen(testProfile)));
     await tester.pumpAndSettle();
 
-    // Tap Male
     await tester.tap(find.text('Male'));
     await tester.pumpAndSettle();
 
-    // Tap Female
     await tester.tap(find.text('Female'));
     await tester.pumpAndSettle();
   });
@@ -95,12 +93,10 @@ void main() {
       await tester.pumpWidget(buildTestApp(_editScreen(testProfile, fakeRepo)));
       await tester.pumpAndSettle();
 
-      // Clear name
       final nameFinder = find.byKey(const Key('edit_profile_name_field'));
       await tester.enterText(nameFinder, '');
       await tester.pumpAndSettle();
 
-      // Tap Save
       final saveFinder = find.byKey(const Key('edit_profile_save_button'));
       await tester.tap(saveFinder);
       await tester.pumpAndSettle();
@@ -108,10 +104,9 @@ void main() {
       expect(find.text(tr.enterFullName), findsNWidgets(2));
       expect(fakeRepo.lastUpdatedUid, isNull);
 
-      // Enter valid name and invalid phone
       await tester.enterText(nameFinder, 'Valid Name');
       final phoneFinder = find.byKey(const Key('edit_profile_phone_field'));
-      await tester.enterText(phoneFinder, '123'); // invalid
+      await tester.enterText(phoneFinder, '123');
       await tester.pumpAndSettle();
 
       await tester.tap(saveFinder);
@@ -140,7 +135,6 @@ void main() {
     await tester.pumpWidget(buildTestApp(_editScreen(testProfile, fakeRepo)));
     await tester.pumpAndSettle();
 
-    // Modify name and phone
     final nameFinder = find.byKey(const Key('edit_profile_name_field'));
     await tester.enterText(nameFinder, 'Jane Smith');
 
@@ -148,7 +142,6 @@ void main() {
     await tester.enterText(phoneFinder, '01098765432');
     await tester.pumpAndSettle();
 
-    // Tap Save
     final saveFinder = find.byKey(const Key('edit_profile_save_button'));
     await tester.tap(saveFinder);
     await tester.pumpAndSettle();
@@ -159,7 +152,6 @@ void main() {
   });
 }
 
-/// The screen with the cubit its route provides, signed in as `user_123`.
 Widget _editScreen(UserProfileModel profile, [FakeProfileRepository? repo]) {
   return BlocProvider<ProfileCubit>(
     create: (_) => ProfileCubit(

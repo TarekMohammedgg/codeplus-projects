@@ -57,15 +57,12 @@ void main() {
   }
 
   testWidgets('specialty chip filters the doctor list', (tester) async {
-    // arrange
     await pumpScreen(tester);
     expect(find.text('Dr. Omar'), findsOneWidget);
 
-    // act
     await tester.tap(find.widgetWithText(ChoiceChip, 'Dentistry (1)'));
     await tester.pump();
 
-    // assert
     expect(find.text('Dr. Sara'), findsOneWidget);
     expect(find.text('Dr. Omar'), findsNothing);
   });
@@ -73,7 +70,6 @@ void main() {
   testWidgets('deactivate asks for confirmation, then calls setActive', (
     tester,
   ) async {
-    // arrange
     final tr = AppLocale.en.buildSync();
     await pumpScreen(tester);
     await tester.tap(find.byIcon(Icons.more_vert_rounded).first);
@@ -82,25 +78,20 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text(tr.deactivateDoctorTitle), findsOneWidget);
 
-    // act
     await tester.tap(find.text(tr.deactivate).last);
     await tester.pumpAndSettle();
 
-    // assert
     expect(repository.activeChanges, [('dentist', false)]);
   });
 
   testWidgets('an inactive doctor offers Activate and no delete', (
     tester,
   ) async {
-    // arrange
     await pumpScreen(tester);
 
-    // act
     await tester.tap(find.byIcon(Icons.more_vert_rounded).last);
     await tester.pumpAndSettle();
 
-    // assert
     expect(find.text(AppLocale.en.buildSync().activate), findsOneWidget);
     expect(find.byIcon(Icons.delete_outline_rounded), findsNothing);
   });
@@ -108,13 +99,10 @@ void main() {
   testWidgets('shows active and total counters with counted chips', (
     tester,
   ) async {
-    // arrange
     final tr = AppLocale.en.buildSync();
 
-    // act
     await pumpScreen(tester);
 
-    // assert
     expect(find.text(tr.activeDoctors), findsOneWidget);
     expect(find.text(tr.totalDoctors), findsOneWidget);
     expect(find.widgetWithText(ChoiceChip, 'All (2)'), findsOneWidget);
@@ -122,13 +110,10 @@ void main() {
   });
 
   testWidgets('no doctors shows the empty state without chips', (tester) async {
-    // arrange
     final tr = AppLocale.en.buildSync();
 
-    // act
     await pumpScreen(tester, doctors: const []);
 
-    // assert
     expect(find.text(tr.noDoctorsFound), findsOneWidget);
     expect(find.text(tr.noDoctorsYet), findsOneWidget);
     expect(find.byType(ChoiceChip), findsNothing);

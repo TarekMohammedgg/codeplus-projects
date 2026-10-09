@@ -146,13 +146,11 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Open the menu and pick Deactivate
       await tester.tap(find.byKey(const Key('admin_doctor_status_menu')));
       await tester.pumpAndSettle();
       await tester.tap(find.text(tr.deactivateDoctorTitle));
       await tester.pumpAndSettle();
 
-      // Confirmation dialog should appear
       expect(
         find.descendant(
           of: find.byType(AlertDialog),
@@ -162,7 +160,6 @@ void main() {
       );
       expect(find.text(tr.confirmDeactivateDoctor), findsOneWidget);
 
-      // Confirm deactivation
       await tester.tap(
         find.widgetWithText(AppTextButton, tr.deactivateDoctorTitle),
       );

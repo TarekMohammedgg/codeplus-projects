@@ -1,8 +1,5 @@
 import 'package:intl/intl.dart';
 
-/// Weekly working hours of a doctor, stored as `doctors/{id}.availability`.
-///
-/// Times are minutes from midnight (540 = 09:00) so slot math stays integer.
 class DoctorAvailability {
   const DoctorAvailability({
     required this.workingDays,
@@ -11,7 +8,6 @@ class DoctorAvailability {
     required this.slotMinutes,
   });
 
-  /// `DateTime.weekday` values: 1 = Monday … 7 = Sunday.
   final List<int> workingDays;
   final int startMinutes;
   final int endMinutes;
@@ -28,8 +24,6 @@ class DoctorAvailability {
     );
   }
 
-  /// Returns null when [raw] is missing or does not describe a usable
-  /// schedule, so the UI can show "no availability" instead of bad slots.
   static DoctorAvailability? tryParse(dynamic raw) {
     if (raw is! Map) return null;
     final days = raw['workingDays'];
@@ -61,9 +55,7 @@ class DoctorAvailability {
     };
   }
 
-  /// Localized weekday name; [weekday] is `DateTime.weekday` (1 = Monday).
   static String weekdayName(int weekday, String locale, {bool short = true}) {
-    // 2026-09-28 is a Monday, so 27 + weekday lands on the right day.
     final date = DateTime(2026, 9, 27 + weekday);
     return (short ? DateFormat.E(locale) : DateFormat.EEEE(locale)).format(
       date,

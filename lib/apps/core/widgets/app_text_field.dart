@@ -4,10 +4,6 @@ import 'package:doctor_hunt/generated/style_atoms.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-/// A standardized, reusable text field widget for the Doctor Hunt application.
-///
-/// Handles common patterns such as password visibility toggling, icon prefixes,
-/// custom validation, content padding, and theme consistency across all screens.
 class AppTextField extends StatefulWidget {
   final TextEditingController? controller;
   final String? initialValue;

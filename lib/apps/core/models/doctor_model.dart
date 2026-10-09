@@ -78,10 +78,8 @@ class DoctorModel {
   final int reviewsCount;
   final bool isActive;
 
-  /// Null until the admin sets working days and hours for this doctor.
   final DoctorAvailability? availability;
 
-  /// `updatedAt`, else `createdAt`; the admin list shows newest first.
   final DateTime? lastModified;
 
   factory DoctorModel.fromFirestore(
@@ -197,8 +195,6 @@ Map<String, dynamic> _localizedMap(dynamic value) {
   return const <String, dynamic>{};
 }
 
-/// First non-empty text, or '' — one broken document must not take down a
-/// whole doctors list (it shows up empty and the admin can fix it).
 String _firstText(List<dynamic> values) {
   for (final value in values) {
     if (value is String && value.trim().isNotEmpty) return value.trim();

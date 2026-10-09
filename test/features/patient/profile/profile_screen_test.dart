@@ -96,7 +96,6 @@ void main() {
       expect(find.text(tr.profile), findsOneWidget);
       expect(find.text(tr.personalInformation), findsOneWidget);
 
-      // 5 cards: Full name, Email, Contact number, Date of birth, Gender
       expect(find.byType(ProfileInfoCard), findsNWidgets(5));
       expect(find.text('Jane Doe'), findsOneWidget);
       expect(find.text('jane@example.com'), findsOneWidget);
@@ -104,13 +103,10 @@ void main() {
       expect(find.textContaining('1995'), findsOneWidget);
       expect(find.text(tr.female), findsOneWidget);
 
-      // Out of scope location is NOT present
       expect(find.text(tr.location), findsNothing);
 
-      // No back button in tab screen
       expect(find.byIcon(Icons.arrow_back_ios_new_rounded), findsNothing);
 
-      // Green edit button is removed; settings row is present
       expect(find.widgetWithText(AppPrimaryButton, tr.edit), findsNothing);
       expect(find.text(tr.settings), findsOneWidget);
       expect(find.byIcon(Icons.settings_outlined), findsOneWidget);
@@ -177,7 +173,6 @@ void main() {
       await tester.pumpWidget(buildTestRouterApp(router));
       await tester.pumpAndSettle();
 
-      // Tap Pencil edit button in header
       final headerEditFinder = find.descendant(
         of: find.byType(ProfileHeaderSection),
         matching: find.byIcon(Icons.edit_outlined),
@@ -187,21 +182,17 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Edit Profile Screen'), findsOneWidget);
 
-      // Return to Profile
       router.go('/profile');
       await tester.pumpAndSettle();
 
-      // Tap Camera icon on avatar
       expect(find.byIcon(Icons.camera_alt_outlined), findsOneWidget);
       await tester.tap(find.byIcon(Icons.camera_alt_outlined));
       await tester.pumpAndSettle();
       expect(find.text('Edit Profile Screen'), findsOneWidget);
 
-      // Return to Profile
       router.go('/profile');
       await tester.pumpAndSettle();
 
-      // Tap Settings row
       await tester.tap(find.text(tr.settings));
       await tester.pumpAndSettle();
       expect(find.text('Settings Screen'), findsOneWidget);

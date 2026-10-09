@@ -23,7 +23,6 @@ void main() {
   testWidgets(
     'HomeScreen shows Popular and Top Rated sections and toggles a favorite',
     (WidgetTester tester) async {
-      // arrange
       tester.view.physicalSize = const Size(1080, 2400);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(() {
@@ -61,13 +60,10 @@ void main() {
       expect(find.text(tr.topRatedDoctors), findsOneWidget);
       expect(find.byIcon(Icons.favorite_rounded), findsNothing);
 
-      // act
       await tester.tap(find.byIcon(Icons.favorite_border_rounded).first);
       await tester.pump();
 
-      // assert
       expect(favoritesRepository.writes, [('patient-1', 'doc_5', true)]);
-      // The same doctor appears in both sections, so both hearts fill.
       expect(find.byIcon(Icons.favorite_rounded), findsNWidgets(2));
     },
   );
@@ -370,7 +366,6 @@ void main() {
   testWidgets('Tapping search bar in HomeScreen navigates to /doctors', (
     WidgetTester tester,
   ) async {
-    // arrange
     tester.view.physicalSize = const Size(1080, 2400);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(() {
@@ -407,11 +402,9 @@ void main() {
     await tester.pumpWidget(buildTestRouterApp(router));
     await tester.pumpAndSettle();
 
-    // act
     await tester.tap(find.byType(AppSearchBar));
     await tester.pumpAndSettle();
 
-    // assert
     expect(router.state.matchedLocation, '/doctors');
     expect(find.text('FindDoctorsPage'), findsOneWidget);
   });

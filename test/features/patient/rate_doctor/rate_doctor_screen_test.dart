@@ -91,7 +91,6 @@ void main() {
         final submitFinder = find.byKey(const Key('rate_doctor_submit_button'));
         expect(submitFinder, findsOneWidget);
 
-        // Submit button should be disabled initially
         final button = tester.widget<ElevatedButton>(
           find.descendant(
             of: submitFinder,
@@ -112,7 +111,6 @@ void main() {
         );
         await tester.pumpAndSettle();
 
-        // Tap 4th star
         await tester.tap(find.byKey(const Key('star_4')));
         await tester.pumpAndSettle();
 
@@ -139,11 +137,9 @@ void main() {
         );
         await tester.pumpAndSettle();
 
-        // Select rating
         await tester.tap(find.byKey(const Key('star_5')));
         await tester.pumpAndSettle();
 
-        // Enter comment
         await tester.enterText(
           find.byKey(const Key('rate_doctor_comment_field')),
           'Amazing care, thank you!',
@@ -152,7 +148,6 @@ void main() {
 
         expect(cubit.state.comment, 'Amazing care, thank you!');
 
-        // Tap submit
         await tester.tap(find.byKey(const Key('rate_doctor_submit_button')));
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 100));

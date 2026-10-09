@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
-/// Loading state for a list screen: the real list item, built with
-/// placeholder data, repeated and skeletonized.
 class AppListSkeleton extends StatelessWidget {
   const AppListSkeleton({
     super.key,

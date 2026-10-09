@@ -42,8 +42,6 @@ class AuthService {
 
   User? get currentUser => _auth.currentUser;
 
-  /// True when the user can sign in with email + password (so they can
-  /// change it); Google-only accounts cannot.
   bool get hasPasswordProvider =>
       currentUser?.providerData.any(
         (p) => p.providerId == EmailAuthProvider.PROVIDER_ID,
@@ -61,7 +59,6 @@ class AuthService {
 
   bool? _isAdmin;
 
-  /// Emits the signed-in user's uid, or null after sign-out.
   Stream<String?> userIdChanges() =>
       _auth.authStateChanges().map((user) => user?.uid);
 
@@ -147,8 +144,6 @@ class AuthService {
       if (user.email != null && user.email!.trim().isNotEmpty) {
         updateData['email'] = user.email!.trim();
       }
-      // Sync photoUrl from Firebase Auth when Firestore doesn't have one yet
-      // (e.g. Google sign-in photo that was never persisted to Firestore).
       final existingPhoto = existingData['photoUrl'] as String?;
       if ((existingPhoto == null || existingPhoto.trim().isEmpty) &&
           user.photoURL != null &&

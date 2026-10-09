@@ -11,7 +11,6 @@ class FindDoctorsCubit extends Cubit<FindDoctorsState> {
 
   final DoctorRepository repository;
 
-  /// [query], [specialtyId] and [sort] come from the route (e.g. Home).
   Future<void> load({
     String? query,
     String? specialtyId,
@@ -42,7 +41,6 @@ class FindDoctorsCubit extends Cubit<FindDoctorsState> {
     }
   }
 
-  /// Re-applies filters when the tab is opened again with new route params.
   void applyRouteFilters({
     String? query,
     String? specialtyId,
@@ -60,7 +58,6 @@ class FindDoctorsCubit extends Cubit<FindDoctorsState> {
 
   void search(String query) => _update((state) => state.copyWith(query: query));
 
-  /// Null selects "All".
   void selectSpecialty(String? specialtyId) =>
       _update((state) => state.copyWith(specialtyId: () => specialtyId));
 
@@ -76,8 +73,6 @@ class FindDoctorsCubit extends Cubit<FindDoctorsState> {
   }
 }
 
-/// The doctors shown for [state]'s filters. [favoriteIds] comes from the
-/// app-wide FavoritesCubit.
 List<DoctorModel> visibleDoctors(
   FindDoctorsSuccess state,
   Set<String> favoriteIds,

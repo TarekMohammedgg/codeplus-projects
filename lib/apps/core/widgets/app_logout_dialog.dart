@@ -4,7 +4,6 @@ import 'package:doctor_hunt/apps/core/widgets/app_confirm_dialog.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
-/// Asks the user to confirm logging out. Returns `true` only on confirm.
 Future<bool> showLogoutConfirmDialog(BuildContext context) {
   return showAppConfirmDialog(
     context,

@@ -94,87 +94,7 @@ class AppSearchBarState extends State<AppSearchBar> {
   Widget build(BuildContext context) {
     final hint = widget.hintText ?? tr.searchDoctorHint;
 
-    // ==========================================
-    // 1) الطريقة السابقة (Manual Container + TextField) - معطلة للتجربة
-    // ==========================================
-    /*
-    return Container(
-      height: widget.height,
-      decoration: BoxDecoration(
-        color: widget.backgroundColor ?? AppColors.surface,
-        borderRadius: widget.borderRadius ?? BorderRadius.circular(14),
-        boxShadow:
-            widget.boxShadow ??
-            const [
-              BoxShadow(
-                //CR hardcode color
-                // Solved
-                color: AppColors.shadowElevated,
-                blurRadius: 16,
-                offset: Offset(0, 4),
-              ),
-            ],
-      ),
-      child: TextField(
-        controller: effectiveController,
-        focusNode: widget.focusNode,
-        readOnly: widget.readOnly,
-        autofocus: widget.autofocus,
-        onTap: widget.onTap,
-        onChanged: widget.onChanged,
-        onSubmitted: widget.onSubmitted,
-        textInputAction: widget.textInputAction,
-        //CR hardcode textstyle
-        // Solved
-        style: context.medium14TextMain,
-        decoration: InputDecoration(
-          filled: false,
-          hintText: hint,
-          //CR hardcode textstyle
-          // Solved
-          hintStyle: context.regular14TextSecondary.copyWith(
-            color: AppColors.textSecondary.withValues(alpha: 0.7),
-          ),
-          prefixIcon:
-              widget.prefixIcon ??
-              const Icon(
-                Icons.search_rounded,
-                color: AppColors.textSecondary,
-                size: 22,
-              ),
-          suffixIcon:
-              widget.suffixIcon ??
-              ValueListenableBuilder<TextEditingValue>(
-                valueListenable: effectiveController,
-                builder: (context, value, _) {
-                  return Visibility(
-                    visible: value.text.isNotEmpty,
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.close_rounded,
-                        color: AppColors.textSecondary,
-                        size: 20,
-                      ),
-                      onPressed: handleClear,
-                    ),
-                  );
-                },
-              ),
-          border: InputBorder.none,
-          enabledBorder: InputBorder.none,
-          focusedBorder: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 14,
-          ),
-        ),
-      ),
-    );
-    */
 
-    // ==========================================
-    // 2) طريقة SearchBar المدمجة من Flutter (Material 3)
-    // ==========================================
     Widget searchBar = SearchBar(
       controller: effectiveController,
       focusNode: effectiveFocusNode,
@@ -241,8 +161,6 @@ class AppSearchBarState extends State<AppSearchBar> {
       ],
     );
 
-    // Read-only bar is just a shortcut: the inner field never takes taps, so
-    // it can't keep a focused/pressed look after navigating away and back.
     if (widget.readOnly) {
       searchBar = GestureDetector(
         behavior: HitTestBehavior.opaque,

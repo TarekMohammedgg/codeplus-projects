@@ -179,7 +179,6 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Tap Cancel Button
       await tester.tap(find.byKey(const Key('details_cancel_button')));
       await tester.pumpAndSettle();
 
@@ -192,7 +191,6 @@ void main() {
       );
       expect(find.text(tr.cancelAppointmentMessage), findsOneWidget);
 
-      // Confirm dialog
       await tester.tap(find.widgetWithText(TextButton, tr.confirm));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
@@ -230,7 +228,6 @@ void main() {
         );
         expect(find.text(tr.rateDoctor), findsOneWidget);
 
-        // Reviewed appointment
         final apptReviewed = _buildTestAppt(
           id: 'appt_reviewed',
           status: AppointmentStatus.completed,
@@ -287,7 +284,6 @@ void main() {
   });
 }
 
-/// The screen with its route-provided cubit, backed by the fake services.
 Widget _detailsScreen({
   required AppointmentModel appointment,
   ClinicService? clinicService,

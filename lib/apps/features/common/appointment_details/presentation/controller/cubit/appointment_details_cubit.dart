@@ -27,17 +27,14 @@ class AppointmentDetailsCubit extends Cubit<AppointmentDetailsState> {
       if (isClosed || name == null) return;
       emit(state.copyWith(specialtyName: name));
     } catch (error, stackTrace) {
-      // The specialty line is optional; the screen stays usable without it.
       addError(error, stackTrace);
     }
   }
 
-  /// Throws on failure so the screen can show the error.
   Future<void> cancel(AppointmentModel appointment, CancelledBy cancelledBy) {
     return repository.cancel(appointment, cancelledBy);
   }
 
-  /// Throws on failure so the screen can show the error.
   Future<void> markCompleted(String appointmentId) {
     return repository.markCompleted(appointmentId);
   }

@@ -65,12 +65,10 @@ class BookingLoaded extends BookingState {
   }
 }
 
-/// Step 4: the booking transaction is running.
 class BookingSubmitting extends BookingState {
   const BookingSubmitting();
 }
 
-/// Step 4: the `upcoming` appointment was created.
 class BookingConfirmed extends BookingState {
   const BookingConfirmed({required this.draft});
 

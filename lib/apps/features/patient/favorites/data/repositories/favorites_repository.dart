@@ -2,7 +2,6 @@ import 'package:doctor_hunt/apps/features/common/auth/data/service/auth_service.
 import 'package:doctor_hunt/apps/features/patient/favorites/data/service/favorites_service.dart';
 
 abstract interface class FavoritesRepository {
-  /// The signed-in user's uid, or null when signed out.
   Stream<String?> userIdChanges();
 
   Stream<Set<String>> watchFavoriteIds(String userId);

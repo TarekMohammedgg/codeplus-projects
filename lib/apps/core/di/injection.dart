@@ -55,28 +55,18 @@ import 'package:doctor_hunt/apps/core/services/app_preferences_service.dart';
 
 final getIt = GetIt.instance;
 
-/// Registers every dependency, service, repository and Cubit
-/// factory used by the app. Called once from `main()` after Firebase and storage are
-/// initialized, and from test setup with fakes registered beforehand.
-///
-/// Every dependency is registered unconditionally: callers own the
-/// lifecycle (`getIt.reset()` between test cases) instead of guarding each
-/// registration with `isRegistered`.
 //CR will tell u in session
 void setupServiceLocator({required SharedPreferences preferences}) {
-  // Storage
   getIt.registerSingleton<SharedPreferences>(preferences);
   getIt.registerLazySingleton<AppPreferencesService>(
     () => AppPreferencesService(preferences: getIt<SharedPreferences>()),
   );
 
-  // Firebase
   getIt.registerLazySingleton<FirebaseAuth>(() => FirebaseAuth.instance);
   getIt.registerLazySingleton<FirebaseFirestore>(
     () => FirebaseFirestore.instance,
   );
 
-  // Services
   getIt.registerLazySingleton<AuthService>(
     () => AuthService(
       auth: getIt<FirebaseAuth>(),
@@ -121,7 +111,6 @@ void setupServiceLocator({required SharedPreferences preferences}) {
     () => ProfileService(firestore: getIt<FirebaseFirestore>()),
   );
 
-  // Repositories
   getIt.registerLazySingleton<AuthRepository>(
     () => FirebaseAuthRepository(authService: getIt<AuthService>()),
   );
@@ -216,7 +205,6 @@ void setupServiceLocator({required SharedPreferences preferences}) {
     ),
   );
 
-  // Cubits (registered as factories to return a fresh instance on demand)
   getIt.registerFactory<AuthCubit>(
     () => AuthCubit(repository: getIt<AuthRepository>()),
   );

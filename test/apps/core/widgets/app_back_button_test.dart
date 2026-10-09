@@ -10,14 +10,12 @@ void main() {
   testWidgets('leading variant keeps the 30dp box inside an AppBar', (
     tester,
   ) async {
-    // act
     await tester.pumpWidget(
       buildTestApp(
         Scaffold(appBar: AppBar(leading: const AppBackButton.leading())),
       ),
     );
 
-    // assert
     expect(
       tester.getSize(find.byType(AppIconButton)),
       const Size.square(AppBackButton.size),
@@ -25,7 +23,6 @@ void main() {
   });
 
   testWidgets('tapping without onTap pops the current route', (tester) async {
-    // arrange
     await tester.pumpWidget(
       buildTestApp(
         Builder(
@@ -43,11 +40,9 @@ void main() {
     await tester.tap(find.text('open'));
     await tester.pumpAndSettle();
 
-    // act
     await tester.tap(find.byType(AppBackButton));
     await tester.pumpAndSettle();
 
-    // assert
     expect(find.byType(AppBackButton), findsNothing);
     expect(find.text('open'), findsOneWidget);
   });

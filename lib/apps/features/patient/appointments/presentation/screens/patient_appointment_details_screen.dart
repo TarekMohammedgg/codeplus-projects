@@ -20,7 +20,6 @@ import 'package:doctor_hunt/apps/features/common/appointment_details/presentatio
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
-/// Needs an [AppointmentDetailsCubit] above it (provided by the route).
 class PatientAppointmentDetailsScreen extends StatefulWidget {
   const PatientAppointmentDetailsScreen({super.key, required this.appointment});
 

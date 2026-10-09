@@ -2,11 +2,8 @@ import 'package:intl/intl.dart';
 
 import 'package:doctor_hunt/apps/core/models/doctor_availability.dart';
 
-// ponytail: fixed window, make admin-configurable if needed
 const bookingWindowDays = 14;
 
-/// Dates (at midnight) in the next [bookingWindowDays] days, starting today,
-/// that fall on one of the doctor's working days.
 List<DateTime> bookableDates(DoctorAvailability availability, DateTime now) {
   final today = DateTime(now.year, now.month, now.day);
   return [
@@ -15,8 +12,6 @@ List<DateTime> bookableDates(DoctorAvailability availability, DateTime now) {
   ].where((day) => availability.workingDays.contains(day.weekday)).toList();
 }
 
-/// Slot start times for [day], excluding [booked] ones and anything not
-/// after [now]. The last slot always ends at or before `endMinutes`.
 List<DateTime> slotsForDay(
   DoctorAvailability availability,
   DateTime day,
@@ -41,7 +36,6 @@ List<DateTime> slotsForDay(
   return slots;
 }
 
-/// Deterministic id of the `bookedSlots` lock document for one slot.
 String slotIdFor(String doctorId, DateTime startAt) =>
     '${doctorId}_${DateFormat('yyyyMMddHHmm').format(startAt)}';
 

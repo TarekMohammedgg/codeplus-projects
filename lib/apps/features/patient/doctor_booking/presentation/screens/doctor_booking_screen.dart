@@ -58,7 +58,6 @@ class DoctorBookingScreen extends StatelessWidget {
               return AppEmptyState(title: context.tr.doctorNoAvailableTimes);
             }
 
-            // Before the first emit, reuse the "loading slots" skeleton.
             return _BookingLoadedBody(
               state: state is BookingLoaded
                   ? state
@@ -212,7 +211,6 @@ class _BookingLoadedBody extends StatelessWidget {
                         final slotTaken = await BookingReviewRoute(
                           draft,
                         ).push<bool>(context);
-                        // Someone booked it meanwhile: refresh this day's slots.
                         if (slotTaken == true && context.mounted) {
                           context.read<BookingCubit>().selectDate(
                             state.selectedDate,

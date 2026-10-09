@@ -9,7 +9,6 @@ import 'package:doctor_hunt/apps/features/patient/profile/presentation/widgets/p
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
-/// Figma "21_Menu screen": the patient side menu opened from the Home avatar.
 class PatientMenuDrawer extends StatelessWidget {
   const PatientMenuDrawer({
     super.key,
@@ -18,14 +17,12 @@ class PatientMenuDrawer extends StatelessWidget {
     required this.onLogoutTap,
   });
 
-  /// Shell branch index: 0 Home, 1 Favorites, 2 Appointments.
   final ValueChanged<int> onTabTap;
   final VoidCallback onSettingsTap;
   final VoidCallback onLogoutTap;
 
   @override
   Widget build(BuildContext context) {
-    // Close the drawer first, then run the action from the shell.
     void closeThen(VoidCallback action) {
       Navigator.of(context).pop();
       action();

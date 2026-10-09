@@ -36,7 +36,6 @@ class AdminDoctorsCubit extends Cubit<AdminDoctorsState> {
     );
   }
 
-  /// The doctor stream re-emits the list with the new status.
   Future<void> setActive(String id, bool isActive) {
     return repository.setActive(id, isActive);
   }

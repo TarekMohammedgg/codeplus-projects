@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 
-/// Filled red heart when [isFavorite], grey outline otherwise.
 class FavoriteHeartIcon extends StatelessWidget {
   const FavoriteHeartIcon({
     super.key,

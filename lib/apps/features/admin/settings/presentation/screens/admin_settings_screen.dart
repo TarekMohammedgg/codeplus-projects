@@ -6,7 +6,7 @@ import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_card.dart';
-import 'package:doctor_hunt/apps/core/widgets/app_initial_avatar.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_profile_avatar.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_logout_dialog.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_avatar_placeholder.dart';
@@ -16,8 +16,6 @@ import 'package:doctor_hunt/apps/features/common/auth/presentation/controller/cu
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
-/// Admin shell tab. Signing out is enough: the router redirect handles
-/// navigation.
 class AdminSettingsScreen extends StatelessWidget {
   const AdminSettingsScreen({super.key});
 
@@ -61,8 +59,8 @@ class AdminSettingsScreen extends StatelessWidget {
                       Expanded(
                         child: Text(tr.settings, style: context.bold18TextMain),
                       ),
-                      AppInitialAvatar(
-                        name: name,
+                      AppProfileAvatar(
+                        imageUrl: user?.photoURL,
                         onTap: () => const AdminProfileRoute().push(context),
                       ),
                     ],

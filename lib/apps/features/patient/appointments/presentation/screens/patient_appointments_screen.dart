@@ -88,8 +88,6 @@ class _PatientAppointmentsScreenState extends State<PatientAppointmentsScreen>
           preferredSize: const Size.fromHeight(46),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
-            // `animation` ticks during the swipe; `index` only changes once
-            // the page settles, which made the pills lag behind.
             child: AnimatedBuilder(
               animation: _tabController.animation!,
               builder: (context, _) {

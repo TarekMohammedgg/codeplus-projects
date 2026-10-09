@@ -11,22 +11,18 @@ void main() {
   });
 
   test('DoctorModel list filters inactive doctors', () {
-    // arrange
     final rawDoctors = [
       _doctor(id: 'first'),
       _doctor(id: 'inactive', isActive: false),
       _doctor(id: 'second'),
     ];
 
-    // act
     final active = rawDoctors.where((d) => d.isActive);
 
-    // assert
     expect(active.map((doctor) => doctor.id), ['first', 'second']);
   });
 
   test('DoctorModel.fromFirestore parses and maps fields properly', () {
-    // act
     final doctor = DoctorModel.fromFirestore('home_doctor', {
       'name': 'Dr. Home',
       'specialtyKey': 'dentist',
@@ -43,7 +39,6 @@ void main() {
       },
     }, specialtyNameEn: AppLocale.en.buildSync().dentist);
 
-    // assert
     expect(doctor.specialty, AppLocale.en.buildSync().dentist);
     expect(doctor.rating, 4.9);
     expect(doctor.reviewsCount, 12);
@@ -53,13 +48,11 @@ void main() {
   });
 
   test('DoctorModel defaults to no rating, no fee and no availability', () {
-    // act
     final doctor = DoctorModel.fromFirestore('new_doctor', {
       'name': 'Dr. New',
       'specialtyKey': 'dentist',
     });
 
-    // assert
     expect(doctor.rating, 0);
     expect(doctor.reviewsCount, 0);
     expect(doctor.consultationFee, 0);
@@ -80,12 +73,10 @@ void main() {
 
   test('DoctorModel.fromFirestore keeps a doc with a missing field instead of '
       'throwing, so one bad doc cannot break a whole list', () {
-    // act
     final doctor = DoctorModel.fromFirestore('bad_doc', {
       'name': 'Dr. No Specialty',
     });
 
-    // assert
     expect(doctor.name, 'Dr. No Specialty');
     expect(doctor.specialty, isEmpty);
   });

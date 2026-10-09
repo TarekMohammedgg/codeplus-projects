@@ -29,7 +29,6 @@ class AdminAppointmentCard extends StatelessWidget {
   final AppointmentModel appointment;
   final SpecialtyModel? specialty;
 
-  /// Opens the appointment details (card tap and "View Details").
   final VoidCallback? onTap;
   final VoidCallback? onCancel;
   final VoidCallback? onMarkCompleted;

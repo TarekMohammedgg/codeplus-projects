@@ -53,16 +53,13 @@ void main() {
   test(
     'load emits loading then success with doctors and specialties',
     () async {
-      // arrange
       final states = expectLater(
         cubit.stream,
         emitsInOrder([isA<FindDoctorsLoading>(), isA<FindDoctorsSuccess>()]),
       );
 
-      // act
       await cubit.load();
 
-      // assert
       await states;
       final state = cubit.state as FindDoctorsSuccess;
       expect(state.doctors, hasLength(2));
@@ -72,80 +69,60 @@ void main() {
   );
 
   test('load applies route filters from Home', () async {
-    // act
     await cubit.load(specialtyId: 'dentistry', sort: DoctorSort.topRated);
 
-    // assert
     expect(visibleIds(), ['dentist']);
     expect((cubit.state as FindDoctorsSuccess).sort, DoctorSort.topRated);
   });
 
   test('load emits failure when the repository throws', () async {
-    // arrange
     final failing = FindDoctorsCubit(repository: _ThrowingDoctorRepository());
 
-    // act
     await failing.load();
 
-    // assert
     expect(failing.state, isA<FindDoctorsFailure>());
     await failing.close();
   });
 
   test('search matches the Arabic or English name', () async {
-    // arrange
     await cubit.load();
 
-    // act
     cubit.search('عمر');
 
-    // assert
     expect(visibleIds(), ['cardiologist']);
   });
 
   test('selectSpecialty(null) shows all doctors again', () async {
-    // arrange
     await cubit.load(specialtyId: 'dentistry');
 
-    // act
     cubit.selectSpecialty(null);
 
-    // assert
     expect(visibleIds(), hasLength(2));
   });
 
   test('favorites filter keeps only the patient favorites', () async {
-    // arrange
     await cubit.load();
 
-    // act
     cubit.toggleFavoritesOnly();
 
-    // assert
     expect(visibleIds({'dentist'}), ['dentist']);
   });
 
   test('sortBy topRated orders by rating desc', () async {
-    // arrange
     await cubit.load();
 
-    // act
     cubit.sortBy(DoctorSort.topRated);
 
-    // assert
     expect(visibleIds(), ['dentist', 'cardiologist']);
   });
 
   test('applyRouteFilters replaces the current filters', () async {
-    // arrange
     await cubit.load();
     cubit.search('Sara');
     cubit.toggleFavoritesOnly();
 
-    // act
     cubit.applyRouteFilters(specialtyId: 'cardiology');
 
-    // assert
     final state = cubit.state as FindDoctorsSuccess;
     expect(state.query, isEmpty);
     expect(state.favoritesOnly, isFalse);

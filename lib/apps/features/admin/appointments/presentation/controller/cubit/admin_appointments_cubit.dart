@@ -23,7 +23,6 @@ class AdminAppointmentsCubit extends Cubit<AdminAppointmentsState> {
       final map = {for (final s in specialties) s.id: s};
       emit(state.copyWith(specialties: map));
     } catch (error, stackTrace) {
-      // Specialty names are optional; the list still loads without them.
       addError(error, stackTrace);
     }
 
@@ -53,7 +52,6 @@ class AdminAppointmentsCubit extends Cubit<AdminAppointmentsState> {
     emit(state.copyWith(selectedTab: tab));
   }
 
-  /// The stream refreshes the list; failures reach the caller.
   Future<void> cancel(AppointmentModel appointment) =>
       repository.cancel(appointment);
 

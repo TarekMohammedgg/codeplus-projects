@@ -27,7 +27,6 @@ class FindDoctorsScreen extends StatefulWidget {
     this.focusSearch = false,
   });
 
-  /// Initial filters from the route query (e.g. Home's search, chips, See All).
   final String? query;
   final String? specialtyId;
   final DoctorSort? sort;
@@ -55,7 +54,6 @@ class _FindDoctorsScreenState extends State<FindDoctorsScreen> {
   @override
   void didUpdateWidget(covariant FindDoctorsScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // The tab stays alive, so new route params arrive here, not in initState.
     if (widget.query != oldWidget.query ||
         widget.specialtyId != oldWidget.specialtyId ||
         widget.sort != oldWidget.sort) {
@@ -93,7 +91,6 @@ class _FindDoctorsScreenState extends State<FindDoctorsScreen> {
       },
       child: BlocBuilder<FindDoctorsCubit, FindDoctorsState>(
         builder: (context, state) {
-          // "See All" opens a sorted list (Figma 10); search opens Find (07).
           final title = switch (widget.sort) {
             DoctorSort.popular => context.tr.popularDoctors,
             DoctorSort.topRated => context.tr.topRatedDoctors,

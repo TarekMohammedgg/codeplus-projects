@@ -151,7 +151,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(LocaleSettings.currentLocale, isNot(equals(initialLocale)));
-    // Restore
     await LocaleSettings.setLocale(AppLocale.en);
   });
 
@@ -165,7 +164,6 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    // Tap Log Out
     await tester.tap(find.byKey(const Key('settings_logout_button')));
     await tester.pumpAndSettle();
 
@@ -178,13 +176,11 @@ void main() {
     );
     expect(find.text(tr.logOutConfirmMessage), findsOneWidget);
 
-    // Tap confirm in dialog
     await tester.tap(find.widgetWithText(TextButton, tr.ok));
     await tester.pumpAndSettle();
   });
 }
 
-/// The screen with the cubits its route provides, backed by fakes.
 Widget _settingsScreen({
   FakeProfileRepository? profileRepository,
   FirebaseAuth? auth,

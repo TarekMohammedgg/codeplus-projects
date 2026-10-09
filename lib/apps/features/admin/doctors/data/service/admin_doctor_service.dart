@@ -2,8 +2,6 @@ import 'package:doctor_hunt/apps/core/models/doctor_availability.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/core/services/doctor_service.dart';
 
-/// Admin side of the `doctors` collection. A thin delegate: every query,
-/// write and parse lives in [DoctorService] (one data source per collection).
 class AdminDoctorService {
   //CR Bad DI: Avoid mixing static singletons and swallowing Firebase uninitialized errors with catch (_) => null.
   //CR Inject non-nullable `FirebaseFirestore` via constructor.

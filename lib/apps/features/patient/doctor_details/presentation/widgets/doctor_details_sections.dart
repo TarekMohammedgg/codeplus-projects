@@ -12,7 +12,6 @@ import 'package:doctor_hunt/apps/core/widgets/clinic_location_map.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
-/// "4.7 · 24 Reviews".
 class DoctorRatingSummary extends StatelessWidget {
   const DoctorRatingSummary({super.key, required this.doctor});
 
@@ -109,7 +108,6 @@ class _ReviewTile extends StatelessWidget {
   }
 }
 
-/// The ONE clinic location from `clinic/settings`, the same for every doctor.
 class ClinicLocationSection extends StatelessWidget {
   const ClinicLocationSection({super.key, required this.clinic});
 

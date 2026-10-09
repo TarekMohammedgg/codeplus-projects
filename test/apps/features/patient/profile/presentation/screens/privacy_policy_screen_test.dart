@@ -9,14 +9,11 @@ void main() {
   testWidgets(
     'PrivacyPolicyScreen renders app bar, title, bullets, and content',
     (WidgetTester tester) async {
-      // arrange
       final tr = AppLocale.en.buildSync();
 
-      // act
       await tester.pumpWidget(buildTestApp(const PrivacyPolicyScreen()));
       await tester.pumpAndSettle();
 
-      // assert
       expect(find.text(tr.privacyPolicy), findsOneWidget);
       expect(find.text(tr.privacyPolicyTitle), findsOneWidget);
       expect(find.text(tr.privacyPolicyIntro), findsOneWidget);

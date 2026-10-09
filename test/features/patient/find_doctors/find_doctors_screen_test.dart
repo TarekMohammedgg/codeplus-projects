@@ -70,10 +70,8 @@ void main() {
   testWidgets('FindDoctorsScreen renders search, filters and doctor cards', (
     WidgetTester tester,
   ) async {
-    // act
     await pumpScreen(tester);
 
-    // assert
     final tr = AppLocale.en.buildSync();
     expect(find.text(tr.searchDoctorHint), findsOneWidget);
     expect(find.text(tr.filterAll), findsOneWidget);
@@ -87,10 +85,8 @@ void main() {
   testWidgets(
     'See All (popular sort) shows the list without search or filters',
     (WidgetTester tester) async {
-      // act
       await pumpScreen(tester, sort: DoctorSort.popular);
 
-      // assert
       final tr = AppLocale.en.buildSync();
       expect(find.text(tr.popularDoctors), findsOneWidget);
       expect(find.byType(TextField), findsNothing);
@@ -102,14 +98,11 @@ void main() {
   testWidgets('tapping a heart toggles the favorite for the patient', (
     WidgetTester tester,
   ) async {
-    // arrange
     await pumpScreen(tester, favorites: {});
 
-    // act
     await tester.tap(find.byIcon(Icons.favorite_border_rounded).first);
     await tester.pump();
 
-    // assert
     expect(favoritesRepository.writes, hasLength(1));
     expect(favoritesRepository.writes.single.$3, isTrue);
   });
@@ -117,21 +110,17 @@ void main() {
   testWidgets('search with no match shows the empty state', (
     WidgetTester tester,
   ) async {
-    // arrange
     await pumpScreen(tester);
 
-    // act
     await tester.enterText(find.byType(TextField), 'zzz');
     await tester.pump();
 
-    // assert
     expect(find.text(AppLocale.en.buildSync().noDoctorsFound), findsOneWidget);
   });
 
   testWidgets(
     'backward navigation via back button navigates to home when canPop is false',
     (WidgetTester tester) async {
-      // arrange
       final router = GoRouter(
         initialLocation: '/doctors',
         routes: [
@@ -156,11 +145,9 @@ void main() {
       await tester.pumpWidget(buildTestRouterApp(router));
       await tester.pumpAndSettle();
 
-      // act
       await tester.tap(find.byIcon(Icons.arrow_back_ios_new_rounded));
       await tester.pumpAndSettle();
 
-      // assert
       expect(find.text('Home Page'), findsOneWidget);
     },
   );
@@ -168,7 +155,6 @@ void main() {
   testWidgets(
     'backward navigation via system back navigates to home when canPop is false',
     (WidgetTester tester) async {
-      // arrange
       final router = GoRouter(
         initialLocation: '/doctors',
         routes: [
@@ -193,11 +179,9 @@ void main() {
       await tester.pumpWidget(buildTestRouterApp(router));
       await tester.pumpAndSettle();
 
-      // act
       await tester.binding.handlePopRoute();
       await tester.pumpAndSettle();
 
-      // assert
       expect(find.text('Home Page'), findsOneWidget);
     },
   );
@@ -205,7 +189,6 @@ void main() {
   testWidgets('backward navigation via back button pops when canPop is true', (
     WidgetTester tester,
   ) async {
-    // arrange
     final router = GoRouter(
       initialLocation: '/start',
       routes: [
@@ -239,11 +222,9 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(FindDoctorsScreen), findsOneWidget);
 
-    // act
     await tester.tap(find.byIcon(Icons.arrow_back_ios_new_rounded));
     await tester.pumpAndSettle();
 
-    // assert
     expect(find.text('Go to Doctors'), findsOneWidget);
   });
 }

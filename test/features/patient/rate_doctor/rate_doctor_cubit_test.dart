@@ -81,10 +81,10 @@ void main() {
       expect(cubit.state.rating, 4);
       expect(cubit.state.canSubmit, isTrue);
 
-      cubit.setRating(0); // Ignored, out of range
+      cubit.setRating(0);
       expect(cubit.state.rating, 4);
 
-      cubit.setRating(6); // Ignored, out of range
+      cubit.setRating(6);
       expect(cubit.state.rating, 4);
     });
 

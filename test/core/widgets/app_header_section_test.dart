@@ -95,7 +95,6 @@ void main() {
       expect(find.byIcon(Icons.translate_rounded), findsOneWidget);
       expect(find.text('EN'), findsOneWidget);
 
-      // Reset
       LocaleSettings.setLocaleSync(AppLocale.en);
     },
   );
@@ -172,7 +171,6 @@ void main() {
   testWidgets('AppHeaderSection handles searchReadOnly and onSearchTap', (
     WidgetTester tester,
   ) async {
-    // arrange
     bool searchTapped = false;
 
     await tester.pumpWidget(
@@ -187,11 +185,9 @@ void main() {
       ),
     );
 
-    // act
     await tester.tap(find.byType(AppSearchBar));
     await tester.pump();
 
-    // assert
     expect(searchTapped, isTrue);
   });
 }

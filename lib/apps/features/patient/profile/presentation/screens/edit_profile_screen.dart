@@ -23,7 +23,6 @@ import 'package:doctor_hunt/apps/features/patient/profile/presentation/controlle
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
-/// Needs a [ProfileCubit] above it (provided by the route).
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key, this.profile});
 

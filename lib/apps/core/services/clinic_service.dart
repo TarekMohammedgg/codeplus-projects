@@ -3,7 +3,6 @@ import 'package:latlong2/latlong.dart';
 
 import 'package:doctor_hunt/apps/core/models/clinic_model.dart';
 
-/// Reads and writes the one clinic document, `clinic/settings`.
 class ClinicService {
   ClinicService({required FirebaseFirestore firestore})
     // ignore: prefer_initializing_formals

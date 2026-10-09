@@ -6,8 +6,6 @@ enum AppointmentStatus { upcoming, completed, cancelled }
 
 enum CancelledBy { patient, admin }
 
-/// One booking in `appointments/{id}`. Doctor and patient details are a
-/// snapshot taken at booking time, so lists never need extra lookups.
 class AppointmentModel {
   const AppointmentModel({
     required this.id,

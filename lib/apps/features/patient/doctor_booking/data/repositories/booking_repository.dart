@@ -8,11 +8,8 @@ import 'package:doctor_hunt/apps/features/patient/profile/data/service/profile_s
 abstract interface class BookingRepository {
   Future<Set<DateTime>> fetchBookedStarts(String doctorId, DateTime day);
 
-  /// The one clinic location, read live so admin changes show immediately.
   Stream<ClinicModel?> watchClinic();
 
-  /// Creates an `upcoming` appointment for the signed-in patient.
-  /// Throws `SlotAlreadyBookedException` when someone booked the slot first.
   Future<void> book(BookingDraft draft);
 }
 
@@ -41,7 +38,6 @@ class BookingRepositoryImpl implements BookingRepository {
   Future<void> book(BookingDraft draft) async {
     final user = authService.currentUser;
     if (user == null) throw StateError('Booking requires a signed-in patient');
-    // The appointment keeps a snapshot of the patient's contact details.
     final profile = await profileService.streamProfile(user.uid).first;
     await appointmentService.book(
       doctor: draft.doctor,

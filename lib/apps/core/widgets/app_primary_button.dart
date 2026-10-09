@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
-/// A standardized, reusable primary button widget with built-in loading state,
-/// outline styling, and icon support for the Doctor Hunt application.
 class AppPrimaryButton extends StatelessWidget {
   final String label;
   final VoidCallback? onPressed;
@@ -19,8 +17,6 @@ class AppPrimaryButton extends StatelessWidget {
   final double borderWidth;
   final BorderRadius? borderRadius;
 
-  /// Defaults to 12dp horizontal so half-width buttons keep their label on
-  /// one line (Material's default is 24dp per side).
   final EdgeInsetsGeometry? padding;
   final TextStyle? textStyle;
   final bool isOutlined;
@@ -126,7 +122,6 @@ class AppPrimaryButton extends StatelessWidget {
                     ),
                 elevation: 0,
               ),
-              // Never wrap the label; shrink it only when it truly can't fit.
               child: FittedBox(
                 fit: BoxFit.scaleDown,
                 child: buildButtonChild(),
@@ -148,7 +143,6 @@ class AppPrimaryButton extends StatelessWidget {
                     context.semiBold16White.copyWith(fontSize: fontSize),
                 elevation: 0,
               ),
-              // Never wrap the label; shrink it only when it truly can't fit.
               child: FittedBox(
                 fit: BoxFit.scaleDown,
                 child: buildButtonChild(),

@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
-/// A standardized, reusable text button widget with optional loading state
-/// and icon support for the Doctor Hunt application.
 class AppTextButton extends StatelessWidget {
   final String label;
   final VoidCallback? onPressed;
@@ -36,9 +34,6 @@ class AppTextButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final effectiveFg = foregroundColor ?? AppColors.primary;
-    // Resolved once and set via TextButton's own `textStyle`, which
-    // TextButton already applies to its child through DefaultTextStyle —
-    // the label/icon below must not set their own style on top of it.
     final effectiveTextStyle = (textStyle ?? context.semiBold14).copyWith(
       color: effectiveFg,
     );

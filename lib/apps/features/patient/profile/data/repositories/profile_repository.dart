@@ -18,8 +18,6 @@ abstract interface class ProfileRepository {
     bool? notificationsEnabled,
   });
 
-  /// Uploads [newImageBytes] (if any), saves the profile document and keeps
-  /// the Firebase Auth name/photo in sync.
   Future<void> saveProfile({
     required String uid,
     required String name,

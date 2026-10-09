@@ -6,8 +6,6 @@ import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
-/// "All" + one chip per specialty. Shared by the patient Doctors tab and the
-/// admin Doctors list.
 class DoctorFilterChips extends StatelessWidget {
   const DoctorFilterChips({
     super.key,
@@ -21,7 +19,6 @@ class DoctorFilterChips extends StatelessWidget {
   final String? selectedSpecialtyId;
   final ValueChanged<String?> onSpecialtySelected;
 
-  /// Doctors per specialty id (null key = "All"); shown as "Label (n)".
   final Map<String?, int>? counts;
 
   String _label(BuildContext context, String? specialtyId, String label) {

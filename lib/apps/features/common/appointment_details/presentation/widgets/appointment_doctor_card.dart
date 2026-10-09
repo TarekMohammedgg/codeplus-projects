@@ -9,8 +9,6 @@ import 'package:doctor_hunt/apps/core/widgets/doctor_avatar_placeholder.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_image.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
-/// Doctor photo, name, status, specialty and fee at the top of the
-/// patient and admin appointment details screens.
 class AppointmentDoctorCard extends StatelessWidget {
   const AppointmentDoctorCard({
     super.key,

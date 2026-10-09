@@ -10,7 +10,6 @@ import '../../../helpers/test_fakes.dart';
 import 'package:doctor_hunt/apps/core/services/app_preferences_service.dart';
 
 void main() {
-  /// Pumps the real redirect over stub pages and returns where it landed.
   Future<String> landAt(
     WidgetTester tester,
     String location, {
@@ -51,10 +50,8 @@ void main() {
   testWidgets(
     'signed out with seen onboarding: onboarding route redirects to Choose Role',
     (tester) async {
-      // act
       final location = await landAt(tester, '/', hasSeenOnboarding: true);
 
-      // assert
       expect(location, '/role-selection');
     },
   );
@@ -62,11 +59,9 @@ void main() {
   testWidgets('signed out: onboarding and auth screens are reachable', (
     tester,
   ) async {
-    // act
     final onboarding = await landAt(tester, '/');
     final login = await landAt(tester, '/login');
 
-    // assert
     expect(onboarding, '/');
     expect(login, '/login');
   });
@@ -74,25 +69,20 @@ void main() {
   testWidgets('signed out: a protected page goes to Choose Role', (
     tester,
   ) async {
-    // act
     final location = await landAt(tester, '/home');
 
-    // assert
     expect(location, '/role-selection');
   });
 
   testWidgets('signed-in patient skips onboarding to Home', (tester) async {
-    // act
     final location = await landAt(tester, '/', signedIn: true);
 
-    // assert
     expect(location, '/home');
   });
 
   testWidgets('signed-in admin skips Choose Role to the admin doctors list', (
     tester,
   ) async {
-    // act
     final location = await landAt(
       tester,
       '/role-selection',
@@ -100,15 +90,25 @@ void main() {
       isAdmin: true,
     );
 
-    // assert
+    expect(location, '/admin/doctors');
+  });
+
+  testWidgets('signed-in admin reopening the app lands on admin pages', (
+    tester,
+  ) async {
+    final location = await landAt(
+      tester,
+      '/home',
+      signedIn: true,
+      isAdmin: true,
+    );
+
     expect(location, '/admin/doctors');
   });
 
   testWidgets('a patient cannot open admin pages', (tester) async {
-    // act
     final location = await landAt(tester, '/admin/doctors', signedIn: true);
 
-    // assert
     expect(location, '/home');
   });
 }

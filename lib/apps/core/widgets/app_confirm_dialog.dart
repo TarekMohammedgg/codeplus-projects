@@ -5,7 +5,6 @@ import 'package:doctor_hunt/apps/core/widgets/app_text_button.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
-/// Cancel / confirm dialog. Returns `true` only on confirm.
 Future<bool> showAppConfirmDialog(
   BuildContext context, {
   required String title,

@@ -17,8 +17,6 @@ import '../widgets/home_load_error.dart';
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, this.user});
 
-  /// The signed-in user, if any. Supplied by the route from the auth
-  /// repository; this widget only formats display data from it.
   final User? user;
 
   @override
@@ -78,8 +76,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   showLanguageToggle: true,
                   showProfile: true,
                   profileImage: user?.photoURL,
-                  // Builder context sits above this Scaffold, so this opens
-                  // the shell's menu drawer.
                   leading: AppIconButton(
                     icon: Icons.menu_rounded,
                     iconSize: 22,

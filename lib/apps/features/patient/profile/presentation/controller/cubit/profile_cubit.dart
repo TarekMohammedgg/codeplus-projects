@@ -58,7 +58,6 @@ class ProfileCubit extends Cubit<ProfileState> {
                 ? profile.copyWith(avatarUrl: resolvedAvatar)
                 : profile;
 
-            // If Firestore doesn't have photoUrl yet but Auth does, sync to Firestore
             if (!hasDocPhoto && authPhoto != null && authPhoto.isNotEmpty) {
               unawaited(
                 repository.updateProfile(uid: targetUid, photoUrl: authPhoto),
@@ -73,10 +72,8 @@ class ProfileCubit extends Cubit<ProfileState> {
         );
   }
 
-  /// Signed-in user, used as a fallback for empty profile fields.
   User? get currentUser => authRepository.currentUser;
 
-  /// Throws on failure so the screen can show the error.
   Future<void> saveProfile({
     required String name,
     required String phone,

@@ -21,8 +21,6 @@ import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/wi
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
-/// Step 3 (review) + step 4 (confirm). Pops `true` when the slot was taken
-/// meanwhile, so the slot screen reloads.
 class BookingReviewScreen extends StatefulWidget {
   const BookingReviewScreen({super.key, required this.draft});
 

@@ -69,7 +69,7 @@ void main() {
       expect(
         PhoneUtils.isValidPhone('01812345678'),
         isFalse,
-      ); // Invalid carrier prefix
+      );
       expect(PhoneUtils.isValidPhone(''), isFalse);
 
       expect(AppValidators.validatePhone(''), isNotNull);

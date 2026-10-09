@@ -34,26 +34,20 @@ void main() {
   });
 
   test('patient sign-in succeeds with the signIn action', () async {
-    // arrange
     final cubit = AuthCubit(repository: _FakeAuthRepository());
 
-    // act
     await cubit.signIn(email: 'user@example.com', password: 'password');
 
-    // assert
     expect((cubit.state as AuthSuccess).action, AuthAction.signIn);
     await cubit.close();
   });
 
   test('admin login by a non-admin signs out and reports the code', () async {
-    // arrange
     final repository = _FakeAuthRepository();
     final cubit = AuthCubit(repository: repository);
 
-    // act
     await cubit.signInAsAdmin(email: 'user@example.com', password: 'password');
 
-    // assert
     expect(repository.signedOut, isTrue);
     expect(
       (cubit.state as AuthFailure).code,
@@ -63,27 +57,21 @@ void main() {
   });
 
   test('admin login by an admin succeeds and stays signed in', () async {
-    // arrange
     final repository = _FakeAuthRepository(isAdmin: true);
     final cubit = AuthCubit(repository: repository);
 
-    // act
     await cubit.signInAsAdmin(email: 'admin@example.com', password: 'password');
 
-    // assert
     expect((cubit.state as AuthSuccess).action, AuthAction.adminSignIn);
     expect(repository.signedOut, isFalse);
     await cubit.close();
   });
 
   test('cancelled Google sign-in returns to the initial state', () async {
-    // arrange
     final cubit = AuthCubit(repository: _FakeAuthRepository());
 
-    // act
     await cubit.signInWithGoogle();
 
-    // assert
     expect(cubit.state, isA<AuthInitial>());
     await cubit.close();
   });
@@ -120,7 +108,6 @@ class _FakeAuthRepository implements AuthRepository {
     throw StateError('not used in this test');
   }
 
-  /// Null = the user cancelled the Google picker.
   @override
   Future<UserCredential?> signInWithGoogle() async => null;
 

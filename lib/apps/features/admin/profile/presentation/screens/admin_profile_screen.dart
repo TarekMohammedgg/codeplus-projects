@@ -22,7 +22,6 @@ import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
-/// Needs an [AdminProfileCubit] above it (provided by the route).
 class AdminProfileScreen extends StatefulWidget {
   const AdminProfileScreen({super.key});
 
@@ -144,7 +143,6 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
           body: SafeArea(
             child: Column(
               children: [
-                // Top App Bar
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
@@ -178,7 +176,6 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
                           children: [
                             12.verticalSpace,
 
-                            // Avatar Picker
                             Center(
                               child: Stack(
                                 children: [
@@ -251,7 +248,6 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
 
                             24.verticalSpace,
 
-                            // Full Name
                             AppTextField(
                               key: const Key('admin_profile_name_field'),
                               controller: _nameController,
@@ -263,7 +259,6 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
 
                             16.verticalSpace,
 
-                            // Email
                             AppTextField(
                               key: const Key('admin_profile_email_field'),
                               controller: _emailController,
@@ -276,7 +271,6 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
 
                             28.verticalSpace,
 
-                            // Clinic Information Section Header
                             Text(
                               context.tr.clinicLocation,
                               style: context.bold16TextMain,
@@ -289,7 +283,6 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
 
                             14.verticalSpace,
 
-                            // Clinic Address Arabic
                             AppTextField(
                               key: const Key('admin_profile_address_ar_field'),
                               controller: _addressArController,
@@ -306,7 +299,6 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
 
                             16.verticalSpace,
 
-                            // Clinic Address English
                             AppTextField(
                               key: const Key('admin_profile_address_en_field'),
                               controller: _addressEnController,
@@ -323,7 +315,6 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
 
                             20.verticalSpace,
 
-                            // FlutterMap Location Picker
                             ClipRRect(
                               borderRadius: BorderRadius.circular(16),
                               child: Container(
@@ -414,7 +405,6 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
 
                             32.verticalSpace,
 
-                            // Save Button
                             SizedBox(
                               width: double.infinity,
                               child: AppPrimaryButton(

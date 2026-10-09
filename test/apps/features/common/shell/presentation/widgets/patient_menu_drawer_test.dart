@@ -52,10 +52,8 @@ void main() {
   }
 
   testWidgets('shows the patient name, phone and menu items', (tester) async {
-    // act
     await pumpOpenDrawer(tester);
 
-    // assert
     expect(find.text(profile.name), findsOneWidget);
     expect(find.text(profile.phone), findsOneWidget);
     expect(find.text(tr.tabHome), findsOneWidget);
@@ -68,39 +66,30 @@ void main() {
   testWidgets('My Appointments closes the drawer and opens tab 2', (
     tester,
   ) async {
-    // arrange
     await pumpOpenDrawer(tester);
 
-    // act
     await tester.tap(find.text(tr.myAppointments));
     await tester.pumpAndSettle();
 
-    // assert
     expect(tappedTab, 2);
     expect(scaffoldKey.currentState!.isDrawerOpen, isFalse);
   });
 
   testWidgets('Settings calls onSettingsTap', (tester) async {
-    // arrange
     await pumpOpenDrawer(tester);
 
-    // act
     await tester.tap(find.text(tr.settings));
     await tester.pumpAndSettle();
 
-    // assert
     expect(settingsTapped, isTrue);
   });
 
   testWidgets('Logout calls onLogoutTap', (tester) async {
-    // arrange
     await pumpOpenDrawer(tester);
 
-    // act
     await tester.tap(find.byKey(const Key('menu_logout_tile')));
     await tester.pumpAndSettle();
 
-    // assert
     expect(logoutTapped, isTrue);
   });
 }

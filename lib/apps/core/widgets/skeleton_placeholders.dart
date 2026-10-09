@@ -3,7 +3,6 @@ import 'package:skeletonizer/skeletonizer.dart';
 import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
 import 'package:doctor_hunt/apps/core/models/review_model.dart';
 
-/// Fake core models that only give skeleton loading states their shape.
 
 AppointmentModel skeletonAppointment() => AppointmentModel(
   id: '',

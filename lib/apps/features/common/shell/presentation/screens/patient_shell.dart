@@ -34,8 +34,6 @@ class PatientShell extends StatelessWidget {
       ),
       child: Scaffold(
         body: navigationShell,
-        // Wider than the default edge so the swipe starts outside the
-        // Android system back-gesture zone.
         drawerEdgeDragWidth: 60,
         drawer: PatientMenuDrawer(
           onTabTap: navigationShell.goBranch,

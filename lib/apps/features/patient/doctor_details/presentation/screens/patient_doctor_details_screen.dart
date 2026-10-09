@@ -42,7 +42,6 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
       (cubit) => cubit.state.isFavorite(doctor.id),
     );
 
-    // Full-screen route, outside PatientShell's listener.
     return BlocListener<FavoritesCubit, FavoritesState>(
       listenWhen: (_, current) => current is FavoritesFailure,
       listener: (context, _) => context.showCustomSnackBar(

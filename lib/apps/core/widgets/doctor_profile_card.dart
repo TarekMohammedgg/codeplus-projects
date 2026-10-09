@@ -10,8 +10,6 @@ import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
-/// Full card (Doctor Details / Review) shows the fee; [compact] is the
-/// smaller Select Time card without the fee.
 class DoctorProfileCard extends StatelessWidget {
   const DoctorProfileCard({
     super.key,

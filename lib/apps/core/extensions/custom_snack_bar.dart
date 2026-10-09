@@ -6,7 +6,6 @@ import 'package:doctor_hunt/generated/style_atoms.dart';
 enum SnackBarStatus { success, error, warning, info }
 
 extension CustomSnackBarExtension on BuildContext {
-  /// Displays a floating snackbar with custom styling based on [status].
   void showCustomSnackBar({
     required String message,
     String? title,
@@ -119,7 +118,6 @@ extension CustomSnackBarExtension on BuildContext {
     );
   }
 
-  /// Convenience shortcut for success snackbar.
   void showSuccessSnackBar(String message, {String? title}) =>
       showCustomSnackBar(
         message: message,
@@ -127,14 +125,12 @@ extension CustomSnackBarExtension on BuildContext {
         status: SnackBarStatus.success,
       );
 
-  /// Convenience shortcut for error snackbar.
   void showErrorSnackBar(String message, {String? title}) => showCustomSnackBar(
     message: message,
     title: title,
     status: SnackBarStatus.error,
   );
 
-  /// Convenience shortcut for warning snackbar.
   void showWarningSnackBar(String message, {String? title}) =>
       showCustomSnackBar(
         message: message,
@@ -142,7 +138,6 @@ extension CustomSnackBarExtension on BuildContext {
         status: SnackBarStatus.warning,
       );
 
-  /// Convenience shortcut for info snackbar.
   void showInfoSnackBar(String message, {String? title}) => showCustomSnackBar(
     message: message,
     title: title,

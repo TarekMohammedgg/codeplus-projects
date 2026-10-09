@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
-/// Uppercase caption shown above a form field.
 class AppFieldLabel extends StatelessWidget {
   const AppFieldLabel(this.text, {super.key});
 

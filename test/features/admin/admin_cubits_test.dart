@@ -40,14 +40,11 @@ void main() {
   test(
     'AdminDoctorsCubit.setActive deactivates through the repository',
     () async {
-      // arrange
       final repository = _FakeAdminDoctorsRepository(const Stream.empty());
       final cubit = AdminDoctorsCubit(repository: repository);
 
-      // act
       await cubit.setActive('doctor-1', false);
 
-      // assert
       expect(repository.activeChanges, [('doctor-1', false)]);
       await cubit.close();
     },
@@ -97,14 +94,12 @@ void main() {
       expect(cubit.state.doctor.id, 'doc-1');
       expect(cubit.state.doctor.name, 'Dr. Gregory House');
 
-      // Test stream update
       final updateDoctor = initialDoctor.copyWith(consultationFee: 150);
       streamController.add(updateDoctor);
       await Future<void>.delayed(const Duration(milliseconds: 50));
 
       expect(cubit.state.doctor.consultationFee, 150);
 
-      // Test toggle active
       await cubit.toggleActive(false);
       expect(service.activeChanges, [('doc-1', false)]);
       expect(cubit.state.doctor.isActive, false);

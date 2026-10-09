@@ -22,23 +22,18 @@ void main() {
   const doctors = [newDoctor, bestRated, mostReviewed];
 
   test('sortByPopularity orders by reviewsCount desc', () {
-    // act
     final sorted = sortByPopularity(doctors);
 
-    // assert
     expect(sorted.map((d) => d.id), ['most-reviewed', 'best-rated', 'new']);
   });
 
   test('sortByTopRated orders by rating desc', () {
-    // act
     final sorted = sortByTopRated(doctors);
 
-    // assert
     expect(sorted.map((d) => d.id), ['best-rated', 'most-reviewed', 'new']);
   });
 
   test('sortByPopularity breaks reviewsCount ties by rating', () {
-    // arrange
     const lowRated = DoctorModel(
       id: 'low',
       name: 'D',
@@ -54,30 +49,23 @@ void main() {
       reviewsCount: 10,
     );
 
-    // act
     final sorted = sortByPopularity([lowRated, highRated]);
 
-    // assert
     expect(sorted.map((d) => d.id), ['high', 'low']);
   });
 
   test('sorting does not mutate the input list', () {
-    // arrange
     final input = [...doctors];
 
-    // act
     sortByTopRated(input);
 
-    // assert
     expect(input.map((d) => d.id), ['new', 'best-rated', 'most-reviewed']);
   });
 
   test('sortDoctors picks the order for each DoctorSort', () {
-    // act
     final popular = sortDoctors(doctors, DoctorSort.popular);
     final topRated = sortDoctors(doctors, DoctorSort.topRated);
 
-    // assert
     expect(popular.first.id, 'most-reviewed');
     expect(topRated.first.id, 'best-rated');
   });

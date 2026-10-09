@@ -107,9 +107,6 @@ class RoleSelectionRoute extends GoRouteData with $RoleSelectionRoute {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Patient Shell (4 tabs: Home, Favorites, Appointments, Profile)
-// ---------------------------------------------------------------------------
 @TypedStatefulShellRoute<PatientShellRoute>(
   branches: [
     TypedStatefulShellBranch<PatientHomeBranch>(
@@ -218,9 +215,6 @@ class ProfileRoute extends GoRouteData with $ProfileRoute {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Admin Shell (3 tabs: Doctors, Appointments, Settings)
-// ---------------------------------------------------------------------------
 @TypedStatefulShellRoute<AdminShellRoute>(
   branches: [
     TypedStatefulShellBranch<AdminDoctorsBranch>(
@@ -275,7 +269,7 @@ class AdminDoctorsRoute extends GoRouteData with $AdminDoctorsRoute {
     return BlocProvider<AdminDoctorsCubit>(
       create: (_) => getIt<AdminDoctorsCubit>(),
       child: AdminDoctorsScreen(
-        adminName: getIt<AuthRepository>().currentUser?.displayName,
+        adminPhotoUrl: getIt<AuthRepository>().currentUser?.photoURL,
       ),
     );
   }
@@ -289,7 +283,7 @@ class AdminAppointmentsRoute extends GoRouteData with $AdminAppointmentsRoute {
     return BlocProvider<AdminAppointmentsCubit>(
       create: (_) => getIt<AdminAppointmentsCubit>()..init(),
       child: AdminAppointmentsScreen(
-        adminName: getIt<AuthRepository>().currentUser?.displayName,
+        adminPhotoUrl: getIt<AuthRepository>().currentUser?.photoURL,
       ),
     );
   }
@@ -307,9 +301,6 @@ class AdminSettingsRoute extends GoRouteData with $AdminSettingsRoute {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Standalone / Full-Screen Routes
-// ---------------------------------------------------------------------------
 @TypedGoRoute<FindDoctorsRoute>(path: AppRoutePaths.doctors)
 class FindDoctorsRoute extends GoRouteData with $FindDoctorsRoute {
   const FindDoctorsRoute({
@@ -323,7 +314,6 @@ class FindDoctorsRoute extends GoRouteData with $FindDoctorsRoute {
   final String? specialtyId;
   final DoctorSort? sort;
 
-  /// Opens with the search field focused (Home's search bar).
   final bool focus;
 
   @override

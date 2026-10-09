@@ -5,7 +5,6 @@ import 'package:doctor_hunt/apps/core/services/doctor_service.dart';
 
 void main() {
   test('newDoctorData writes only the locked doctor fields', () {
-    // act
     final data = newDoctorData(
       fullNameAr: ' د. سارة ',
       fullNameEn: ' Dr. Sara ',
@@ -14,7 +13,6 @@ void main() {
       imageUrl: ' https://res.cloudinary.com/x/sara ',
     );
 
-    // assert
     expect(data.keys.toSet(), {
       'fullName',
       'specialtyId',
@@ -35,7 +33,6 @@ void main() {
   });
 
   test('newDoctorData stores an empty image url as null', () {
-    // act
     final data = newDoctorData(
       fullNameAr: 'أ',
       fullNameEn: 'A',
@@ -44,19 +41,16 @@ void main() {
       imageUrl: '  ',
     );
 
-    // assert
     expect(data['imageUrl'], isNull);
   });
 
   test('DoctorModel parses consultationFee', () {
-    // act
     final doctor = DoctorModel.fromFirestore('doc_1', {
       'fullName': {'ar': 'أ', 'en': 'A'},
       'specialtyId': 'dentistry',
       'consultationFee': 45,
     });
 
-    // assert
     expect(doctor.consultationFee, 45);
     expect(doctor.consultationFee, 45);
   });

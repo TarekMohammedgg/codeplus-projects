@@ -4,8 +4,6 @@ import 'package:doctor_hunt/apps/core/models/doctor_availability.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/core/services/specialty_service.dart';
 
-/// Single Firestore access point for the `doctors` collection: every query,
-/// write and parse of a doctor lives here (patient reads and admin CRUD).
 class DoctorService {
   DoctorService({
     required FirebaseFirestore firestore,
@@ -21,7 +19,6 @@ class DoctorService {
   CollectionReference<Map<String, dynamic>> get _doctors =>
       _firestore.collection('doctors');
 
-  /// Patients only ever see active doctors.
   Future<List<DoctorModel>> fetchActiveDoctors() async {
     final snapshot = await _doctors.where('isActive', isEqualTo: true).get();
     final specialtyNames = await _specialtyService.fetchSpecialtyNames();
@@ -30,7 +27,6 @@ class DoctorService {
         .toList();
   }
 
-  /// Every doctor (active or not), newest change first, for the admin list.
   Stream<List<DoctorModel>> streamAllDoctors() {
     return _doctors.snapshots().asyncMap((snapshot) async {
       final specialtyNames = await _specialtyService.fetchSpecialtyNames();
@@ -96,8 +92,6 @@ class DoctorService {
     });
   }
 
-  /// Doctors are never deleted (booking history keeps them); patients only
-  /// see active ones.
   Future<void> setActive(String id, bool isActive) {
     return _doctors.doc(id).update({
       'isActive': isActive,
@@ -151,8 +145,6 @@ String? _cleanUrl(String? value) {
   return trimmed == null || trimmed.isEmpty ? null : trimmed;
 }
 
-/// The only fields a new doctor document gets (see Locked decisions):
-/// no location, no experience, no bio/services/flags.
 Map<String, dynamic> newDoctorData({
   required String fullNameAr,
   required String fullNameEn,

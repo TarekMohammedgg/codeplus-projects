@@ -141,7 +141,7 @@ void main() {
         id: '1',
         name: 'Doctor 1',
         specialty: 'Spec',
-        lastModified: tModified, // updated recently
+        lastModified: tModified,
       );
       final doc2 = DoctorModel(
         id: '2',
@@ -184,7 +184,6 @@ void main() {
       sortDoctors(list);
       expect(list.map((d) => d.id).toList(), ['3', '2', '1']);
 
-      // Simulate deleting doc2
       list.removeWhere((d) => d.id == '2');
       sortDoctors(list);
 

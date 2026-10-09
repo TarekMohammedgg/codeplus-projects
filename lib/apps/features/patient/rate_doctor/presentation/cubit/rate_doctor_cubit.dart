@@ -85,7 +85,6 @@ class RateDoctorCubit extends Cubit<RateDoctorState> {
         emit(state.copyWith(specialtyName: name));
       }
     } catch (error, stackTrace) {
-      // The specialty line is optional; the screen stays usable without it.
       addError(error, stackTrace);
     }
   }

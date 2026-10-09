@@ -3,13 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_icon_button.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
-/// The one back button used on every screen (Figma: white 30dp box,
-/// radius 10, chevron). Taps pop the route unless [onTap] is given.
 class AppBackButton extends StatelessWidget {
   const AppBackButton({super.key, this.onTap}) : _asLeading = false;
 
-  /// For `AppBar.leading`: keeps the 30dp box (no stretching) and puts it
-  /// 20dp from the screen edge.
   const AppBackButton.leading({super.key, this.onTap}) : _asLeading = true;
 
   final VoidCallback? onTap;

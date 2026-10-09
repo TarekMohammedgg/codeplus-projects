@@ -144,7 +144,6 @@ class _RateDoctorViewState extends State<_RateDoctorView> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        // Doctor Summary Card
                         SizedBox(
                           width: double.infinity,
                           child: AppCard(
@@ -209,7 +208,6 @@ class _RateDoctorViewState extends State<_RateDoctorView> {
                         ),
                         28.verticalSpace,
 
-                        // Rating prompt
                         Text(
                           context.tr.ratingDoctorSubtitle,
                           style: context.medium14TextSecondary,
@@ -217,7 +215,6 @@ class _RateDoctorViewState extends State<_RateDoctorView> {
                         ),
                         20.verticalSpace,
 
-                        // 5 Stars
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: List.generate(5, (index) {
@@ -258,7 +255,6 @@ class _RateDoctorViewState extends State<_RateDoctorView> {
                         ],
                         32.verticalSpace,
 
-                        // Optional Comment
                         Align(
                           alignment: AlignmentDirectional.centerStart,
                           child: Text(
@@ -291,7 +287,6 @@ class _RateDoctorViewState extends State<_RateDoctorView> {
                   ),
                 ),
 
-                // Submit Button
                 Padding(
                   padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
                   child: AppPrimaryButton(

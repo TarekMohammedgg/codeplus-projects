@@ -4,7 +4,6 @@ import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
-/// Icon tile + small label + value (date, time, fee on appointment cards).
 class AppointmentInfoTile extends StatelessWidget {
   const AppointmentInfoTile({
     super.key,
@@ -45,8 +44,6 @@ class AppointmentInfoTile extends StatelessWidget {
                 ),
               ),
               2.verticalSpace,
-              // Narrow columns (admin card) shrink the value instead of
-              // cutting it off.
               FittedBox(
                 fit: BoxFit.scaleDown,
                 alignment: AlignmentDirectional.centerStart,

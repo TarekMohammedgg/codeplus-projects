@@ -174,32 +174,26 @@ void main() {
   testWidgets('Cancelling the log out dialog keeps the admin signed in', (
     WidgetTester tester,
   ) async {
-    // arrange
     final tr = AppLocale.en.buildSync();
     final router = await pumpSettingsRouter(tester);
     await tester.tap(find.text(tr.logOut));
     await tester.pumpAndSettle();
 
-    // act
     await tester.tap(find.text(tr.cancel));
     await tester.pumpAndSettle();
 
-    // assert
     expect(router.state.matchedLocation, '/admin/settings');
   });
 
   testWidgets('Tapping the profile header opens the admin profile', (
     WidgetTester tester,
   ) async {
-    // arrange
     final router = await pumpSettingsRouter(tester);
     expect(find.text('Mona'), findsOneWidget);
 
-    // act
     await tester.tap(find.text('Mona'));
     await tester.pumpAndSettle();
 
-    // assert
     expect(router.state.matchedLocation, '/admin/profile');
   });
 }

@@ -5,8 +5,6 @@ import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
 import 'package:doctor_hunt/apps/core/models/review_model.dart';
 import 'package:doctor_hunt/apps/core/utils/rating_utils.dart';
 
-/// Single Firestore access point for `reviews` and the doctor rating
-/// aggregate they update.
 class ReviewService {
   ReviewService({required FirebaseFirestore firestore})
     // ignore: prefer_initializing_formals
@@ -17,7 +15,6 @@ class ReviewService {
   CollectionReference<Map<String, dynamic>> get _reviews =>
       _firestore.collection('reviews');
 
-  /// Newest first.
   Future<List<ReviewModel>> fetchRecentReviews(
     String doctorId, {
     int limit = 5,
@@ -37,10 +34,6 @@ class ReviewService {
     return reviews.take(limit).toList();
   }
 
-  /// Saves the review (doc id = appointment id, so one per appointment) and
-  /// updates the doctor's average and count in the same transaction.
-  /// Throws [ReviewNotAllowedException] unless the appointment is completed
-  /// and not reviewed yet.
   Future<void> submitReview({
     required AppointmentModel appointment,
     required int rating,
@@ -73,7 +66,6 @@ class ReviewService {
         'comment': comment,
         'createdAt': FieldValue.serverTimestamp(),
       });
-      // Doctor `updatedAt` is left alone on purpose: the admin list sorts by it.
       transaction.update(doctorRef, {
         'rating': double.parse(
           nextAverage(average, count, rating).toStringAsFixed(2),

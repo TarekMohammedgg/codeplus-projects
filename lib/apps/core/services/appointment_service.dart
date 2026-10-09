@@ -5,8 +5,6 @@ import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/core/utils/slot_generator.dart';
 
-/// Single Firestore access point for `appointments` and their
-/// `bookedSlots` locks, shared by the patient and admin features.
 class AppointmentService {
   AppointmentService({required FirebaseFirestore firestore})
     // ignore: prefer_initializing_formals
@@ -31,9 +29,6 @@ class AppointmentService {
     };
   }
 
-  /// Books [startAt] for the patient. The `bookedSlots` lock document and the
-  /// appointment are written in one transaction, so two patients can never
-  /// hold the same slot. Throws [SlotAlreadyBookedException] when taken.
   Future<void> book({
     required DoctorModel doctor,
     required DateTime startAt,
@@ -79,7 +74,6 @@ class AppointmentService {
     });
   }
 
-  /// Soonest first.
   Stream<List<AppointmentModel>> streamPatientAppointments(String patientId) {
     return _appointments
         .where('patientId', isEqualTo: patientId)
@@ -87,7 +81,6 @@ class AppointmentService {
         .map((snapshot) => _parse(snapshot)..sort(_bySoonest));
   }
 
-  /// Latest first.
   Stream<List<AppointmentModel>> streamAllAppointments() {
     return _appointments
         .orderBy('startAt', descending: true)
@@ -95,8 +88,6 @@ class AppointmentService {
         .map(_parse);
   }
 
-  /// Cancels the appointment and deletes its slot lock so the slot can be
-  /// booked again.
   Future<void> cancel(
     AppointmentModel appointment, {
     required CancelledBy cancelledBy,

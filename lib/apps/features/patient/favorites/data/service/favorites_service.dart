@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-/// Per-patient favorites stored in `users/{uid}/favorites/{doctorId}`.
 class FavoritesService {
   FavoritesService({
     required FirebaseFirestore firestore,

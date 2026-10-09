@@ -19,7 +19,6 @@ import 'package:doctor_hunt/apps/features/patient/profile/presentation/widgets/p
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
-/// Needs a [ProfileCubit] and an [AuthCubit] above it (provided by the route).
 class PatientSettingsScreen extends StatefulWidget {
   const PatientSettingsScreen({super.key});
 
@@ -31,7 +30,6 @@ class _PatientSettingsScreenState extends State<PatientSettingsScreen> {
   bool _notificationsEnabled = true;
   bool _hasLoadedProfile = false;
 
-  /// The switch starts from the stored value once, then is driven locally.
   void _syncNotifications(ProfileState state) {
     if (_hasLoadedProfile || state is! ProfileLoaded) return;
     _hasLoadedProfile = true;
@@ -227,7 +225,6 @@ class _PatientSettingsScreenState extends State<PatientSettingsScreen> {
   }
 }
 
-/// Flat row with a bottom divider, as in the Figma settings list.
 class _SettingsListTile extends StatelessWidget {
   const _SettingsListTile({
     super.key,

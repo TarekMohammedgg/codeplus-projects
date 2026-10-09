@@ -4,7 +4,6 @@ import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
-/// Icon + label on the start, value on the end (date, time, fee rows).
 class AppointmentDetailRow extends StatelessWidget {
   const AppointmentDetailRow({
     super.key,

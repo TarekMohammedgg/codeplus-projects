@@ -20,7 +20,6 @@ import 'package:doctor_hunt/apps/features/common/appointment_details/presentatio
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
-/// Needs an [AppointmentDetailsCubit] above it (provided by the route).
 class AdminAppointmentDetailsScreen extends StatefulWidget {
   const AdminAppointmentDetailsScreen({super.key, required this.appointment});
 
@@ -175,7 +174,6 @@ class _AdminAppointmentDetailsScreenState
   }
 }
 
-/// Embedded patient contact info (there is no Patients module in the MVP).
 class _PatientInfoCard extends StatelessWidget {
   const _PatientInfoCard({required this.appointment});
 

@@ -8,7 +8,6 @@ import 'package:doctor_hunt/apps/core/widgets/clinic_location_map.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
-/// The ONE clinic location (address + map) in a card.
 class ClinicLocationCard extends StatelessWidget {
   const ClinicLocationCard({super.key, required this.clinic});
 

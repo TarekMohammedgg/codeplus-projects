@@ -11,7 +11,6 @@ import 'package:doctor_hunt/generated/app_image.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
-/// Shown after the appointment is saved. [onDone] leads to My Appointments.
 class BookingSuccessDialog extends StatelessWidget {
   const BookingSuccessDialog({
     super.key,

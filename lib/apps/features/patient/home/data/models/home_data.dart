@@ -8,10 +8,8 @@ class HomeData {
     required this.specialties,
   });
 
-  /// Active doctors sorted by `reviewsCount` desc.
   final List<DoctorModel> popularDoctors;
 
-  /// Active doctors sorted by `rating` desc.
   final List<DoctorModel> topRatedDoctors;
   final List<SpecialtyModel> specialties;
 }

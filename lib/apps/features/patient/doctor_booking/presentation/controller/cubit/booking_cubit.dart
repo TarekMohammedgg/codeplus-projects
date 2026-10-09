@@ -241,10 +241,8 @@ class BookingCubit extends Cubit<BookingState> {
     }
   }
 
-  /// Clinic location for the review step (live from `clinic/settings`).
   Stream<ClinicModel?> watchClinic() => repository.watchClinic();
 
-  /// Step 4: books [draft] in one transaction (appointment + slot lock).
   Future<void> confirm(BookingDraft draft) async {
     if (state is BookingSubmitting) return;
 

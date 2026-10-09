@@ -137,23 +137,19 @@ void main() {
         );
         await tester.pumpAndSettle();
 
-        // Title & Doctor
         expect(find.text('Appointment Details'), findsOneWidget);
         expect(find.text('Dr. Gregory House'), findsOneWidget);
         expect(find.text('Cardiology'), findsOneWidget);
         expect(find.text('\$50.00'), findsWidgets);
 
-        // Embedded Patient Info
         expect(find.text('Patient Information'), findsOneWidget);
         expect(find.text('John Patient'), findsOneWidget);
         expect(find.text('+201099887766'), findsOneWidget);
         expect(find.text('patient@hospital.org'), findsOneWidget);
 
-        // Clinic Info
         expect(find.text('Clinic Location'), findsOneWidget);
         expect(find.text('Tahrir Street, Cairo'), findsOneWidget);
 
-        // Action buttons for upcoming
         expect(
           find.byKey(const Key('admin_mark_completed_button')),
           findsOneWidget,
@@ -188,11 +184,9 @@ void main() {
         );
         await tester.pumpAndSettle();
 
-        // Tap Mark Completed
         await tester.tap(find.byKey(const Key('admin_mark_completed_button')));
         await tester.pumpAndSettle();
 
-        // Dialog is shown
         expect(find.text('Mark Appointment Completed'), findsOneWidget);
         expect(
           find.text(
@@ -201,7 +195,6 @@ void main() {
           findsOneWidget,
         );
 
-        // Confirm
         await tester.tap(find.text('Confirm'));
         await tester.pumpAndSettle();
 
@@ -239,7 +232,6 @@ void main() {
       await tester.tap(find.byKey(const Key('admin_mark_completed_button')));
       await tester.pumpAndSettle();
 
-      // Tap Cancel in dialog
       await tester.tap(find.text('Cancel'));
       await tester.pumpAndSettle();
 
@@ -269,20 +261,17 @@ void main() {
         );
         await tester.pumpAndSettle();
 
-        // Tap Cancel Appointment
         await tester.tap(
           find.byKey(const Key('admin_cancel_appointment_button')),
         );
         await tester.pumpAndSettle();
 
-        // Dialog is shown
         expect(find.text('Cancel Appointment'), findsWidgets);
         expect(
           find.text('Are you sure you want to cancel this appointment?'),
           findsOneWidget,
         );
 
-        // Confirm
         await tester.tap(find.text('Confirm'));
         await tester.pumpAndSettle();
 
@@ -387,7 +376,6 @@ void main() {
   });
 }
 
-/// The screen with its route-provided cubit, backed by the fake services.
 Widget _detailsScreen({
   required AppointmentModel appointment,
   ClinicService? clinicService,

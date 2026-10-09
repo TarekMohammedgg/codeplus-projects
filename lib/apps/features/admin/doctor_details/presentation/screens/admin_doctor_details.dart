@@ -20,7 +20,6 @@ import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
-/// Needs an [AdminDoctorDetailsCubit] above it (provided by the route).
 class AdminDoctorDetails extends StatelessWidget {
   const AdminDoctorDetails({super.key});
 

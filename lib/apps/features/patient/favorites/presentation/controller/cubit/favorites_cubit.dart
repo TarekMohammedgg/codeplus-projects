@@ -5,8 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:doctor_hunt/apps/features/patient/favorites/data/repositories/favorites_repository.dart';
 import 'package:doctor_hunt/apps/features/patient/favorites/presentation/controller/cubit/favorites_state.dart';
 
-/// App-wide favorites of the signed-in patient. Follows auth changes so a
-/// different patient never sees the previous patient's hearts.
 class FavoritesCubit extends Cubit<FavoritesState> {
   FavoritesCubit({required this.repository}) : super(const FavoritesInitial()) {
     _userSubscription = repository.userIdChanges().listen(
@@ -46,7 +44,6 @@ class FavoritesCubit extends Cubit<FavoritesState> {
 
     final previous = state.doctorIds;
     final makeFavorite = !previous.contains(doctorId);
-    // Optimistic: the heart flips now, the Firestore stream confirms it.
     emit(
       FavoritesSuccess(
         doctorIds: makeFavorite

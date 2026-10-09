@@ -7,7 +7,6 @@ import 'package:doctor_hunt/apps/features/patient/profile/data/models/user_profi
 import 'package:doctor_hunt/apps/features/patient/profile/data/service/profile_service.dart';
 
 abstract class AdminProfileRepository {
-  /// Uid of the signed-in admin, or null when signed out.
   String? get currentUid;
   Future<UserProfileModel?> fetchAdminProfile(String uid);
   Future<ClinicModel?> fetchClinic();
@@ -74,7 +73,6 @@ class AdminProfileRepositoryImpl implements AdminProfileRepository {
   }) async {
     final user = auth.currentUser;
 
-    // 1. Email change
     if (user != null &&
         newEmail != null &&
         newEmail.trim().isNotEmpty &&
@@ -83,7 +81,6 @@ class AdminProfileRepositoryImpl implements AdminProfileRepository {
       await user.verifyBeforeUpdateEmail(newEmail.trim());
     }
 
-    // 2. Update Auth display name & photo URL
     if (user != null) {
       await user.updateDisplayName(displayName.trim());
       if (photoUrl != null && photoUrl.isNotEmpty) {
@@ -91,14 +88,12 @@ class AdminProfileRepositoryImpl implements AdminProfileRepository {
       }
     }
 
-    // 3. Update Firestore users/{uid}
     await profileService.updateProfile(
       uid: uid,
       displayName: displayName.trim(),
       photoUrl: photoUrl,
     );
 
-    // 4. Update clinic/settings
     await clinicService.updateClinic(
       addressAr: addressAr.trim(),
       addressEn: addressEn.trim(),

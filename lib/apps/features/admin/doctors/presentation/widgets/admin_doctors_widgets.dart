@@ -24,7 +24,6 @@ class AdminDoctorListTile extends StatelessWidget {
   final VoidCallback? onTap;
   final VoidCallback? onEdit;
 
-  /// Activate or deactivate; doctors are never deleted.
   final VoidCallback? onToggleActive;
 
   @override

@@ -2,7 +2,6 @@ import 'package:latlong2/latlong.dart';
 
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
-/// The single clinic location shown for every doctor (`clinic/settings`).
 class ClinicModel {
   const ClinicModel({
     required this.addressAr,

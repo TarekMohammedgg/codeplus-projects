@@ -117,8 +117,6 @@ class LoginScreenState extends State<LoginScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Login is reached with `go`, so this is the only way
-                  // back to Choose Role for both roles.
                   Align(
                     alignment: AlignmentDirectional.centerStart,
                     child: AppBackButton(
