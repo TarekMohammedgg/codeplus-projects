@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_status_pill.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_avatar_placeholder.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_image.dart';
-import 'package:doctor_hunt/apps/features/admin/doctors/data/models/admin_doctor_model.dart';
+import 'package:doctor_hunt/apps/core/widgets/doctor_profile_card.dart';
+import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
@@ -17,7 +20,7 @@ class AdminDoctorListTile extends StatelessWidget {
     this.onToggleActive,
   });
 
-  final AdminDoctorModel doctor;
+  final DoctorModel doctor;
   final VoidCallback? onTap;
   final VoidCallback? onEdit;
 
@@ -26,102 +29,136 @@ class AdminDoctorListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.surface,
-      borderRadius: BorderRadius.circular(16),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: AppColors.outline),
-          ),
-          child: Row(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(28),
-                child: DoctorImage(
-                  imageUrl: doctor.imageUrl,
-                  width: 52,
-                  height: 52,
-                  fallback: const DoctorAvatarPlaceholder(size: 52),
-                ),
-              ),
-              14.horizontalSpace,
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(doctor.name, style: context.semiBold16TextMain),
-                    2.verticalSpace,
-                    Text(
-                      doctor.specialty,
-                      style: context.regular14TextSecondary,
-                    ),
-                    6.verticalSpace,
-                    _ActiveBadge(isActive: doctor.isActive),
-                  ],
-                ),
-              ),
-              PopupMenuButton<_DoctorAction>(
-                icon: const Icon(
-                  Icons.more_vert_rounded,
-                  color: AppColors.textSecondary,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                color: AppColors.surface,
-                elevation: 4,
-                onSelected: (action) => switch (action) {
-                  _DoctorAction.edit => onEdit?.call(),
-                  _DoctorAction.toggleActive => onToggleActive?.call(),
-                },
-                itemBuilder: (context) => [
-                  PopupMenuItem(
-                    value: _DoctorAction.edit,
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.edit_outlined,
-                          size: 20,
-                          color: AppColors.textMain,
-                        ),
-                        10.horizontalSpace,
-                        Text(tr.edit, style: context.medium14TextMain),
-                      ],
-                    ),
+    final radius = BorderRadius.circular(10);
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: radius,
+        boxShadow: const [
+          BoxShadow(color: AppColors.shadowElevated, blurRadius: 20),
+        ],
+      ),
+      child: Material(
+        color: AppColors.surface,
+        borderRadius: radius,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: radius,
+          child: Padding(
+            padding: const EdgeInsetsDirectional.fromSTEB(12, 12, 0, 12),
+            child: Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: DoctorImage(
+                    imageUrl: doctor.imageUrl,
+                    width: 52,
+                    height: 52,
+                    fallback: const DoctorAvatarPlaceholder(size: 52),
                   ),
-                  PopupMenuItem(
-                    value: _DoctorAction.toggleActive,
-                    child: Row(
-                      children: [
-                        Icon(
-                          doctor.isActive
-                              ? Icons.block_rounded
-                              : Icons.check_circle_outline_rounded,
-                          size: 20,
-                          color: doctor.isActive
-                              ? AppColors.error
-                              : AppColors.success,
-                        ),
-                        10.horizontalSpace,
-                        Text(
-                          doctor.isActive ? tr.deactivate : tr.activate,
-                          style: context.medium14TextMain.copyWith(
+                ),
+                10.horizontalSpace,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        doctor.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: context.medium16TextMain,
+                      ),
+                      4.verticalSpace,
+                      Text(
+                        doctor.specialty,
+                        style: context.regular12TextSecondary,
+                      ),
+                      4.verticalSpace,
+                      Row(
+                        children: [
+                          DoctorStarRating(rating: doctor.rating, size: 12),
+                          6.horizontalSpace,
+                          Flexible(
+                            child: Text(
+                              tr.ratingSummary(
+                                rating: doctor.rating.toStringAsFixed(1),
+                                count: doctor.reviewsCount,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: context.regular10TextSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                AppStatusPill(
+                  label: doctor.isActive ? tr.activeLabel : tr.inactiveLabel,
+                  color: doctor.isActive ? AppColors.success : AppColors.error,
+                  backgroundColor: doctor.isActive
+                      ? AppColors.successLight
+                      : AppColors.errorLight,
+                ),
+                PopupMenuButton<_DoctorAction>(
+                  icon: const Icon(
+                    Icons.more_vert_rounded,
+                    size: 20,
+                    color: AppColors.textSecondary,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  color: AppColors.surface,
+                  elevation: 4,
+                  onSelected: (action) => switch (action) {
+                    _DoctorAction.edit => onEdit?.call(),
+                    _DoctorAction.toggleActive => onToggleActive?.call(),
+                  },
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      value: _DoctorAction.edit,
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.edit_outlined,
+                            size: 20,
+                            color: AppColors.textMain,
+                          ),
+                          10.horizontalSpace,
+                          Text(tr.edit, style: context.medium14TextMain),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: _DoctorAction.toggleActive,
+                      child: Row(
+                        children: [
+                          Icon(
+                            doctor.isActive
+                                ? Icons.block_rounded
+                                : Icons.check_circle_outline_rounded,
+                            size: 20,
                             color: doctor.isActive
                                 ? AppColors.error
                                 : AppColors.success,
                           ),
-                        ),
-                      ],
+                          10.horizontalSpace,
+                          Text(
+                            doctor.isActive ? tr.deactivate : tr.activate,
+                            style: context.medium14TextMain.copyWith(
+                              color: doctor.isActive
+                                  ? AppColors.error
+                                  : AppColors.success,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -130,30 +167,6 @@ class AdminDoctorListTile extends StatelessWidget {
 }
 
 enum _DoctorAction { edit, toggleActive }
-
-class _ActiveBadge extends StatelessWidget {
-  const _ActiveBadge({required this.isActive});
-
-  final bool isActive;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = isActive ? AppColors.success : AppColors.textSecondary;
-    final bgColor = isActive ? AppColors.successLight : AppColors.outline;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Text(
-        isActive ? tr.activeLabel : tr.inactiveLabel,
-        style: context.medium12TextSecondary.copyWith(color: color),
-      ),
-    );
-  }
-}
 
 class AdminStatsRow extends StatelessWidget {
   const AdminStatsRow({
@@ -170,19 +183,11 @@ class AdminStatsRow extends StatelessWidget {
     return Row(
       children: [
         Expanded(
-          child: _StatCard(
-            icon: Icons.groups_rounded,
-            label: tr.totalDoctors,
-            count: totalCount,
-          ),
+          child: _StatCard(label: tr.activeDoctors, count: activeCount),
         ),
         12.horizontalSpace,
         Expanded(
-          child: _StatCard(
-            icon: Icons.check_circle_rounded,
-            label: tr.activeLabel,
-            count: activeCount,
-          ),
+          child: _StatCard(label: tr.totalDoctors, count: totalCount),
         ),
       ],
     );
@@ -190,45 +195,40 @@ class AdminStatsRow extends StatelessWidget {
 }
 
 class _StatCard extends StatelessWidget {
-  const _StatCard({
-    required this.icon,
-    required this.label,
-    required this.count,
-  });
+  const _StatCard({required this.label, required this.count});
 
-  final IconData icon;
   final String label;
   final int count;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      padding: const EdgeInsets.all(13),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.outline),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: const BoxDecoration(
-              color: AppColors.primaryLight,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, color: AppColors.primary, size: 20),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.surfaceMuted),
+        boxShadow: const [
+          BoxShadow(
+            color: AppColors.shadowSubtle,
+            blurRadius: 4,
+            offset: Offset(0, 2),
           ),
-          10.horizontalSpace,
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(label, style: context.regular12TextSecondary),
-                Text('$count', style: context.bold18TextMain),
-              ],
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: context.regular11TextSecondary.copyWith(
+              color: AppColors.textMuted,
             ),
+          ),
+          4.verticalSpace,
+          Text(
+            NumberFormat.decimalPattern().format(count),
+            style: context.bold18TextMain,
           ),
         ],
       ),

@@ -6,7 +6,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/core/models/specialty_model.dart';
-import 'package:doctor_hunt/apps/features/admin/doctors/data/models/admin_doctor_model.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/data/repositories/admin_doctors_repository.dart';
 import 'package:doctor_hunt/apps/features/admin/create_doctor/data/repositories/create_doctor_repository.dart';
 import 'package:doctor_hunt/apps/features/common/auth/data/repositories/auth_repository.dart';
@@ -24,12 +23,32 @@ import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
 import 'package:doctor_hunt/apps/features/patient/appointments/data/repositories/patient_appointments_repository.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/data/models/user_profile_model.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/data/repositories/profile_repository.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class FakeSharedPreferences extends Fake implements SharedPreferences {
+  FakeSharedPreferences([Map<String, Object>? values])
+    : _values = values != null
+          ? Map<String, Object>.from(values)
+          : <String, Object>{};
+
+  final Map<String, Object> _values;
+
+  @override
+  bool? getBool(String key) => _values[key] as bool?;
+
+  @override
+  Future<bool> setBool(String key, bool value) async {
+    _values[key] = value;
+    return true;
+  }
+}
 
 class FakeUser extends Fake implements User {
   FakeUser({
     this.uid = 'test_uid',
     this.email = 'test@example.com',
     this.displayName = 'Test User',
+    this.photoURL,
     this.providerData = const [],
   });
 
@@ -41,6 +60,9 @@ class FakeUser extends Fake implements User {
 
   @override
   final String? displayName;
+
+  @override
+  final String? photoURL;
 
   @override
   final List<UserInfo> providerData;
@@ -97,6 +119,18 @@ class FakeAuthRepository implements AuthRepository {
 
   @override
   User? get currentUser => auth != null ? auth!.currentUser : _currentUser;
+
+  @override
+  bool get hasPasswordProvider =>
+      currentUser?.providerData.any(
+        (p) => p.providerId == EmailAuthProvider.PROVIDER_ID,
+      ) ??
+      false;
+
+  @override
+  Future<void> updateDisplayNameAndPhoto(String name, String? photoUrl) async {
+    _throwIfNeeded();
+  }
 
   void _throwIfNeeded() {
     if (shouldFail) throw StateError('auth operation failed');
@@ -158,16 +192,27 @@ class FakeAuthRepository implements AuthRepository {
 }
 
 class FakeDoctorRepository implements DoctorRepository {
-  FakeDoctorRepository({this.doctors = const [], this.specialties = const []});
+  FakeDoctorRepository({
+    this.doctors = const [],
+    this.specialties = const [],
+    this.error,
+  });
 
-  final List<DoctorModel> doctors;
-  final List<SpecialtyModel> specialties;
+  List<DoctorModel> doctors;
+  List<SpecialtyModel> specialties;
+  Object? error;
 
   @override
-  Future<List<DoctorModel>> fetchDoctors() async => doctors;
+  Future<List<DoctorModel>> fetchDoctors() async {
+    if (error != null) throw error!;
+    return doctors;
+  }
 
   @override
-  Future<List<SpecialtyModel>> fetchSpecialties() async => specialties;
+  Future<List<SpecialtyModel>> fetchSpecialties() async {
+    if (error != null) throw error!;
+    return specialties;
+  }
 }
 
 class FakeHomeRepository implements HomeRepository {
@@ -194,12 +239,12 @@ class FakeAdminDoctorsRepository implements AdminDoctorsRepository {
     this.specialties = const [],
   });
 
-  final List<AdminDoctorModel> doctors;
+  final List<DoctorModel> doctors;
   final List<SpecialtyModel> specialties;
   final activeChanges = <(String id, bool isActive)>[];
 
   @override
-  Stream<List<AdminDoctorModel>> streamDoctors() => Stream.value(doctors);
+  Stream<List<DoctorModel>> streamDoctors() => Stream.value(doctors);
 
   @override
   Future<List<SpecialtyModel>> fetchSpecialties() async => specialties;
@@ -246,20 +291,34 @@ class FakeCreateDoctorRepository implements CreateDoctorRepository {
 
 /// Drive auth and favorites by adding to [userIds] / [favoriteIds].
 class FakeFavoritesRepository implements FavoritesRepository {
-  FakeFavoritesRepository({this.setFavoriteError});
+  FakeFavoritesRepository({
+    this.setFavoriteError,
+    this.initialUserId,
+    this.initialFavorites,
+  });
 
   final userIds = StreamController<String?>.broadcast();
   final favoriteIds = StreamController<Set<String>>.broadcast();
   final watchedUserIds = <String>[];
   final writes = <(String userId, String doctorId, bool isFavorite)>[];
   Object? setFavoriteError;
+  String? initialUserId;
+  Set<String>? initialFavorites;
 
   @override
-  Stream<String?> userIdChanges() => userIds.stream;
+  Stream<String?> userIdChanges() {
+    if (initialUserId != null) {
+      return Stream.value(initialUserId);
+    }
+    return userIds.stream;
+  }
 
   @override
   Stream<Set<String>> watchFavoriteIds(String userId) {
     watchedUserIds.add(userId);
+    if (initialFavorites != null) {
+      return Stream.value(initialFavorites!);
+    }
     return favoriteIds.stream;
   }
 
@@ -308,6 +367,27 @@ class FakeProfileRepository implements ProfileRepository {
     lastUpdatedDob = dob;
     lastUpdatedGender = gender;
     lastUpdatedPhotoUrl = photoUrl;
+  }
+
+  @override
+  Future<void> saveProfile({
+    required String uid,
+    required String name,
+    required String phone,
+    DateTime? dob,
+    String? gender,
+    String? currentPhotoUrl,
+    Uint8List? newImageBytes,
+    String? newImageName,
+  }) {
+    return updateProfile(
+      uid: uid,
+      displayName: name,
+      phone: phone,
+      dob: dob,
+      gender: gender,
+      photoUrl: currentPhotoUrl,
+    );
   }
 }
 

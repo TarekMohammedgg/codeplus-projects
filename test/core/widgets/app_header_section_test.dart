@@ -168,4 +168,30 @@ void main() {
       expect(profileTapped, isTrue);
     },
   );
+
+  testWidgets('AppHeaderSection handles searchReadOnly and onSearchTap', (
+    WidgetTester tester,
+  ) async {
+    // arrange
+    bool searchTapped = false;
+
+    await tester.pumpWidget(
+      buildTestApp(
+        Scaffold(
+          body: AppHeaderSection(
+            title: 'Home',
+            searchReadOnly: true,
+            onSearchTap: () => searchTapped = true,
+          ),
+        ),
+      ),
+    );
+
+    // act
+    await tester.tap(find.byType(AppSearchBar));
+    await tester.pump();
+
+    // assert
+    expect(searchTapped, isTrue);
+  });
 }

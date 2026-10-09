@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:doctor_hunt/apps/features/admin/doctors/data/models/admin_doctor_model.dart';
-import 'package:doctor_hunt/apps/features/admin/doctors/data/service/admin_doctor_service.dart';
+import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
+import 'package:doctor_hunt/apps/core/services/doctor_service.dart';
 
 void main() {
   test('newDoctorData writes only the locked doctor fields', () {
@@ -48,9 +48,9 @@ void main() {
     expect(data['imageUrl'], isNull);
   });
 
-  test('AdminDoctorModel parses consultationFee', () {
+  test('DoctorModel parses consultationFee', () {
     // act
-    final doctor = AdminDoctorModel.fromFirestore('doc_1', {
+    final doctor = DoctorModel.fromFirestore('doc_1', {
       'fullName': {'ar': 'أ', 'en': 'A'},
       'specialtyId': 'dentistry',
       'consultationFee': 45,
@@ -58,6 +58,6 @@ void main() {
 
     // assert
     expect(doctor.consultationFee, 45);
-    expect(doctor.toDoctorModel().consultationFee, 45);
+    expect(doctor.consultationFee, 45);
   });
 }

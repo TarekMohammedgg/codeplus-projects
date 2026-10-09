@@ -2,15 +2,19 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
 import 'package:doctor_hunt/apps/core/models/specialty_model.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_list_skeleton.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/features/admin/appointments/data/repositories/admin_appointments_repository.dart';
 import 'package:doctor_hunt/apps/features/admin/appointments/presentation/controller/cubit/admin_appointments_cubit.dart';
 import 'package:doctor_hunt/apps/features/admin/appointments/presentation/controller/cubit/admin_appointments_state.dart';
 import 'package:doctor_hunt/apps/features/admin/appointments/presentation/screens/admin_appointments_screen.dart';
 import 'package:doctor_hunt/apps/features/admin/appointments/presentation/widgets/admin_appointment_card.dart';
+
+import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
 import '../../../helpers/test_app.dart';
 
@@ -28,6 +32,17 @@ class _FakeAdminAppointmentsRepository implements AdminAppointmentsRepository {
 
   @override
   Future<List<SpecialtyModel>> getSpecialties() async => specialtiesToReturn;
+
+  final List<String> cancelled = [];
+  final List<String> completed = [];
+
+  @override
+  Future<void> cancel(AppointmentModel appointment) async =>
+      cancelled.add(appointment.id);
+
+  @override
+  Future<void> markCompleted(String appointmentId) async =>
+      completed.add(appointmentId);
 
   void dispose() {
     streamController.close();
@@ -222,7 +237,12 @@ void main() {
       );
 
       await tester.pumpWidget(
-        buildTestApp(AdminAppointmentsScreen(cubit: cubit)),
+        buildTestApp(
+          BlocProvider<AdminAppointmentsCubit>.value(
+            value: cubit,
+            child: const AdminAppointmentsScreen(),
+          ),
+        ),
       );
 
       expect(find.byType(AppListSkeleton), findsOneWidget);
@@ -239,7 +259,12 @@ void main() {
       );
 
       await tester.pumpWidget(
-        buildTestApp(AdminAppointmentsScreen(cubit: cubit)),
+        buildTestApp(
+          BlocProvider<AdminAppointmentsCubit>.value(
+            value: cubit,
+            child: const AdminAppointmentsScreen(),
+          ),
+        ),
       );
 
       expect(find.text('Something went wrong'), findsOneWidget);
@@ -265,15 +290,26 @@ void main() {
       );
 
       await tester.pumpWidget(
-        buildTestApp(AdminAppointmentsScreen(cubit: cubit)),
+        buildTestApp(
+          BlocProvider<AdminAppointmentsCubit>.value(
+            value: cubit,
+            child: const AdminAppointmentsScreen(),
+          ),
+        ),
       );
       await tester.pumpAndSettle();
 
       expect(find.text('Appointments'), findsWidgets);
-      expect(find.widgetWithText(Tab, 'All'), findsOneWidget);
-      expect(find.widgetWithText(Tab, 'Upcoming'), findsOneWidget);
-      expect(find.widgetWithText(Tab, 'Completed'), findsOneWidget);
-      expect(find.widgetWithText(Tab, 'Cancelled'), findsOneWidget);
+      expect(find.widgetWithText(AppPrimaryButton, 'All'), findsOneWidget);
+      expect(find.widgetWithText(AppPrimaryButton, 'Upcoming'), findsOneWidget);
+      expect(
+        find.widgetWithText(AppPrimaryButton, 'Completed'),
+        findsOneWidget,
+      );
+      expect(
+        find.widgetWithText(AppPrimaryButton, 'Cancelled'),
+        findsOneWidget,
+      );
 
       expect(find.byType(AdminAppointmentCard), findsNWidgets(3));
       expect(find.textContaining('Jane Patient'), findsOneWidget);
@@ -294,14 +330,19 @@ void main() {
       );
 
       await tester.pumpWidget(
-        buildTestApp(AdminAppointmentsScreen(cubit: cubit)),
+        buildTestApp(
+          BlocProvider<AdminAppointmentsCubit>.value(
+            value: cubit,
+            child: const AdminAppointmentsScreen(),
+          ),
+        ),
       );
       await tester.pumpAndSettle();
 
       expect(find.byType(AdminAppointmentCard), findsNWidgets(3));
 
       // Tap on Upcoming tab
-      await tester.tap(find.widgetWithText(Tab, 'Upcoming'));
+      await tester.tap(find.widgetWithText(AppPrimaryButton, 'Upcoming'));
       await tester.pumpAndSettle();
 
       expect(cubit.state.selectedTab, AdminAppointmentTab.upcoming);
@@ -310,7 +351,7 @@ void main() {
       expect(find.textContaining('Bob Smith'), findsNothing);
 
       // Tap on Completed tab
-      await tester.tap(find.widgetWithText(Tab, 'Completed'));
+      await tester.tap(find.widgetWithText(AppPrimaryButton, 'Completed'));
       await tester.pumpAndSettle();
 
       expect(cubit.state.selectedTab, AdminAppointmentTab.completed);
@@ -318,13 +359,47 @@ void main() {
       expect(find.textContaining('Bob Smith'), findsOneWidget);
 
       // Tap on Cancelled tab
-      await tester.tap(find.widgetWithText(Tab, 'Cancelled'));
+      await tester.tap(find.widgetWithText(AppPrimaryButton, 'Cancelled'));
       await tester.pumpAndSettle();
 
       expect(cubit.state.selectedTab, AdminAppointmentTab.cancelled);
       expect(find.byType(AdminAppointmentCard), findsOneWidget);
       expect(find.textContaining('Alice Green'), findsOneWidget);
 
+      await cubit.close();
+    });
+
+    testWidgets('Mark as Completed confirms, then calls the repository', (
+      tester,
+    ) async {
+      // arrange
+      final tr = AppLocale.en.buildSync();
+      final cubit = AdminAppointmentsCubit(
+        repository: repo,
+        initialState: AdminAppointmentsState(
+          status: AdminAppointmentsStatus.loaded,
+          appointments: allAppointments,
+          selectedTab: AdminAppointmentTab.upcoming,
+        ),
+      );
+      await tester.pumpWidget(
+        buildTestApp(
+          BlocProvider<AdminAppointmentsCubit>.value(
+            value: cubit,
+            child: const AdminAppointmentsScreen(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('admin_complete_button_appt_1')));
+      await tester.pumpAndSettle();
+
+      // act
+      await tester.tap(find.text(tr.confirm));
+      await tester.pumpAndSettle();
+
+      // assert
+      expect(repo.completed, ['appt_1']);
       await cubit.close();
     });
 
@@ -339,7 +414,12 @@ void main() {
       );
 
       await tester.pumpWidget(
-        buildTestApp(AdminAppointmentsScreen(cubit: cubit)),
+        buildTestApp(
+          BlocProvider<AdminAppointmentsCubit>.value(
+            value: cubit,
+            child: const AdminAppointmentsScreen(),
+          ),
+        ),
       );
       await tester.pumpAndSettle();
 

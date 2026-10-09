@@ -27,6 +27,9 @@ import 'package:doctor_hunt/apps/features/patient/home/data/repositories/home_re
 import 'package:doctor_hunt/apps/features/patient/home/data/service/home_service.dart';
 import 'package:doctor_hunt/apps/features/patient/home/presentation/controller/cubit/home_cubit.dart';
 
+import '../../helpers/test_fakes.dart';
+import 'package:doctor_hunt/apps/core/services/app_preferences_service.dart';
+
 class _FakeFirebaseAuth extends Fake implements FirebaseAuth {}
 
 class _FakeFirebaseFirestore extends Fake implements FirebaseFirestore {}
@@ -34,7 +37,7 @@ class _FakeFirebaseFirestore extends Fake implements FirebaseFirestore {}
 void main() {
   setUp(() async {
     await getIt.reset();
-    setupServiceLocator();
+    setupServiceLocator(preferences: FakeSharedPreferences());
   });
 
   tearDown(() async {
@@ -48,6 +51,7 @@ void main() {
     });
 
     test('registers all core and feature services as lazy singletons', () {
+      expect(getIt.isRegistered<AppPreferencesService>(), isTrue);
       expect(getIt.isRegistered<AuthService>(), isTrue);
       expect(getIt.isRegistered<DoctorService>(), isTrue);
       expect(getIt.isRegistered<HomeService>(), isTrue);
@@ -88,12 +92,14 @@ void main() {
       expect(service, isNotNull);
     });
 
-    test('AdminDoctorService accepts injected FirebaseFirestore', () {
+    test('AdminDoctorService delegates to the injected DoctorService', () {
       final fakeFirestore = _FakeFirebaseFirestore();
       final specialtyService = SpecialtyService(firestore: fakeFirestore);
       final service = AdminDoctorService(
-        firestore: fakeFirestore,
-        specialtyService: specialtyService,
+        doctorService: DoctorService(
+          firestore: fakeFirestore,
+          specialtyService: specialtyService,
+        ),
       );
       expect(service, isNotNull);
     });
@@ -110,8 +116,10 @@ void main() {
       final fakeFirestore = _FakeFirebaseFirestore();
       final specialtyService = SpecialtyService(firestore: fakeFirestore);
       final service = AdminDoctorService(
-        firestore: fakeFirestore,
-        specialtyService: specialtyService,
+        doctorService: DoctorService(
+          firestore: fakeFirestore,
+          specialtyService: specialtyService,
+        ),
       );
       final repo = FirebaseAdminDoctorsRepository(
         doctorService: service,

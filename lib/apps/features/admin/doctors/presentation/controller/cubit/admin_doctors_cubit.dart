@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:doctor_hunt/apps/core/models/specialty_model.dart';
-import 'package:doctor_hunt/apps/features/admin/doctors/data/models/admin_doctor_model.dart';
+import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/data/repositories/admin_doctors_repository.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/presentation/controller/cubit/admin_doctors_state.dart';
 
@@ -11,7 +11,7 @@ class AdminDoctorsCubit extends Cubit<AdminDoctorsState> {
     : super(const AdminDoctorsInitial());
 
   final AdminDoctorsRepository repository;
-  StreamSubscription<List<AdminDoctorModel>>? _doctorsSubscription;
+  StreamSubscription<List<DoctorModel>>? _doctorsSubscription;
 
   Future<void> load() async {
     await _doctorsSubscription?.cancel();

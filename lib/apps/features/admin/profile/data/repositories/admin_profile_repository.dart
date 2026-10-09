@@ -7,6 +7,8 @@ import 'package:doctor_hunt/apps/features/patient/profile/data/models/user_profi
 import 'package:doctor_hunt/apps/features/patient/profile/data/service/profile_service.dart';
 
 abstract class AdminProfileRepository {
+  /// Uid of the signed-in admin, or null when signed out.
+  String? get currentUid;
   Future<UserProfileModel?> fetchAdminProfile(String uid);
   Future<ClinicModel?> fetchClinic();
   Future<void> updateAdminProfileAndClinic({
@@ -30,6 +32,9 @@ class AdminProfileRepositoryImpl implements AdminProfileRepository {
   final FirebaseAuth auth;
   final ProfileService profileService;
   final ClinicService clinicService;
+
+  @override
+  String? get currentUid => auth.currentUser?.uid;
 
   @override
   Future<UserProfileModel?> fetchAdminProfile(String uid) async {

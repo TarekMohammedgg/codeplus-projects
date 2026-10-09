@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import 'package:doctor_hunt/apps/core/extensions/context_extensions.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/models/clinic_model.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/core/models/review_model.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_profile_card.dart';
-import 'package:doctor_hunt/apps/features/patient/doctor_details/presentation/widgets/clinic_location_map.dart';
+import 'package:doctor_hunt/apps/core/widgets/clinic_location_map.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
@@ -67,7 +68,7 @@ class _ReviewTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final createdAt = review.createdAt;
-    final locale = context.tr.$meta.locale.languageCode;
+    final locale = context.localeCode;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(14),

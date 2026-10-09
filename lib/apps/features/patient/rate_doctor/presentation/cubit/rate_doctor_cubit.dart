@@ -79,9 +79,14 @@ class RateDoctorCubit extends Cubit<RateDoctorState> {
   }
 
   Future<void> loadSpecialty(String? specialtyId) async {
-    final name = await repository.getSpecialtyName(specialtyId);
-    if (!isClosed && name != null) {
-      emit(state.copyWith(specialtyName: name));
+    try {
+      final name = await repository.getSpecialtyName(specialtyId);
+      if (!isClosed && name != null) {
+        emit(state.copyWith(specialtyName: name));
+      }
+    } catch (error, stackTrace) {
+      // The specialty line is optional; the screen stays usable without it.
+      addError(error, stackTrace);
     }
   }
 

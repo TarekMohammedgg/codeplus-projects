@@ -1,100 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 
-import 'package:doctor_hunt/apps/core/di/injection.dart';
+import 'package:doctor_hunt/apps/core/extensions/context_extensions.dart';
+import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
+import 'package:doctor_hunt/apps/core/models/doctor_availability.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
-import 'package:doctor_hunt/apps/core/widgets/app_icon_button.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_card.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_back_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_avatar_placeholder.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_image.dart';
-import 'package:doctor_hunt/apps/features/admin/availability/data/repositories/doctor_availability_repository.dart';
 import 'package:doctor_hunt/apps/features/admin/availability/presentation/controller/cubit/doctor_availability_cubit.dart';
 import 'package:doctor_hunt/apps/features/admin/availability/presentation/controller/cubit/doctor_availability_state.dart';
-import 'package:doctor_hunt/apps/features/admin/doctors/data/models/admin_doctor_model.dart';
-import 'package:doctor_hunt/apps/features/admin/doctors/data/service/admin_doctor_service.dart';
+import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
+/// Needs a [DoctorAvailabilityCubit] above it (provided by the route).
 class DoctorAvailabilityScreen extends StatelessWidget {
-  const DoctorAvailabilityScreen({
-    super.key,
-    required this.doctor,
-    this.cubit,
-    this.repository,
-  });
+  const DoctorAvailabilityScreen({super.key, required this.doctor});
 
-  final AdminDoctorModel doctor;
-  final DoctorAvailabilityCubit? cubit;
-  final DoctorAvailabilityRepository? repository;
-
-  @override
-  Widget build(BuildContext context) {
-    if (cubit != null) {
-      return BlocProvider<DoctorAvailabilityCubit>.value(
-        value: cubit!,
-        child: _DoctorAvailabilityView(doctor: doctor),
-      );
-    }
-
-    final repo =
-        repository ??
-        DoctorAvailabilityRepositoryImpl(
-          doctorService: getIt<AdminDoctorService>(),
-        );
-
-    return BlocProvider<DoctorAvailabilityCubit>(
-      create: (_) => DoctorAvailabilityCubit(
-        repository: repo,
-        initialAvailability: doctor.availability,
-      ),
-      child: _DoctorAvailabilityView(doctor: doctor),
-    );
-  }
-}
-
-class _DoctorAvailabilityView extends StatelessWidget {
-  const _DoctorAvailabilityView({required this.doctor});
-
-  final AdminDoctorModel doctor;
+  final DoctorModel doctor;
 
   static const List<int> _slotOptions = [15, 20, 30, 45, 60];
-
-  void _popScreen(BuildContext context) {
-    try {
-      if (context.canPop()) {
-        context.pop();
-        return;
-      }
-    } catch (_) {}
-    Navigator.of(context).maybePop();
-  }
 
   String _formatTime(BuildContext context, int minutes) {
     final time = TimeOfDay(hour: minutes ~/ 60, minute: minutes % 60);
     return time.format(context);
-  }
-
-  String _formatDayName(BuildContext context, int weekday) {
-    try {
-      final locale = Localizations.localeOf(context).toString();
-      // 2026-09-28 is a Monday (weekday 1)
-      final sample = DateTime(2026, 9, 27 + weekday);
-      return DateFormat.E(locale).format(sample);
-    } catch (_) {
-      const fallback = {
-        1: 'Mon',
-        2: 'Tue',
-        3: 'Wed',
-        4: 'Thu',
-        5: 'Fri',
-        6: 'Sat',
-        7: 'Sun',
-      };
-      return fallback[weekday] ?? '';
-    }
   }
 
   void _showErrorSnackBar(BuildContext context, DoctorAvailabilityState state) {
@@ -114,15 +47,7 @@ class _DoctorAvailabilityView extends StatelessWidget {
         break;
     }
 
-    if (message.isNotEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message),
-          backgroundColor: AppColors.error,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-    }
+    if (message.isNotEmpty) context.showErrorSnackBar(message);
   }
 
   @override
@@ -130,14 +55,8 @@ class _DoctorAvailabilityView extends StatelessWidget {
     return BlocConsumer<DoctorAvailabilityCubit, DoctorAvailabilityState>(
       listener: (context, state) {
         if (state.status == DoctorAvailabilityStatus.success) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(context.tr.availabilityUpdatedSuccess),
-              backgroundColor: AppColors.primary,
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
-          _popScreen(context);
+          context.showSuccessSnackBar(context.tr.availabilityUpdatedSuccess);
+          Navigator.of(context).maybePop();
         } else if (state.status == DoctorAvailabilityStatus.failure) {
           _showErrorSnackBar(context, state);
         }
@@ -158,7 +77,7 @@ class _DoctorAvailabilityView extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      AppIconButton.back(onTap: () => _popScreen(context)),
+                      const AppBackButton(),
                       12.horizontalSpace,
                       Expanded(
                         child: Text(
@@ -179,59 +98,52 @@ class _DoctorAvailabilityView extends StatelessWidget {
                         8.verticalSpace,
 
                         // Doctor info card
-                        Container(
+                        SizedBox(
                           width: double.infinity,
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: AppColors.surface,
-                            borderRadius: BorderRadius.circular(16),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: AppColors.shadowCard,
-                                blurRadius: 16,
-                                offset: Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: SizedBox(
-                                  width: 56,
-                                  height: 56,
-                                  child: doctor.imageUrl != null
-                                      ? DoctorImage(
-                                          imageUrl: doctor.imageUrl!,
-                                          width: 56,
-                                          height: 56,
-                                          fit: BoxFit.cover,
-                                          fallback:
-                                              const DoctorAvatarPlaceholder(
-                                                size: 56,
-                                              ),
-                                        )
-                                      : const DoctorAvatarPlaceholder(size: 56),
+                          child: AppCard(
+                            child: Row(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: SizedBox(
+                                    width: 56,
+                                    height: 56,
+                                    child: doctor.imageUrl != null
+                                        ? DoctorImage(
+                                            imageUrl: doctor.imageUrl!,
+                                            width: 56,
+                                            height: 56,
+                                            fit: BoxFit.cover,
+                                            fallback:
+                                                const DoctorAvatarPlaceholder(
+                                                  size: 56,
+                                                ),
+                                          )
+                                        : const DoctorAvatarPlaceholder(
+                                            size: 56,
+                                          ),
+                                  ),
                                 ),
-                              ),
-                              16.horizontalSpace,
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      doctor.name,
-                                      style: context.semiBold16TextMain,
-                                    ),
-                                    4.verticalSpace,
-                                    Text(
-                                      doctor.specialty,
-                                      style: context.regular12TextSecondary,
-                                    ),
-                                  ],
+                                16.horizontalSpace,
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        doctor.name,
+                                        style: context.semiBold16TextMain,
+                                      ),
+                                      4.verticalSpace,
+                                      Text(
+                                        doctor.specialty,
+                                        style: context.regular12TextSecondary,
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
 
@@ -257,7 +169,10 @@ class _DoctorAvailabilityView extends StatelessWidget {
                             final isSelected = state.workingDays.contains(
                               weekday,
                             );
-                            final dayLabel = _formatDayName(context, weekday);
+                            final dayLabel = DoctorAvailability.weekdayName(
+                              weekday,
+                              context.localeCode,
+                            );
 
                             return FilterChip(
                               key: Key('availability_day_$weekday'),

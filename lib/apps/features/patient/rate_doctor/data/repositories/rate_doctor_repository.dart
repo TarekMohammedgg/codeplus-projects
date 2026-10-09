@@ -45,12 +45,7 @@ class RateDoctorRepositoryImpl implements RateDoctorRepository {
   @override
   Future<String?> getSpecialtyName(String? specialtyId) async {
     if (specialtyId == null || specialtyId.isEmpty) return null;
-    try {
-      final list = await specialtyService.fetchActiveSpecialties();
-      final match = list.where((s) => s.id == specialtyId).firstOrNull;
-      return match?.localizedName;
-    } catch (_) {
-      return null;
-    }
+    final list = await specialtyService.fetchActiveSpecialties();
+    return list.where((s) => s.id == specialtyId).firstOrNull?.localizedName;
   }
 }

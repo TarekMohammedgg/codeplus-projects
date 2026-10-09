@@ -1,9 +1,9 @@
+import 'package:doctor_hunt/apps/core/widgets/app_back_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_text_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_text_field.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/controller/cubit/auth_cubit.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/controller/cubit/auth_state.dart';
-import 'package:doctor_hunt/apps/features/common/auth/presentation/widgets/auth_back_button.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/widgets/auth_buttons.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/widgets/auth_header.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/widgets/forgot_password_bottom_sheet.dart';
@@ -121,9 +121,8 @@ class LoginScreenState extends State<LoginScreen> {
                   // back to Choose Role for both roles.
                   Align(
                     alignment: AlignmentDirectional.centerStart,
-                    child: AuthBackButton(
-                      circular: true,
-                      onPressed: () => const RoleSelectionRoute().go(context),
+                    child: AppBackButton(
+                      onTap: () => const RoleSelectionRoute().go(context),
                     ),
                   ),
                   16.verticalSpace,

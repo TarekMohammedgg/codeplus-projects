@@ -54,6 +54,8 @@ void main() {
         expect(loaded.doctor.id, 'doc-1');
         expect(loaded.bookableDates.isNotEmpty, isTrue);
         expect(loaded.slots.length, 3);
+        expect(loaded.slotsCountByDate.isNotEmpty, isTrue);
+        expect(loaded.slotsCountByDate[DateTime(2026, 3, 2)], 3);
         expect(loaded.selectedSlot, isNull);
 
         await cubit.close();

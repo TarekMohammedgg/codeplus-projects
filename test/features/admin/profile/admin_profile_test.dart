@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:latlong2/latlong.dart';
 
 import 'package:doctor_hunt/apps/core/models/clinic_model.dart';
@@ -29,6 +30,9 @@ class _FakeAdminProfileRepository implements AdminProfileRepository {
 
   bool shouldThrow = false;
   String? lastUpdatedUid;
+
+  @override
+  String? currentUid = 'admin_123';
   String? lastUpdatedName;
   String? lastUpdatedEmail;
   String? lastUpdatedPhotoUrl;
@@ -121,7 +125,6 @@ void main() {
       );
 
       final success = await cubit.saveProfileAndClinic(
-        uid: 'admin_123',
         displayName: 'New Admin',
         email: 'newadmin@hunt.com',
         addressAr: 'العنوان الجديد',
@@ -149,7 +152,6 @@ void main() {
       repository.shouldThrow = true;
 
       final success = await cubit.saveProfileAndClinic(
-        uid: 'admin_123',
         displayName: 'New Admin',
         email: 'admin@hunt.com',
         addressAr: 'العنوان',
@@ -184,10 +186,9 @@ void main() {
 
       await tester.pumpWidget(
         buildTestApp(
-          AdminProfileScreen(
-            cubit: cubit,
-            repository: repository,
-            uploadService: uploadService,
+          BlocProvider<AdminProfileCubit>.value(
+            value: cubit,
+            child: const AdminProfileScreen(),
           ),
         ),
       );
@@ -225,10 +226,9 @@ void main() {
 
       await tester.pumpWidget(
         buildTestApp(
-          AdminProfileScreen(
-            cubit: cubit,
-            repository: repository,
-            uploadService: uploadService,
+          BlocProvider<AdminProfileCubit>.value(
+            value: cubit,
+            child: const AdminProfileScreen(),
           ),
         ),
       );
@@ -263,10 +263,9 @@ void main() {
 
         await tester.pumpWidget(
           buildTestApp(
-            AdminProfileScreen(
-              cubit: cubit,
-              repository: repository,
-              uploadService: uploadService,
+            BlocProvider<AdminProfileCubit>.value(
+              value: cubit,
+              child: const AdminProfileScreen(),
             ),
           ),
         );

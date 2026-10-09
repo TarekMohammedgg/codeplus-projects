@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:doctor_hunt/apps/core/constants/app_route_paths.dart';
 import 'package:doctor_hunt/apps/core/di/injection.dart';
+import 'package:doctor_hunt/apps/core/services/app_preferences_service.dart';
 import 'package:doctor_hunt/apps/features/common/auth/data/repositories/auth_repository.dart';
 
 import 'routes.dart';
@@ -30,10 +31,12 @@ Future<String?> appRouterRedirect(
   BuildContext context,
   GoRouterState state, {
   required AuthRepository authRepository,
+  required AppPreferencesService preferencesService,
 }) async {
   final authRepo = authRepository;
   final user = authRepo.currentUser;
   final loc = state.matchedLocation;
+  final hasSeenOnboarding = preferencesService.hasSeenOnboarding;
 
   final isPublic =
       loc == AppRoutePaths.onboarding ||
@@ -42,6 +45,9 @@ Future<String?> appRouterRedirect(
       loc == AppRoutePaths.signup;
 
   if (user == null) {
+    if (loc == AppRoutePaths.onboarding && hasSeenOnboarding) {
+      return const RoleSelectionRoute().location;
+    }
     return isPublic ? null : const RoleSelectionRoute().location;
   }
 
@@ -68,6 +74,7 @@ abstract final class AppRouter {
   static GoRouter get router => _router ??= createRouter(
     authRepository: getIt<AuthRepository>(),
     firebaseAuth: getIt<FirebaseAuth>(),
+    preferencesService: getIt<AppPreferencesService>(),
   );
 
   @visibleForTesting
@@ -79,16 +86,27 @@ abstract final class AppRouter {
   static GoRouter createRouter({
     required AuthRepository authRepository,
     required FirebaseAuth firebaseAuth,
+    required AppPreferencesService preferencesService,
     String? initialLocation,
     List<RouteBase>? routes,
   }) {
+    final defaultInitial = authRepository.currentUser != null
+        ? AppRoutePaths.home
+        : (preferencesService.hasSeenOnboarding
+              ? const RoleSelectionRoute().location
+              : const OnboardingRoute().location);
+
     return GoRouter(
-      initialLocation: initialLocation ?? const OnboardingRoute().location,
+      initialLocation: initialLocation ?? defaultInitial,
       overridePlatformDefaultLocation: true,
       routes: routes ?? $appRoutes,
       refreshListenable: AuthRefreshListenable(firebaseAuth),
-      redirect: (context, state) =>
-          appRouterRedirect(context, state, authRepository: authRepository),
+      redirect: (context, state) => appRouterRedirect(
+        context,
+        state,
+        authRepository: authRepository,
+        preferencesService: preferencesService,
+      ),
     );
   }
 }

@@ -78,16 +78,17 @@ void main() {
     expect(doctor.name, 'Dr. Ahmed');
   });
 
-  test(
-    'DoctorModel.fromFirestore throws FormatException on missing required field',
-    () {
-      expect(
-        () =>
-            DoctorModel.fromFirestore('bad_doc', {'name': 'Dr. No Specialty'}),
-        throwsA(isA<FormatException>()),
-      );
-    },
-  );
+  test('DoctorModel.fromFirestore keeps a doc with a missing field instead of '
+      'throwing, so one bad doc cannot break a whole list', () {
+    // act
+    final doctor = DoctorModel.fromFirestore('bad_doc', {
+      'name': 'Dr. No Specialty',
+    });
+
+    // assert
+    expect(doctor.name, 'Dr. No Specialty');
+    expect(doctor.specialty, isEmpty);
+  });
 
   group('DoctorModel accentColorHex normalization and UI fallback', () {
     test('normalizes six-digit color with #', () {

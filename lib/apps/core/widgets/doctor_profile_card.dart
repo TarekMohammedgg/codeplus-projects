@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:doctor_hunt/apps/core/widgets/favorite_heart_icon.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
+import 'package:doctor_hunt/apps/core/utils/formatters.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_avatar_placeholder.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_image.dart';
@@ -79,13 +81,8 @@ class DoctorProfileCard extends StatelessWidget {
                               padding: const EdgeInsetsDirectional.only(
                                 start: 4,
                               ),
-                              child: Icon(
-                                isFavorite
-                                    ? Icons.favorite_rounded
-                                    : Icons.favorite_border_rounded,
-                                color: isFavorite
-                                    ? AppColors.favorite
-                                    : AppColors.disabled,
+                              child: FavoriteHeartIcon(
+                                isFavorite: isFavorite,
                                 size: 20,
                               ),
                             ),
@@ -112,12 +109,13 @@ class DoctorProfileCard extends StatelessWidget {
                               TextSpan(
                                 children: [
                                   TextSpan(
-                                    text: '\$ ',
+                                    text: '$feeCurrencySymbol ',
                                     style: context.medium16Primary,
                                   ),
                                   TextSpan(
-                                    text: doctor.consultationFee
-                                        .toStringAsFixed(2),
+                                    text: formatFeeAmount(
+                                      doctor.consultationFee,
+                                    ),
                                     style: context.light16TextSecondary,
                                   ),
                                 ],

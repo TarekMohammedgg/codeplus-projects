@@ -6,7 +6,7 @@ import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/utils/doctor_sort.dart';
-import 'package:doctor_hunt/apps/core/widgets/app_icon_button.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_back_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_search_bar.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_filter_chips.dart';
 import 'package:doctor_hunt/apps/features/patient/favorites/presentation/controller/cubit/favorites_cubit.dart';
@@ -19,12 +19,19 @@ import 'package:doctor_hunt/apps/core/widgets/app_list_skeleton.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 
 class FindDoctorsScreen extends StatefulWidget {
-  const FindDoctorsScreen({super.key, this.query, this.specialtyId, this.sort});
+  const FindDoctorsScreen({
+    super.key,
+    this.query,
+    this.specialtyId,
+    this.sort,
+    this.focusSearch = false,
+  });
 
   /// Initial filters from the route query (e.g. Home's search, chips, See All).
   final String? query;
   final String? specialtyId;
   final DoctorSort? sort;
+  final bool focusSearch;
 
   @override
   State<FindDoctorsScreen> createState() => _FindDoctorsScreenState();
@@ -86,38 +93,38 @@ class _FindDoctorsScreenState extends State<FindDoctorsScreen> {
       },
       child: BlocBuilder<FindDoctorsCubit, FindDoctorsState>(
         builder: (context, state) {
+          // "See All" opens a sorted list (Figma 10); search opens Find (07).
+          final title = switch (widget.sort) {
+            DoctorSort.popular => context.tr.popularDoctors,
+            DoctorSort.topRated => context.tr.topRatedDoctors,
+            null => context.tr.findDoctors,
+          };
           return Scaffold(
             backgroundColor: AppColors.background,
-            body: SafeArea(
-              child: Column(
-                children: [
+            appBar: AppBar(
+              leadingWidth: 50,
+              leading: AppBackButton.leading(onTap: () => _handleBack(context)),
+              titleSpacing: 19,
+              title: Text(title, style: context.medium18TextMain),
+            ),
+            body: Column(
+              children: [
+                if (widget.sort == null) ...[
                   16.verticalSpace,
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Row(
-                      children: [
-                        AppIconButton.back(onTap: () => _handleBack(context)),
-                        12.horizontalSpace,
-                        Expanded(
-                          child: Text(
-                            context.tr.findDoctors,
-                            style: context.bold18TextMain,
-                          ),
-                        ),
-                        if (state is FindDoctorsSuccess)
-                          DoctorSortMenu(
-                            sort: state.sort,
-                            onSelected: cubit.sortBy,
-                          ),
-                      ],
-                    ),
-                  ),
-                  16.verticalSpace,
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: AppSearchBar(
                       controller: _searchController,
+                      autofocus: widget.focusSearch,
                       onChanged: cubit.search,
+                      height: 54,
+                      borderRadius: BorderRadius.circular(6),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: AppColors.shadowElevated,
+                          blurRadius: 40,
+                        ),
+                      ],
                     ),
                   ),
                   if (state is FindDoctorsSuccess) ...[
@@ -128,10 +135,10 @@ class _FindDoctorsScreenState extends State<FindDoctorsScreen> {
                       onSpecialtySelected: cubit.selectSpecialty,
                     ),
                   ],
-                  14.verticalSpace,
-                  Expanded(child: _buildDoctorsContent(context, state)),
                 ],
-              ),
+                10.verticalSpace,
+                Expanded(child: _buildDoctorsContent(context, state)),
+              ],
             ),
           );
         },
@@ -142,7 +149,7 @@ class _FindDoctorsScreenState extends State<FindDoctorsScreen> {
   Widget _buildDoctorsContent(BuildContext context, FindDoctorsState state) {
     return switch (state) {
       FindDoctorsInitial() || FindDoctorsLoading() => AppListSkeleton(
-        padding: const EdgeInsets.fromLTRB(24, 6, 24, 32),
+        padding: const EdgeInsets.fromLTRB(20, 14, 20, 32),
         spacing: 14,
         itemBuilder: (_) => FindDoctorCard(
           doctor: DoctorModel.placeholder(),
@@ -177,7 +184,7 @@ class _DoctorsList extends StatelessWidget {
       );
     }
     return ListView.separated(
-      padding: const EdgeInsets.fromLTRB(24, 6, 24, 32),
+      padding: const EdgeInsets.fromLTRB(20, 14, 20, 32),
       itemCount: doctors.length,
       separatorBuilder: (_, _) => 14.verticalSpace,
       itemBuilder: (context, index) {

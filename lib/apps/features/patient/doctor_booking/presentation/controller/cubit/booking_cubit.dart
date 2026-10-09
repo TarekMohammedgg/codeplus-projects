@@ -50,7 +50,105 @@ class BookingCubit extends Cubit<BookingState> {
       ),
     );
 
-    await selectDate(firstDate, now: currentTime);
+    await _loadSlotsForDates(
+      doctor: doctor,
+      availability: availability,
+      dates: dates,
+      selectedDate: firstDate,
+      currentTime: currentTime,
+    );
+  }
+
+  Future<void> _loadSlotsForDates({
+    required DoctorModel doctor,
+    required DoctorAvailability availability,
+    required List<DateTime> dates,
+    required DateTime selectedDate,
+    required DateTime currentTime,
+  }) async {
+    try {
+      final slotsCountMap = <DateTime, int>{};
+      List<DateTime> selectedDateSlots = [];
+
+      final results = await Future.wait(
+        dates.map((date) async {
+          try {
+            final booked = await repository.fetchBookedStarts(doctor.id, date);
+            final daySlots = slotsForDay(
+              availability,
+              date,
+              booked,
+              currentTime,
+            );
+            return MapEntry(
+              DateTime(date.year, date.month, date.day),
+              daySlots,
+            );
+          } catch (error, stackTrace) {
+            addError(error, stackTrace);
+            return MapEntry(
+              DateTime(date.year, date.month, date.day),
+              <DateTime>[],
+            );
+          }
+        }),
+      );
+
+      for (final entry in results) {
+        slotsCountMap[entry.key] = entry.value.length;
+        if (DateUtils.isSameDay(entry.key, selectedDate)) {
+          selectedDateSlots = entry.value;
+        }
+      }
+
+      DateTime? nextDate;
+      if (selectedDateSlots.isEmpty) {
+        final currentIndex = dates.indexWhere(
+          (d) => DateUtils.isSameDay(d, selectedDate),
+        );
+        final startIndex = currentIndex == -1 ? 0 : currentIndex + 1;
+        for (var i = startIndex; i < dates.length; i++) {
+          final candidateDate = dates[i];
+          final count =
+              slotsCountMap[DateTime(
+                candidateDate.year,
+                candidateDate.month,
+                candidateDate.day,
+              )] ??
+              0;
+          if (count > 0) {
+            nextDate = candidateDate;
+            break;
+          }
+        }
+      }
+
+      emit(
+        BookingLoaded(
+          doctor: doctor,
+          bookableDates: dates,
+          selectedDate: selectedDate,
+          slots: selectedDateSlots,
+          slotsCountByDate: slotsCountMap,
+          selectedSlot: null,
+          nextAvailableDate: nextDate,
+          isLoadingSlots: false,
+        ),
+      );
+    } catch (error, stackTrace) {
+      addError(error, stackTrace);
+      emit(
+        BookingLoaded(
+          doctor: doctor,
+          bookableDates: dates,
+          selectedDate: selectedDate,
+          slots: const [],
+          slotsCountByDate: const {},
+          selectedSlot: null,
+          isLoadingSlots: false,
+        ),
+      );
+    }
   }
 
   Future<void> selectDate(DateTime date, {DateTime? now}) async {
@@ -63,6 +161,9 @@ class BookingCubit extends Cubit<BookingState> {
     final dates = currentState is BookingLoaded
         ? currentState.bookableDates
         : bookableDates(availability, currentTime);
+    final currentCounts = currentState is BookingLoaded
+        ? currentState.slotsCountByDate
+        : const <DateTime, int>{};
 
     emit(
       BookingLoaded(
@@ -70,6 +171,7 @@ class BookingCubit extends Cubit<BookingState> {
         bookableDates: dates,
         selectedDate: date,
         slots: const [],
+        slotsCountByDate: currentCounts,
         selectedSlot: null,
         isLoadingSlots: true,
       ),
@@ -79,9 +181,30 @@ class BookingCubit extends Cubit<BookingState> {
       final booked = await repository.fetchBookedStarts(doctor.id, date);
       final slots = slotsForDay(availability, date, booked, currentTime);
 
+      final updatedCounts = Map<DateTime, int>.from(currentCounts);
+      updatedCounts[DateTime(date.year, date.month, date.day)] = slots.length;
+
       DateTime? nextDate;
       if (slots.isEmpty) {
-        nextDate = await _findNextDateWithSlots(
+        final currentIndex = dates.indexWhere(
+          (d) => DateUtils.isSameDay(d, date),
+        );
+        final startIndex = currentIndex == -1 ? 0 : currentIndex + 1;
+        for (var i = startIndex; i < dates.length; i++) {
+          final candidateDate = dates[i];
+          final count =
+              updatedCounts[DateTime(
+                candidateDate.year,
+                candidateDate.month,
+                candidateDate.day,
+              )] ??
+              0;
+          if (count > 0) {
+            nextDate = candidateDate;
+            break;
+          }
+        }
+        nextDate ??= await _findNextDateWithSlots(
           fromDate: date,
           dates: dates,
           availability: availability,
@@ -96,18 +219,21 @@ class BookingCubit extends Cubit<BookingState> {
           bookableDates: dates,
           selectedDate: date,
           slots: slots,
+          slotsCountByDate: updatedCounts,
           selectedSlot: null,
           nextAvailableDate: nextDate,
           isLoadingSlots: false,
         ),
       );
-    } catch (_) {
+    } catch (error, stackTrace) {
+      addError(error, stackTrace);
       emit(
         BookingLoaded(
           doctor: doctor,
           bookableDates: dates,
           selectedDate: date,
           slots: const [],
+          slotsCountByDate: currentCounts,
           selectedSlot: null,
           isLoadingSlots: false,
         ),
@@ -169,7 +295,8 @@ class BookingCubit extends Cubit<BookingState> {
         if (slots.isNotEmpty) {
           return candidateDate;
         }
-      } catch (_) {
+      } catch (error, stackTrace) {
+        addError(error, stackTrace);
         continue;
       }
     }

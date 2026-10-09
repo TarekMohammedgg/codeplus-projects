@@ -6,8 +6,10 @@ import 'package:doctor_hunt/apps/core/constants/app_route_paths.dart';
 import 'package:doctor_hunt/apps/core/di/injection.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/core/utils/doctor_sort.dart';
+import 'package:doctor_hunt/apps/features/admin/doctor_details/presentation/controller/cubit/admin_doctor_details_cubit.dart';
 import 'package:doctor_hunt/apps/features/admin/doctor_details/presentation/screens/admin_doctor_details.dart';
-import 'package:doctor_hunt/apps/features/admin/doctors/data/models/admin_doctor_model.dart';
+import 'package:doctor_hunt/apps/features/admin/availability/presentation/controller/cubit/doctor_availability_cubit.dart';
+import 'package:doctor_hunt/apps/features/admin/profile/presentation/controller/cubit/admin_profile_cubit.dart';
 import 'package:doctor_hunt/apps/features/admin/profile/presentation/screens/admin_profile_screen.dart';
 import 'package:doctor_hunt/apps/features/admin/appointments/presentation/controller/cubit/admin_appointments_cubit.dart';
 import 'package:doctor_hunt/apps/features/admin/appointments/presentation/screens/admin_appointments_screen.dart';
@@ -20,6 +22,8 @@ import 'package:doctor_hunt/apps/features/admin/doctors/presentation/screens/adm
 import 'package:doctor_hunt/apps/features/admin/settings/presentation/screens/admin_settings_screen.dart';
 import 'package:doctor_hunt/apps/features/common/auth/data/repositories/auth_repository.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/controller/cubit/auth_cubit.dart';
+import 'package:doctor_hunt/apps/features/common/appointment_details/presentation/controller/cubit/appointment_details_cubit.dart';
+import 'package:doctor_hunt/apps/features/patient/profile/presentation/controller/cubit/profile_cubit.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/screens/login_screen.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/screens/signup_screen.dart';
 import 'package:doctor_hunt/apps/features/common/onboarding/presentation/screens/onboarding_screen.dart';
@@ -37,6 +41,8 @@ import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/sc
 import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/screens/doctor_booking_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_details/presentation/controller/cubit/doctor_details_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_details/presentation/screens/patient_doctor_details_screen.dart';
+import 'package:doctor_hunt/apps/features/patient/favorites/presentation/controller/cubit/favorite_doctors_cubit.dart';
+import 'package:doctor_hunt/apps/features/patient/favorites/presentation/screens/favorites_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/controller/cubit/find_doctors_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/screens/find_doctors_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/home/presentation/controller/cubit/home_cubit.dart';
@@ -45,7 +51,9 @@ import 'package:doctor_hunt/apps/features/patient/profile/data/models/user_profi
 import 'package:doctor_hunt/apps/features/patient/profile/presentation/controller/cubit/change_password_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/presentation/screens/change_password_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/presentation/screens/edit_profile_screen.dart';
+import 'package:doctor_hunt/apps/core/services/app_preferences_service.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/presentation/screens/patient_settings_screen.dart';
+import 'package:doctor_hunt/apps/features/patient/profile/presentation/screens/privacy_policy_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/presentation/screens/profile_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/rate_doctor/presentation/screens/rate_doctor_screen.dart';
 
@@ -57,7 +65,7 @@ class OnboardingRoute extends GoRouteData with $OnboardingRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const OnboardingScreen();
+    return OnboardingScreen(preferencesService: getIt<AppPreferencesService>());
   }
 }
 
@@ -100,15 +108,15 @@ class RoleSelectionRoute extends GoRouteData with $RoleSelectionRoute {
 }
 
 // ---------------------------------------------------------------------------
-// Patient Shell (4 tabs: Home, Doctors, Appointments, Profile)
+// Patient Shell (4 tabs: Home, Favorites, Appointments, Profile)
 // ---------------------------------------------------------------------------
 @TypedStatefulShellRoute<PatientShellRoute>(
   branches: [
     TypedStatefulShellBranch<PatientHomeBranch>(
       routes: [TypedGoRoute<HomeRoute>(path: AppRoutePaths.home)],
     ),
-    TypedStatefulShellBranch<PatientDoctorsBranch>(
-      routes: [TypedGoRoute<FindDoctorsRoute>(path: AppRoutePaths.doctors)],
+    TypedStatefulShellBranch<PatientFavoritesBranch>(
+      routes: [TypedGoRoute<FavoritesRoute>(path: AppRoutePaths.favorites)],
     ),
     TypedStatefulShellBranch<PatientAppointmentsBranch>(
       routes: [
@@ -131,7 +139,15 @@ class PatientShellRoute extends StatefulShellRouteData {
     GoRouterState state,
     StatefulNavigationShell navigationShell,
   ) {
-    return PatientShell(navigationShell: navigationShell);
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<ProfileCubit>(
+          create: (_) => getIt<ProfileCubit>()..init(),
+        ),
+        BlocProvider<AuthCubit>(create: (_) => getIt<AuthCubit>()),
+      ],
+      child: PatientShell(navigationShell: navigationShell),
+    );
   }
 }
 
@@ -139,8 +155,8 @@ class PatientHomeBranch extends StatefulShellBranchData {
   const PatientHomeBranch();
 }
 
-class PatientDoctorsBranch extends StatefulShellBranchData {
-  const PatientDoctorsBranch();
+class PatientFavoritesBranch extends StatefulShellBranchData {
+  const PatientFavoritesBranch();
 }
 
 class PatientAppointmentsBranch extends StatefulShellBranchData {
@@ -163,18 +179,14 @@ class HomeRoute extends GoRouteData with $HomeRoute {
   }
 }
 
-class FindDoctorsRoute extends GoRouteData with $FindDoctorsRoute {
-  const FindDoctorsRoute({this.q, this.specialtyId, this.sort});
-
-  final String? q;
-  final String? specialtyId;
-  final DoctorSort? sort;
+class FavoritesRoute extends GoRouteData with $FavoritesRoute {
+  const FavoritesRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return BlocProvider<FindDoctorsCubit>(
-      create: (_) => getIt<FindDoctorsCubit>(),
-      child: FindDoctorsScreen(query: q, specialtyId: specialtyId, sort: sort),
+    return BlocProvider<FavoriteDoctorsCubit>(
+      create: (_) => getIt<FavoriteDoctorsCubit>(),
+      child: const FavoritesScreen(),
     );
   }
 }
@@ -262,7 +274,9 @@ class AdminDoctorsRoute extends GoRouteData with $AdminDoctorsRoute {
   Widget build(BuildContext context, GoRouterState state) {
     return BlocProvider<AdminDoctorsCubit>(
       create: (_) => getIt<AdminDoctorsCubit>(),
-      child: const AdminDoctorsScreen(),
+      child: AdminDoctorsScreen(
+        adminName: getIt<AuthRepository>().currentUser?.displayName,
+      ),
     );
   }
 }
@@ -274,7 +288,9 @@ class AdminAppointmentsRoute extends GoRouteData with $AdminAppointmentsRoute {
   Widget build(BuildContext context, GoRouterState state) {
     return BlocProvider<AdminAppointmentsCubit>(
       create: (_) => getIt<AdminAppointmentsCubit>()..init(),
-      child: const AdminAppointmentsScreen(),
+      child: AdminAppointmentsScreen(
+        adminName: getIt<AuthRepository>().currentUser?.displayName,
+      ),
     );
   }
 }
@@ -294,11 +310,41 @@ class AdminSettingsRoute extends GoRouteData with $AdminSettingsRoute {
 // ---------------------------------------------------------------------------
 // Standalone / Full-Screen Routes
 // ---------------------------------------------------------------------------
+@TypedGoRoute<FindDoctorsRoute>(path: AppRoutePaths.doctors)
+class FindDoctorsRoute extends GoRouteData with $FindDoctorsRoute {
+  const FindDoctorsRoute({
+    this.q,
+    this.specialtyId,
+    this.sort,
+    this.focus = false,
+  });
+
+  final String? q;
+  final String? specialtyId;
+  final DoctorSort? sort;
+
+  /// Opens with the search field focused (Home's search bar).
+  final bool focus;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return BlocProvider<FindDoctorsCubit>(
+      create: (_) => getIt<FindDoctorsCubit>(),
+      child: FindDoctorsScreen(
+        query: q,
+        specialtyId: specialtyId,
+        sort: sort,
+        focusSearch: focus,
+      ),
+    );
+  }
+}
+
 @TypedGoRoute<CreateDoctorRoute>(path: AppRoutePaths.createDoctor)
 class CreateDoctorRoute extends GoRouteData with $CreateDoctorRoute {
   const CreateDoctorRoute([this.$extra]);
 
-  final AdminDoctorModel? $extra;
+  final DoctorModel? $extra;
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
@@ -315,7 +361,10 @@ class AdminProfileRoute extends GoRouteData with $AdminProfileRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const AdminProfileScreen();
+    return BlocProvider<AdminProfileCubit>(
+      create: (_) => getIt<AdminProfileCubit>()..loadCurrentProfile(),
+      child: const AdminProfileScreen(),
+    );
   }
 }
 
@@ -324,11 +373,14 @@ class AdminDoctorDetailsRoute extends GoRouteData
     with $AdminDoctorDetailsRoute {
   const AdminDoctorDetailsRoute(this.$extra);
 
-  final AdminDoctorModel $extra;
+  final DoctorModel $extra;
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return AdminDoctorDetails(doctor: $extra);
+    return BlocProvider<AdminDoctorDetailsCubit>(
+      create: (_) => getIt<AdminDoctorDetailsCubit>(param1: $extra),
+      child: const AdminDoctorDetails(),
+    );
   }
 }
 
@@ -345,7 +397,10 @@ class AdminAppointmentDetailsRoute extends GoRouteData
   Widget build(BuildContext context, GoRouterState state) {
     final appt = $extra;
     if (appt == null) return const Scaffold();
-    return AdminAppointmentDetailsScreen(appointment: appt);
+    return BlocProvider<AppointmentDetailsCubit>(
+      create: (_) => getIt<AppointmentDetailsCubit>()..init(appt),
+      child: AdminAppointmentDetailsScreen(appointment: appt),
+    );
   }
 }
 
@@ -354,11 +409,15 @@ class DoctorAvailabilityRoute extends GoRouteData
     with $DoctorAvailabilityRoute {
   const DoctorAvailabilityRoute(this.$extra);
 
-  final AdminDoctorModel $extra;
+  final DoctorModel $extra;
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return DoctorAvailabilityScreen(doctor: $extra);
+    return BlocProvider<DoctorAvailabilityCubit>(
+      create: (_) =>
+          getIt<DoctorAvailabilityCubit>(param1: $extra.availability),
+      child: DoctorAvailabilityScreen(doctor: $extra),
+    );
   }
 }
 
@@ -418,7 +477,10 @@ class EditProfileRoute extends GoRouteData with $EditProfileRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return EditProfileScreen(profile: $extra);
+    return BlocProvider<ProfileCubit>(
+      create: (_) => getIt<ProfileCubit>(),
+      child: EditProfileScreen(profile: $extra),
+    );
   }
 }
 
@@ -428,8 +490,13 @@ class PatientSettingsRoute extends GoRouteData with $PatientSettingsRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return BlocProvider<AuthCubit>(
-      create: (_) => getIt<AuthCubit>(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AuthCubit>(create: (_) => getIt<AuthCubit>()),
+        BlocProvider<ProfileCubit>(
+          create: (_) => getIt<ProfileCubit>()..init(),
+        ),
+      ],
       child: const PatientSettingsScreen(),
     );
   }
@@ -448,6 +515,16 @@ class ChangePasswordRoute extends GoRouteData with $ChangePasswordRoute {
   }
 }
 
+@TypedGoRoute<PrivacyPolicyRoute>(path: AppRoutePaths.privacyPolicy)
+class PrivacyPolicyRoute extends GoRouteData with $PrivacyPolicyRoute {
+  const PrivacyPolicyRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const PrivacyPolicyScreen();
+  }
+}
+
 @TypedGoRoute<PatientAppointmentDetailsRoute>(
   path: AppRoutePaths.patientAppointmentDetails,
 )
@@ -461,7 +538,10 @@ class PatientAppointmentDetailsRoute extends GoRouteData
   Widget build(BuildContext context, GoRouterState state) {
     final appt = $extra;
     if (appt == null) return const Scaffold();
-    return PatientAppointmentDetailsScreen(appointment: appt);
+    return BlocProvider<AppointmentDetailsCubit>(
+      create: (_) => getIt<AppointmentDetailsCubit>()..init(appt),
+      child: PatientAppointmentDetailsScreen(appointment: appt),
+    );
   }
 }
 

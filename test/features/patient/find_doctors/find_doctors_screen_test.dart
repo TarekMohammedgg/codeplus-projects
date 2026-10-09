@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
+import 'package:doctor_hunt/apps/core/utils/doctor_sort.dart';
 import 'package:doctor_hunt/apps/features/patient/favorites/presentation/controller/cubit/favorites_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/controller/cubit/find_doctors_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/screens/find_doctors_screen.dart';
@@ -32,7 +34,11 @@ void main() {
 
   tearDown(() => favoritesCubit.close());
 
-  Future<void> pumpScreen(WidgetTester tester, {Set<String>? favorites}) async {
+  Future<void> pumpScreen(
+    WidgetTester tester, {
+    Set<String>? favorites,
+    DoctorSort? sort,
+  }) async {
     tester.view.physicalSize = const Size(1080, 2400);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(() {
@@ -47,7 +53,7 @@ void main() {
             create: (_) => FindDoctorsCubit(
               repository: FakeDoctorRepository(doctors: testFindDoctors()),
             ),
-            child: const FindDoctorsScreen(),
+            child: FindDoctorsScreen(sort: sort),
           ),
         ),
       ),
@@ -71,12 +77,27 @@ void main() {
     final tr = AppLocale.en.buildSync();
     expect(find.text(tr.searchDoctorHint), findsOneWidget);
     expect(find.text(tr.filterAll), findsOneWidget);
-    expect(find.text(tr.favorites), findsOneWidget);
-    expect(find.text(tr.sortPopular), findsOneWidget);
+    expect(find.text(tr.favorites), findsNothing);
+    expect(find.text(tr.findDoctors), findsOneWidget);
     expect(find.text('Dr. Shruti Kedia'), findsOneWidget);
     expect(find.text('Dr. Fillerup Grab'), findsOneWidget);
-    expect(find.byIcon(Icons.arrow_back_ios_new_rounded), findsNothing);
+    expect(find.byIcon(Icons.arrow_back_ios_new_rounded), findsOneWidget);
   });
+
+  testWidgets(
+    'See All (popular sort) shows the list without search or filters',
+    (WidgetTester tester) async {
+      // act
+      await pumpScreen(tester, sort: DoctorSort.popular);
+
+      // assert
+      final tr = AppLocale.en.buildSync();
+      expect(find.text(tr.popularDoctors), findsOneWidget);
+      expect(find.byType(TextField), findsNothing);
+      expect(find.text(tr.filterAll), findsNothing);
+      expect(find.text('Dr. Shruti Kedia'), findsOneWidget);
+    },
+  );
 
   testWidgets('tapping a heart toggles the favorite for the patient', (
     WidgetTester tester,
@@ -93,21 +114,6 @@ void main() {
     expect(favoritesRepository.writes.single.$3, isTrue);
   });
 
-  testWidgets('Favorites chip shows only favorite doctors', (
-    WidgetTester tester,
-  ) async {
-    // arrange
-    await pumpScreen(tester, favorites: {'doc_5'});
-
-    // act
-    await tester.tap(find.text(AppLocale.en.buildSync().favorites));
-    await tester.pump();
-
-    // assert
-    expect(find.text('Dr. Fillerup Grab'), findsOneWidget);
-    expect(find.text('Dr. Shruti Kedia'), findsNothing);
-  });
-
   testWidgets('search with no match shows the empty state', (
     WidgetTester tester,
   ) async {
@@ -120,5 +126,124 @@ void main() {
 
     // assert
     expect(find.text(AppLocale.en.buildSync().noDoctorsFound), findsOneWidget);
+  });
+
+  testWidgets(
+    'backward navigation via back button navigates to home when canPop is false',
+    (WidgetTester tester) async {
+      // arrange
+      final router = GoRouter(
+        initialLocation: '/doctors',
+        routes: [
+          GoRoute(
+            path: '/home',
+            builder: (_, _) => const Scaffold(body: Text('Home Page')),
+          ),
+          GoRoute(
+            path: '/doctors',
+            builder: (_, _) => BlocProvider<FavoritesCubit>.value(
+              value: favoritesCubit,
+              child: BlocProvider<FindDoctorsCubit>(
+                create: (_) => FindDoctorsCubit(
+                  repository: FakeDoctorRepository(doctors: testFindDoctors()),
+                ),
+                child: const FindDoctorsScreen(),
+              ),
+            ),
+          ),
+        ],
+      );
+      await tester.pumpWidget(buildTestRouterApp(router));
+      await tester.pumpAndSettle();
+
+      // act
+      await tester.tap(find.byIcon(Icons.arrow_back_ios_new_rounded));
+      await tester.pumpAndSettle();
+
+      // assert
+      expect(find.text('Home Page'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'backward navigation via system back navigates to home when canPop is false',
+    (WidgetTester tester) async {
+      // arrange
+      final router = GoRouter(
+        initialLocation: '/doctors',
+        routes: [
+          GoRoute(
+            path: '/home',
+            builder: (_, _) => const Scaffold(body: Text('Home Page')),
+          ),
+          GoRoute(
+            path: '/doctors',
+            builder: (_, _) => BlocProvider<FavoritesCubit>.value(
+              value: favoritesCubit,
+              child: BlocProvider<FindDoctorsCubit>(
+                create: (_) => FindDoctorsCubit(
+                  repository: FakeDoctorRepository(doctors: testFindDoctors()),
+                ),
+                child: const FindDoctorsScreen(),
+              ),
+            ),
+          ),
+        ],
+      );
+      await tester.pumpWidget(buildTestRouterApp(router));
+      await tester.pumpAndSettle();
+
+      // act
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+
+      // assert
+      expect(find.text('Home Page'), findsOneWidget);
+    },
+  );
+
+  testWidgets('backward navigation via back button pops when canPop is true', (
+    WidgetTester tester,
+  ) async {
+    // arrange
+    final router = GoRouter(
+      initialLocation: '/start',
+      routes: [
+        GoRoute(
+          path: '/start',
+          builder: (context, _) => Scaffold(
+            body: ElevatedButton(
+              onPressed: () => context.push('/doctors'),
+              child: const Text('Go to Doctors'),
+            ),
+          ),
+        ),
+        GoRoute(
+          path: '/doctors',
+          builder: (_, _) => BlocProvider<FavoritesCubit>.value(
+            value: favoritesCubit,
+            child: BlocProvider<FindDoctorsCubit>(
+              create: (_) => FindDoctorsCubit(
+                repository: FakeDoctorRepository(doctors: testFindDoctors()),
+              ),
+              child: const FindDoctorsScreen(),
+            ),
+          ),
+        ),
+      ],
+    );
+    await tester.pumpWidget(buildTestRouterApp(router));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Go to Doctors'));
+    await tester.pumpAndSettle();
+    expect(find.byType(FindDoctorsScreen), findsOneWidget);
+
+    // act
+    await tester.tap(find.byIcon(Icons.arrow_back_ios_new_rounded));
+    await tester.pumpAndSettle();
+
+    // assert
+    expect(find.text('Go to Doctors'), findsOneWidget);
   });
 }

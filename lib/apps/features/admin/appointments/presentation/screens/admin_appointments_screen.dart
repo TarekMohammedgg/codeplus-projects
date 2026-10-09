@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:doctor_hunt/apps/core/di/injection.dart';
+import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
+import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
+import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_confirm_dialog.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_initial_avatar.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_empty_state.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
-import 'package:doctor_hunt/apps/features/admin/appointments/data/repositories/admin_appointments_repository.dart';
 import 'package:doctor_hunt/apps/features/admin/appointments/presentation/controller/cubit/admin_appointments_cubit.dart';
 import 'package:doctor_hunt/apps/features/admin/appointments/presentation/controller/cubit/admin_appointments_state.dart';
 import 'package:doctor_hunt/apps/features/admin/appointments/presentation/widgets/admin_appointment_card.dart';
@@ -17,10 +20,10 @@ import 'package:doctor_hunt/apps/core/widgets/app_list_skeleton.dart';
 import 'package:doctor_hunt/apps/core/widgets/skeleton_placeholders.dart';
 
 class AdminAppointmentsScreen extends StatefulWidget {
-  const AdminAppointmentsScreen({super.key, this.cubit, this.repository});
+  const AdminAppointmentsScreen({super.key, this.adminName});
 
-  final AdminAppointmentsCubit? cubit;
-  final AdminAppointmentsRepository? repository;
+  /// Shown as the initial badge in the header.
+  final String? adminName;
 
   @override
   State<AdminAppointmentsScreen> createState() =>
@@ -45,26 +48,22 @@ class _AdminAppointmentsScreenState extends State<AdminAppointmentsScreen>
 
   @override
   Widget build(BuildContext context) {
-    if (widget.cubit != null) {
-      return BlocProvider<AdminAppointmentsCubit>.value(
-        value: widget.cubit!,
-        child: _AdminAppointmentsView(tabController: _tabController),
-      );
-    }
-
-    final repo = widget.repository ?? getIt<AdminAppointmentsRepository>();
-
-    return BlocProvider<AdminAppointmentsCubit>(
-      create: (_) => AdminAppointmentsCubit(repository: repo)..init(),
-      child: _AdminAppointmentsView(tabController: _tabController),
+    // The cubit is provided by AdminAppointmentsRoute.
+    return _AdminAppointmentsView(
+      tabController: _tabController,
+      adminName: widget.adminName,
     );
   }
 }
 
 class _AdminAppointmentsView extends StatelessWidget {
-  const _AdminAppointmentsView({required this.tabController});
+  const _AdminAppointmentsView({
+    required this.tabController,
+    required this.adminName,
+  });
 
   final TabController tabController;
+  final String? adminName;
 
   String _emptyMessageForTab(BuildContext context, AdminAppointmentTab tab) {
     return switch (tab) {
@@ -75,63 +74,116 @@ class _AdminAppointmentsView extends StatelessWidget {
     };
   }
 
+  Future<void> _cancel(BuildContext context, AppointmentModel appt) async {
+    final cubit = context.read<AdminAppointmentsCubit>();
+    final confirmed = await showAppConfirmDialog(
+      context,
+      title: context.tr.cancelAppointmentTitle,
+      message: context.tr.cancelAppointmentMessage,
+      confirmLabel: context.tr.confirm,
+      confirmColor: AppColors.error,
+    );
+    if (!confirmed || !context.mounted) return;
+    try {
+      await cubit.cancel(appt);
+      if (!context.mounted) return;
+      context.showSuccessSnackBar(context.tr.appointmentCancelledSuccess);
+    } catch (e) {
+      if (!context.mounted) return;
+      context.showErrorSnackBar(AppException.from(e).message);
+    }
+  }
+
+  Future<void> _markCompleted(
+    BuildContext context,
+    AppointmentModel appt,
+  ) async {
+    final cubit = context.read<AdminAppointmentsCubit>();
+    final confirmed = await showAppConfirmDialog(
+      context,
+      title: context.tr.markCompletedTitle,
+      message: context.tr.markCompletedMessage,
+      confirmLabel: context.tr.confirm,
+    );
+    if (!confirmed || !context.mounted) return;
+    try {
+      await cubit.markCompleted(appt.id);
+      if (!context.mounted) return;
+      context.showSuccessSnackBar(context.tr.appointmentMarkedCompletedSuccess);
+    } catch (e) {
+      if (!context.mounted) return;
+      context.showErrorSnackBar(AppException.from(e).message);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
+        bottom: false,
         child: Column(
           children: [
-            // Top App Bar
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              padding: const EdgeInsets.fromLTRB(16, 12, 20, 12),
               child: Row(
                 children: [
-                  Text(
-                    context.tr.tabAppointments,
-                    style: context.bold20TextMain,
+                  Expanded(
+                    child: Text(
+                      context.tr.tabAppointments,
+                      style: context.bold20TextMain,
+                    ),
+                  ),
+                  AppInitialAvatar(
+                    name: adminName ?? context.tr.adminRoleTitle,
+                    onTap: () => const AdminProfileRoute().push(context),
                   ),
                 ],
               ),
             ),
-
-            // Tab Bar
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              decoration: BoxDecoration(
-                color: AppColors.surfaceMuted,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: TabBar(
-                controller: tabController,
-                onTap: (index) {
-                  context.read<AdminAppointmentsCubit>().selectTab(
-                    AdminAppointmentTab.values[index],
-                  );
-                },
-                indicator: BoxDecoration(
-                  color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(10),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: ListenableBuilder(
+                listenable: tabController,
+                builder: (context, _) => Row(
+                  spacing: 8,
+                  children: [
+                    for (final (index, label) in [
+                      context.tr.all,
+                      context.tr.upcoming,
+                      context.tr.completed,
+                      context.tr.cancelled,
+                    ].indexed)
+                      Expanded(
+                        child: AppPrimaryButton(
+                          label: label,
+                          height: 38,
+                          padding: EdgeInsets.zero,
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(8),
+                          ),
+                          backgroundColor: tabController.index == index
+                              ? AppColors.primary
+                              : AppColors.primaryLight,
+                          foregroundColor: tabController.index == index
+                              ? AppColors.white
+                              : AppColors.primary,
+                          textStyle: tabController.index == index
+                              ? context.medium12White
+                              : context.regular12Primary,
+                          onPressed: () {
+                            tabController.animateTo(index);
+                            context.read<AdminAppointmentsCubit>().selectTab(
+                              AdminAppointmentTab.values[index],
+                            );
+                          },
+                        ),
+                      ),
+                  ],
                 ),
-                indicatorSize: TabBarIndicatorSize.tab,
-                dividerColor: Colors.transparent,
-                labelColor: AppColors.white,
-                unselectedLabelColor: AppColors.textSecondary,
-                labelStyle: context.semiBold14TextMain,
-                unselectedLabelStyle: context.regular14TextSecondary,
-                padding: const EdgeInsets.all(4),
-                tabs: [
-                  Tab(text: context.tr.all),
-                  Tab(text: context.tr.upcoming),
-                  Tab(text: context.tr.completed),
-                  Tab(text: context.tr.cancelled),
-                ],
               ),
             ),
-
             16.verticalSpace,
-
-            // Content
             Expanded(
               child:
                   BlocBuilder<AdminAppointmentsCubit, AdminAppointmentsState>(
@@ -153,8 +205,7 @@ class _AdminAppointmentsView extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  state.errorMessage ??
-                                      'Failed to load appointments',
+                                  state.errorMessage ?? context.tr.serviceError,
                                   style: context.medium14TextSecondary,
                                   textAlign: TextAlign.center,
                                 ),
@@ -184,18 +235,20 @@ class _AdminAppointmentsView extends StatelessWidget {
                       }
 
                       return ListView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
                         itemCount: appointments.length,
                         itemBuilder: (context, index) {
                           final appt = appointments[index];
-                          final specialty = state.specialties[appt.specialtyId];
 
                           return AdminAppointmentCard(
                             appointment: appt,
-                            specialty: specialty,
-                            onTap: () {
-                              AdminAppointmentDetailsRoute(appt).push(context);
-                            },
+                            specialty: state.specialties[appt.specialtyId],
+                            onTap: () => AdminAppointmentDetailsRoute(
+                              appt,
+                            ).push(context),
+                            onCancel: () => _cancel(context, appt),
+                            onMarkCompleted: () =>
+                                _markCompleted(context, appt),
                           );
                         },
                       );

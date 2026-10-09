@@ -114,7 +114,7 @@ void main() {
     expect(
       find.descendant(
         of: navBarFinder,
-        matching: find.byIcon(Icons.medical_services_rounded),
+        matching: find.byIcon(Icons.favorite_rounded),
       ),
       findsOneWidget,
     );
@@ -220,7 +220,7 @@ void main() {
     );
     await tester.pump();
 
-    await tester.tap(find.byIcon(Icons.medical_services_rounded));
+    await tester.tap(find.byIcon(Icons.favorite_rounded));
     await tester.pumpAndSettle();
     expect(currentIndex, 1);
 
@@ -365,6 +365,55 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(router.state.matchedLocation, '/profile');
+  });
+
+  testWidgets('Tapping search bar in HomeScreen navigates to /doctors', (
+    WidgetTester tester,
+  ) async {
+    // arrange
+    tester.view.physicalSize = const Size(1080, 2400);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+
+    final router = GoRouter(
+      initialLocation: '/home',
+      routes: [
+        GoRoute(
+          path: '/home',
+          builder: (context, state) => BlocProvider<HomeCubit>(
+            create: (_) => HomeCubit(
+              repository: FakeHomeRepository(
+                data: HomeData(
+                  popularDoctors: const [],
+                  topRatedDoctors: const [],
+                  specialties: const [],
+                ),
+              ),
+            ),
+            child: const HomeScreen(),
+          ),
+        ),
+        GoRoute(
+          path: '/doctors',
+          builder: (context, state) =>
+              const Scaffold(body: Text('FindDoctorsPage')),
+        ),
+      ],
+    );
+
+    await tester.pumpWidget(buildTestRouterApp(router));
+    await tester.pumpAndSettle();
+
+    // act
+    await tester.tap(find.byType(AppSearchBar));
+    await tester.pumpAndSettle();
+
+    // assert
+    expect(router.state.matchedLocation, '/doctors');
+    expect(find.text('FindDoctorsPage'), findsOneWidget);
   });
 }
 

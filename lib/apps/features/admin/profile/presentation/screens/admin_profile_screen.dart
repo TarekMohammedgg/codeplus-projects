@@ -1,82 +1,36 @@
 import 'dart:typed_data';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:latlong2/latlong.dart';
 
-import 'package:doctor_hunt/apps/core/di/injection.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
-import 'package:doctor_hunt/apps/core/services/cloudinary_upload_service.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/utils/validators.dart';
-import 'package:doctor_hunt/apps/core/widgets/app_icon_button.dart';
+import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
+import 'package:doctor_hunt/apps/core/utils/image_pick.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_back_button.dart';
+import 'package:doctor_hunt/apps/core/widgets/clinic_location_map.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_text_field.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_avatar_placeholder.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_image.dart';
-import 'package:doctor_hunt/apps/features/admin/profile/data/repositories/admin_profile_repository.dart';
 import 'package:doctor_hunt/apps/features/admin/profile/presentation/controller/cubit/admin_profile_cubit.dart';
 import 'package:doctor_hunt/apps/features/admin/profile/presentation/controller/cubit/admin_profile_state.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
-class AdminProfileScreen extends StatelessWidget {
-  const AdminProfileScreen({
-    super.key,
-    this.cubit,
-    this.repository,
-    this.uploadService,
-    this.auth,
-  });
-
-  final AdminProfileCubit? cubit;
-  final AdminProfileRepository? repository;
-  final CloudinaryUploadService? uploadService;
-  final FirebaseAuth? auth;
+/// Needs an [AdminProfileCubit] above it (provided by the route).
+class AdminProfileScreen extends StatefulWidget {
+  const AdminProfileScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    if (cubit != null) {
-      return BlocProvider<AdminProfileCubit>.value(
-        value: cubit!,
-        child: const _AdminProfileView(),
-      );
-    }
-
-    final effectiveRepo = repository ?? getIt<AdminProfileRepository>();
-    final effectiveUpload = uploadService ?? getIt<CloudinaryUploadService>();
-
-    return BlocProvider<AdminProfileCubit>(
-      create: (_) {
-        final currentUid =
-            (auth ?? getIt<FirebaseAuth>()).currentUser?.uid ?? '';
-        final c = AdminProfileCubit(
-          repository: effectiveRepo,
-          uploadService: effectiveUpload,
-        );
-        if (currentUid.isNotEmpty) {
-          c.loadProfile(currentUid);
-        }
-        return c;
-      },
-      child: const _AdminProfileView(),
-    );
-  }
+  State<AdminProfileScreen> createState() => _AdminProfileScreenState();
 }
 
-class _AdminProfileView extends StatefulWidget {
-  const _AdminProfileView();
-
-  @override
-  State<_AdminProfileView> createState() => _AdminProfileViewState();
-}
-
-class _AdminProfileViewState extends State<_AdminProfileView> {
+class _AdminProfileScreenState extends State<AdminProfileScreen> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _nameController;
   late final TextEditingController _emailController;
@@ -88,8 +42,6 @@ class _AdminProfileViewState extends State<_AdminProfileView> {
   String? _newImageName;
   bool _initialized = false;
 
-  static const LatLng _defaultLocation = LatLng(30.0444, 31.2357);
-
   @override
   void initState() {
     super.initState();
@@ -97,6 +49,7 @@ class _AdminProfileViewState extends State<_AdminProfileView> {
     _emailController = TextEditingController();
     _addressArController = TextEditingController();
     _addressEnController = TextEditingController();
+    _populateFromState(context.read<AdminProfileCubit>().state);
   }
 
   @override
@@ -118,20 +71,14 @@ class _AdminProfileViewState extends State<_AdminProfileView> {
       _emailController.text = state.email;
       _addressArController.text = state.addressAr;
       _addressEnController.text = state.addressEn;
-      _selectedLocation = state.location ?? _defaultLocation;
+      _selectedLocation = state.location ?? ClinicLocationMap.defaultLocation;
       _initialized = true;
     }
   }
 
   Future<void> _pickImage() async {
     try {
-      final picker = ImagePicker();
-      final picked = await picker.pickImage(
-        source: ImageSource.gallery,
-        maxWidth: 1024,
-        maxHeight: 1024,
-        imageQuality: 85,
-      );
+      final picked = await pickGalleryImage();
       if (picked == null) return;
 
       final bytes = await picked.readAsBytes();
@@ -140,31 +87,21 @@ class _AdminProfileViewState extends State<_AdminProfileView> {
         _newImageBytes = bytes;
         _newImageName = picked.name;
       });
-    } catch (_) {}
-  }
-
-  void _popScreen(BuildContext context) {
-    try {
-      if (context.canPop()) {
-        context.pop();
-        return;
-      }
-    } catch (_) {}
-    Navigator.of(context).maybePop();
+    } catch (_) {
+      if (!mounted) return;
+      context.showErrorSnackBar(context.tr.pickImageError);
+    }
   }
 
   void _save(BuildContext context, AdminProfileState state) {
     if (!_formKey.currentState!.validate()) return;
 
-    final location = _selectedLocation ?? state.location ?? _defaultLocation;
-
-    final auth = getIt.isRegistered<FirebaseAuth>()
-        ? getIt<FirebaseAuth>()
-        : FirebaseAuth.instance;
-    final uid = auth.currentUser?.uid ?? 'admin';
+    final location =
+        _selectedLocation ??
+        state.location ??
+        ClinicLocationMap.defaultLocation;
 
     context.read<AdminProfileCubit>().saveProfileAndClinic(
-      uid: uid,
       displayName: _nameController.text.trim(),
       email: _emailController.text.trim(),
       addressAr: _addressArController.text.trim(),
@@ -186,33 +123,21 @@ class _AdminProfileViewState extends State<_AdminProfileView> {
               ? context.tr.emailVerificationSent(email: _emailController.text)
               : context.tr.adminProfileUpdatedSuccess;
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(message),
-              backgroundColor: AppColors.primary,
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
-          _popScreen(context);
+          context.showSuccessSnackBar(message);
+          Navigator.of(context).maybePop();
         } else if (state.status == AdminProfileStatus.failure) {
-          final message = state.errorMessage == 'requires-recent-login'
+          final message =
+              state.failure == AdminProfileFailure.requiresRecentLogin
               ? context.tr.requiresRecentLogin
-              : (state.errorMessage ?? 'Error');
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(message),
-              backgroundColor: AppColors.error,
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
+              : (state.errorMessage ?? context.tr.unexpectedError);
+          context.showErrorSnackBar(message);
         }
       },
       builder: (context, state) {
-        _populateFromState(state);
-
         final activeLocation =
-            _selectedLocation ?? state.location ?? _defaultLocation;
+            _selectedLocation ??
+            state.location ??
+            ClinicLocationMap.defaultLocation;
 
         return Scaffold(
           backgroundColor: AppColors.background,
@@ -227,7 +152,7 @@ class _AdminProfileViewState extends State<_AdminProfileView> {
                   ),
                   child: Row(
                     children: [
-                      AppIconButton.back(onTap: () => _popScreen(context)),
+                      const AppBackButton(),
                       12.horizontalSpace,
                       Expanded(
                         child: Text(

@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/models/specialty_model.dart';
-import 'package:doctor_hunt/apps/core/widgets/app_text_button.dart';
+import 'package:doctor_hunt/apps/core/widgets/doctor_avatar_placeholder.dart';
+import 'package:doctor_hunt/apps/core/widgets/doctor_image.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
@@ -31,48 +32,15 @@ class SpecialtyDropdownField extends StatelessWidget {
       borderRadius: BorderRadius.circular(16),
       dropdownColor: AppColors.surface,
       menuMaxHeight: 320,
-      icon: Container(
-        padding: const EdgeInsets.all(4),
-        decoration: BoxDecoration(
-          color: value != null
-              ? AppColors.primary.withValues(alpha: 0.1)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Icon(
-          Icons.keyboard_arrow_down_rounded,
-          color: value != null ? AppColors.primary : AppColors.textSecondary,
-          size: 22,
-        ),
+      icon: const Icon(
+        Icons.keyboard_arrow_down_rounded,
+        color: AppColors.textMain,
+        size: 22,
       ),
       decoration: InputDecoration(
         hintText: tr.selectSpecialtyHint,
         hintStyle: context.regular16TextMain.copyWith(
           color: AppColors.textSecondary.withValues(alpha: 0.7),
-        ),
-        prefixIcon: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: Container(
-            width: 34,
-            height: 34,
-            decoration: BoxDecoration(
-              color: value != null
-                  ? AppColors.primary.withValues(alpha: 0.12)
-                  : AppColors.outline.withValues(alpha: 0.4),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              value?.icon ?? Icons.medical_services_outlined,
-              size: 18,
-              color: value != null
-                  ? AppColors.primary
-                  : AppColors.textSecondary,
-            ),
-          ),
-        ),
-        prefixIconConstraints: const BoxConstraints(
-          minWidth: 52,
-          minHeight: 48,
         ),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
@@ -145,123 +113,107 @@ class DoctorImagePickerField extends StatelessWidget {
     required this.imageUrl,
     required this.selectedBytes,
     required this.onPick,
-    this.onClear,
     this.isUploading = false,
   });
 
   final String? imageUrl;
   final Uint8List? selectedBytes;
   final VoidCallback onPick;
-  final VoidCallback? onClear;
   final bool isUploading;
+
+  static const double _size = 112;
 
   @override
   Widget build(BuildContext context) {
     final hasImage = selectedBytes != null || (imageUrl?.isNotEmpty ?? false);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        GestureDetector(
-          onTap: isUploading ? null : onPick,
-          child: Container(
-            height: 180,
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: AppColors.outline),
-            ),
-            clipBehavior: Clip.antiAlias,
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                if (selectedBytes != null)
-                  Image.memory(selectedBytes!, fit: BoxFit.cover)
-                else if (imageUrl?.isNotEmpty ?? false)
-                  Image.network(
-                    imageUrl!,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, _, _) => const _EmptyDoctorImage(),
-                  )
-                else
-                  const _EmptyDoctorImage(),
-                if (isUploading)
-                  ColoredBox(
-                    color: Colors.black54,
-                    child: Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const CircularProgressIndicator(color: Colors.white),
-                          const SizedBox(height: 12),
-                          Text(
-                            tr.uploadDoctorImageTitle,
-                            style: context.semiBold14TextMain.copyWith(
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
+
+    return GestureDetector(
+      onTap: isUploading ? null : onPick,
+      child: Column(
+        children: [
+          Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Container(
+                width: _size,
+                height: _size,
+                clipBehavior: Clip.antiAlias,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: hasImage
+                      ? null
+                      : Border.all(color: AppColors.disabled, width: 2),
+                ),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    if (selectedBytes != null)
+                      Image.memory(selectedBytes!, fit: BoxFit.cover)
+                    else if (hasImage)
+                      DoctorImage(
+                        imageUrl: imageUrl,
+                        width: _size,
+                        height: _size,
+                        fallback: const DoctorAvatarPlaceholder(size: _size),
+                      )
+                    else
+                      const Icon(
+                        Icons.photo_camera_outlined,
+                        size: 32,
+                        color: AppColors.textSecondary,
                       ),
-                    ),
-                  ),
-                if (!isUploading)
-                  PositionedDirectional(
-                    end: 12,
-                    bottom: 12,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: AppColors.primary,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
-                        child: Text(
-                          hasImage
-                              ? tr.uploadDoctorImageTitle
-                              : tr.tapToPickImage,
-                          style: context.semiBold12TextMain.copyWith(
-                            color: Colors.white,
+                    if (isUploading)
+                      const ColoredBox(
+                        color: AppColors.shadowStrong,
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            color: AppColors.white,
                           ),
                         ),
                       ),
+                  ],
+                ),
+              ),
+              if (hasImage)
+                PositionedDirectional(
+                  end: 0,
+                  bottom: 0,
+                  child: Container(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: AppColors.white, width: 2),
+                    ),
+                    child: const Icon(
+                      Icons.photo_camera_outlined,
+                      size: 16,
+                      color: AppColors.white,
                     ),
                   ),
+                ),
+            ],
+          ),
+          12.verticalSpace,
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (hasImage) ...[
+                const Icon(
+                  Icons.photo_camera_outlined,
+                  size: 14,
+                  color: AppColors.primary,
+                ),
+                4.horizontalSpace,
               ],
-            ),
+              Text(
+                hasImage ? tr.tapPhotoToChange : tr.addPhoto,
+                style: context.medium12Primary,
+              ),
+            ],
           ),
-        ),
-        if (hasImage && onClear != null && !isUploading)
-          Align(
-            alignment: AlignmentDirectional.centerEnd,
-            //CR use primary widget (any reuse widget)
-            // Solved
-            child: AppTextButton(
-              onPressed: onClear,
-              icon: Icons.close_rounded,
-              iconSize: 18,
-              label: tr.removeImage,
-            ),
-          ),
-      ],
-    );
-  }
-}
-
-class _EmptyDoctorImage extends StatelessWidget {
-  const _EmptyDoctorImage();
-
-  @override
-  Widget build(BuildContext context) {
-    return ColoredBox(
-      color: AppColors.primaryLight,
-      child: Center(
-        child: Icon(
-          Icons.add_a_photo_outlined,
-          size: 44,
-          color: AppColors.primary,
-        ),
+        ],
       ),
     );
   }

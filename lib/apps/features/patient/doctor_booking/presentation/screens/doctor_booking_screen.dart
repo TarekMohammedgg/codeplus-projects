@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 
 import 'package:doctor_hunt/apps/core/di/injection.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
@@ -9,7 +8,7 @@ import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_empty_state.dart';
-import 'package:doctor_hunt/apps/core/widgets/app_icon_button.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_back_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_profile_card.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_booking/data/models/booking_draft.dart';
@@ -40,26 +39,15 @@ class DoctorBookingScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(
-          backgroundColor: AppColors.transparent,
-          elevation: 0,
-          scrolledUnderElevation: 0,
-          centerTitle: false,
           leadingWidth: 50,
-          leading: Padding(
-            padding: const EdgeInsetsDirectional.only(start: 20),
-            child: Center(
-              child: AppIconButton.back(
-                width: 30,
-                height: 30,
-                onTap: () {
-                  if (context.canPop()) {
-                    context.pop();
-                  } else {
-                    const HomeRoute().go(context);
-                  }
-                },
-              ),
-            ),
+          leading: AppBackButton.leading(
+            onTap: () {
+              if (context.canPop()) {
+                context.pop();
+              } else {
+                const HomeRoute().go(context);
+              }
+            },
           ),
           titleSpacing: 19,
           title: Text(context.tr.selectTime, style: context.medium18TextMain),
@@ -93,30 +81,6 @@ class _BookingLoadedBody extends StatelessWidget {
   const _BookingLoadedBody({required this.state});
 
   final BookingLoaded state;
-
-  String _formatDayLabel(BuildContext context, DateTime date) {
-    final now = DateTime.now();
-    final isToday = DateUtils.isSameDay(date, now);
-    final isTomorrow = DateUtils.isSameDay(
-      date,
-      now.add(const Duration(days: 1)),
-    );
-    final locale = TranslationProvider.of(
-      context,
-    ).translations.$meta.locale.languageCode;
-    final datePart = DateFormat('d MMM', locale).format(date);
-
-    if (isToday) {
-      return '${context.tr.today}, $datePart';
-    }
-    if (isTomorrow) {
-      final tomorrowCap = context.tr.tomorrow.isNotEmpty
-          ? '${context.tr.tomorrow[0].toUpperCase()}${context.tr.tomorrow.substring(1)}'
-          : context.tr.tomorrow;
-      return '$tomorrowCap, $datePart';
-    }
-    return DateFormat('E, d MMM', locale).format(date);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -160,7 +124,7 @@ class _BookingLoadedBody extends StatelessWidget {
                 19.verticalSpace,
                 Center(
                   child: Text(
-                    _formatDayLabel(context, state.selectedDate),
+                    formatBookingDayLabel(context, state.selectedDate),
                     style: context.medium18TextMain,
                   ),
                 ),
@@ -169,7 +133,6 @@ class _BookingLoadedBody extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Skeletonizer(
-                      containersColor: AppColors.surfaceMuted,
                       child: TimeSlotsSection(
                         title: BoneMock.title,
                         slots: List.generate(

@@ -1,40 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:doctor_hunt/apps/core/di/injection.dart';
 import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
+import 'package:doctor_hunt/apps/core/extensions/context_extensions.dart';
+import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
-import 'package:doctor_hunt/apps/core/models/clinic_model.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
-import 'package:doctor_hunt/apps/core/services/appointment_service.dart';
-import 'package:doctor_hunt/apps/core/services/clinic_service.dart';
-import 'package:doctor_hunt/apps/core/services/specialty_service.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
-import 'package:doctor_hunt/apps/core/widgets/app_icon_button.dart';
+import 'package:doctor_hunt/apps/core/utils/formatters.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_back_button.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_confirm_dialog.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
-import 'package:doctor_hunt/apps/core/widgets/app_text_button.dart';
-import 'package:doctor_hunt/apps/core/widgets/doctor_avatar_placeholder.dart';
-import 'package:doctor_hunt/apps/core/widgets/doctor_image.dart';
-import 'package:doctor_hunt/apps/features/patient/appointments/presentation/widgets/appointment_status_chip.dart';
-import 'package:doctor_hunt/apps/features/patient/doctor_details/presentation/widgets/clinic_location_map.dart';
+import 'package:doctor_hunt/apps/core/widgets/appointment_detail_row.dart';
+import 'package:doctor_hunt/apps/core/widgets/appointment_summary_card.dart';
+import 'package:doctor_hunt/apps/core/widgets/clinic_location_card.dart';
+import 'package:doctor_hunt/apps/features/common/appointment_details/presentation/controller/cubit/appointment_details_cubit.dart';
+import 'package:doctor_hunt/apps/features/common/appointment_details/presentation/widgets/appointment_doctor_card.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
+/// Needs an [AppointmentDetailsCubit] above it (provided by the route).
 class PatientAppointmentDetailsScreen extends StatefulWidget {
-  const PatientAppointmentDetailsScreen({
-    super.key,
-    required this.appointment,
-    this.clinicService,
-    this.appointmentService,
-    this.specialtyService,
-  });
+  const PatientAppointmentDetailsScreen({super.key, required this.appointment});
 
   final AppointmentModel appointment;
-  final ClinicService? clinicService;
-  final AppointmentService? appointmentService;
-  final SpecialtyService? specialtyService;
 
   @override
   State<PatientAppointmentDetailsScreen> createState() =>
@@ -43,130 +33,43 @@ class PatientAppointmentDetailsScreen extends StatefulWidget {
 
 class _PatientAppointmentDetailsScreenState
     extends State<PatientAppointmentDetailsScreen> {
-  ClinicService get _clinicService =>
-      widget.clinicService ?? getIt<ClinicService>();
-  AppointmentService get _appointmentService =>
-      widget.appointmentService ?? getIt<AppointmentService>();
-  SpecialtyService get _specialtyService =>
-      widget.specialtyService ?? getIt<SpecialtyService>();
-
-  late AppointmentModel _appointment;
-  String? _specialtyName;
   bool _isCancelling = false;
 
-  @override
-  void initState() {
-    super.initState();
-    _appointment = widget.appointment;
-    _loadSpecialty();
-  }
-
-  @override
-  void didUpdateWidget(covariant PatientAppointmentDetailsScreen oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.appointment != widget.appointment) {
-      _appointment = widget.appointment;
-      _loadSpecialty();
-    }
-  }
-
-  Future<void> _loadSpecialty() async {
-    final specId = _appointment.specialtyId;
-    if (specId != null && specId.isNotEmpty) {
-      try {
-        final specialties = await _specialtyService.fetchActiveSpecialties();
-        final match = specialties.where((s) => s.id == specId).firstOrNull;
-        if (match != null && mounted) {
-          setState(() => _specialtyName = match.localizedName);
-        }
-      } catch (_) {}
-    }
-  }
-
   Future<void> _confirmCancel() async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        backgroundColor: AppColors.surface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(
-          context.tr.cancelAppointmentTitle,
-          style: context.semiBold16TextMain,
-        ),
-        content: Text(
-          context.tr.cancelAppointmentMessage,
-          style: context.regular14TextSecondary,
-        ),
-        actions: [
-          AppTextButton(
-            label: context.tr.cancel,
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            textStyle: context.medium14TextSecondary,
-          ),
-          AppTextButton(
-            label: context.tr.confirm,
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            foregroundColor: AppColors.error,
-          ),
-        ],
-      ),
+    final cubit = context.read<AppointmentDetailsCubit>();
+    final confirmed = await showAppConfirmDialog(
+      context,
+      title: context.tr.cancelAppointmentTitle,
+      message: context.tr.cancelAppointmentMessage,
+      confirmLabel: context.tr.confirm,
+      confirmColor: AppColors.error,
     );
+    if (!confirmed || !mounted) return;
 
-    if (confirmed == true && mounted) {
-      setState(() => _isCancelling = true);
-      try {
-        await _appointmentService.cancel(
-          _appointment,
-          cancelledBy: CancelledBy.patient,
-        );
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(context.tr.appointmentCancelledSuccess),
-              backgroundColor: AppColors.primary,
-            ),
-          );
-          if (context.canPop()) {
-            context.pop();
-          } else {
-            Navigator.of(context).maybePop();
-          }
-        }
-      } catch (e) {
-        if (mounted) {
-          setState(() => _isCancelling = false);
-          final appEx = AppException.from(e);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(appEx.message),
-              backgroundColor: AppColors.error,
-            ),
-          );
-        }
-      }
+    setState(() => _isCancelling = true);
+    try {
+      await cubit.cancel(widget.appointment, CancelledBy.patient);
+    } catch (e) {
+      if (!mounted) return;
+      context.showErrorSnackBar(AppException.from(e).message);
+      return;
+    } finally {
+      if (mounted) setState(() => _isCancelling = false);
     }
+    if (!mounted) return;
+    context.showSuccessSnackBar(context.tr.appointmentCancelledSuccess);
+    Navigator.of(context).maybePop();
   }
 
   @override
   Widget build(BuildContext context) {
-    final locale = LocaleSettings.currentLocale.languageCode;
-    final formattedDate = DateFormat.yMMMd(locale).format(_appointment.startAt);
-    final formattedTime = DateFormat.jm(locale).format(_appointment.startAt);
+    final appointment = widget.appointment;
+    final state = context.watch<AppointmentDetailsCubit>().state;
 
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: AppIconButton.back(
-          onTap: () {
-            if (context.canPop()) {
-              context.pop();
-            } else {
-              Navigator.of(context).maybePop();
-            }
-          },
-        ),
+        leading: const AppBackButton.leading(),
         centerTitle: true,
         title: Text(
           context.tr.appointmentDetails,
@@ -181,147 +84,35 @@ class _PatientAppointmentDetailsScreenState
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Doctor Info Card
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: AppColors.surface,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: AppColors.shadowCard,
-                          blurRadius: 16,
-                          offset: Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: SizedBox(
-                            width: 72,
-                            height: 72,
-                            child: DoctorImage(
-                              imageUrl: _appointment.doctorImageUrl,
-                              fallback: const DoctorAvatarPlaceholder(
-                                circle: false,
-                              ),
-                            ),
-                          ),
-                        ),
-                        14.horizontalSpace,
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      _appointment.doctorName,
-                                      style: context.semiBold16TextMain,
-                                    ),
-                                  ),
-                                  8.horizontalSpace,
-                                  AppointmentStatusChip(
-                                    status: _appointment.status,
-                                  ),
-                                ],
-                              ),
-                              if (_specialtyName != null &&
-                                  _specialtyName!.isNotEmpty) ...[
-                                4.verticalSpace,
-                                Text(
-                                  _specialtyName!,
-                                  style: context.regular12TextSecondary,
-                                ),
-                              ],
-                              8.verticalSpace,
-                              Text(
-                                '\$${_appointment.fee.toStringAsFixed(0)}',
-                                style: context.bold14Primary,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                  AppointmentDoctorCard(
+                    appointment: appointment,
+                    specialtyName: state.specialtyName,
                   ),
                   20.verticalSpace,
-
-                  // Booking Details Card
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: AppColors.surface,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: AppColors.shadowCard,
-                          blurRadius: 16,
-                          offset: Offset(0, 4),
+                  AppointmentSummaryCard(
+                    date: formatDate(appointment.startAt, context.localeCode),
+                    time: formatTime(appointment.startAt, context.localeCode),
+                    fee: formatFee(appointment.fee),
+                    extraRows: [
+                      if (appointment.status == AppointmentStatus.cancelled)
+                        AppointmentDetailRow(
+                          icon: Icons.cancel_outlined,
+                          label: context.tr.statusCancelled,
+                          value: appointment.cancelledBy == CancelledBy.patient
+                              ? context.tr.cancelledByYou
+                              : context.tr.cancelledByClinic,
+                          valueColor: AppColors.error,
                         ),
-                      ],
-                    ),
-                    child: Column(
-                      children: [
-                        _DetailRow(
-                          icon: Icons.calendar_today_outlined,
-                          label: context.tr.appointmentDate,
-                          value: formattedDate,
-                        ),
-                        12.verticalSpace,
-                        const Divider(height: 1, color: AppColors.outline),
-                        12.verticalSpace,
-                        _DetailRow(
-                          icon: Icons.access_time_rounded,
-                          label: context.tr.appointmentTime,
-                          value: formattedTime,
-                        ),
-                        12.verticalSpace,
-                        const Divider(height: 1, color: AppColors.outline),
-                        12.verticalSpace,
-                        _DetailRow(
-                          icon: Icons.payments_outlined,
-                          label: context.tr.consultationFee,
-                          value: '\$${_appointment.fee.toStringAsFixed(0)}',
-                          valueColor: AppColors.primary,
-                        ),
-                        if (_appointment.status ==
-                            AppointmentStatus.cancelled) ...[
-                          12.verticalSpace,
-                          const Divider(height: 1, color: AppColors.outline),
-                          12.verticalSpace,
-                          _DetailRow(
-                            icon: Icons.cancel_outlined,
-                            label: context.tr.statusCancelled,
-                            value:
-                                _appointment.cancelledBy == CancelledBy.patient
-                                ? context.tr.cancelledByYou
-                                : context.tr.cancelledByClinic,
-                            valueColor: AppColors.error,
-                          ),
-                        ],
-                      ],
-                    ),
+                    ],
                   ),
                   20.verticalSpace,
-
-                  // Live Clinic Location Card
-                  _LiveClinicLocationCard(
-                    clinicStream: _clinicService.streamClinic(),
-                  ),
+                  ClinicLocationCard(clinic: state.clinic),
                   24.verticalSpace,
                 ],
               ),
             ),
           ),
-
-          // Bottom Action
-          if (_appointment.status == AppointmentStatus.upcoming)
+          if (appointment.status == AppointmentStatus.upcoming)
             SafeArea(
               top: false,
               child: Padding(
@@ -336,18 +127,18 @@ class _PatientAppointmentDetailsScreenState
                 ),
               ),
             )
-          else if (_appointment.status == AppointmentStatus.completed)
+          else if (appointment.status == AppointmentStatus.completed)
             SafeArea(
               top: false,
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
-                child: !_appointment.isReviewed
+                child: !appointment.isReviewed
                     ? AppPrimaryButton(
                         key: const Key('details_rate_doctor_button'),
                         label: context.tr.rateDoctor,
                         icon: Icons.star_rounded,
                         onPressed: () =>
-                            PatientRateDoctorRoute(_appointment).push(context),
+                            PatientRateDoctorRoute(appointment).push(context),
                       )
                     : Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -370,103 +161,6 @@ class _PatientAppointmentDetailsScreenState
             ),
         ],
       ),
-    );
-  }
-}
-
-class _DetailRow extends StatelessWidget {
-  const _DetailRow({
-    required this.icon,
-    required this.label,
-    required this.value,
-    this.valueColor,
-  });
-
-  final IconData icon;
-  final String label;
-  final String value;
-  final Color? valueColor;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Icon(icon, size: 20, color: AppColors.primary),
-        10.horizontalSpace,
-        Text(label, style: context.regular14TextSecondary),
-        const Spacer(),
-        Text(
-          value,
-          style: context.semiBold14TextMain.copyWith(
-            color: valueColor ?? AppColors.textMain,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _LiveClinicLocationCard extends StatelessWidget {
-  const _LiveClinicLocationCard({required this.clinicStream});
-
-  final Stream<ClinicModel?> clinicStream;
-
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<ClinicModel?>(
-      stream: clinicStream,
-      builder: (context, snapshot) {
-        final clinic = snapshot.data;
-        final address = clinic?.localizedAddress ?? '';
-        final location = clinic?.location;
-
-        return Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: AppColors.surface,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: const [
-              BoxShadow(
-                color: AppColors.shadowCard,
-                blurRadius: 16,
-                offset: Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  const Icon(
-                    Icons.location_on_outlined,
-                    size: 20,
-                    color: AppColors.primary,
-                  ),
-                  8.horizontalSpace,
-                  Text(
-                    context.tr.clinicLocation,
-                    style: context.bold16TextMain,
-                  ),
-                ],
-              ),
-              12.verticalSpace,
-              if (address.isEmpty && location == null)
-                Text(
-                  context.tr.clinicLocationNotSet,
-                  style: context.regular14TextSecondary,
-                )
-              else ...[
-                if (address.isNotEmpty) ...[
-                  Text(address, style: context.regular14TextSecondary),
-                  if (location != null) 12.verticalSpace,
-                ],
-                if (location != null) ClinicLocationMap(location: location),
-              ],
-            ],
-          ),
-        );
-      },
     );
   }
 }

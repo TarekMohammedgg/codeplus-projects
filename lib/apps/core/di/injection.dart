@@ -22,6 +22,11 @@ import 'package:doctor_hunt/apps/features/admin/create_doctor/presentation/contr
 import 'package:doctor_hunt/apps/features/common/auth/data/repositories/auth_repository.dart';
 import 'package:doctor_hunt/apps/features/common/auth/data/service/auth_service.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/controller/cubit/auth_cubit.dart';
+import 'package:doctor_hunt/apps/features/common/appointment_details/data/repositories/appointment_details_repository.dart';
+import 'package:doctor_hunt/apps/features/common/appointment_details/presentation/controller/cubit/appointment_details_cubit.dart';
+import 'package:doctor_hunt/apps/features/admin/doctor_details/presentation/controller/cubit/admin_doctor_details_cubit.dart';
+import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
+import 'package:doctor_hunt/apps/core/models/doctor_availability.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/data/repositories/doctor_repository.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/data/service/find_doctors_service.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/controller/cubit/find_doctors_cubit.dart';
@@ -30,6 +35,7 @@ import 'package:doctor_hunt/apps/features/patient/doctor_details/data/repositori
 import 'package:doctor_hunt/apps/features/patient/doctor_details/presentation/controller/cubit/doctor_details_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/favorites/data/repositories/favorites_repository.dart';
 import 'package:doctor_hunt/apps/features/patient/favorites/data/service/favorites_service.dart';
+import 'package:doctor_hunt/apps/features/patient/favorites/presentation/controller/cubit/favorite_doctors_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/favorites/presentation/controller/cubit/favorites_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/controller/cubit/booking_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/appointments/data/repositories/patient_appointments_repository.dart';
@@ -44,17 +50,26 @@ import 'package:doctor_hunt/apps/features/patient/profile/presentation/controlle
 import 'package:doctor_hunt/apps/features/patient/rate_doctor/data/repositories/rate_doctor_repository.dart';
 import 'package:doctor_hunt/apps/features/patient/rate_doctor/presentation/cubit/rate_doctor_cubit.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:doctor_hunt/apps/core/services/app_preferences_service.dart';
+
 final getIt = GetIt.instance;
 
-/// Registers every Firebase dependency, service, repository and Cubit
-/// factory used by the app. Called once from `main()` after Firebase is
+/// Registers every dependency, service, repository and Cubit
+/// factory used by the app. Called once from `main()` after Firebase and storage are
 /// initialized, and from test setup with fakes registered beforehand.
 ///
 /// Every dependency is registered unconditionally: callers own the
 /// lifecycle (`getIt.reset()` between test cases) instead of guarding each
 /// registration with `isRegistered`.
 //CR will tell u in session
-void setupServiceLocator() {
+void setupServiceLocator({required SharedPreferences preferences}) {
+  // Storage
+  getIt.registerSingleton<SharedPreferences>(preferences);
+  getIt.registerLazySingleton<AppPreferencesService>(
+    () => AppPreferencesService(preferences: getIt<SharedPreferences>()),
+  );
+
   // Firebase
   getIt.registerLazySingleton<FirebaseAuth>(() => FirebaseAuth.instance);
   getIt.registerLazySingleton<FirebaseFirestore>(
@@ -84,11 +99,9 @@ void setupServiceLocator() {
     () => FindDoctorsService(doctorService: getIt<DoctorService>()),
   );
   getIt.registerLazySingleton<AdminDoctorService>(
-    () => AdminDoctorService(
-      firestore: getIt<FirebaseFirestore>(),
-      specialtyService: getIt<SpecialtyService>(),
-    ),
+    () => AdminDoctorService(doctorService: getIt<DoctorService>()),
   );
+
   getIt.registerLazySingleton<CloudinaryUploadService>(
     () => CloudinaryUploadService(),
   );
@@ -158,7 +171,11 @@ void setupServiceLocator() {
     ),
   );
   getIt.registerLazySingleton<ProfileRepository>(
-    () => FirebaseProfileRepository(profileService: getIt<ProfileService>()),
+    () => FirebaseProfileRepository(
+      profileService: getIt<ProfileService>(),
+      uploadService: getIt<CloudinaryUploadService>(),
+      authService: getIt<AuthService>(),
+    ),
   );
   getIt.registerLazySingleton<PatientAppointmentsRepository>(
     () => PatientAppointmentsRepositoryImpl(
@@ -191,6 +208,13 @@ void setupServiceLocator() {
       specialtyService: getIt<SpecialtyService>(),
     ),
   );
+  getIt.registerLazySingleton<AppointmentDetailsRepository>(
+    () => AppointmentDetailsRepositoryImpl(
+      appointmentService: getIt<AppointmentService>(),
+      clinicService: getIt<ClinicService>(),
+      specialtyService: getIt<SpecialtyService>(),
+    ),
+  );
 
   // Cubits (registered as factories to return a fresh instance on demand)
   getIt.registerFactory<AuthCubit>(
@@ -217,6 +241,9 @@ void setupServiceLocator() {
   getIt.registerFactory<FavoritesCubit>(
     () => FavoritesCubit(repository: getIt<FavoritesRepository>()),
   );
+  getIt.registerFactory<FavoriteDoctorsCubit>(
+    () => FavoriteDoctorsCubit(doctorRepository: getIt<DoctorRepository>()),
+  );
   getIt.registerFactory<ProfileCubit>(
     () => ProfileCubit(
       repository: getIt<ProfileRepository>(),
@@ -235,9 +262,22 @@ void setupServiceLocator() {
   getIt.registerFactory<RateDoctorCubit>(
     () => RateDoctorCubit(repository: getIt<RateDoctorRepository>()),
   );
-  getIt.registerFactory<DoctorAvailabilityCubit>(
-    () => DoctorAvailabilityCubit(
-      repository: getIt<DoctorAvailabilityRepository>(),
+  getIt
+      .registerFactoryParam<DoctorAvailabilityCubit, DoctorAvailability?, void>(
+        (availability, _) => DoctorAvailabilityCubit(
+          repository: getIt<DoctorAvailabilityRepository>(),
+          initialAvailability: availability,
+        ),
+      );
+  getIt.registerFactoryParam<AdminDoctorDetailsCubit, DoctorModel, void>(
+    (doctor, _) => AdminDoctorDetailsCubit(
+      initialDoctor: doctor,
+      doctorService: getIt<AdminDoctorService>(),
+    ),
+  );
+  getIt.registerFactory<AppointmentDetailsCubit>(
+    () => AppointmentDetailsCubit(
+      repository: getIt<AppointmentDetailsRepository>(),
     ),
   );
   getIt.registerFactory<AdminProfileCubit>(

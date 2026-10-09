@@ -18,6 +18,9 @@ class AppPrimaryButton extends StatelessWidget {
   final Color? borderColor;
   final double borderWidth;
   final BorderRadius? borderRadius;
+
+  /// Defaults to 12dp horizontal so half-width buttons keep their label on
+  /// one line (Material's default is 24dp per side).
   final EdgeInsetsGeometry? padding;
   final TextStyle? textStyle;
   final bool isOutlined;
@@ -74,6 +77,9 @@ class AppPrimaryButton extends StatelessWidget {
               ? BorderSide(color: borderColor!, width: borderWidth)
               : BorderSide.none);
 
+    final effectivePadding =
+        padding ?? const EdgeInsets.symmetric(horizontal: 12);
+
     Widget buildButtonChild() {
       if (isLoading) {
         return SizedBox(
@@ -109,7 +115,7 @@ class AppPrimaryButton extends StatelessWidget {
                 backgroundColor: effectiveBg,
                 foregroundColor: effectiveFg,
                 disabledForegroundColor: effectiveFg.withValues(alpha: 0.6),
-                padding: padding,
+                padding: effectivePadding,
                 side: effectiveBorderSide,
                 shape: RoundedRectangleBorder(borderRadius: effectiveRadius),
                 textStyle:
@@ -120,7 +126,11 @@ class AppPrimaryButton extends StatelessWidget {
                     ),
                 elevation: 0,
               ),
-              child: buildButtonChild(),
+              // Never wrap the label; shrink it only when it truly can't fit.
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: buildButtonChild(),
+              ),
             )
           : ElevatedButton(
               onPressed: isLoading ? null : onPressed,
@@ -128,7 +138,7 @@ class AppPrimaryButton extends StatelessWidget {
                 backgroundColor: effectiveBg,
                 disabledBackgroundColor: effectiveBg.withValues(alpha: 0.6),
                 foregroundColor: effectiveFg,
-                padding: padding,
+                padding: effectivePadding,
                 shape: RoundedRectangleBorder(
                   borderRadius: effectiveRadius,
                   side: effectiveBorderSide,
@@ -138,7 +148,11 @@ class AppPrimaryButton extends StatelessWidget {
                     context.semiBold16White.copyWith(fontSize: fontSize),
                 elevation: 0,
               ),
-              child: buildButtonChild(),
+              // Never wrap the label; shrink it only when it truly can't fit.
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: buildButtonChild(),
+              ),
             ),
     );
   }

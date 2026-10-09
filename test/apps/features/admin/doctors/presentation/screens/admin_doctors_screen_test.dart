@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:doctor_hunt/apps/core/models/specialty_model.dart';
-import 'package:doctor_hunt/apps/features/admin/doctors/data/models/admin_doctor_model.dart';
+import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/presentation/controller/cubit/admin_doctors_cubit.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/presentation/screens/admin_doctors_screen.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
@@ -14,7 +14,24 @@ import '../../../../../../helpers/test_fakes.dart';
 void main() {
   late FakeAdminDoctorsRepository repository;
 
-  Future<void> pumpScreen(WidgetTester tester) async {
+  Future<void> pumpScreen(
+    WidgetTester tester, {
+    List<DoctorModel> doctors = const [
+      DoctorModel(
+        id: 'dentist',
+        name: 'Dr. Sara',
+        specialty: 'Dentistry',
+        specialtyId: 'dentistry',
+      ),
+      DoctorModel(
+        id: 'cardiologist',
+        name: 'Dr. Omar',
+        specialty: 'Cardiology',
+        specialtyId: 'cardiology',
+        isActive: false,
+      ),
+    ],
+  }) async {
     tester.view.physicalSize = const Size(1080, 2400);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(() {
@@ -22,21 +39,7 @@ void main() {
       tester.view.resetDevicePixelRatio();
     });
     repository = FakeAdminDoctorsRepository(
-      doctors: const [
-        AdminDoctorModel(
-          id: 'dentist',
-          name: 'Dr. Sara',
-          specialty: 'Dentistry',
-          specialtyId: 'dentistry',
-        ),
-        AdminDoctorModel(
-          id: 'cardiologist',
-          name: 'Dr. Omar',
-          specialty: 'Cardiology',
-          specialtyId: 'cardiology',
-          isActive: false,
-        ),
-      ],
+      doctors: doctors,
       specialties: const [
         SpecialtyModel(id: 'dentistry', nameAr: 'أسنان', nameEn: 'Dentistry'),
         SpecialtyModel(id: 'cardiology', nameAr: 'قلب', nameEn: 'Cardiology'),
@@ -59,7 +62,7 @@ void main() {
     expect(find.text('Dr. Omar'), findsOneWidget);
 
     // act
-    await tester.tap(find.widgetWithText(ChoiceChip, 'Dentistry'));
+    await tester.tap(find.widgetWithText(ChoiceChip, 'Dentistry (1)'));
     await tester.pump();
 
     // assert
@@ -100,5 +103,34 @@ void main() {
     // assert
     expect(find.text(AppLocale.en.buildSync().activate), findsOneWidget);
     expect(find.byIcon(Icons.delete_outline_rounded), findsNothing);
+  });
+
+  testWidgets('shows active and total counters with counted chips', (
+    tester,
+  ) async {
+    // arrange
+    final tr = AppLocale.en.buildSync();
+
+    // act
+    await pumpScreen(tester);
+
+    // assert
+    expect(find.text(tr.activeDoctors), findsOneWidget);
+    expect(find.text(tr.totalDoctors), findsOneWidget);
+    expect(find.widgetWithText(ChoiceChip, 'All (2)'), findsOneWidget);
+    expect(find.text(tr.inactiveLabel), findsOneWidget);
+  });
+
+  testWidgets('no doctors shows the empty state without chips', (tester) async {
+    // arrange
+    final tr = AppLocale.en.buildSync();
+
+    // act
+    await pumpScreen(tester, doctors: const []);
+
+    // assert
+    expect(find.text(tr.noDoctorsFound), findsOneWidget);
+    expect(find.text(tr.noDoctorsYet), findsOneWidget);
+    expect(find.byType(ChoiceChip), findsNothing);
   });
 }

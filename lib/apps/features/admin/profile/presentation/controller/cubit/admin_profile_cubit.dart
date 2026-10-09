@@ -18,6 +18,13 @@ class AdminProfileCubit extends Cubit<AdminProfileState> {
   final AdminProfileRepository repository;
   final CloudinaryUploadService uploadService;
 
+  /// Loads the signed-in admin; does nothing when nobody is signed in.
+  Future<void> loadCurrentProfile() async {
+    final uid = repository.currentUid;
+    if (uid == null) return;
+    await loadProfile(uid);
+  }
+
   Future<void> loadProfile(String uid) async {
     emit(state.copyWith(status: AdminProfileStatus.loading));
     try {
@@ -50,7 +57,6 @@ class AdminProfileCubit extends Cubit<AdminProfileState> {
   }
 
   Future<bool> saveProfileAndClinic({
-    required String uid,
     required String displayName,
     required String email,
     required String addressAr,
@@ -59,6 +65,18 @@ class AdminProfileCubit extends Cubit<AdminProfileState> {
     Uint8List? newImageBytes,
     String? newImageName,
   }) async {
+    // Never fall back to a made-up uid: that would write another document.
+    final uid = repository.currentUid;
+    if (uid == null) {
+      emit(
+        state.copyWith(
+          status: AdminProfileStatus.failure,
+          failure: AdminProfileFailure.unknown,
+        ),
+      );
+      return false;
+    }
+
     emit(
       state.copyWith(
         status: AdminProfileStatus.saving,
@@ -103,13 +121,14 @@ class AdminProfileCubit extends Cubit<AdminProfileState> {
       );
       return true;
     } on FirebaseAuthException catch (e) {
-      final message = e.code == 'requires-recent-login'
-          ? 'requires-recent-login'
-          : e.message ?? e.toString();
+      final isRecentLogin = e.code == 'requires-recent-login';
       emit(
         state.copyWith(
           status: AdminProfileStatus.failure,
-          errorMessage: message,
+          errorMessage: isRecentLogin ? null : e.message,
+          failure: isRecentLogin
+              ? AdminProfileFailure.requiresRecentLogin
+              : AdminProfileFailure.unknown,
         ),
       );
       return false;
@@ -118,6 +137,7 @@ class AdminProfileCubit extends Cubit<AdminProfileState> {
         state.copyWith(
           status: AdminProfileStatus.failure,
           errorMessage: e.toString(),
+          failure: AdminProfileFailure.unknown,
         ),
       );
       return false;

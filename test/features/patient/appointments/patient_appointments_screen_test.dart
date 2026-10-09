@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
+import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/features/patient/appointments/presentation/controller/cubit/patient_appointments_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/appointments/presentation/screens/patient_appointments_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/appointments/presentation/widgets/patient_appointment_card.dart';
@@ -116,6 +118,44 @@ void main() {
       expect(find.text(tr.completed), findsOneWidget);
       expect(find.text(tr.cancelled), findsOneWidget);
       expect(find.byIcon(Icons.arrow_back_ios_new_rounded), findsOneWidget);
+      await cubit.close();
+    });
+
+    testWidgets('pill follows the swipe before the page settles', (
+      WidgetTester tester,
+    ) async {
+      // arrange
+      final cubit = PatientAppointmentsCubit(
+        repository: FakePatientAppointmentsRepository(),
+        authService: FakeAuthService(user: FakeUser(uid: 'patient_123')),
+      );
+      await cubit.init();
+      await tester.pumpWidget(
+        buildTestApp(
+          BlocProvider<PatientAppointmentsCubit>.value(
+            value: cubit,
+            child: const PatientAppointmentsScreen(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final gesture = await tester.startGesture(
+        tester.getCenter(find.byType(TabBarView)),
+      );
+
+      // act: drag past half the page, finger still down
+      await gesture.moveBy(
+        Offset(-tester.getSize(find.byType(TabBarView)).width * 0.6, 0),
+      );
+      await tester.pump();
+
+      // assert
+      final completedPill = tester.widget<AppPrimaryButton>(
+        find.widgetWithText(AppPrimaryButton, tr.completed),
+      );
+      expect(completedPill.backgroundColor, AppColors.primary);
+      await gesture.up();
+      await tester.pumpAndSettle();
       await cubit.close();
     });
 

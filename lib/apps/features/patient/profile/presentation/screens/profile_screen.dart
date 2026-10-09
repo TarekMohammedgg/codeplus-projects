@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 
 import 'package:doctor_hunt/apps/core/di/injection.dart';
+import 'package:doctor_hunt/apps/core/extensions/context_extensions.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
+import 'package:doctor_hunt/apps/core/utils/formatters.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/data/models/user_profile_model.dart';
@@ -67,25 +68,18 @@ class _ProfileContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tr = context.tr;
-    final locale = TranslationProvider.of(
-      context,
-    ).translations.$meta.locale.languageCode;
-
     String dobFormatted;
     if (profile.dob != null) {
-      try {
-        dobFormatted = DateFormat('d MMM yyyy', locale).format(profile.dob!);
-      } catch (_) {
-        dobFormatted = DateFormat('d MMM yyyy', 'en').format(profile.dob!);
-      }
+      dobFormatted = formatDate(profile.dob!, context.localeCode);
     } else {
       dobFormatted = tr.notSet;
     }
 
-    final genderFormatted =
-        (profile.gender != null && profile.gender!.isNotEmpty)
-        ? profile.gender!
-        : tr.notSet;
+    final genderFormatted = switch (profile.gender) {
+      Gender.male => tr.male,
+      Gender.female => tr.female,
+      null => tr.notSet,
+    };
 
     final nameFormatted = profile.name.isNotEmpty ? profile.name : tr.notSet;
     final emailFormatted = profile.email.isNotEmpty ? profile.email : tr.notSet;
@@ -114,11 +108,21 @@ class _ProfileContent extends StatelessWidget {
                   ),
                 ),
                 16.verticalSpace,
-                ProfileInfoCard(label: tr.fullName, value: nameFormatted),
+                ProfileInfoCard(
+                  label: tr.fullName,
+                  value: nameFormatted,
+                  showEditIcon: true,
+                  onEdit: () => EditProfileRoute(profile).push(context),
+                ),
                 10.verticalSpace,
                 ProfileInfoCard(label: tr.email, value: emailFormatted),
                 10.verticalSpace,
-                ProfileInfoCard(label: tr.contactNumber, value: phoneFormatted),
+                ProfileInfoCard(
+                  label: tr.contactNumber,
+                  value: phoneFormatted,
+                  showEditIcon: true,
+                  onEdit: () => EditProfileRoute(profile).push(context),
+                ),
                 10.verticalSpace,
                 ProfileInfoCard(label: tr.dateOfBirth, value: dobFormatted),
                 10.verticalSpace,

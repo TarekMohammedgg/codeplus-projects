@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:doctor_hunt/apps/features/patient/profile/presentation/controller/cubit/profile_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:doctor_hunt/apps/core/di/injection.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/data/models/user_profile_model.dart';
@@ -21,7 +23,7 @@ void main() {
     email: 'jane@example.com',
     phone: '+201012345678',
     dob: DateTime(1995, 5, 20),
-    gender: 'female',
+    gender: Gender.female,
     avatarUrl: 'https://example.com/avatar.jpg',
   );
 
@@ -35,9 +37,7 @@ void main() {
         tester.view.resetDevicePixelRatio();
       });
 
-      await tester.pumpWidget(
-        buildTestApp(EditProfileScreen(profile: testProfile)),
-      );
+      await tester.pumpWidget(buildTestApp(_editScreen(testProfile)));
       await tester.pumpAndSettle();
 
       expect(find.text('Edit Profile'), findsOneWidget);
@@ -65,9 +65,7 @@ void main() {
       tester.view.resetDevicePixelRatio();
     });
 
-    await tester.pumpWidget(
-      buildTestApp(EditProfileScreen(profile: testProfile)),
-    );
+    await tester.pumpWidget(buildTestApp(_editScreen(testProfile)));
     await tester.pumpAndSettle();
 
     // Tap Male
@@ -94,11 +92,7 @@ void main() {
       getIt.registerLazySingleton<ProfileRepository>(() => fakeRepo);
       getIt.allowReassignment = false;
 
-      await tester.pumpWidget(
-        buildTestApp(
-          EditProfileScreen(profile: testProfile, profileRepository: fakeRepo),
-        ),
-      );
+      await tester.pumpWidget(buildTestApp(_editScreen(testProfile, fakeRepo)));
       await tester.pumpAndSettle();
 
       // Clear name
@@ -143,11 +137,7 @@ void main() {
     getIt.registerLazySingleton<ProfileRepository>(() => fakeRepo);
     getIt.allowReassignment = false;
 
-    await tester.pumpWidget(
-      buildTestApp(
-        EditProfileScreen(profile: testProfile, profileRepository: fakeRepo),
-      ),
-    );
+    await tester.pumpWidget(buildTestApp(_editScreen(testProfile, fakeRepo)));
     await tester.pumpAndSettle();
 
     // Modify name and phone
@@ -167,4 +157,17 @@ void main() {
     expect(fakeRepo.lastUpdatedDisplayName, equals('Jane Smith'));
     expect(fakeRepo.lastUpdatedPhone, equals('+201098765432'));
   });
+}
+
+/// The screen with the cubit its route provides, signed in as `user_123`.
+Widget _editScreen(UserProfileModel profile, [FakeProfileRepository? repo]) {
+  return BlocProvider<ProfileCubit>(
+    create: (_) => ProfileCubit(
+      repository: repo ?? FakeProfileRepository(),
+      authRepository: FakeAuthRepository(
+        currentUser: FakeUser(uid: 'user_123'),
+      ),
+    ),
+    child: EditProfileScreen(profile: profile),
+  );
 }

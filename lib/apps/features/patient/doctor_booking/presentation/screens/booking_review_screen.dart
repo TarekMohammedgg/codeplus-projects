@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 
+import 'package:doctor_hunt/apps/core/extensions/context_extensions.dart';
 import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/models/clinic_model.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
-import 'package:doctor_hunt/apps/core/widgets/app_icon_button.dart';
+import 'package:doctor_hunt/apps/core/utils/formatters.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_back_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
+import 'package:doctor_hunt/apps/core/widgets/appointment_summary_card.dart';
+import 'package:doctor_hunt/apps/core/widgets/clinic_location_card.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_profile_card.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_booking/data/models/booking_draft.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/controller/cubit/booking_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/controller/cubit/booking_state.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/widgets/booking_success_dialog.dart';
-import 'package:doctor_hunt/apps/features/patient/doctor_details/presentation/widgets/clinic_location_map.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
@@ -63,9 +65,8 @@ class _BookingReviewScreenState extends State<BookingReviewScreen> {
   Widget build(BuildContext context) {
     final draft = widget.draft;
     final doctor = draft.doctor;
-    final locale = context.tr.$meta.locale.languageCode;
-    final formattedDate = DateFormat.yMMMEd(locale).format(draft.startAt);
-    final formattedTime = DateFormat.jm(locale).format(draft.startAt);
+    final formattedDate = formatDate(draft.startAt, context.localeCode);
+    final formattedTime = formatTime(draft.startAt, context.localeCode);
 
     final isConfirming = context.select<BookingCubit, bool>(
       (cubit) => cubit.state is BookingSubmitting,
@@ -76,9 +77,7 @@ class _BookingReviewScreenState extends State<BookingReviewScreen> {
       child: Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: AppIconButton.back(onTap: () => context.pop()),
+          leading: AppBackButton.leading(onTap: () => context.pop()),
           centerTitle: true,
           title: Text(context.tr.bookingReview, style: context.bold18TextMain),
         ),
@@ -95,13 +94,17 @@ class _BookingReviewScreenState extends State<BookingReviewScreen> {
                   children: [
                     DoctorProfileCard(doctor: doctor),
                     20.verticalSpace,
-                    _BookingInfoCard(
+                    AppointmentSummaryCard(
                       date: formattedDate,
                       time: formattedTime,
-                      fee: '\$${doctor.consultationFee.toStringAsFixed(2)}',
+                      fee: formatFee(doctor.consultationFee),
                     ),
                     20.verticalSpace,
-                    _ClinicLocationCard(clinicStream: _clinic),
+                    StreamBuilder<ClinicModel?>(
+                      stream: _clinic,
+                      builder: (context, snapshot) =>
+                          ClinicLocationCard(clinic: snapshot.data),
+                    ),
                     24.verticalSpace,
                   ],
                 ),
@@ -124,159 +127,6 @@ class _BookingReviewScreenState extends State<BookingReviewScreen> {
           ],
         ),
       ),
-    );
-  }
-}
-
-class _BookingInfoCard extends StatelessWidget {
-  const _BookingInfoCard({
-    required this.date,
-    required this.time,
-    required this.fee,
-  });
-
-  final String date;
-  final String time;
-  final String fee;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: const [
-          BoxShadow(
-            color: AppColors.shadowCard,
-            blurRadius: 16,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          _InfoRow(
-            icon: Icons.calendar_today_outlined,
-            label: context.tr.appointmentDate,
-            value: date,
-          ),
-          12.verticalSpace,
-          const Divider(height: 1, color: AppColors.outline),
-          12.verticalSpace,
-          _InfoRow(
-            icon: Icons.access_time_rounded,
-            label: context.tr.appointmentTime,
-            value: time,
-          ),
-          12.verticalSpace,
-          const Divider(height: 1, color: AppColors.outline),
-          12.verticalSpace,
-          _InfoRow(
-            icon: Icons.payments_outlined,
-            label: context.tr.consultationFee,
-            value: fee,
-            valueColor: AppColors.primary,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _InfoRow extends StatelessWidget {
-  const _InfoRow({
-    required this.icon,
-    required this.label,
-    required this.value,
-    this.valueColor,
-  });
-
-  final IconData icon;
-  final String label;
-  final String value;
-  final Color? valueColor;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Icon(icon, size: 20, color: AppColors.primary),
-        10.horizontalSpace,
-        Text(label, style: context.regular14TextSecondary),
-        const Spacer(),
-        Text(
-          value,
-          style: context.semiBold14TextMain.copyWith(
-            color: valueColor ?? AppColors.textMain,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _ClinicLocationCard extends StatelessWidget {
-  const _ClinicLocationCard({required this.clinicStream});
-
-  final Stream<ClinicModel?> clinicStream;
-
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<ClinicModel?>(
-      stream: clinicStream,
-      builder: (context, snapshot) {
-        final clinic = snapshot.data;
-        final address = clinic?.localizedAddress ?? '';
-        final location = clinic?.location;
-
-        return Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: AppColors.surface,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: const [
-              BoxShadow(
-                color: AppColors.shadowCard,
-                blurRadius: 16,
-                offset: Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  const Icon(
-                    Icons.location_on_outlined,
-                    size: 20,
-                    color: AppColors.primary,
-                  ),
-                  8.horizontalSpace,
-                  Text(
-                    context.tr.clinicLocation,
-                    style: context.bold16TextMain,
-                  ),
-                ],
-              ),
-              12.verticalSpace,
-              if (address.isEmpty && location == null)
-                Text(
-                  context.tr.clinicLocationNotSet,
-                  style: context.regular14TextSecondary,
-                )
-              else ...[
-                if (address.isNotEmpty) ...[
-                  Text(address, style: context.regular14TextSecondary),
-                  if (location != null) 12.verticalSpace,
-                ],
-                if (location != null) ClinicLocationMap(location: location),
-              ],
-            ],
-          ),
-        );
-      },
     );
   }
 }

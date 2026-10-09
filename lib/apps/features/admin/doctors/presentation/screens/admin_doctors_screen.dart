@@ -6,10 +6,12 @@ import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
-import 'package:doctor_hunt/apps/core/widgets/app_header_section.dart';
-import 'package:doctor_hunt/apps/core/widgets/app_text_button.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_empty_state.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_initial_avatar.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_search_bar.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_confirm_dialog.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_filter_chips.dart';
-import 'package:doctor_hunt/apps/features/admin/doctors/data/models/admin_doctor_model.dart';
+import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/presentation/controller/cubit/admin_doctors_cubit.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/presentation/controller/cubit/admin_doctors_state.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/presentation/widgets/admin_doctors_widgets.dart';
@@ -19,7 +21,10 @@ import 'package:skeletonizer/skeletonizer.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_list_skeleton.dart';
 
 class AdminDoctorsScreen extends StatefulWidget {
-  const AdminDoctorsScreen({super.key});
+  const AdminDoctorsScreen({super.key, this.adminName});
+
+  /// Shown as the initial badge in the header.
+  final String? adminName;
 
   @override
   State<AdminDoctorsScreen> createState() => AdminDoctorsScreenState();
@@ -51,7 +56,7 @@ class AdminDoctorsScreenState extends State<AdminDoctorsScreen> {
     super.dispose();
   }
 
-  List<AdminDoctorModel> _filter(List<AdminDoctorModel> doctors) {
+  List<DoctorModel> _filter(List<DoctorModel> doctors) {
     final query = _query.trim().toLowerCase();
     return doctors.where((doctor) {
       if (_specialtyId != null && doctor.specialtyId != _specialtyId) {
@@ -67,37 +72,17 @@ class AdminDoctorsScreenState extends State<AdminDoctorsScreen> {
     }).toList();
   }
 
-  Future<void> _confirmToggleActive(AdminDoctorModel doctor) async {
+  Future<void> _confirmToggleActive(DoctorModel doctor) async {
     final activate = !doctor.isActive;
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        backgroundColor: AppColors.surface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(
-          activate ? tr.activateDoctorTitle : tr.deactivateDoctorTitle,
-          style: context.semiBold16TextMain,
-        ),
-        content: Text(
-          activate ? tr.activateDoctorConfirm : tr.deactivateDoctorConfirm,
-          style: context.regular14TextSecondary,
-        ),
-        actions: [
-          AppTextButton(
-            label: tr.cancel,
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            textStyle: context.medium14TextSecondary,
-          ),
-          AppTextButton(
-            label: activate ? tr.activate : tr.deactivate,
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            foregroundColor: activate ? AppColors.success : AppColors.error,
-          ),
-        ],
-      ),
+    final confirmed = await showAppConfirmDialog(
+      context,
+      title: activate ? tr.activateDoctorTitle : tr.deactivateDoctorTitle,
+      message: activate ? tr.activateDoctorConfirm : tr.deactivateDoctorConfirm,
+      confirmLabel: activate ? tr.activate : tr.deactivate,
+      confirmColor: activate ? AppColors.success : AppColors.error,
     );
 
-    if (confirmed != true || !mounted) return;
+    if (!confirmed || !mounted) return;
     try {
       await _adminDoctorsCubit.setActive(doctor.id, activate);
       if (!mounted) return;
@@ -116,35 +101,66 @@ class AdminDoctorsScreenState extends State<AdminDoctorsScreen> {
       builder: (context, state) {
         return Scaffold(
           backgroundColor: AppColors.background,
-          body: Column(
-            children: [
-              AppHeaderSection(
-                title: tr.doctorsTitle,
-                leading: const Icon(Icons.menu_rounded, color: Colors.white),
-                trailing: const Icon(
-                  Icons.notifications_none_rounded,
-                  color: Colors.white,
-                ),
-                showSearchBar: true,
-                searchController: _searchController,
-                searchHintText: tr.searchAdminDoctorsHint,
-                onSearchChanged: (value) => setState(() => _query = value),
-              ),
-              Expanded(child: _buildDoctorsContent(context, state)),
-            ],
+          body: SafeArea(
+            bottom: false,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _buildHeader(context),
+                Expanded(child: _buildDoctorsContent(context, state)),
+              ],
+            ),
           ),
           floatingActionButton: FloatingActionButton.extended(
             onPressed: () => const CreateDoctorRoute().push(context),
             backgroundColor: AppColors.primary,
-            foregroundColor: Colors.white,
-            icon: const Icon(Icons.add_rounded),
-            label: Text(
-              tr.addDoctor,
-              style: context.semiBold14Primary.copyWith(color: Colors.white),
-            ),
+            foregroundColor: AppColors.white,
+            shape: const StadiumBorder(),
+            icon: const Icon(Icons.add_rounded, size: 18),
+            label: Text(tr.addDoctor, style: context.regular12White),
           ),
         );
       },
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      child: Row(
+        children: [
+          Expanded(child: Text(tr.doctorsTitle, style: context.bold18TextMain)),
+          AppInitialAvatar(
+            name: widget.adminName ?? tr.adminRoleTitle,
+            onTap: () => const AdminProfileRoute().push(context),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSearchBar() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: AppSearchBar(
+        controller: _searchController,
+        hintText: tr.searchAdminDoctorsHint,
+        height: 44,
+        borderRadius: BorderRadius.circular(12),
+        prefixIcon: const Icon(
+          Icons.search_rounded,
+          color: AppColors.textMuted,
+          size: 18,
+        ),
+        boxShadow: const [
+          BoxShadow(
+            color: AppColors.shadowCard,
+            blurRadius: 2,
+            offset: Offset(0, 1),
+          ),
+        ],
+        onChanged: (value) => setState(() => _query = value),
+      ),
     );
   }
 
@@ -154,7 +170,7 @@ class AdminDoctorsScreenState extends State<AdminDoctorsScreen> {
         padding: const EdgeInsets.fromLTRB(20, 16, 20, 88),
         spacing: 12,
         itemBuilder: (_) => AdminDoctorListTile(
-          doctor: AdminDoctorModel(
+          doctor: DoctorModel(
             id: '',
             name: BoneMock.fullName,
             specialty: BoneMock.name,
@@ -172,37 +188,51 @@ class AdminDoctorsScreenState extends State<AdminDoctorsScreen> {
     final doctors = state.doctors;
     final filtered = _filter(doctors);
     final activeCount = doctors.where((doctor) => doctor.isActive).length;
+    final counts = <String?, int>{null: doctors.length};
+    for (final doctor in doctors) {
+      counts.update(doctor.specialtyId, (n) => n + 1, ifAbsent: () => 1);
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+          padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
           child: AdminStatsRow(
             totalCount: doctors.length,
             activeCount: activeCount,
           ),
         ),
-        12.verticalSpace,
-        DoctorFilterChips(
-          specialties: state.specialties,
-          selectedSpecialtyId: _specialtyId,
-          onSpecialtySelected: (id) => setState(() => _specialtyId = id),
-        ),
-        12.verticalSpace,
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+        _buildSearchBar(),
+        if (doctors.isEmpty)
+          Expanded(
+            child: AppEmptyState(
+              image: const _NoDoctorsIcon(),
+              title: tr.noDoctorsFound,
+              titleStyle: context.bold16TextMain,
+              subtitle: tr.noDoctorsYet,
+            ),
+          )
+        else ...[
+          14.verticalSpace,
+          DoctorFilterChips(
+            specialties: state.specialties,
+            selectedSpecialtyId: _specialtyId,
+            counts: counts,
+            onSpecialtySelected: (id) => setState(() => _specialtyId = id),
+          ),
+          16.verticalSpace,
+          Expanded(
             child: filtered.isEmpty
                 ? Center(
                     child: Text(
-                      doctors.isEmpty ? tr.noDoctorsYet : tr.noDoctorsFound,
+                      tr.noDoctorsFound,
                       textAlign: TextAlign.center,
                       style: context.regular14TextSecondary,
                     ),
                   )
                 : ListView.separated(
-                    padding: const EdgeInsets.only(bottom: 88),
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 88),
                     itemCount: filtered.length,
                     separatorBuilder: (_, _) => 12.verticalSpace,
                     itemBuilder: (context, index) {
@@ -216,6 +246,51 @@ class AdminDoctorsScreenState extends State<AdminDoctorsScreen> {
                       );
                     },
                   ),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+class _NoDoctorsIcon extends StatelessWidget {
+  const _NoDoctorsIcon();
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Container(
+          width: 80,
+          height: 80,
+          decoration: BoxDecoration(
+            color: AppColors.primaryLight,
+            shape: BoxShape.circle,
+            border: Border.all(color: AppColors.primaryLight),
+          ),
+          child: const Icon(
+            Icons.medical_services_outlined,
+            size: 40,
+            color: AppColors.primary,
+          ),
+        ),
+        PositionedDirectional(
+          end: -4,
+          bottom: -4,
+          child: Container(
+            width: 28,
+            height: 28,
+            decoration: BoxDecoration(
+              color: AppColors.primary,
+              shape: BoxShape.circle,
+              border: Border.all(color: AppColors.white, width: 2),
+            ),
+            child: const Icon(
+              Icons.add_rounded,
+              size: 16,
+              color: AppColors.white,
+            ),
           ),
         ),
       ],

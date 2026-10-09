@@ -1,273 +1,271 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:doctor_hunt/apps/core/di/injection.dart';
+import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
+import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
-import 'package:doctor_hunt/apps/core/widgets/app_icon_button.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_back_button.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_card.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_logout_dialog.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
-import 'package:doctor_hunt/apps/core/widgets/app_text_button.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/controller/cubit/auth_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/data/models/user_profile_model.dart';
-import 'package:doctor_hunt/apps/features/patient/profile/data/repositories/profile_repository.dart';
+import 'package:doctor_hunt/apps/features/patient/profile/presentation/controller/cubit/profile_cubit.dart';
+import 'package:doctor_hunt/apps/features/patient/profile/presentation/controller/cubit/profile_state.dart';
+import 'package:doctor_hunt/apps/features/patient/profile/presentation/widgets/profile_avatar.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
+/// Needs a [ProfileCubit] and an [AuthCubit] above it (provided by the route).
 class PatientSettingsScreen extends StatefulWidget {
-  const PatientSettingsScreen({super.key, this.profileRepository, this.auth});
-
-  final ProfileRepository? profileRepository;
-  final FirebaseAuth? auth;
+  const PatientSettingsScreen({super.key});
 
   @override
   State<PatientSettingsScreen> createState() => _PatientSettingsScreenState();
 }
 
 class _PatientSettingsScreenState extends State<PatientSettingsScreen> {
-  ProfileRepository get _repository =>
-      widget.profileRepository ?? getIt<ProfileRepository>();
-  FirebaseAuth get _auth => widget.auth ?? getIt<FirebaseAuth>();
-
   bool _notificationsEnabled = true;
   bool _hasLoadedProfile = false;
 
-  User? get _currentUser => _auth.currentUser;
+  /// The switch starts from the stored value once, then is driven locally.
+  void _syncNotifications(ProfileState state) {
+    if (_hasLoadedProfile || state is! ProfileLoaded) return;
+    _hasLoadedProfile = true;
+    _notificationsEnabled = state.profile.notificationsEnabled;
+  }
 
-  bool get _hasPasswordProvider {
-    final user = _currentUser;
-    if (user == null) return false;
-    return user.providerData.any((p) => p.providerId == 'password');
+  @override
+  void initState() {
+    super.initState();
+    _syncNotifications(context.read<ProfileCubit>().state);
   }
 
   Future<void> _toggleNotifications(bool value) async {
     setState(() => _notificationsEnabled = value);
-    final uid = _currentUser?.uid;
-    if (uid != null && uid.isNotEmpty) {
-      await _repository.updateProfile(uid: uid, notificationsEnabled: value);
+    try {
+      await context.read<ProfileCubit>().setNotifications(value);
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _notificationsEnabled = !value);
+      context.showErrorSnackBar(AppException.from(e).message);
     }
   }
 
   Future<void> _switchLanguage(AppLocale locale) async {
+    final cubit = context.read<ProfileCubit>();
     await LocaleSettings.setLocale(locale);
-    final uid = _currentUser?.uid;
-    if (uid != null && uid.isNotEmpty) {
-      await _repository.updateProfile(uid: uid, language: locale.languageCode);
+    try {
+      await cubit.setLanguage(locale.languageCode);
+    } catch (e) {
+      if (!mounted) return;
+      context.showErrorSnackBar(AppException.from(e).message);
     }
   }
 
   Future<void> _confirmLogOut() async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        backgroundColor: AppColors.surface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(tr.logOutConfirmTitle, style: context.semiBold16TextMain),
-        content: Text(
-          tr.logOutConfirmMessage,
-          style: context.regular14TextSecondary,
-        ),
-        actions: [
-          AppTextButton(
-            label: tr.cancel,
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            textStyle: context.medium14TextSecondary,
-          ),
-          AppTextButton(
-            label: tr.logOut,
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            foregroundColor: AppColors.error,
-          ),
-        ],
-      ),
-    );
+    final confirmed = await showLogoutConfirmDialog(context);
 
-    if (confirmed == true && mounted) {
+    if (confirmed && mounted) {
       await context.read<AuthCubit>().signOut();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final uid = _currentUser?.uid;
-
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: AppIconButton.back(onTap: () => context.pop()),
-        centerTitle: true,
+        leading: AppBackButton.leading(onTap: () => context.pop()),
         title: Text(context.tr.settings, style: context.bold18TextMain),
       ),
-      body: uid == null
-          ? _buildSettingsContent(context)
-          : StreamBuilder<UserProfileModel>(
-              stream: _repository.streamProfile(uid),
-              builder: (context, snapshot) {
-                if (snapshot.hasData && !_hasLoadedProfile) {
-                  _notificationsEnabled = snapshot.data!.notificationsEnabled;
-                  _hasLoadedProfile = true;
-                }
-                return _buildSettingsContent(context);
-              },
-            ),
+      body: BlocConsumer<ProfileCubit, ProfileState>(
+        listener: (_, state) => setState(() => _syncNotifications(state)),
+        builder: (context, state) => _buildSettingsContent(
+          context,
+          state is ProfileLoaded ? state.profile : null,
+        ),
+      ),
     );
   }
 
-  Widget _buildSettingsContent(BuildContext context) {
+  Widget _buildSettingsContent(
+    BuildContext context,
+    UserProfileModel? profile,
+  ) {
     final currentLocale = LocaleSettings.currentLocale;
+    final tr = context.tr;
+    final currentUser = context.read<ProfileCubit>().currentUser;
+
+    final displayName = profile?.name.isNotEmpty == true
+        ? profile!.name
+        : (currentUser?.displayName?.isNotEmpty == true
+              ? currentUser!.displayName!
+              : tr.patientRoleTitle);
+
+    final displayEmail = profile?.email.isNotEmpty == true
+        ? profile!.email
+        : (currentUser?.email ?? '');
+
+    final avatarUrl = profile?.avatarUrl ?? currentUser?.photoURL;
+    const chevron = Icon(
+      Icons.chevron_right_rounded,
+      color: AppColors.textSecondary,
+    );
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(context.tr.accountSettings, style: context.bold16TextMain),
-          16.verticalSpace,
-          Container(
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: const [
-                BoxShadow(
-                  color: AppColors.shadowCard,
-                  blurRadius: 16,
-                  offset: Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Column(
+          AppCard(
+            child: Row(
               children: [
-                if (_hasPasswordProvider) ...[
-                  _SettingsListTile(
-                    key: const Key('settings_change_password_tile'),
-                    icon: Icons.lock_outline_rounded,
-                    title: context.tr.changePassword,
-                    trailing: const Icon(
-                      Icons.chevron_right_rounded,
-                      color: AppColors.textSecondary,
-                    ),
-                    onTap: () => const ChangePasswordRoute().push(context),
-                  ),
-                  const Divider(height: 1, color: AppColors.outline),
-                ],
-                _SettingsListTile(
-                  key: const Key('settings_notifications_tile'),
-                  icon: Icons.notifications_none_rounded,
-                  title: context.tr.notifications,
-                  trailing: Switch.adaptive(
-                    value: _notificationsEnabled,
-                    activeTrackColor: AppColors.primary,
-                    onChanged: _toggleNotifications,
+                ProfileAvatar(avatarUrl: avatarUrl, size: 56),
+                16.horizontalSpace,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        displayName,
+                        style: context.bold16TextMain,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      4.verticalSpace,
+                      Text(
+                        displayEmail,
+                        style: context.regular12TextSecondary,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
           ),
-          28.verticalSpace,
-          Text(context.tr.moreOptions, style: context.bold16TextMain),
           16.verticalSpace,
-          Container(
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: const [
-                BoxShadow(
-                  color: AppColors.shadowCard,
-                  blurRadius: 16,
-                  offset: Offset(0, 4),
-                ),
-              ],
+          Text(tr.accountSettings, style: context.semiBold16TextSecondary),
+          if (context.read<AuthCubit>().hasPasswordProvider)
+            _SettingsListTile(
+              key: const Key('settings_change_password_tile'),
+              icon: Icons.lock_outline_rounded,
+              iconBackgroundColor: AppColors.settingsPasswordBadge,
+              title: tr.changePassword,
+              trailing: chevron,
+              onTap: () => const ChangePasswordRoute().push(context),
             ),
-            child: _SettingsListTile(
-              key: const Key('settings_language_tile'),
-              icon: Icons.language_rounded,
-              title: context.tr.language,
-              subtitle: currentLocale == AppLocale.ar
-                  ? context.tr.arabicLanguage
-                  : context.tr.englishLanguage,
-              trailing: const Icon(
-                Icons.swap_horiz_rounded,
-                color: AppColors.primary,
-              ),
-              onTap: () {
-                final nextLocale = currentLocale == AppLocale.ar
-                    ? AppLocale.en
-                    : AppLocale.ar;
-                _switchLanguage(nextLocale);
-              },
+          _SettingsListTile(
+            key: const Key('settings_notifications_tile'),
+            icon: Icons.notifications_none_rounded,
+            iconBackgroundColor: AppColors.settingsNotificationBadge,
+            title: tr.notifications,
+            trailing: Switch.adaptive(
+              value: _notificationsEnabled,
+              activeTrackColor: AppColors.switchActive,
+              onChanged: _toggleNotifications,
             ),
           ),
-          36.verticalSpace,
-          AppPrimaryButton.outlined(
-            key: const Key('settings_logout_button'),
-            label: context.tr.logOut,
-            icon: Icons.logout_rounded,
-            foregroundColor: AppColors.error,
-            borderColor: AppColors.error,
-            onPressed: _confirmLogOut,
+          _SettingsListTile(
+            key: const Key('settings_privacy_policy_tile'),
+            icon: Icons.privacy_tip_outlined,
+            iconBackgroundColor: AppColors.settingsPrivacyBadge,
+            title: tr.privacyPolicy,
+            trailing: chevron,
+            onTap: () => const PrivacyPolicyRoute().push(context),
           ),
           24.verticalSpace,
+          Text(tr.moreOptions, style: context.semiBold16TextSecondary),
+          _SettingsListTile(
+            key: const Key('settings_language_tile'),
+            title: tr.language,
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  currentLocale == AppLocale.ar
+                      ? tr.arabicLanguage
+                      : tr.englishLanguage,
+                  style: context.regular12TextSecondary,
+                ),
+                4.horizontalSpace,
+                chevron,
+              ],
+            ),
+            onTap: () => _switchLanguage(
+              currentLocale == AppLocale.ar ? AppLocale.en : AppLocale.ar,
+            ),
+          ),
+          _SettingsListTile(
+            key: const Key('settings_build_version_tile'),
+            title: tr.buildVersion,
+            trailing: Text(
+              tr.versionValue,
+              style: context.regular12TextSecondary,
+            ),
+          ),
+          48.verticalSpace,
+          AppPrimaryButton(
+            key: const Key('settings_logout_button'),
+            label: tr.logOut,
+            icon: Icons.logout_rounded,
+            height: 48,
+            fontSize: 15,
+            backgroundColor: AppColors.errorLight,
+            foregroundColor: AppColors.error,
+            onPressed: _confirmLogOut,
+          ),
         ],
       ),
     );
   }
 }
 
+/// Flat row with a bottom divider, as in the Figma settings list.
 class _SettingsListTile extends StatelessWidget {
   const _SettingsListTile({
     super.key,
-    required this.icon,
+    this.icon,
+    this.iconBackgroundColor,
     required this.title,
-    this.subtitle,
     required this.trailing,
     this.onTap,
   });
 
-  final IconData icon;
+  final IconData? icon;
+  final Color? iconBackgroundColor;
   final String title;
-  final String? subtitle;
   final Widget trailing;
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(icon, size: 20, color: AppColors.primary),
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: const BoxDecoration(
+          border: Border(bottom: BorderSide(color: AppColors.outline)),
+        ),
+        child: Row(
+          children: [
+            if (icon != null) ...[
+              CircleAvatar(
+                radius: 16,
+                backgroundColor: iconBackgroundColor,
+                child: Icon(icon, size: 16, color: AppColors.white),
               ),
-              14.horizontalSpace,
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(title, style: context.semiBold14TextMain),
-                    if (subtitle != null) ...[
-                      2.verticalSpace,
-                      Text(subtitle!, style: context.regular12TextSecondary),
-                    ],
-                  ],
-                ),
-              ),
-              trailing,
+              20.horizontalSpace,
             ],
-          ),
+            Expanded(child: Text(title, style: context.regular16TextSecondary)),
+            trailing,
+          ],
         ),
       ),
     );

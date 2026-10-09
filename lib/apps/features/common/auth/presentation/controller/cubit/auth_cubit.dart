@@ -11,6 +11,8 @@ class AuthCubit extends Cubit<AuthState> {
 
   User? get currentUser => repository.currentUser;
 
+  bool get hasPasswordProvider => repository.hasPasswordProvider;
+
   Future<void> signIn({required String email, required String password}) async {
     emit(const AuthLoading(action: AuthAction.signIn));
     try {

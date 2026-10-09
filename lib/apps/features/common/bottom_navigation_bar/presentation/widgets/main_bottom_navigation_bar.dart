@@ -45,8 +45,8 @@ class MainBottomNavigationBar extends StatelessWidget {
                 onTap: () => onTap(0),
               ),
               NavItem(
-                icon: Icons.medical_services_rounded,
-                label: tr.tabDoctors,
+                icon: Icons.favorite_rounded,
+                label: tr.tabFavorites,
                 isSelected: currentIndex == 1,
                 onTap: () => onTap(1),
               ),

@@ -47,9 +47,18 @@ class AppSearchBar extends StatefulWidget {
 
 class AppSearchBarState extends State<AppSearchBar> {
   TextEditingController? internalController;
+  FocusNode? internalFocusNode;
 
   TextEditingController get effectiveController =>
       widget.controller ?? (internalController ??= TextEditingController());
+
+  FocusNode? get effectiveFocusNode {
+    if (widget.focusNode != null) return widget.focusNode;
+    if (widget.readOnly) {
+      return internalFocusNode ??= FocusNode(canRequestFocus: false);
+    }
+    return null;
+  }
 
   @override
   void didUpdateWidget(covariant AppSearchBar oldWidget) {
@@ -62,11 +71,16 @@ class AppSearchBarState extends State<AppSearchBar> {
       internalController?.dispose();
       internalController = null;
     }
+    if (!widget.readOnly && internalFocusNode != null) {
+      internalFocusNode?.dispose();
+      internalFocusNode = null;
+    }
   }
 
   @override
   void dispose() {
     internalController?.dispose();
+    internalFocusNode?.dispose();
     super.dispose();
   }
 
@@ -161,6 +175,82 @@ class AppSearchBarState extends State<AppSearchBar> {
     // ==========================================
     // 2) طريقة SearchBar المدمجة من Flutter (Material 3)
     // ==========================================
+    Widget searchBar = SearchBar(
+      controller: effectiveController,
+      focusNode: effectiveFocusNode,
+      readOnly: widget.readOnly,
+      autoFocus: widget.autofocus,
+      onTap: widget.onTap,
+      onTapOutside: (event) {
+        FocusManager.instance.primaryFocus?.unfocus();
+      },
+      onChanged: widget.onChanged,
+      onSubmitted: widget.onSubmitted,
+      textInputAction: widget.textInputAction,
+      hintText: hint,
+      hintStyle: WidgetStatePropertyAll(
+        context.regular14TextSecondary.copyWith(
+          color: AppColors.textSecondary.withValues(alpha: 0.7),
+        ),
+      ),
+      textStyle: WidgetStatePropertyAll(context.medium14TextMain),
+      backgroundColor: WidgetStatePropertyAll(
+        widget.backgroundColor ?? AppColors.surface,
+      ),
+      elevation: const WidgetStatePropertyAll(0),
+      side: const WidgetStatePropertyAll(BorderSide.none),
+      shape: WidgetStatePropertyAll(
+        RoundedRectangleBorder(
+          borderRadius: widget.borderRadius ?? BorderRadius.circular(14),
+        ),
+      ),
+      constraints: BoxConstraints(
+        minHeight: widget.height,
+        maxHeight: widget.height,
+      ),
+      padding: const WidgetStatePropertyAll(
+        EdgeInsets.symmetric(horizontal: 12),
+      ),
+      leading:
+          widget.prefixIcon ??
+          const Icon(
+            Icons.search_rounded,
+            color: AppColors.textSecondary,
+            size: 22,
+          ),
+      trailing: [
+        if (widget.suffixIcon != null)
+          widget.suffixIcon!
+        else
+          ValueListenableBuilder<TextEditingValue>(
+            valueListenable: effectiveController,
+            builder: (context, value, _) {
+              return Visibility(
+                visible: value.text.isNotEmpty,
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.close_rounded,
+                    color: AppColors.textSecondary,
+                    size: 20,
+                  ),
+                  onPressed: handleClear,
+                ),
+              );
+            },
+          ),
+      ],
+    );
+
+    // Read-only bar is just a shortcut: the inner field never takes taps, so
+    // it can't keep a focused/pressed look after navigating away and back.
+    if (widget.readOnly) {
+      searchBar = GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: widget.onTap,
+        child: IgnorePointer(child: searchBar),
+      );
+    }
+
     return Container(
       decoration: BoxDecoration(
         boxShadow:
@@ -175,70 +265,7 @@ class AppSearchBarState extends State<AppSearchBar> {
               ),
             ],
       ),
-      child: SearchBar(
-        controller: effectiveController,
-        focusNode: widget.focusNode,
-        autoFocus: widget.autofocus,
-        onTap: widget.onTap,
-        onTapOutside: (event) {
-          FocusManager.instance.primaryFocus?.unfocus();
-        },
-        onChanged: widget.onChanged,
-        onSubmitted: widget.onSubmitted,
-        textInputAction: widget.textInputAction,
-        hintText: hint,
-        hintStyle: WidgetStatePropertyAll(
-          context.regular14TextSecondary.copyWith(
-            color: AppColors.textSecondary.withValues(alpha: 0.7),
-          ),
-        ),
-        textStyle: WidgetStatePropertyAll(context.medium14TextMain),
-        backgroundColor: WidgetStatePropertyAll(
-          widget.backgroundColor ?? AppColors.surface,
-        ),
-        elevation: const WidgetStatePropertyAll(0),
-        side: const WidgetStatePropertyAll(BorderSide.none),
-        shape: WidgetStatePropertyAll(
-          RoundedRectangleBorder(
-            borderRadius: widget.borderRadius ?? BorderRadius.circular(14),
-          ),
-        ),
-        constraints: BoxConstraints(
-          minHeight: widget.height,
-          maxHeight: widget.height,
-        ),
-        padding: const WidgetStatePropertyAll(
-          EdgeInsets.symmetric(horizontal: 12),
-        ),
-        leading:
-            widget.prefixIcon ??
-            const Icon(
-              Icons.search_rounded,
-              color: AppColors.textSecondary,
-              size: 22,
-            ),
-        trailing: [
-          if (widget.suffixIcon != null)
-            widget.suffixIcon!
-          else
-            ValueListenableBuilder<TextEditingValue>(
-              valueListenable: effectiveController,
-              builder: (context, value, _) {
-                return Visibility(
-                  visible: value.text.isNotEmpty,
-                  child: IconButton(
-                    icon: const Icon(
-                      Icons.close_rounded,
-                      color: AppColors.textSecondary,
-                      size: 20,
-                    ),
-                    onPressed: handleClear,
-                  ),
-                );
-              },
-            ),
-        ],
-      ),
+      child: searchBar,
     );
   }
 }

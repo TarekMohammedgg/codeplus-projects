@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:doctor_hunt/apps/features/admin/doctors/data/models/admin_doctor_model.dart';
+import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/data/repositories/admin_doctors_repository.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/presentation/controller/cubit/admin_doctors_cubit.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/presentation/controller/cubit/admin_doctors_state.dart';
@@ -15,7 +15,7 @@ import 'package:doctor_hunt/apps/features/admin/doctors/data/service/admin_docto
 
 void main() {
   test('AdminDoctorsCubit emits doctors from the Firestore stream', () async {
-    final streamController = StreamController<List<AdminDoctorModel>>();
+    final streamController = StreamController<List<DoctorModel>>();
     final cubit = AdminDoctorsCubit(
       repository: _FakeAdminDoctorsRepository(streamController.stream),
     );
@@ -26,7 +26,7 @@ void main() {
 
     await cubit.load();
     streamController.add(const [
-      AdminDoctorModel(id: 'doctor-1', name: 'Dr. One', specialty: 'Dentist'),
+      DoctorModel(id: 'doctor-1', name: 'Dr. One', specialty: 'Dentist'),
     ]);
     await states;
 
@@ -79,9 +79,9 @@ void main() {
   test(
     'AdminDoctorDetailsCubit streams updates and toggles active state',
     () async {
-      final streamController = StreamController<AdminDoctorModel?>();
+      final streamController = StreamController<DoctorModel?>();
       final service = _FakeAdminDoctorService(streamController.stream);
-      const initialDoctor = AdminDoctorModel(
+      const initialDoctor = DoctorModel(
         id: 'doc-1',
         name: 'Dr. Gregory House',
         specialty: 'Diagnostics',
@@ -118,11 +118,11 @@ void main() {
 class _FakeAdminDoctorService extends Fake implements AdminDoctorService {
   _FakeAdminDoctorService(this.doctorStream);
 
-  final Stream<AdminDoctorModel?> doctorStream;
+  final Stream<DoctorModel?> doctorStream;
   final activeChanges = <(String, bool)>[];
 
   @override
-  Stream<AdminDoctorModel?> streamDoctor(String id) => doctorStream;
+  Stream<DoctorModel?> streamDoctor(String id) => doctorStream;
 
   @override
   Future<void> setActive(String id, bool isActive) async {
@@ -133,11 +133,11 @@ class _FakeAdminDoctorService extends Fake implements AdminDoctorService {
 class _FakeAdminDoctorsRepository implements AdminDoctorsRepository {
   _FakeAdminDoctorsRepository(this.doctorsStream);
 
-  final Stream<List<AdminDoctorModel>> doctorsStream;
+  final Stream<List<DoctorModel>> doctorsStream;
   final activeChanges = <(String, bool)>[];
 
   @override
-  Stream<List<AdminDoctorModel>> streamDoctors() => doctorsStream;
+  Stream<List<DoctorModel>> streamDoctors() => doctorsStream;
 
   @override
   Future<List<SpecialtyModel>> fetchSpecialties() async => const [

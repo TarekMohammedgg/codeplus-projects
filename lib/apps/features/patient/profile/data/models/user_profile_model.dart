@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+enum Gender { male, female }
+
 class UserProfileModel {
   const UserProfileModel({
     this.uid = '',
@@ -18,7 +20,7 @@ class UserProfileModel {
   final String email;
   final String phone;
   final DateTime? dob;
-  final String? gender;
+  final Gender? gender;
   final String? avatarUrl;
   final String language;
   final bool notificationsEnabled;
@@ -47,7 +49,8 @@ class UserProfileModel {
       email: (data['email'] as String? ?? '').trim(),
       phone: (data['phone'] as String? ?? '').trim(),
       dob: parseDob(data['dob']),
-      gender: (data['gender'] as String?)?.trim(),
+      gender: Gender.values
+          .asNameMap()[(data['gender'] as String?)?.trim().toLowerCase()],
       avatarUrl: (photoUrl != null && photoUrl.isNotEmpty) ? photoUrl : null,
       language: data['language'] as String? ?? 'en',
       notificationsEnabled: data['notificationsEnabled'] as bool? ?? true,
@@ -60,7 +63,7 @@ class UserProfileModel {
       'email': email,
       'phone': phone,
       if (dob != null) 'dob': Timestamp.fromDate(dob!),
-      if (gender != null) 'gender': gender,
+      if (gender != null) 'gender': gender?.name,
       if (avatarUrl != null) 'photoUrl': avatarUrl,
       'language': language,
       'notificationsEnabled': notificationsEnabled,
@@ -73,7 +76,7 @@ class UserProfileModel {
     String? email,
     String? phone,
     DateTime? dob,
-    String? gender,
+    Gender? gender,
     String? avatarUrl,
     String? language,
     bool? notificationsEnabled,

@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:doctor_hunt/apps/core/models/doctor_availability.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
@@ -30,6 +32,7 @@ class DoctorModel {
     this.reviewsCount = 0,
     this.isActive = true,
     this.availability,
+    this.lastModified,
     // ignore: prefer_initializing_formals
   }) : _name = name,
        // ignore: prefer_initializing_formals
@@ -78,6 +81,9 @@ class DoctorModel {
   /// Null until the admin sets working days and hours for this doctor.
   final DoctorAvailability? availability;
 
+  /// `updatedAt`, else `createdAt`; the admin list shows newest first.
+  final DateTime? lastModified;
+
   factory DoctorModel.fromFirestore(
     String id,
     Map<String, dynamic> data, {
@@ -85,16 +91,8 @@ class DoctorModel {
     String? specialtyNameEn,
   }) {
     final names = _localizedMap(data['fullName']);
-    final nameEn = _firstText(
-      [names['en'], data['fullNameEn'], data['name']],
-      id,
-      'fullName.en',
-    );
-    final nameAr = _firstText(
-      [names['ar'], data['fullNameAr'], data['name']],
-      id,
-      'fullName.ar',
-    );
+    final nameEn = _firstText([names['en'], data['fullNameEn'], data['name']]);
+    final nameAr = _firstText([names['ar'], data['fullNameAr'], data['name']]);
 
     final storedSpecialty = _localizedMap(data['specialty']);
     final rawSpecialtyAr =
@@ -113,28 +111,20 @@ class DoctorModel {
             )
             as String?;
 
-    final resolvedAr = _firstText(
-      [
-        specialtyNameAr,
-        rawSpecialtyAr,
-        specialtyNameEn,
-        rawSpecialtyEn,
-        legacyRawSpecialty,
-      ],
-      id,
-      'specialty',
-    );
-    final resolvedEn = _firstText(
-      [
-        specialtyNameEn,
-        rawSpecialtyEn,
-        specialtyNameAr,
-        rawSpecialtyAr,
-        legacyRawSpecialty,
-      ],
-      id,
-      'specialty',
-    );
+    final resolvedAr = _firstText([
+      specialtyNameAr,
+      rawSpecialtyAr,
+      specialtyNameEn,
+      rawSpecialtyEn,
+      legacyRawSpecialty,
+    ]);
+    final resolvedEn = _firstText([
+      specialtyNameEn,
+      rawSpecialtyEn,
+      specialtyNameAr,
+      rawSpecialtyAr,
+      legacyRawSpecialty,
+    ]);
 
     final localizedName = LocaleSettings.currentLocale == AppLocale.ar
         ? nameAr
@@ -159,6 +149,7 @@ class DoctorModel {
       reviewsCount: (data['reviewsCount'] as num?)?.toInt() ?? 0,
       isActive: data['isActive'] as bool? ?? true,
       availability: DoctorAvailability.tryParse(data['availability']),
+      lastModified: _timestamp(data['updatedAt'] ?? data['createdAt']),
     );
   }
 
@@ -178,6 +169,7 @@ class DoctorModel {
     int? reviewsCount,
     bool? isActive,
     DoctorAvailability? availability,
+    DateTime? lastModified,
   }) {
     return DoctorModel(
       id: id ?? this.id,
@@ -195,6 +187,7 @@ class DoctorModel {
       reviewsCount: reviewsCount ?? this.reviewsCount,
       isActive: isActive ?? this.isActive,
       availability: availability ?? this.availability,
+      lastModified: lastModified ?? this.lastModified,
     );
   }
 }
@@ -204,12 +197,17 @@ Map<String, dynamic> _localizedMap(dynamic value) {
   return const <String, dynamic>{};
 }
 
-String _firstText(List<dynamic> values, String id, String field) {
+/// First non-empty text, or '' — one broken document must not take down a
+/// whole doctors list (it shows up empty and the admin can fix it).
+String _firstText(List<dynamic> values) {
   for (final value in values) {
     if (value is String && value.trim().isNotEmpty) return value.trim();
   }
-  throw FormatException('Doctor $id is missing required field: $field');
+  return '';
 }
+
+DateTime? _timestamp(dynamic value) =>
+    value is Timestamp ? value.toDate() : null;
 
 String? _accentColorHex(dynamic value) {
   if (value is! String) return null;

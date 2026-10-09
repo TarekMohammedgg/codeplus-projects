@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 
 import 'package:doctor_hunt/apps/core/di/injection.dart';
+import 'package:doctor_hunt/apps/core/extensions/context_extensions.dart';
+import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
-import 'package:doctor_hunt/apps/core/widgets/app_icon_button.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_card.dart';
+import 'package:doctor_hunt/apps/core/utils/formatters.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_back_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_text_field.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_avatar_placeholder.dart';
@@ -64,16 +66,6 @@ class _RateDoctorViewState extends State<_RateDoctorView> {
     super.dispose();
   }
 
-  void _popScreen() {
-    try {
-      if (context.canPop()) {
-        context.pop();
-        return;
-      }
-    } catch (_) {}
-    Navigator.of(context).maybePop();
-  }
-
   @override
   Widget build(BuildContext context) {
     final appointment = widget.appointment;
@@ -84,30 +76,18 @@ class _RateDoctorViewState extends State<_RateDoctorView> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: AppIconButton.back(onTap: _popScreen),
+        leading: AppBackButton.leading(),
         centerTitle: true,
         title: Text(context.tr.rateDoctorTitle, style: context.bold18TextMain),
       ),
       body: BlocConsumer<RateDoctorCubit, RateDoctorState>(
         listener: (context, state) {
           if (state.status == RateDoctorStatus.success) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(context.tr.reviewAddedSuccess),
-                backgroundColor: AppColors.primary,
-              ),
-            );
-            _popScreen();
+            context.showSuccessSnackBar(context.tr.reviewAddedSuccess);
+            Navigator.of(context).maybePop();
           } else if (state.status == RateDoctorStatus.failure &&
               state.errorMessage != null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.errorMessage!),
-                backgroundColor: AppColors.error,
-              ),
-            );
+            context.showErrorSnackBar(state.errorMessage!);
           }
         },
         builder: (context, state) {
@@ -134,7 +114,7 @@ class _RateDoctorViewState extends State<_RateDoctorView> {
                     24.verticalSpace,
                     AppPrimaryButton(
                       label: context.tr.confirm,
-                      onPressed: _popScreen,
+                      onPressed: () => Navigator.of(context).maybePop(),
                     ),
                   ],
                 ),
@@ -143,8 +123,14 @@ class _RateDoctorViewState extends State<_RateDoctorView> {
           }
 
           final cubit = context.read<RateDoctorCubit>();
-          final formattedDate = DateFormat.yMMMd().format(appointment.startAt);
-          final formattedTime = DateFormat.jm().format(appointment.startAt);
+          final formattedDate = formatDate(
+            appointment.startAt,
+            context.localeCode,
+          );
+          final formattedTime = formatTime(
+            appointment.startAt,
+            context.localeCode,
+          );
 
           return SafeArea(
             child: Column(
@@ -159,75 +145,66 @@ class _RateDoctorViewState extends State<_RateDoctorView> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         // Doctor Summary Card
-                        Container(
+                        SizedBox(
                           width: double.infinity,
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: AppColors.surface,
-                            borderRadius: BorderRadius.circular(16),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: AppColors.shadowCard,
-                                blurRadius: 16,
-                                offset: Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: SizedBox(
-                                  width: 64,
-                                  height: 64,
-                                  child: DoctorImage(
-                                    imageUrl: appointment.doctorImageUrl,
-                                    fallback: const DoctorAvatarPlaceholder(
-                                      circle: false,
+                          child: AppCard(
+                            child: Row(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: SizedBox(
+                                    width: 64,
+                                    height: 64,
+                                    child: DoctorImage(
+                                      imageUrl: appointment.doctorImageUrl,
+                                      fallback: const DoctorAvatarPlaceholder(
+                                        circle: false,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              16.horizontalSpace,
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      appointment.doctorName,
-                                      style: context.semiBold16TextMain,
-                                    ),
-                                    if (state.specialtyName != null &&
-                                        state.specialtyName!.isNotEmpty) ...[
-                                      4.verticalSpace,
+                                16.horizontalSpace,
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
                                       Text(
-                                        state.specialtyName!,
-                                        style: context.regular12TextSecondary,
+                                        appointment.doctorName,
+                                        style: context.semiBold16TextMain,
                                       ),
-                                    ],
-                                    6.verticalSpace,
-                                    Row(
-                                      children: [
-                                        const Icon(
-                                          Icons.event_available_rounded,
-                                          size: 14,
-                                          color: AppColors.primary,
-                                        ),
-                                        4.horizontalSpace,
-                                        Expanded(
-                                          child: Text(
-                                            '$formattedDate · $formattedTime',
-                                            style:
-                                                context.regular12TextSecondary,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
+                                      if (state.specialtyName != null &&
+                                          state.specialtyName!.isNotEmpty) ...[
+                                        4.verticalSpace,
+                                        Text(
+                                          state.specialtyName!,
+                                          style: context.regular12TextSecondary,
                                         ),
                                       ],
-                                    ),
-                                  ],
+                                      6.verticalSpace,
+                                      Row(
+                                        children: [
+                                          const Icon(
+                                            Icons.event_available_rounded,
+                                            size: 14,
+                                            color: AppColors.primary,
+                                          ),
+                                          4.horizontalSpace,
+                                          Expanded(
+                                            child: Text(
+                                              '$formattedDate · $formattedTime',
+                                              style: context
+                                                  .regular12TextSecondary,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                         28.verticalSpace,

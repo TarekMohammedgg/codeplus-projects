@@ -7,6 +7,8 @@ import 'package:doctor_hunt/apps/core/router/app_router.dart';
 import '../../../helpers/test_app.dart';
 import '../../../helpers/test_fakes.dart';
 
+import 'package:doctor_hunt/apps/core/services/app_preferences_service.dart';
+
 void main() {
   /// Pumps the real redirect over stub pages and returns where it landed.
   Future<String> landAt(
@@ -14,11 +16,16 @@ void main() {
     String location, {
     bool signedIn = false,
     bool isAdmin = false,
+    bool hasSeenOnboarding = false,
   }) async {
     final auth = FakeFirebaseAuth(mockUser: signedIn ? FakeUser() : null);
+    final prefs = FakeSharedPreferences({
+      'has_seen_onboarding': hasSeenOnboarding,
+    });
     final router = AppRouter.createRouter(
       authRepository: FakeAuthRepository(auth: auth, isAdmin: isAdmin),
       firebaseAuth: auth,
+      preferencesService: AppPreferencesService(preferences: prefs),
       initialLocation: location,
       routes: [
         for (final path in [
@@ -40,6 +47,17 @@ void main() {
     await tester.pumpAndSettle();
     return router.state.matchedLocation;
   }
+
+  testWidgets(
+    'signed out with seen onboarding: onboarding route redirects to Choose Role',
+    (tester) async {
+      // act
+      final location = await landAt(tester, '/', hasSeenOnboarding: true);
+
+      // assert
+      expect(location, '/role-selection');
+    },
+  );
 
   testWidgets('signed out: onboarding and auth screens are reachable', (
     tester,

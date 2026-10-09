@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import 'package:doctor_hunt/apps/core/extensions/context_extensions.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
-import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
 class TimeSlotsSection extends StatelessWidget {
@@ -32,9 +32,7 @@ class TimeSlotsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     if (slots.isEmpty) return const SizedBox.shrink();
 
-    final locale = TranslationProvider.of(
-      context,
-    ).translations.$meta.locale.languageCode;
+    final locale = context.localeCode;
     final borderRadius = BorderRadius.circular(6);
 
     return Column(

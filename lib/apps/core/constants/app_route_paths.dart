@@ -12,6 +12,7 @@ abstract final class AppRoutePaths {
   static const String adminSettings = '/admin/settings';
   static const String adminProfile = '/admin/profile';
   static const String home = '/home';
+  static const String favorites = '/favorites';
   static const String doctors = '/doctors';
   static const String appointments = '/appointments';
   static const String doctorDetails = '/doctor-details';
@@ -21,6 +22,7 @@ abstract final class AppRoutePaths {
   static const String editProfile = '/profile/edit';
   static const String patientSettings = '/settings';
   static const String changePassword = '/settings/change-password';
+  static const String privacyPolicy = '/settings/privacy-policy';
   static const String patientAppointmentDetails = '/appointments/details';
   static const String rateDoctor = '/appointments/rate';
 }

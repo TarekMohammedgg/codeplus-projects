@@ -61,40 +61,20 @@ class DoctorAvailability {
     };
   }
 
+  /// Localized weekday name; [weekday] is `DateTime.weekday` (1 = Monday).
+  static String weekdayName(int weekday, String locale, {bool short = true}) {
+    // 2026-09-28 is a Monday, so 27 + weekday lands on the right day.
+    final date = DateTime(2026, 9, 27 + weekday);
+    return (short ? DateFormat.E(locale) : DateFormat.EEEE(locale)).format(
+      date,
+    );
+  }
+
   String formatSummary({String? locale}) {
     if (workingDays.isEmpty) return 'Not set';
     final sortedDays = List<int>.from(workingDays)..sort();
-    const enDays = {
-      1: 'Mon',
-      2: 'Tue',
-      3: 'Wed',
-      4: 'Thu',
-      5: 'Fri',
-      6: 'Sat',
-      7: 'Sun',
-    };
-    const arDays = {
-      1: 'الإثنين',
-      2: 'الثلاثاء',
-      3: 'الأربعاء',
-      4: 'الخميس',
-      5: 'الجمعة',
-      6: 'السبت',
-      7: 'الأحد',
-    };
-
     final dayNames = sortedDays
-        .map((w) {
-          try {
-            final sample = DateTime(2026, 9, 27 + w);
-            return DateFormat.E(locale).format(sample);
-          } catch (_) {
-            if (locale?.startsWith('ar') ?? false) {
-              return arDays[w] ?? '';
-            }
-            return enDays[w] ?? '';
-          }
-        })
+        .map((w) => weekdayName(w, locale ?? 'en'))
         .join(', ');
 
     final startH = (startMinutes ~/ 60).toString().padLeft(2, '0');

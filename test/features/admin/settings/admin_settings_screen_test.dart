@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:doctor_hunt/apps/core/router/app_router.dart';
+import 'package:doctor_hunt/apps/core/services/app_preferences_service.dart';
 import 'package:doctor_hunt/apps/features/admin/settings/presentation/screens/admin_settings_screen.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/controller/cubit/auth_cubit.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
@@ -91,6 +92,9 @@ void main() {
       final router = AppRouter.createRouter(
         authRepository: repo,
         firebaseAuth: fakeAuth,
+        preferencesService: AppPreferencesService(
+          preferences: FakeSharedPreferences(),
+        ),
         initialLocation: '/admin/settings',
         routes: [
           GoRoute(
@@ -112,8 +116,14 @@ void main() {
 
       await tester.tap(find.text(tr.logOut));
       await tester.pumpAndSettle();
-      expect(find.text(tr.logOutConfirmTitle), findsOneWidget);
-      await tester.tap(find.text(tr.logOut).last);
+      expect(
+        find.descendant(
+          of: find.byType(AlertDialog),
+          matching: find.text(tr.logOutConfirmTitle),
+        ),
+        findsOneWidget,
+      );
+      await tester.tap(find.text(tr.ok));
       await tester.pumpAndSettle();
 
       expect(router.state.matchedLocation, '/role-selection');
@@ -134,6 +144,9 @@ void main() {
     final router = AppRouter.createRouter(
       authRepository: repo,
       firebaseAuth: fakeAuth,
+      preferencesService: AppPreferencesService(
+        preferences: FakeSharedPreferences(),
+      ),
       initialLocation: '/admin/settings',
       routes: [
         GoRoute(

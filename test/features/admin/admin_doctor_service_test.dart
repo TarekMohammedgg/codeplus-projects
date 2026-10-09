@@ -1,14 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:doctor_hunt/apps/features/admin/doctors/data/models/admin_doctor_model.dart';
+import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() {
-  group('AdminDoctorModel', () {
+  setUpAll(() => initializeDateFormatting('en'));
+
+  group('DoctorModel', () {
     test('parses timestamps and computes lastModified correctly', () {
       final created = DateTime(2026, 9, 1, 10, 0);
       final updated = DateTime(2026, 9, 5, 12, 30);
 
-      final modelWithBoth = AdminDoctorModel.fromFirestore('doc1', {
+      final modelWithBoth = DoctorModel.fromFirestore('doc1', {
         'name': 'Dr. Alice',
         'specialty': 'Dentist',
         'createdAt': Timestamp.fromDate(created),
@@ -17,7 +20,7 @@ void main() {
 
       expect(modelWithBoth.lastModified, updated);
 
-      final modelCreatedOnly = AdminDoctorModel.fromFirestore('doc2', {
+      final modelCreatedOnly = DoctorModel.fromFirestore('doc2', {
         'name': 'Dr. Bob',
         'specialty': 'Cardiologist',
         'createdAt': Timestamp.fromDate(created),
@@ -25,7 +28,7 @@ void main() {
 
       expect(modelCreatedOnly.lastModified, created);
 
-      final modelNoTimestamp = AdminDoctorModel.fromFirestore('doc3', {
+      final modelNoTimestamp = DoctorModel.fromFirestore('doc3', {
         'name': 'Dr. Charlie',
         'specialty': 'Pediatrician',
       });
@@ -34,7 +37,7 @@ void main() {
     });
 
     test('parses rating, reviewsCount, and availability correctly', () {
-      final model = AdminDoctorModel.fromFirestore('doc4', {
+      final model = DoctorModel.fromFirestore('doc4', {
         'name': 'Dr. David',
         'specialty': 'Cardiologist',
         'rating': 4.8,
@@ -62,7 +65,7 @@ void main() {
   });
 
   group('Admin doctor list sorting', () {
-    void sortDoctors(List<AdminDoctorModel> list) {
+    void sortDoctors(List<DoctorModel> list) {
       list.sort((a, b) {
         final aTime = a.lastModified ?? DateTime.now();
         final bTime = b.lastModified ?? DateTime.now();
@@ -75,19 +78,19 @@ void main() {
       final t2 = DateTime(2026, 9, 2, 10, 0);
       final t3 = DateTime(2026, 9, 3, 10, 0);
 
-      final doc1 = AdminDoctorModel(
+      final doc1 = DoctorModel(
         id: '1',
         name: 'Doctor 1',
         specialty: 'Spec 1',
         lastModified: t1,
       );
-      final doc2 = AdminDoctorModel(
+      final doc2 = DoctorModel(
         id: '2',
         name: 'Doctor 2',
         specialty: 'Spec 2',
         lastModified: t2,
       );
-      final doc3 = AdminDoctorModel(
+      final doc3 = DoctorModel(
         id: '3',
         name: 'Doctor 3',
         specialty: 'Spec 3',
@@ -104,19 +107,19 @@ void main() {
       final tOld = DateTime(2026, 9, 1, 10, 0);
       final tNew = DateTime(2026, 9, 5, 15, 0);
 
-      final existing1 = AdminDoctorModel(
+      final existing1 = DoctorModel(
         id: '1',
         name: 'Existing A',
         specialty: 'Dentist',
         lastModified: tOld,
       );
-      final existing2 = AdminDoctorModel(
+      final existing2 = DoctorModel(
         id: '2',
         name: 'Existing B',
         specialty: 'Pediatrician',
         lastModified: tOld.add(const Duration(hours: 1)),
       );
-      final newlyAdded = AdminDoctorModel(
+      final newlyAdded = DoctorModel(
         id: '3',
         name: 'New Doctor',
         specialty: 'Cardiologist',
@@ -134,13 +137,13 @@ void main() {
       final t2 = DateTime(2026, 9, 2);
       final tModified = DateTime(2026, 9, 5);
 
-      final doc1 = AdminDoctorModel(
+      final doc1 = DoctorModel(
         id: '1',
         name: 'Doctor 1',
         specialty: 'Spec',
         lastModified: tModified, // updated recently
       );
-      final doc2 = AdminDoctorModel(
+      final doc2 = DoctorModel(
         id: '2',
         name: 'Doctor 2',
         specialty: 'Spec',
@@ -158,19 +161,19 @@ void main() {
       final t2 = DateTime(2026, 9, 2);
       final t3 = DateTime(2026, 9, 3);
 
-      final doc1 = AdminDoctorModel(
+      final doc1 = DoctorModel(
         id: '1',
         name: 'Doctor 1',
         specialty: 'Spec',
         lastModified: t1,
       );
-      final doc2 = AdminDoctorModel(
+      final doc2 = DoctorModel(
         id: '2',
         name: 'Doctor 2',
         specialty: 'Spec',
         lastModified: t2,
       );
-      final doc3 = AdminDoctorModel(
+      final doc3 = DoctorModel(
         id: '3',
         name: 'Doctor 3',
         specialty: 'Spec',

@@ -11,7 +11,7 @@ import 'package:doctor_hunt/apps/core/services/clinic_service.dart';
 import 'package:doctor_hunt/apps/features/admin/create_doctor/data/repositories/create_doctor_repository.dart';
 import 'package:doctor_hunt/apps/features/admin/create_doctor/presentation/controller/cubit/create_doctor_cubit.dart';
 import 'package:doctor_hunt/apps/features/admin/create_doctor/presentation/screens/create_doctor_screen.dart';
-import 'package:doctor_hunt/apps/features/admin/doctors/data/models/admin_doctor_model.dart';
+import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/data/repositories/admin_doctors_repository.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/presentation/controller/cubit/admin_doctors_cubit.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/presentation/screens/admin_doctors_screen.dart';
@@ -22,7 +22,9 @@ import 'package:doctor_hunt/apps/features/common/auth/presentation/screens/login
 import 'package:doctor_hunt/apps/features/common/auth/presentation/screens/signup_screen.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/widgets/forgot_password_bottom_sheet.dart';
 import 'package:doctor_hunt/apps/features/common/role_selection/data/models/user_role.dart';
+import 'package:doctor_hunt/apps/features/patient/favorites/presentation/controller/cubit/favorite_doctors_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/favorites/presentation/controller/cubit/favorites_cubit.dart';
+import 'package:doctor_hunt/apps/features/patient/favorites/presentation/screens/favorites_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/data/repositories/doctor_repository.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/controller/cubit/find_doctors_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/screens/find_doctors_screen.dart';
@@ -42,6 +44,7 @@ import '../../helpers/test_fakes.dart';
 Future<void> setupFakeServiceLocator({
   void Function(AuthCubit)? onAuthCubitCreated,
   void Function(HomeCubit)? onHomeCubitCreated,
+  void Function(FavoriteDoctorsCubit)? onFavoriteDoctorsCubitCreated,
   void Function(FindDoctorsCubit)? onFindDoctorsCubitCreated,
   void Function(AdminDoctorsCubit)? onAdminDoctorsCubitCreated,
   void Function(CreateDoctorCubit)? onCreateDoctorCubitCreated,
@@ -78,6 +81,13 @@ Future<void> setupFakeServiceLocator({
   getIt.registerFactory<FavoritesCubit>(
     () => FavoritesCubit(repository: FakeFavoritesRepository()),
   );
+  getIt.registerFactory<FavoriteDoctorsCubit>(() {
+    final cubit = FavoriteDoctorsCubit(
+      doctorRepository: getIt<DoctorRepository>(),
+    );
+    onFavoriteDoctorsCubitCreated?.call(cubit);
+    return cubit;
+  });
   getIt.registerFactory<AuthCubit>(() {
     final cubit = AuthCubit(repository: getIt<AuthRepository>());
     onAuthCubitCreated?.call(cubit);
@@ -298,6 +308,32 @@ void main() {
     );
 
     testWidgets(
+      'FavoritesRoute mounts FavoritesScreen and provides FavoriteDoctorsCubit',
+      (WidgetTester tester) async {
+        tester.view.physicalSize = const Size(1080, 2400);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(() {
+          tester.view.resetPhysicalSize();
+          tester.view.resetDevicePixelRatio();
+        });
+
+        final router = GoRouter(
+          initialLocation: '/favorites',
+          routes: $appRoutes,
+        );
+        await tester.pumpWidget(buildTestRouterApp(router));
+        await tester.pumpAndSettle();
+
+        expect(find.byType(FavoritesScreen), findsOneWidget);
+        final favoritesElement = tester.element(find.byType(FavoritesScreen));
+        expect(
+          favoritesElement.read<FavoriteDoctorsCubit>(),
+          isA<FavoriteDoctorsCubit>(),
+        );
+      },
+    );
+
+    testWidgets(
       'AdminDoctorsRoute mounts AdminDoctorsScreen and provides AdminDoctorsCubit',
       (WidgetTester tester) async {
         tester.view.physicalSize = const Size(1080, 2400);
@@ -346,7 +382,7 @@ void main() {
         await tester.pumpWidget(buildTestRouterApp(router));
         await tester.pumpAndSettle();
 
-        const doctor = AdminDoctorModel(
+        const doctor = DoctorModel(
           id: 'doc_1',
           name: 'Dr. John',
           specialty: 'Dentist',
@@ -458,6 +494,40 @@ void main() {
         await tester.pumpAndSettle();
 
         const FindDoctorsRoute().push(tester.element(find.text('Start')));
+        await tester.pumpAndSettle();
+
+        expect(captured, isNotNull);
+        expect(captured!.isClosed, isFalse);
+
+        router.pop();
+        await tester.pumpAndSettle();
+
+        expect(captured!.isClosed, isTrue);
+      },
+    );
+
+    testWidgets(
+      'FavoriteDoctorsCubit is disposed when FavoritesRoute is popped',
+      (WidgetTester tester) async {
+        FavoriteDoctorsCubit? captured;
+        await setupFakeServiceLocator(
+          onFavoriteDoctorsCubitCreated: (c) => captured = c,
+        );
+
+        final router = GoRouter(
+          initialLocation: '/start',
+          routes: [
+            GoRoute(
+              path: '/start',
+              builder: (context, state) => const Scaffold(body: Text('Start')),
+            ),
+            ...$appRoutes,
+          ],
+        );
+        await tester.pumpWidget(buildTestRouterApp(router));
+        await tester.pumpAndSettle();
+
+        const FavoritesRoute().push(tester.element(find.text('Start')));
         await tester.pumpAndSettle();
 
         expect(captured, isNotNull);

@@ -5,9 +5,10 @@ import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
-import 'package:doctor_hunt/apps/core/widgets/app_header_section.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_card.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_initial_avatar.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_logout_dialog.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
-import 'package:doctor_hunt/apps/core/widgets/app_text_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_avatar_placeholder.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_image.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/controller/cubit/auth_cubit.dart';
@@ -21,31 +22,8 @@ class AdminSettingsScreen extends StatelessWidget {
   const AdminSettingsScreen({super.key});
 
   Future<void> _confirmLogOut(BuildContext context) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        backgroundColor: AppColors.surface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(tr.logOutConfirmTitle, style: context.semiBold16TextMain),
-        content: Text(
-          tr.logOutConfirmMessage,
-          style: context.regular14TextSecondary,
-        ),
-        actions: [
-          AppTextButton(
-            label: tr.cancel,
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            textStyle: context.medium14TextSecondary,
-          ),
-          AppTextButton(
-            label: tr.logOut,
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            foregroundColor: AppColors.error,
-          ),
-        ],
-      ),
-    );
-    if (confirmed == true && context.mounted) {
+    final confirmed = await showLogoutConfirmDialog(context);
+    if (confirmed && context.mounted) {
       await context.read<AuthCubit>().signOut();
     }
   }
@@ -54,6 +32,7 @@ class AdminSettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = context.read<AuthCubit>().currentUser;
     final displayName = user?.displayName?.trim() ?? '';
+    final name = displayName.isNotEmpty ? displayName : tr.adminRoleTitle;
 
     return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
@@ -70,78 +49,133 @@ class AdminSettingsScreen extends StatelessWidget {
 
         return Scaffold(
           backgroundColor: AppColors.background,
-          body: Column(
-            children: [
-              AppHeaderSection(title: tr.settings, showSearchBar: false),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 24,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+          body: SafeArea(
+            bottom: false,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
+                  child: Row(
                     children: [
-                      InkWell(
-                        onTap: () => const AdminProfileRoute().push(context),
-                        borderRadius: BorderRadius.circular(16),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          child: Row(
-                            children: [
-                              ClipOval(
-                                child: DoctorImage(
-                                  imageUrl: user?.photoURL,
-                                  width: 56,
-                                  height: 56,
-                                  fallback: const DoctorAvatarPlaceholder(
-                                    size: 56,
-                                  ),
-                                ),
-                              ),
-                              14.horizontalSpace,
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      displayName.isNotEmpty
-                                          ? displayName
-                                          : tr.adminRoleTitle,
-                                      style: context.semiBold16TextMain,
-                                    ),
-                                    2.verticalSpace,
-                                    Text(
-                                      user?.email ?? '',
-                                      style: context.regular14TextSecondary,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const Icon(
-                                Icons.chevron_right_rounded,
-                                color: AppColors.textSecondary,
-                              ),
-                            ],
-                          ),
-                        ),
+                      Expanded(
+                        child: Text(tr.settings, style: context.bold18TextMain),
                       ),
-                      32.verticalSpace,
-                      AppPrimaryButton.outlined(
-                        onPressed: isLoggingOut
-                            ? null
-                            : () => _confirmLogOut(context),
-                        icon: Icons.logout_rounded,
-                        label: tr.logOut,
-                        foregroundColor: AppColors.error,
-                        borderColor: AppColors.error,
-                        isLoading: isLoggingOut,
+                      AppInitialAvatar(
+                        name: name,
+                        onTap: () => const AdminProfileRoute().push(context),
                       ),
                     ],
                   ),
                 ),
-              ),
-            ],
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        AppCard(
+                          padding: EdgeInsets.zero,
+                          child: InkWell(
+                            onTap: () =>
+                                const AdminProfileRoute().push(context),
+                            borderRadius: BorderRadius.circular(16),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Row(
+                                children: [
+                                  ClipOval(
+                                    child: DoctorImage(
+                                      imageUrl: user?.photoURL,
+                                      width: 56,
+                                      height: 56,
+                                      fallback: const DoctorAvatarPlaceholder(
+                                        size: 56,
+                                      ),
+                                    ),
+                                  ),
+                                  16.horizontalSpace,
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          name,
+                                          style: context.bold16TextMain,
+                                        ),
+                                        4.verticalSpace,
+                                        Text(
+                                          user?.email ?? '',
+                                          style: context.regular12TextSecondary,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        24.verticalSpace,
+                        AppCard(
+                          padding: EdgeInsets.zero,
+                          child: ListTile(
+                            onTap: () =>
+                                const AdminProfileRoute().push(context),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            leading: Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: AppColors.primaryLight,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Icon(
+                                Icons.manage_accounts_outlined,
+                                size: 20,
+                                color: AppColors.primary,
+                              ),
+                            ),
+                            title: Text(
+                              tr.adminProfile,
+                              style: context.semiBold14TextMain,
+                            ),
+                            subtitle: Text(
+                              tr.adminProfileSubtitle,
+                              style: context.regular12TextSecondary,
+                            ),
+                            trailing: const Icon(
+                              Icons.chevron_right_rounded,
+                              color: AppColors.textMain,
+                            ),
+                          ),
+                        ),
+                        32.verticalSpace,
+                        AppPrimaryButton(
+                          onPressed: isLoggingOut
+                              ? null
+                              : () => _confirmLogOut(context),
+                          icon: Icons.logout_rounded,
+                          label: tr.logOut,
+                          height: 48,
+                          fontSize: 15,
+                          backgroundColor: AppColors.errorLight,
+                          foregroundColor: AppColors.error,
+                          isLoading: isLoggingOut,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },

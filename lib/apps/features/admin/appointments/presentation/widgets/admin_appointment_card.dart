@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
+import 'package:doctor_hunt/apps/core/extensions/context_extensions.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
 import 'package:doctor_hunt/apps/core/models/specialty_model.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
+import 'package:doctor_hunt/apps/core/utils/formatters.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
+import 'package:doctor_hunt/apps/core/widgets/appointment_info_tile.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_avatar_placeholder.dart';
-import 'package:doctor_hunt/apps/core/widgets/doctor_image.dart';
+import 'package:doctor_hunt/apps/core/widgets/appointment_status_chip.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
+
+const _actionHeight = 36.0;
+const _actionRadius = BorderRadius.all(Radius.circular(6));
 
 class AdminAppointmentCard extends StatelessWidget {
   const AdminAppointmentCard({
@@ -16,89 +22,64 @@ class AdminAppointmentCard extends StatelessWidget {
     required this.appointment,
     this.specialty,
     this.onTap,
+    this.onCancel,
+    this.onMarkCompleted,
   });
 
   final AppointmentModel appointment;
   final SpecialtyModel? specialty;
-  final VoidCallback? onTap;
 
-  String _formatDateTime(BuildContext context, DateTime dateTime) {
-    try {
-      final locale = Localizations.localeOf(context).toString();
-      return DateFormat('EEE, d MMM · hh:mm a', locale).format(dateTime);
-    } catch (_) {
-      return DateFormat('EEE, d MMM · hh:mm a').format(dateTime);
-    }
-  }
+  /// Opens the appointment details (card tap and "View Details").
+  final VoidCallback? onTap;
+  final VoidCallback? onCancel;
+  final VoidCallback? onMarkCompleted;
 
   @override
   Widget build(BuildContext context) {
-    final statusColor = switch (appointment.status) {
-      AppointmentStatus.upcoming => AppColors.primary,
-      AppointmentStatus.completed => AppColors.primary,
-      AppointmentStatus.cancelled => AppColors.error,
-    };
-
-    final statusText = switch (appointment.status) {
-      AppointmentStatus.upcoming => context.tr.statusUpcoming,
-      AppointmentStatus.completed => context.tr.statusCompleted,
-      AppointmentStatus.cancelled => context.tr.statusCancelled,
-    };
-
     final specialtyTitle = specialty?.localizedName ?? '';
+    final radius = BorderRadius.circular(10);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: radius,
         boxShadow: const [
-          BoxShadow(
-            color: AppColors.shadowCard,
-            blurRadius: 12,
-            offset: Offset(0, 3),
-          ),
+          BoxShadow(color: AppColors.shadowElevated, blurRadius: 20),
         ],
       ),
       child: Material(
-        color: Colors.transparent,
+        color: AppColors.surface,
+        borderRadius: radius,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: radius,
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(12),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: SizedBox(
-                        width: 50,
-                        height: 50,
-                        child: appointment.doctorImageUrl != null
-                            ? DoctorImage(
-                                imageUrl: appointment.doctorImageUrl!,
-                                width: 50,
-                                height: 50,
-                                fit: BoxFit.cover,
-                                fallback: const DoctorAvatarPlaceholder(
-                                  size: 50,
-                                ),
-                              )
-                            : const DoctorAvatarPlaceholder(size: 50),
-                      ),
+                    const ClipRRect(
+                      borderRadius: BorderRadius.all(Radius.circular(8)),
+                      child: DoctorAvatarPlaceholder(size: 48, circle: false),
                     ),
-                    12.horizontalSpace,
+                    10.horizontalSpace,
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
+                            appointment.patientName,
+                            style: context.medium16TextMain,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          2.verticalSpace,
+                          Text(
                             appointment.doctorName,
-                            style: context.semiBold16TextMain,
+                            style: context.medium12TextSecondary,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -106,77 +87,95 @@ class AdminAppointmentCard extends StatelessWidget {
                             2.verticalSpace,
                             Text(
                               specialtyTitle,
-                              style: context.regular12TextSecondary,
+                              style: context.light12TextSecondary,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ],
-                          6.verticalSpace,
-                          // Patient name
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 3,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppColors.surfaceMuted,
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Text(
-                              context.tr.patientNameLabel(
-                                name: appointment.patientName,
-                              ),
-                              style: context.medium12TextSecondary,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
                         ],
                       ),
                     ),
-                    // Status Badge
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: statusColor.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        statusText,
-                        style: context.semiBold12Primary.copyWith(
-                          color: statusColor,
+                    8.horizontalSpace,
+                    AppointmentStatusChip(status: appointment.status),
+                  ],
+                ),
+                10.verticalSpace,
+                const Divider(height: 1, color: AppColors.outlineSoft),
+                10.verticalSpace,
+                Row(
+                  children: [
+                    Expanded(
+                      child: AppointmentInfoTile(
+                        icon: Icons.calendar_month_outlined,
+                        label: context.tr.dateLabel,
+                        value: formatDate(
+                          appointment.startAt,
+                          context.localeCode,
                         ),
+                      ),
+                    ),
+                    6.horizontalSpace,
+                    Expanded(
+                      child: AppointmentInfoTile(
+                        icon: Icons.schedule_rounded,
+                        label: context.tr.timeLabel,
+                        value: formatTime(
+                          appointment.startAt,
+                          context.localeCode,
+                        ),
+                      ),
+                    ),
+                    6.horizontalSpace,
+                    Expanded(
+                      child: AppointmentInfoTile(
+                        icon: Icons.monetization_on_outlined,
+                        label: context.tr.feeLabel,
+                        value: formatFee(appointment.fee),
                       ),
                     ),
                   ],
                 ),
                 12.verticalSpace,
-                const Divider(color: AppColors.outlineSoft, height: 1),
-                10.verticalSpace,
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.access_time_rounded,
-                      size: 16,
-                      color: AppColors.primary,
-                    ),
-                    6.horizontalSpace,
-                    Expanded(
-                      child: Text(
-                        _formatDateTime(context, appointment.startAt),
-                        style: context.medium12TextSecondary,
+                if (appointment.status == AppointmentStatus.upcoming)
+                  Row(
+                    spacing: 8,
+                    children: [
+                      Expanded(
+                        child: AppPrimaryButton.outlined(
+                          key: Key('admin_cancel_button_${appointment.id}'),
+                          label: context.tr.cancelAppointment,
+                          onPressed: onCancel,
+                          height: _actionHeight,
+                          borderWidth: 1,
+                          borderRadius: _actionRadius,
+                          backgroundColor: AppColors.errorLight,
+                          foregroundColor: AppColors.error,
+                          textStyle: context.medium12Error,
+                        ),
                       ),
-                    ),
-                    if (appointment.fee > 0)
-                      Text(
-                        '\$${appointment.fee.toStringAsFixed(0)}',
-                        style: context.semiBold14TextMain,
+                      Expanded(
+                        child: AppPrimaryButton(
+                          key: Key('admin_complete_button_${appointment.id}'),
+                          label: context.tr.markCompleted,
+                          onPressed: onMarkCompleted,
+                          height: _actionHeight,
+                          borderRadius: _actionRadius,
+                          textStyle: context.medium12White,
+                        ),
                       ),
-                  ],
-                ),
+                    ],
+                  )
+                else
+                  AppPrimaryButton.outlined(
+                    key: Key('admin_view_details_button_${appointment.id}'),
+                    label: context.tr.viewDetails,
+                    onPressed: onTap,
+                    height: _actionHeight,
+                    borderWidth: 1,
+                    borderRadius: _actionRadius,
+                    backgroundColor: AppColors.surface,
+                    textStyle: context.medium12Primary,
+                  ),
               ],
             ),
           ),

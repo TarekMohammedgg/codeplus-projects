@@ -22,7 +22,10 @@ class AdminAppointmentsCubit extends Cubit<AdminAppointmentsState> {
       final specialties = await repository.getSpecialties();
       final map = {for (final s in specialties) s.id: s};
       emit(state.copyWith(specialties: map));
-    } catch (_) {}
+    } catch (error, stackTrace) {
+      // Specialty names are optional; the list still loads without them.
+      addError(error, stackTrace);
+    }
 
     await _subscription?.cancel();
     _subscription = repository.streamAppointments().listen(
@@ -49,6 +52,13 @@ class AdminAppointmentsCubit extends Cubit<AdminAppointmentsState> {
   void selectTab(AdminAppointmentTab tab) {
     emit(state.copyWith(selectedTab: tab));
   }
+
+  /// The stream refreshes the list; failures reach the caller.
+  Future<void> cancel(AppointmentModel appointment) =>
+      repository.cancel(appointment);
+
+  Future<void> markCompleted(String appointmentId) =>
+      repository.markCompleted(appointmentId);
 
   @override
   Future<void> close() {

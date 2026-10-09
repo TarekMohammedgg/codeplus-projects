@@ -44,6 +44,8 @@ class Assets {
   static const String assetsDummyProfileImage =
       "assets/dummy/profile_image.png";
 
+  static const String assetsEmptyState = "assets/empty_state.png";
+
   static const String assetsTranslationAr = "assets/translation/ar.json";
 
   static const String assetsTranslationEn = "assets/translation/en.json";

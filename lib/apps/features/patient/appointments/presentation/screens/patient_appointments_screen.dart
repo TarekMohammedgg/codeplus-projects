@@ -3,14 +3,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
+import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_empty_state.dart';
-import 'package:doctor_hunt/apps/core/widgets/app_icon_button.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_back_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
-import 'package:doctor_hunt/apps/core/widgets/app_text_button.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_confirm_dialog.dart';
 import 'package:doctor_hunt/apps/features/patient/appointments/presentation/controller/cubit/patient_appointments_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/appointments/presentation/widgets/patient_appointment_card.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
@@ -46,56 +47,26 @@ class _PatientAppointmentsScreenState extends State<PatientAppointmentsScreen>
     BuildContext context,
     AppointmentModel appointment,
   ) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        backgroundColor: AppColors.surface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(
-          context.tr.cancelAppointmentTitle,
-          style: context.semiBold16TextMain,
-        ),
-        content: Text(
-          context.tr.cancelAppointmentMessage,
-          style: context.regular14TextSecondary,
-        ),
-        actions: [
-          AppTextButton(
-            label: context.tr.cancel,
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            textStyle: context.medium14TextSecondary,
-          ),
-          AppTextButton(
-            label: context.tr.confirm,
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            foregroundColor: AppColors.error,
-          ),
-        ],
-      ),
+    final confirmed = await showAppConfirmDialog(
+      context,
+      title: context.tr.cancelAppointmentTitle,
+      message: context.tr.cancelAppointmentMessage,
+      confirmLabel: context.tr.confirm,
+      confirmColor: AppColors.error,
     );
 
-    if (confirmed == true && context.mounted) {
+    if (confirmed && context.mounted) {
       try {
         await context.read<PatientAppointmentsCubit>().cancelAppointment(
           appointment,
         );
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(context.tr.appointmentCancelledSuccess),
-              backgroundColor: AppColors.primary,
-            ),
-          );
+          context.showSuccessSnackBar(context.tr.appointmentCancelledSuccess);
         }
       } catch (e) {
         if (context.mounted) {
           final appEx = AppException.from(e);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(appEx.message),
-              backgroundColor: AppColors.error,
-            ),
-          );
+          context.showErrorSnackBar(appEx.message);
         }
       }
     }
@@ -106,22 +77,10 @@ class _PatientAppointmentsScreenState extends State<PatientAppointmentsScreen>
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: AppColors.transparent,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        centerTitle: false,
         leadingWidth: 50,
-        leading: Padding(
-          padding: const EdgeInsetsDirectional.only(start: 20),
-          child: Center(
-            child: AppIconButton.back(
-              width: 30,
-              height: 30,
-              onTap: () => context.canPop()
-                  ? context.pop()
-                  : const HomeRoute().go(context),
-            ),
-          ),
+        leading: AppBackButton.leading(
+          onTap: () =>
+              context.canPop() ? context.pop() : const HomeRoute().go(context),
         ),
         titleSpacing: 19,
         title: Text(context.tr.appointments, style: context.medium18TextMain),
@@ -129,37 +88,42 @@ class _PatientAppointmentsScreenState extends State<PatientAppointmentsScreen>
           preferredSize: const Size.fromHeight(46),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
-            child: ListenableBuilder(
-              listenable: _tabController,
-              builder: (context, _) => Row(
-                spacing: 8,
-                children: [
-                  for (final (index, label) in [
-                    context.tr.upcoming,
-                    context.tr.completed,
-                    context.tr.cancelled,
-                  ].indexed)
-                    Expanded(
-                      child: AppPrimaryButton(
-                        label: label,
-                        height: 38,
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(6),
+            // `animation` ticks during the swipe; `index` only changes once
+            // the page settles, which made the pills lag behind.
+            child: AnimatedBuilder(
+              animation: _tabController.animation!,
+              builder: (context, _) {
+                final selected = _tabController.animation!.value.round();
+                return Row(
+                  spacing: 8,
+                  children: [
+                    for (final (index, label) in [
+                      context.tr.upcoming,
+                      context.tr.completed,
+                      context.tr.cancelled,
+                    ].indexed)
+                      Expanded(
+                        child: AppPrimaryButton(
+                          label: label,
+                          height: 38,
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(6),
+                          ),
+                          backgroundColor: selected == index
+                              ? AppColors.primary
+                              : AppColors.primaryLight,
+                          textStyle: selected == index
+                              ? context.medium12White
+                              : context.regular12Primary,
+                          foregroundColor: selected == index
+                              ? AppColors.white
+                              : AppColors.primary,
+                          onPressed: () => _tabController.animateTo(index),
                         ),
-                        backgroundColor: _tabController.index == index
-                            ? AppColors.primary
-                            : AppColors.primaryLight,
-                        textStyle: _tabController.index == index
-                            ? context.medium12White
-                            : context.regular12Primary,
-                        foregroundColor: _tabController.index == index
-                            ? AppColors.white
-                            : AppColors.primary,
-                        onPressed: () => _tabController.animateTo(index),
                       ),
-                    ),
-                ],
-              ),
+                  ],
+                );
+              },
             ),
           ),
         ),

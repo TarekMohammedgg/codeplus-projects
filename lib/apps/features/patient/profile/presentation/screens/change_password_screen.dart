@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
-import 'package:doctor_hunt/apps/core/widgets/app_icon_button.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_back_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_text_field.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/presentation/controller/cubit/change_password_cubit.dart';
@@ -53,9 +54,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: AppIconButton.back(
+        leading: AppBackButton.leading(
           onTap: () {
             if (Navigator.of(context).canPop()) Navigator.of(context).pop();
           },
@@ -66,22 +65,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       body: BlocConsumer<ChangePasswordCubit, ChangePasswordState>(
         listener: (context, state) {
           if (state is ChangePasswordSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(context.tr.passwordChangedSuccess),
-                backgroundColor: AppColors.primary,
-              ),
-            );
+            context.showSuccessSnackBar(context.tr.passwordChangedSuccess);
             if (Navigator.of(context).canPop()) {
               Navigator.of(context).pop();
             }
           } else if (state is ChangePasswordFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: AppColors.error,
-              ),
-            );
+            context.showErrorSnackBar(state.message);
           }
         },
         builder: (context, state) {

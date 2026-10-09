@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_status_pill.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
-import 'package:doctor_hunt/generated/style_atoms.dart';
 
 class AppointmentStatusChip extends StatelessWidget {
   const AppointmentStatusChip({super.key, required this.status});
@@ -31,20 +30,6 @@ class AppointmentStatusChip extends StatelessWidget {
       ),
     };
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-      decoration: ShapeDecoration(color: bgColor, shape: const StadiumBorder()),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          CircleAvatar(radius: 3, backgroundColor: color),
-          5.horizontalSpace,
-          Text(
-            label,
-            style: context.medium10TextMain.copyWith(color: color, fontSize: 9),
-          ),
-        ],
-      ),
-    );
+    return AppStatusPill(label: label, color: color, backgroundColor: bgColor);
   }
 }

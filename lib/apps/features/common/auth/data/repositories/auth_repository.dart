@@ -27,12 +27,24 @@ abstract interface class AuthRepository {
   });
 
   User? get currentUser;
+
+  bool get hasPasswordProvider;
+
+  Future<void> updateDisplayNameAndPhoto(String name, String? photoUrl);
 }
 
 class FirebaseAuthRepository implements AuthRepository {
   FirebaseAuthRepository({required this.authService});
 
   final AuthService authService;
+
+  @override
+  bool get hasPasswordProvider => authService.hasPasswordProvider;
+
+  @override
+  Future<void> updateDisplayNameAndPhoto(String name, String? photoUrl) {
+    return authService.updateDisplayNameAndPhoto(name, photoUrl);
+  }
 
   @override
   Future<void> changePassword({

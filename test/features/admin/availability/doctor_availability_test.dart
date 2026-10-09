@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:doctor_hunt/apps/core/models/doctor_availability.dart';
 import 'package:doctor_hunt/apps/features/admin/availability/data/repositories/doctor_availability_repository.dart';
 import 'package:doctor_hunt/apps/features/admin/availability/presentation/controller/cubit/doctor_availability_cubit.dart';
 import 'package:doctor_hunt/apps/features/admin/availability/presentation/controller/cubit/doctor_availability_state.dart';
 import 'package:doctor_hunt/apps/features/admin/availability/presentation/screens/doctor_availability_screen.dart';
-import 'package:doctor_hunt/apps/features/admin/doctors/data/models/admin_doctor_model.dart';
+import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
 import '../../../helpers/test_app.dart';
@@ -29,7 +30,7 @@ class _FakeDoctorAvailabilityRepository extends Fake
 }
 
 void main() {
-  const testDoctor = AdminDoctorModel(
+  const testDoctor = DoctorModel(
     id: 'doc_1',
     name: 'Dr. Gregory House',
     specialty: 'Diagnostic Medicine',
@@ -159,10 +160,9 @@ void main() {
 
       await tester.pumpWidget(
         buildTestApp(
-          DoctorAvailabilityScreen(
-            doctor: testDoctor,
-            cubit: cubit,
-            repository: repo,
+          BlocProvider<DoctorAvailabilityCubit>.value(
+            value: cubit,
+            child: DoctorAvailabilityScreen(doctor: testDoctor),
           ),
         ),
       );
@@ -197,10 +197,9 @@ void main() {
 
       await tester.pumpWidget(
         buildTestApp(
-          DoctorAvailabilityScreen(
-            doctor: testDoctor,
-            cubit: cubit,
-            repository: repo,
+          BlocProvider<DoctorAvailabilityCubit>.value(
+            value: cubit,
+            child: DoctorAvailabilityScreen(doctor: testDoctor),
           ),
         ),
       );
@@ -225,10 +224,9 @@ void main() {
 
         await tester.pumpWidget(
           buildTestApp(
-            DoctorAvailabilityScreen(
-              doctor: testDoctor,
-              cubit: cubit,
-              repository: repo,
+            BlocProvider<DoctorAvailabilityCubit>.value(
+              value: cubit,
+              child: DoctorAvailabilityScreen(doctor: testDoctor),
             ),
           ),
         );
@@ -261,10 +259,9 @@ void main() {
 
       await tester.pumpWidget(
         buildTestApp(
-          DoctorAvailabilityScreen(
-            doctor: testDoctor,
-            cubit: cubit,
-            repository: repo,
+          BlocProvider<DoctorAvailabilityCubit>.value(
+            value: cubit,
+            child: DoctorAvailabilityScreen(doctor: testDoctor),
           ),
         ),
       );
@@ -291,10 +288,9 @@ void main() {
 
         await tester.pumpWidget(
           buildTestApp(
-            DoctorAvailabilityScreen(
-              doctor: testDoctor,
-              cubit: cubit,
-              repository: repo,
+            BlocProvider<DoctorAvailabilityCubit>.value(
+              value: cubit,
+              child: DoctorAvailabilityScreen(doctor: testDoctor),
             ),
           ),
         );

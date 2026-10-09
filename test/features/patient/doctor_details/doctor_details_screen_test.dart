@@ -10,7 +10,7 @@ import 'package:doctor_hunt/apps/core/models/review_model.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_profile_card.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_details/presentation/controller/cubit/doctor_details_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_details/presentation/screens/patient_doctor_details_screen.dart';
-import 'package:doctor_hunt/apps/features/patient/doctor_details/presentation/widgets/clinic_location_map.dart';
+import 'package:doctor_hunt/apps/core/widgets/clinic_location_map.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import '../../../helpers/test_app.dart';
 import '../../../helpers/test_fakes.dart';

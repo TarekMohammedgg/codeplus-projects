@@ -7,11 +7,14 @@ import 'package:doctor_hunt/apps/core/widgets/app_icon_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_text_button.dart';
 import 'package:doctor_hunt/apps/features/common/onboarding/data/onboarding_data.dart';
 import 'package:doctor_hunt/apps/features/common/onboarding/data/models/onboarding_model.dart';
+import 'package:doctor_hunt/apps/core/services/app_preferences_service.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
 class OnboardingScreen extends StatefulWidget {
-  const OnboardingScreen({super.key});
+  const OnboardingScreen({super.key, required this.preferencesService});
+
+  final AppPreferencesService preferencesService;
 
   @override
   State<OnboardingScreen> createState() => OnboardingScreenState();
@@ -28,11 +31,13 @@ class OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   void onSkip() {
+    widget.preferencesService.setHasSeenOnboarding(true);
     const RoleSelectionRoute().go(context);
   }
 
   void onNext() {
     if (currentIndex == onboardingPages().length - 1) {
+      widget.preferencesService.setHasSeenOnboarding(true);
       const RoleSelectionRoute().go(context);
       return;
     }

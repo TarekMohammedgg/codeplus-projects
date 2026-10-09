@@ -332,11 +332,8 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'Favorites'
 	String get favorites => 'Favorites';
 
-	/// en: 'Popular'
-	String get sortPopular => 'Popular';
-
-	/// en: 'Top Rated'
-	String get sortTopRated => 'Top Rated';
+	/// en: 'Popular Doctors'
+	String get popularDoctors => 'Popular Doctors';
 
 	/// en: 'No doctors found'
 	String get noDoctorsFound => 'No doctors found';
@@ -350,8 +347,8 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'Booking appointment with $name...'
 	String bookingMessage({required Object name}) => 'Booking appointment with ${name}...';
 
-	/// en: 'tomorrow'
-	String get tomorrow => 'tomorrow';
+	/// en: 'Tomorrow'
+	String get tomorrow => 'Tomorrow';
 
 	/// en: 'Doctor Details'
 	String get doctorDetails => 'Doctor Details';
@@ -449,14 +446,17 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'Profile updated successfully'
 	String get profileUpdatedSuccess => 'Profile updated successfully';
 
-	/// en: 'Log out?'
-	String get logOutConfirmTitle => 'Log out?';
+	/// en: 'Log Out'
+	String get logOutConfirmTitle => 'Log Out';
 
-	/// en: 'You will need to sign in again to use the app.'
-	String get logOutConfirmMessage => 'You will need to sign in again to use the app.';
+	/// en: 'Are you sure you want to logout?'
+	String get logOutConfirmMessage => 'Are you sure you want to logout?';
 
 	/// en: 'Log Out'
 	String get logOut => 'Log Out';
+
+	/// en: 'Ok'
+	String get ok => 'Ok';
 
 	/// en: 'Select Time'
 	String get selectTime => 'Select Time';
@@ -526,6 +526,18 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// en: 'View Details'
 	String get viewDetails => 'View Details';
+
+	/// en: 'Date'
+	String get dateLabel => 'Date';
+
+	/// en: 'Time'
+	String get timeLabel => 'Time';
+
+	/// en: 'Fee'
+	String get feeLabel => 'Fee';
+
+	/// en: 'Appointment'
+	String get appointmentLabel => 'Appointment';
 
 	/// en: 'Confirm'
 	String get confirm => 'Confirm';
@@ -638,6 +650,12 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'Total Doctors'
 	String get totalDoctors => 'Total Doctors';
 
+	/// en: 'Active Doctors'
+	String get activeDoctors => 'Active Doctors';
+
+	/// en: '$label ($count)'
+	String labelWithCount({required Object label, required Object count}) => '${label} (${count})';
+
 	/// en: 'Active'
 	String get activeLabel => 'Active';
 
@@ -650,8 +668,8 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'Search doctors...'
 	String get searchAdminDoctorsHint => 'Search doctors...';
 
-	/// en: 'No doctors yet. Tap Add Doctor to create one.'
-	String get noDoctorsYet => 'No doctors yet. Tap Add Doctor to create one.';
+	/// en: 'There are currently no doctors registered on Doctor Hunt. Add your first doctor to get started.'
+	String get noDoctorsYet => 'There are currently no doctors registered on Doctor Hunt. Add your first doctor to get started.';
 
 	/// en: 'Create Doctor'
 	String get createDoctorTitle => 'Create Doctor';
@@ -668,17 +686,14 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'Select specialty'
 	String get selectSpecialtyHint => 'Select specialty';
 
-	/// en: 'Doctor Image'
-	String get doctorImageLabel => 'Doctor Image';
-
-	/// en: 'Upload doctor image'
-	String get uploadDoctorImageTitle => 'Upload doctor image';
-
 	/// en: 'Tap to pick an image'
 	String get tapToPickImage => 'Tap to pick an image';
 
-	/// en: 'Remove selected image'
-	String get removeImage => 'Remove selected image';
+	/// en: 'Add photo'
+	String get addPhoto => 'Add photo';
+
+	/// en: 'Tap photo to change'
+	String get tapPhotoToChange => 'Tap photo to change';
 
 	/// en: 'Create Doctor'
 	String get createDoctorButton => 'Create Doctor';
@@ -767,8 +782,11 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'Edit Doctor'
 	String get editDoctorTitle => 'Edit Doctor';
 
-	/// en: 'Update Doctor'
-	String get updateDoctorButton => 'Update Doctor';
+	/// en: 'Manage Availability'
+	String get manageAvailability => 'Manage Availability';
+
+	/// en: 'Rating'
+	String get rating => 'Rating';
 
 	/// en: 'Doctor updated successfully'
 	String get doctorUpdatedSuccess => 'Doctor updated successfully';
@@ -793,6 +811,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// en: 'Profile'
 	String get tabProfile => 'Profile';
+
+	/// en: 'My Appointments'
+	String get myAppointments => 'My Appointments';
 
 	/// en: 'No favorite doctors yet'
 	String get noFavoritesFound => 'No favorite doctors yet';
@@ -905,11 +926,11 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'Doctor Availability'
 	String get doctorAvailability => 'Doctor Availability';
 
-	/// en: 'Set weekly working days, hours and appointment duration'
-	String get doctorAvailabilitySubtitle => 'Set weekly working days, hours and appointment duration';
-
 	/// en: 'Working Days'
 	String get workingDays => 'Working Days';
+
+	/// en: '$count days enabled'
+	String daysEnabled({required Object count}) => '${count} days enabled';
 
 	/// en: 'Working Hours'
 	String get workingHours => 'Working Hours';
@@ -922,9 +943,6 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// en: 'Slot Duration'
 	String get slotDuration => 'Slot Duration';
-
-	/// en: '$count slots per day'
-	String slotsPerDay({required Object count}) => '${count} slots per day';
 
 	/// en: '$count min'
 	String minutesDuration({required Object count}) => '${count} min';
@@ -946,6 +964,12 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// en: 'Admin Profile'
 	String get adminProfile => 'Admin Profile';
+
+	/// en: 'Edit your details & clinic location'
+	String get adminProfileSubtitle => 'Edit your details & clinic location';
+
+	/// en: 'Save Changes'
+	String get saveChanges => 'Save Changes';
 
 	/// en: 'Clinic Address (Arabic)'
 	String get clinicAddressAr => 'Clinic Address (Arabic)';
@@ -983,8 +1007,8 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'No appointments found'
 	String get noAppointmentsFound => 'No appointments found';
 
-	/// en: 'Mark Completed'
-	String get markCompleted => 'Mark Completed';
+	/// en: 'Mark as Completed'
+	String get markCompleted => 'Mark as Completed';
 
 	/// en: 'Mark Appointment Completed'
 	String get markCompletedTitle => 'Mark Appointment Completed';
@@ -1012,6 +1036,48 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// en: 'Cancelled by admin'
 	String get cancelledByAdmin => 'Cancelled by admin';
+
+	/// en: 'Build version'
+	String get buildVersion => 'Build version';
+
+	/// en: 'v1.0.0'
+	String get versionValue => 'v1.0.0';
+
+	/// en: 'Doctor Hunt Apps Privacy Policy'
+	String get privacyPolicyTitle => 'Doctor Hunt Apps Privacy Policy';
+
+	/// en: 'There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words believable. It is a long established fact that reader will distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a moreIt is a long established fact that reader will distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more'
+	String get privacyPolicyIntro => 'There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words believable. It is a long established fact that reader will distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a moreIt is a long established fact that reader will distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more';
+
+	/// en: 'The standard chunk of lorem Ipsum used since 1500s is reproduced below for those interested.'
+	String get privacyPolicyBullet1 => 'The standard chunk of lorem Ipsum used since 1500s is reproduced below for those interested.';
+
+	/// en: 'Sections 1.10.32 and 1.10.33 from "de Finibus Bonorum et Malorum". The point of using.'
+	String get privacyPolicyBullet2 => 'Sections 1.10.32 and 1.10.33 from "de Finibus Bonorum et Malorum". The point of using.';
+
+	/// en: 'Lorem Ipsum is that it has a moreIt is a long established fact that reader will distracted.'
+	String get privacyPolicyBullet3 => 'Lorem Ipsum is that it has a moreIt is a long established fact that reader will distracted.';
+
+	/// en: 'The point of using Lorem Ipsum is that it has a moreIt is a long established fact that reader will distracted.'
+	String get privacyPolicyBullet4 => 'The point of using Lorem Ipsum is that it has a moreIt is a long established fact that reader will distracted.';
+
+	/// en: 'It is a long established fact that reader distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a moreIt is a long established.'
+	String get privacyPolicyOutro => 'It is a long established fact that reader distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a moreIt is a long established.';
+
+	/// en: '...'
+	String get loadingEllipsis => '...';
+
+	/// en: 'Doctor Name (AR)'
+	String get doctorNameArLabel => 'Doctor Name (AR)';
+
+	/// en: 'Doctor Name (EN)'
+	String get doctorNameEnLabel => 'Doctor Name (EN)';
+
+	/// en: 'Set weekly working days, hours and appointment duration'
+	String get doctorAvailabilitySubtitle => 'Set weekly working days, hours and appointment duration';
+
+	/// en: '$count slots per day'
+	String slotsPerDay({required Object count}) => '${count} slots per day';
 }
 
 /// The flat map containing all translations for locale <en>.
@@ -1119,13 +1185,12 @@ extension on Translations {
 			'bookNow' => 'Book Now',
 			'filterAll' => 'All',
 			'favorites' => 'Favorites',
-			'sortPopular' => 'Popular',
-			'sortTopRated' => 'Top Rated',
+			'popularDoctors' => 'Popular Doctors',
 			'noDoctorsFound' => 'No doctors found',
 			'bookingComingSoon' => 'Booking is not available yet.',
 			'doctorNoAvailableTimes' => 'Doctor has no available times yet',
 			'bookingMessage' => ({required Object name}) => 'Booking appointment with ${name}...',
-			'tomorrow' => 'tomorrow',
+			'tomorrow' => 'Tomorrow',
 			'doctorDetails' => 'Doctor Details',
 			'profile' => 'Profile',
 			'setUpYourProfile' => 'Set up your profile',
@@ -1158,9 +1223,10 @@ extension on Translations {
 			'female' => 'Female',
 			'selectDob' => 'Select date of birth',
 			'profileUpdatedSuccess' => 'Profile updated successfully',
-			'logOutConfirmTitle' => 'Log out?',
-			'logOutConfirmMessage' => 'You will need to sign in again to use the app.',
+			'logOutConfirmTitle' => 'Log Out',
+			'logOutConfirmMessage' => 'Are you sure you want to logout?',
 			'logOut' => 'Log Out',
+			'ok' => 'Ok',
 			'selectTime' => 'Select Time',
 			'selectDate' => 'Select Date',
 			'today' => 'Today',
@@ -1184,6 +1250,10 @@ extension on Translations {
 			'bookAppointment' => 'Book Appointment',
 			'appointmentBookedSuccess' => ({required Object name, required Object date, required Object time}) => 'Appointment booked successfully with ${name} on ${date} at ${time}',
 			'viewDetails' => 'View Details',
+			'dateLabel' => 'Date',
+			'timeLabel' => 'Time',
+			'feeLabel' => 'Fee',
+			'appointmentLabel' => 'Appointment',
 			'confirm' => 'Confirm',
 			'thankYou' => 'Thank You !',
 			'appointmentSuccessful' => 'Your Appointment Successful',
@@ -1221,20 +1291,21 @@ extension on Translations {
 			'secureAdminAccessOnly' => 'Secure admin access only',
 			'doctorsTitle' => 'Doctors',
 			'totalDoctors' => 'Total Doctors',
+			'activeDoctors' => 'Active Doctors',
+			'labelWithCount' => ({required Object label, required Object count}) => '${label} (${count})',
 			'activeLabel' => 'Active',
 			'inactiveLabel' => 'Inactive',
 			'addDoctor' => 'Add Doctor',
 			'searchAdminDoctorsHint' => 'Search doctors...',
-			'noDoctorsYet' => 'No doctors yet. Tap Add Doctor to create one.',
+			'noDoctorsYet' => 'There are currently no doctors registered on Doctor Hunt. Add your first doctor to get started.',
 			'createDoctorTitle' => 'Create Doctor',
 			'doctorNameLabel' => 'Doctor Name',
 			'doctorNameHint' => 'Enter doctor name',
 			'specialtyLabel' => 'Specialty',
 			'selectSpecialtyHint' => 'Select specialty',
-			'doctorImageLabel' => 'Doctor Image',
-			'uploadDoctorImageTitle' => 'Upload doctor image',
 			'tapToPickImage' => 'Tap to pick an image',
-			'removeImage' => 'Remove selected image',
+			'addPhoto' => 'Add photo',
+			'tapPhotoToChange' => 'Tap photo to change',
 			'createDoctorButton' => 'Create Doctor',
 			'doctorCreatedSuccess' => 'Doctor created successfully',
 			'doctorFeeLabel' => 'Consultation Fee',
@@ -1264,7 +1335,8 @@ extension on Translations {
 			'edit' => 'Edit',
 			'cancel' => 'Cancel',
 			'editDoctorTitle' => 'Edit Doctor',
-			'updateDoctorButton' => 'Update Doctor',
+			'manageAvailability' => 'Manage Availability',
+			'rating' => 'Rating',
 			'doctorUpdatedSuccess' => 'Doctor updated successfully',
 			'changeImage' => 'Change image',
 			'placeholderDoctorName' => 'Dr. Pediatrician',
@@ -1273,6 +1345,7 @@ extension on Translations {
 			'tabDoctors' => 'Doctors',
 			'tabAppointments' => 'Appointments',
 			'tabProfile' => 'Profile',
+			'myAppointments' => 'My Appointments',
 			'noFavoritesFound' => 'No favorite doctors yet',
 			'appointments' => 'Appointments',
 			'upcoming' => 'Upcoming',
@@ -1310,13 +1383,12 @@ extension on Translations {
 			'confirmDeactivateDoctor' => 'Are you sure you want to deactivate this doctor?',
 			'doctorStatusUpdated' => 'Doctor status updated',
 			'doctorAvailability' => 'Doctor Availability',
-			'doctorAvailabilitySubtitle' => 'Set weekly working days, hours and appointment duration',
 			'workingDays' => 'Working Days',
+			'daysEnabled' => ({required Object count}) => '${count} days enabled',
 			'workingHours' => 'Working Hours',
 			'startTime' => 'Start Time',
 			'endTime' => 'End Time',
 			'slotDuration' => 'Slot Duration',
-			'slotsPerDay' => ({required Object count}) => '${count} slots per day',
 			'minutesDuration' => ({required Object count}) => '${count} min',
 			'errorSelectAtLeastOneDay' => 'Please select at least one working day',
 			'errorStartMustBeBeforeEnd' => 'Start time must be before end time',
@@ -1324,6 +1396,8 @@ extension on Translations {
 			'availabilityUpdatedSuccess' => 'Availability updated successfully',
 			'saveAvailability' => 'Save Availability',
 			'adminProfile' => 'Admin Profile',
+			'adminProfileSubtitle' => 'Edit your details & clinic location',
+			'saveChanges' => 'Save Changes',
 			'clinicAddressAr' => 'Clinic Address (Arabic)',
 			'clinicAddressEn' => 'Clinic Address (English)',
 			'tapMapToSetLocation' => 'Tap anywhere on the map to set clinic location pin',
@@ -1336,7 +1410,7 @@ extension on Translations {
 			'all' => 'All',
 			'patientNameLabel' => ({required Object name}) => 'Patient: ${name}',
 			'noAppointmentsFound' => 'No appointments found',
-			'markCompleted' => 'Mark Completed',
+			'markCompleted' => 'Mark as Completed',
 			'markCompletedTitle' => 'Mark Appointment Completed',
 			'markCompletedMessage' => 'Are you sure you want to mark this appointment as completed?',
 			'appointmentMarkedCompletedSuccess' => 'Appointment marked as completed successfully',
@@ -1346,6 +1420,20 @@ extension on Translations {
 			'patientEmail' => 'Email',
 			'cancelledByPatient' => 'Cancelled by patient',
 			'cancelledByAdmin' => 'Cancelled by admin',
+			'buildVersion' => 'Build version',
+			'versionValue' => 'v1.0.0',
+			'privacyPolicyTitle' => 'Doctor Hunt Apps Privacy Policy',
+			'privacyPolicyIntro' => 'There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words believable. It is a long established fact that reader will distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a moreIt is a long established fact that reader will distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more',
+			'privacyPolicyBullet1' => 'The standard chunk of lorem Ipsum used since 1500s is reproduced below for those interested.',
+			'privacyPolicyBullet2' => 'Sections 1.10.32 and 1.10.33 from "de Finibus Bonorum et Malorum". The point of using.',
+			'privacyPolicyBullet3' => 'Lorem Ipsum is that it has a moreIt is a long established fact that reader will distracted.',
+			'privacyPolicyBullet4' => 'The point of using Lorem Ipsum is that it has a moreIt is a long established fact that reader will distracted.',
+			'privacyPolicyOutro' => 'It is a long established fact that reader distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a moreIt is a long established.',
+			'loadingEllipsis' => '...',
+			'doctorNameArLabel' => 'Doctor Name (AR)',
+			'doctorNameEnLabel' => 'Doctor Name (EN)',
+			'doctorAvailabilitySubtitle' => 'Set weekly working days, hours and appointment duration',
+			'slotsPerDay' => ({required Object count}) => '${count} slots per day',
 			_ => null,
 		};
 	}

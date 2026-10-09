@@ -1,42 +1,33 @@
 import 'dart:typed_data';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 
-import 'package:doctor_hunt/apps/core/di/injection.dart';
 import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
+import 'package:doctor_hunt/apps/core/extensions/context_extensions.dart';
 import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
-import 'package:doctor_hunt/apps/core/services/cloudinary_upload_service.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
+import 'package:doctor_hunt/apps/core/utils/formatters.dart';
+import 'package:doctor_hunt/apps/core/utils/image_pick.dart';
 import 'package:doctor_hunt/apps/core/utils/phone_utils.dart';
 import 'package:doctor_hunt/apps/core/utils/validators.dart';
-import 'package:doctor_hunt/apps/core/widgets/app_icon_button.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_back_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_text_field.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_avatar_placeholder.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_image.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/data/models/user_profile_model.dart';
-import 'package:doctor_hunt/apps/features/patient/profile/data/repositories/profile_repository.dart';
+import 'package:doctor_hunt/apps/features/patient/profile/presentation/controller/cubit/profile_cubit.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
+/// Needs a [ProfileCubit] above it (provided by the route).
 class EditProfileScreen extends StatefulWidget {
-  const EditProfileScreen({
-    super.key,
-    this.profile,
-    this.profileRepository,
-    this.uploadService,
-    this.auth,
-  });
+  const EditProfileScreen({super.key, this.profile});
 
   final UserProfileModel? profile;
-  final ProfileRepository? profileRepository;
-  final CloudinaryUploadService? uploadService;
-  final FirebaseAuth? auth;
 
   @override
   State<EditProfileScreen> createState() => _EditProfileScreenState();
@@ -49,7 +40,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   late final TextEditingController _phoneController;
 
   DateTime? _selectedDob;
-  String _selectedGender = 'male';
+  Gender _selectedGender = Gender.male;
   String? _currentPhotoUrl;
 
   Uint8List? _newImageBytes;
@@ -57,17 +48,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   bool _isSaving = false;
 
-  ProfileRepository get _repository =>
-      widget.profileRepository ?? getIt<ProfileRepository>();
-  CloudinaryUploadService get _uploadService =>
-      widget.uploadService ?? getIt<CloudinaryUploadService>();
-  FirebaseAuth get _auth => widget.auth ?? getIt<FirebaseAuth>();
-
   @override
   void initState() {
     super.initState();
     final profile = widget.profile;
-    final currentUser = _auth.currentUser;
+    final currentUser = context.read<ProfileCubit>().currentUser;
 
     _nameController = TextEditingController(
       text: profile?.name.isNotEmpty == true
@@ -81,9 +66,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
     _phoneController = TextEditingController(text: profile?.phone ?? '');
     _selectedDob = profile?.dob;
-    _selectedGender = (profile?.gender != null && profile!.gender!.isNotEmpty)
-        ? profile.gender!.toLowerCase()
-        : 'male';
+    _selectedGender = profile?.gender ?? Gender.male;
     _currentPhotoUrl = profile?.avatarUrl ?? currentUser?.photoURL;
   }
 
@@ -97,20 +80,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   Future<void> _pickImage() async {
     try {
-      final picker = ImagePicker();
-      final picked = await picker.pickImage(
-        source: ImageSource.gallery,
-        maxWidth: 1024,
-        maxHeight: 1024,
-        imageQuality: 85,
-      );
-      if (picked != null) {
-        final bytes = await picked.readAsBytes();
-        setState(() {
-          _newImageBytes = bytes;
-          _newImageName = picked.name;
-        });
-      }
+      final picked = await pickGalleryImage();
+      if (picked == null) return;
+      final bytes = await picked.readAsBytes();
+      if (!mounted) return;
+      setState(() {
+        _newImageBytes = bytes;
+        _newImageName = picked.name;
+      });
     } catch (_) {
       if (mounted) {
         context.showErrorSnackBar(context.tr.pickImageError);
@@ -136,40 +113,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     if (!_formKey.currentState!.validate()) return;
     if (_isSaving) return;
 
-    final user = _auth.currentUser;
-    final uid = widget.profile?.uid.isNotEmpty == true
-        ? widget.profile!.uid
-        : user?.uid;
-    if (uid == null || uid.isEmpty) return;
-
+    final cubit = context.read<ProfileCubit>();
     setState(() => _isSaving = true);
     try {
-      var photoUrl = _currentPhotoUrl;
-      if (_newImageBytes != null) {
-        photoUrl = await _uploadService.uploadImage(
-          bytes: _newImageBytes!,
-          fileName: _newImageName ?? 'profile_$uid.jpg',
-        );
-      }
-
-      final normalizedPhone = PhoneUtils.normalizePhoneNumber(
-        _phoneController.text.trim(),
-      );
-      final newName = _nameController.text.trim();
-
-      await _repository.updateProfile(
-        uid: uid,
-        displayName: newName,
-        phone: normalizedPhone,
+      await cubit.saveProfile(
+        name: _nameController.text.trim(),
+        phone: PhoneUtils.normalizePhoneNumber(_phoneController.text.trim()),
         dob: _selectedDob,
-        gender: _selectedGender,
-        photoUrl: photoUrl,
+        gender: _selectedGender.name,
+        currentPhotoUrl: _currentPhotoUrl,
+        newImageBytes: _newImageBytes,
+        newImageName: _newImageName,
       );
-
-      await user?.updateDisplayName(newName);
-      if (photoUrl != null && photoUrl.isNotEmpty) {
-        await user?.updatePhotoURL(photoUrl);
-      }
 
       if (!mounted) return;
       context.showSuccessSnackBar(context.tr.profileUpdatedSuccess);
@@ -186,17 +141,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final locale = context.tr.$meta.locale.languageCode;
-    final formattedDob = _selectedDob != null
-        ? DateFormat.yMMMd(locale).format(_selectedDob!)
-        : null;
+    String? formattedDob;
+    if (_selectedDob != null) {
+      formattedDob = formatDate(_selectedDob!, context.localeCode);
+    }
 
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: AppIconButton.back(onTap: () => context.pop()),
+        leading: AppBackButton.leading(onTap: () => context.pop()),
         centerTitle: true,
         title: Text(context.tr.editProfile, style: context.bold18TextMain),
       ),
@@ -366,8 +319,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     child: _GenderOption(
                       label: context.tr.male,
                       icon: Icons.male_rounded,
-                      isSelected: _selectedGender == 'male',
-                      onTap: () => setState(() => _selectedGender = 'male'),
+                      isSelected: _selectedGender == Gender.male,
+                      onTap: () =>
+                          setState(() => _selectedGender = Gender.male),
                     ),
                   ),
                   12.horizontalSpace,
@@ -375,8 +329,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     child: _GenderOption(
                       label: context.tr.female,
                       icon: Icons.female_rounded,
-                      isSelected: _selectedGender == 'female',
-                      onTap: () => setState(() => _selectedGender = 'female'),
+                      isSelected: _selectedGender == Gender.female,
+                      onTap: () =>
+                          setState(() => _selectedGender = Gender.female),
                     ),
                   ),
                 ],

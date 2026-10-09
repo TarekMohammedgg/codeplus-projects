@@ -1,10 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import 'package:doctor_hunt/apps/core/extensions/context_extensions.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
+
+/// "Today, 7 Oct", "Tomorrow, 8 Oct", or "Fri, 9 Oct".
+String formatBookingDayLabel(BuildContext context, DateTime date) {
+  final now = DateTime.now();
+  final locale = context.localeCode;
+  final datePart = DateFormat('d MMM', locale).format(date);
+
+  if (DateUtils.isSameDay(date, now)) {
+    return '${context.tr.today}, $datePart';
+  }
+  if (DateUtils.isSameDay(date, now.add(const Duration(days: 1)))) {
+    return '${context.tr.tomorrow}, $datePart';
+  }
+  return DateFormat('E, d MMM', locale).format(date);
+}
 
 class DateSelectorList extends StatelessWidget {
   const DateSelectorList({
@@ -23,30 +39,6 @@ class DateSelectorList extends StatelessWidget {
   final bool isLoadingSlots;
   final Map<DateTime, int> slotsCountByDate;
   final ValueChanged<DateTime>? onSelectDate;
-
-  String _formatDayLabel(BuildContext context, DateTime date) {
-    final now = DateTime.now();
-    final isToday = DateUtils.isSameDay(date, now);
-    final isTomorrow = DateUtils.isSameDay(
-      date,
-      now.add(const Duration(days: 1)),
-    );
-    final locale = TranslationProvider.of(
-      context,
-    ).translations.$meta.locale.languageCode;
-    final datePart = DateFormat('d MMM', locale).format(date);
-
-    if (isToday) {
-      return '${context.tr.today}, $datePart';
-    }
-    if (isTomorrow) {
-      final tomorrowCap = context.tr.tomorrow.isNotEmpty
-          ? '${context.tr.tomorrow[0].toUpperCase()}${context.tr.tomorrow.substring(1)}'
-          : context.tr.tomorrow;
-      return '$tomorrowCap, $datePart';
-    }
-    return DateFormat('E, d MMM', locale).format(date);
-  }
 
   int? _findSlotsCount(DateTime date) {
     for (final entry in slotsCountByDate.entries) {
@@ -73,13 +65,13 @@ class DateSelectorList extends StatelessWidget {
         itemBuilder: (context, index) {
           final date = bookableDates[index];
           final isSelected = DateUtils.isSameDay(date, selectedDate);
-          final dayLabel = _formatDayLabel(context, date);
+          final dayLabel = formatBookingDayLabel(context, date);
 
           final count = isSelected ? slotsCount : _findSlotsCount(date);
 
           final String subtitle;
           if (isSelected && isLoadingSlots && count == 0) {
-            subtitle = '...';
+            subtitle = context.tr.loadingEllipsis;
           } else if (count != null) {
             if (count > 0) {
               subtitle = context.tr.slotsAvailable(count: count);
@@ -87,7 +79,9 @@ class DateSelectorList extends StatelessWidget {
               subtitle = context.tr.noSlotsAvailable;
             }
           } else {
-            subtitle = isLoadingSlots ? '...' : context.tr.noSlotsAvailable;
+            subtitle = isLoadingSlots
+                ? context.tr.loadingEllipsis
+                : context.tr.noSlotsAvailable;
           }
 
           return Material(

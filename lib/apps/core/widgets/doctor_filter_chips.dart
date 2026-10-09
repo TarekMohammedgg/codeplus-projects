@@ -6,25 +6,32 @@ import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
-/// "All" + optional "Favorites" + one chip per specialty. Shared by the
-/// patient Doctors tab and the admin Doctors list.
+/// "All" + one chip per specialty. Shared by the patient Doctors tab and the
+/// admin Doctors list.
 class DoctorFilterChips extends StatelessWidget {
   const DoctorFilterChips({
     super.key,
     required this.specialties,
     required this.selectedSpecialtyId,
     required this.onSpecialtySelected,
-    this.favoritesOnly = false,
-    this.onFavoritesToggled,
+    this.counts,
   });
 
   final List<SpecialtyModel> specialties;
   final String? selectedSpecialtyId;
-  final bool favoritesOnly;
   final ValueChanged<String?> onSpecialtySelected;
 
-  /// Null hides the Favorites chip.
-  final VoidCallback? onFavoritesToggled;
+  /// Doctors per specialty id (null key = "All"); shown as "Label (n)".
+  final Map<String?, int>? counts;
+
+  String _label(BuildContext context, String? specialtyId, String label) {
+    final counts = this.counts;
+    if (counts == null) return label;
+    return context.tr.labelWithCount(
+      label: label,
+      count: counts[specialtyId] ?? 0,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,23 +42,14 @@ class DoctorFilterChips extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         children: [
           _FilterChip(
-            label: context.tr.filterAll,
+            label: _label(context, null, context.tr.filterAll),
             selected: selectedSpecialtyId == null,
             onSelected: () => onSpecialtySelected(null),
           ),
-          if (onFavoritesToggled case final onFavoritesToggled?) ...[
-            8.horizontalSpace,
-            _FilterChip(
-              label: context.tr.favorites,
-              icon: Icons.favorite_rounded,
-              selected: favoritesOnly,
-              onSelected: onFavoritesToggled,
-            ),
-          ],
           for (final specialty in specialties) ...[
             8.horizontalSpace,
             _FilterChip(
-              label: specialty.localizedName,
+              label: _label(context, specialty.id, specialty.localizedName),
               selected: selectedSpecialtyId == specialty.id,
               onSelected: () => onSpecialtySelected(specialty.id),
             ),
@@ -67,26 +65,17 @@ class _FilterChip extends StatelessWidget {
     required this.label,
     required this.selected,
     required this.onSelected,
-    this.icon,
   });
 
   final String label;
   final bool selected;
   final VoidCallback onSelected;
-  final IconData? icon;
 
   @override
   Widget build(BuildContext context) {
     final foreground = selected ? AppColors.white : AppColors.textSecondary;
     return ChoiceChip(
       label: Text(label),
-      avatar: icon == null
-          ? null
-          : Icon(
-              icon,
-              size: 16,
-              color: selected ? AppColors.white : AppColors.favorite,
-            ),
       showCheckmark: false,
       selected: selected,
       onSelected: (_) => onSelected(),

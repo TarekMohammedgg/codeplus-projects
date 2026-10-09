@@ -19,6 +19,7 @@ class BookingLoaded extends BookingState {
     required this.bookableDates,
     required this.selectedDate,
     required this.slots,
+    this.slotsCountByDate = const {},
     this.selectedSlot,
     this.nextAvailableDate,
     this.isLoadingSlots = false,
@@ -28,6 +29,7 @@ class BookingLoaded extends BookingState {
   final List<DateTime> bookableDates;
   final DateTime selectedDate;
   final List<DateTime> slots;
+  final Map<DateTime, int> slotsCountByDate;
   final DateTime? selectedSlot;
   final DateTime? nextAvailableDate;
   final bool isLoadingSlots;
@@ -39,6 +41,7 @@ class BookingLoaded extends BookingState {
     List<DateTime>? bookableDates,
     DateTime? selectedDate,
     List<DateTime>? slots,
+    Map<DateTime, int>? slotsCountByDate,
     DateTime? selectedSlot,
     bool clearSelectedSlot = false,
     DateTime? nextAvailableDate,
@@ -50,6 +53,7 @@ class BookingLoaded extends BookingState {
       bookableDates: bookableDates ?? this.bookableDates,
       selectedDate: selectedDate ?? this.selectedDate,
       slots: slots ?? this.slots,
+      slotsCountByDate: slotsCountByDate ?? this.slotsCountByDate,
       selectedSlot: clearSelectedSlot
           ? null
           : (selectedSlot ?? this.selectedSlot),

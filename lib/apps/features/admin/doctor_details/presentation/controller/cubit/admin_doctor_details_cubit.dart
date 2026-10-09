@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
-import 'package:doctor_hunt/apps/features/admin/doctors/data/models/admin_doctor_model.dart';
+import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/data/service/admin_doctor_service.dart';
 
 class AdminDoctorDetailsState {
@@ -13,13 +13,13 @@ class AdminDoctorDetailsState {
     this.errorMessage,
   });
 
-  final AdminDoctorModel doctor;
+  final DoctorModel doctor;
   final bool isLoading;
   final bool isTogglingActive;
   final String? errorMessage;
 
   AdminDoctorDetailsState copyWith({
-    AdminDoctorModel? doctor,
+    DoctorModel? doctor,
     bool? isLoading,
     bool? isTogglingActive,
     String? errorMessage,
@@ -65,14 +65,14 @@ class AdminDoctorDetailsState {
 
 class AdminDoctorDetailsCubit extends Cubit<AdminDoctorDetailsState> {
   AdminDoctorDetailsCubit({
-    required AdminDoctorModel initialDoctor,
+    required DoctorModel initialDoctor,
     required this.doctorService,
   }) : super(AdminDoctorDetailsState(doctor: initialDoctor)) {
     _init();
   }
 
   final AdminDoctorService doctorService;
-  StreamSubscription<AdminDoctorModel?>? _subscription;
+  StreamSubscription<DoctorModel?>? _subscription;
 
   void _init() {
     _subscription = doctorService

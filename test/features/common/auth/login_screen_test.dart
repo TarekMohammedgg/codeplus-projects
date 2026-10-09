@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/controller/cubit/auth_cubit.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/screens/login_screen.dart';
-import 'package:doctor_hunt/apps/features/common/auth/presentation/widgets/auth_back_button.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_back_button.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/widgets/auth_buttons.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import '../../../helpers/test_app.dart';
@@ -65,7 +65,7 @@ void main() {
     await tester.pumpAndSettle();
 
     // act
-    await tester.tap(find.byType(AuthBackButton));
+    await tester.tap(find.byType(AppBackButton));
     await tester.pumpAndSettle();
 
     // assert

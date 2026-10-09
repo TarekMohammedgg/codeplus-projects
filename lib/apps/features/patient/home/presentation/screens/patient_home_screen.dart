@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_header_section.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_icon_button.dart';
 import 'package:doctor_hunt/apps/features/patient/home/presentation/controller/cubit/home_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/home/presentation/controller/cubit/home_state.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
@@ -25,7 +26,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final searchController = TextEditingController();
   late final HomeCubit _homeCubit;
 
   @override
@@ -45,12 +45,6 @@ class _HomeScreenState extends State<HomeScreen> {
     // solved
     _homeCubit = context.read<HomeCubit>();
     _homeCubit.load();
-  }
-
-  @override
-  void dispose() {
-    searchController.dispose();
-    super.dispose();
   }
 
   String _greeting(User? user) {
@@ -78,12 +72,25 @@ class _HomeScreenState extends State<HomeScreen> {
                 AppHeaderSection(
                   greeting: _greeting(user),
                   title: tr.findYourDoctor,
-                  searchController: searchController,
-                  onSearchSubmitted: (query) =>
-                      FindDoctorsRoute(q: query.trim()).go(context),
+                  searchReadOnly: true,
+                  onSearchTap: () =>
+                      const FindDoctorsRoute(focus: true).push(context),
                   showLanguageToggle: true,
                   showProfile: true,
                   profileImage: user?.photoURL,
+                  // Builder context sits above this Scaffold, so this opens
+                  // the shell's menu drawer.
+                  leading: AppIconButton(
+                    icon: Icons.menu_rounded,
+                    iconSize: 22,
+                    iconColor: AppColors.white,
+                    backgroundColor: AppColors.white.withValues(alpha: 0.2),
+                    boxShadow: const [],
+                    tooltip: MaterialLocalizations.of(
+                      context,
+                    ).openAppDrawerTooltip,
+                    onTap: () => Scaffold.of(context).openDrawer(),
+                  ),
                   onProfileTap: () => const ProfileRoute().go(context),
                 ),
                 switch (state) {

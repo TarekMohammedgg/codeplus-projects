@@ -2,8 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:doctor_hunt/apps/features/patient/profile/presentation/controller/cubit/profile_cubit.dart';
 
-import 'package:doctor_hunt/apps/core/di/injection.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/controller/cubit/auth_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/data/models/user_profile_model.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/presentation/screens/patient_settings_screen.dart';
@@ -67,13 +67,7 @@ void main() {
 
       await tester.pumpWidget(
         buildTestApp(
-          BlocProvider<AuthCubit>(
-            create: (_) => getIt<AuthCubit>(),
-            child: PatientSettingsScreen(
-              profileRepository: fakeRepo,
-              auth: fakeAuth,
-            ),
-          ),
+          _settingsScreen(profileRepository: fakeRepo, auth: fakeAuth),
         ),
       );
       await tester.pumpAndSettle();
@@ -99,13 +93,7 @@ void main() {
 
       await tester.pumpWidget(
         buildTestApp(
-          BlocProvider<AuthCubit>(
-            create: (_) => getIt<AuthCubit>(),
-            child: PatientSettingsScreen(
-              profileRepository: fakeRepo,
-              auth: fakeAuth,
-            ),
-          ),
+          _settingsScreen(profileRepository: fakeRepo, auth: fakeAuth),
         ),
       );
       await tester.pumpAndSettle();
@@ -130,13 +118,7 @@ void main() {
 
     await tester.pumpWidget(
       buildTestApp(
-        BlocProvider<AuthCubit>(
-          create: (_) => getIt<AuthCubit>(),
-          child: PatientSettingsScreen(
-            profileRepository: fakeRepo,
-            auth: fakeAuth,
-          ),
-        ),
+        _settingsScreen(profileRepository: fakeRepo, auth: fakeAuth),
       ),
     );
     await tester.pumpAndSettle();
@@ -159,13 +141,7 @@ void main() {
 
     await tester.pumpWidget(
       buildTestApp(
-        BlocProvider<AuthCubit>(
-          create: (_) => getIt<AuthCubit>(),
-          child: PatientSettingsScreen(
-            profileRepository: fakeRepo,
-            auth: fakeAuth,
-          ),
-        ),
+        _settingsScreen(profileRepository: fakeRepo, auth: fakeAuth),
       ),
     );
     await tester.pumpAndSettle();
@@ -185,12 +161,7 @@ void main() {
     final fakeAuthRepo = FakeAuthRepository();
 
     await tester.pumpWidget(
-      buildTestApp(
-        BlocProvider<AuthCubit>(
-          create: (_) => AuthCubit(repository: fakeAuthRepo),
-          child: const PatientSettingsScreen(),
-        ),
-      ),
+      buildTestApp(_settingsScreen(authRepository: fakeAuthRepo)),
     );
     await tester.pumpAndSettle();
 
@@ -198,11 +169,38 @@ void main() {
     await tester.tap(find.byKey(const Key('settings_logout_button')));
     await tester.pumpAndSettle();
 
-    expect(find.text(tr.logOutConfirmTitle), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byType(AlertDialog),
+        matching: find.text(tr.logOutConfirmTitle),
+      ),
+      findsOneWidget,
+    );
     expect(find.text(tr.logOutConfirmMessage), findsOneWidget);
 
     // Tap confirm in dialog
-    await tester.tap(find.widgetWithText(TextButton, tr.logOut));
+    await tester.tap(find.widgetWithText(TextButton, tr.ok));
     await tester.pumpAndSettle();
   });
+}
+
+/// The screen with the cubits its route provides, backed by fakes.
+Widget _settingsScreen({
+  FakeProfileRepository? profileRepository,
+  FirebaseAuth? auth,
+  FakeAuthRepository? authRepository,
+}) {
+  final authRepo = authRepository ?? FakeAuthRepository(auth: auth);
+  return MultiBlocProvider(
+    providers: [
+      BlocProvider<AuthCubit>(create: (_) => AuthCubit(repository: authRepo)),
+      BlocProvider<ProfileCubit>(
+        create: (_) => ProfileCubit(
+          repository: profileRepository ?? FakeProfileRepository(),
+          authRepository: authRepo,
+        )..init(),
+      ),
+    ],
+    child: const PatientSettingsScreen(),
+  );
 }

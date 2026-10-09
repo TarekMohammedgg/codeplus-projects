@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 import 'apps/core/di/injection.dart';
 import 'apps/core/router/app_router.dart';
@@ -9,12 +11,15 @@ import 'generated/i18n/translations.g.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'apps/features/common/auth/data/repositories/auth_repository.dart';
 import 'apps/features/common/auth/data/service/auth_service.dart';
 import 'apps/features/patient/favorites/presentation/controller/cubit/favorites_cubit.dart';
 import 'firebase_options.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   try {
     await dotenv.load(fileName: '.env');
@@ -23,14 +28,40 @@ void main() async {
   }
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await AuthService.initialize();
-  setupServiceLocator();
+  await initializeDateFormatting();
+  final preferences = await SharedPreferences.getInstance();
+  setupServiceLocator(preferences: preferences);
+
+  // Warm up the current user's role while splash is preserved so that
+  // GoRouter's initial redirect resolves instantly without any black screen.
+  final currentUser = getIt<AuthRepository>().currentUser;
+  if (currentUser != null) {
+    try {
+      await getIt<AuthRepository>().isCurrentUserAdmin();
+    } catch (e) {
+      debugPrint('Failed to warm up user role: $e');
+    }
+  }
 
   LocaleSettings.useDeviceLocale();
   runApp(TranslationProvider(child: const DoctorHuntApp()));
 }
 
-class DoctorHuntApp extends StatelessWidget {
+class DoctorHuntApp extends StatefulWidget {
   const DoctorHuntApp({super.key});
+
+  @override
+  State<DoctorHuntApp> createState() => _DoctorHuntAppState();
+}
+
+class _DoctorHuntAppState extends State<DoctorHuntApp> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      FlutterNativeSplash.remove();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +79,12 @@ class DoctorHuntApp extends StatelessWidget {
         supportedLocales: AppLocaleUtils.supportedLocales,
         localizationsDelegates: GlobalMaterialLocalizations.delegates,
         routerConfig: AppRouter.router,
+        builder: (context, child) {
+          return ColoredBox(
+            color: AppColors.background,
+            child: child ?? const SizedBox.shrink(),
+          );
+        },
       ),
     );
   }

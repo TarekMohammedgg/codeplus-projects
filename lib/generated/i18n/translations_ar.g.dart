@@ -136,8 +136,7 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get bookNow => 'احجز الآن';
 	@override String get filterAll => 'الكل';
 	@override String get favorites => 'المفضلة';
-	@override String get sortPopular => 'الأكثر شعبية';
-	@override String get sortTopRated => 'الأعلى تقييماً';
+	@override String get popularDoctors => 'الأطباء الأكثر شعبية';
 	@override String get noDoctorsFound => 'لم يتم العثور على أطباء';
 	@override String get bookingComingSoon => 'الحجز غير متاح حاليًا.';
 	@override String get doctorNoAvailableTimes => 'ليس لدى الطبيب مواعيد متاحة بعد';
@@ -175,9 +174,10 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get female => 'أنثى';
 	@override String get selectDob => 'اختر تاريخ الميلاد';
 	@override String get profileUpdatedSuccess => 'تم تحديث الملف الشخصي بنجاح';
-	@override String get logOutConfirmTitle => 'تسجيل الخروج؟';
-	@override String get logOutConfirmMessage => 'ستحتاج إلى تسجيل الدخول مرة أخرى لاستخدام التطبيق.';
+	@override String get logOutConfirmTitle => 'تسجيل الخروج';
+	@override String get logOutConfirmMessage => 'هل أنت متأكد أنك تريد تسجيل الخروج؟';
 	@override String get logOut => 'تسجيل الخروج';
+	@override String get ok => 'حسناً';
 	@override String get selectTime => 'اختيار الموعد';
 	@override String get selectDate => 'اختر التاريخ';
 	@override String get today => 'اليوم';
@@ -201,6 +201,10 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get bookAppointment => 'حجز الموعد';
 	@override String appointmentBookedSuccess({required Object name, required Object date, required Object time}) => 'تم حجز الموعد بنجاح مع ${name} في يوم ${date} الساعة ${time}';
 	@override String get viewDetails => 'عرض التفاصيل';
+	@override String get dateLabel => 'التاريخ';
+	@override String get timeLabel => 'الوقت';
+	@override String get feeLabel => 'الرسوم';
+	@override String get appointmentLabel => 'الموعد';
 	@override String get confirm => 'تأكيد';
 	@override String get thankYou => 'شكراً لك !';
 	@override String get appointmentSuccessful => 'تم حجز موعدك بنجاح';
@@ -238,20 +242,21 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get secureAdminAccessOnly => 'وصول آمن للمسؤولين فقط';
 	@override String get doctorsTitle => 'الأطباء';
 	@override String get totalDoctors => 'إجمالي الأطباء';
+	@override String get activeDoctors => 'الأطباء النشطون';
+	@override String labelWithCount({required Object label, required Object count}) => '${label} (${count})';
 	@override String get activeLabel => 'نشط';
 	@override String get inactiveLabel => 'غير نشط';
 	@override String get addDoctor => 'إضافة طبيب';
 	@override String get searchAdminDoctorsHint => 'ابحث عن أطباء...';
-	@override String get noDoctorsYet => 'لا يوجد أطباء بعد. اضغط على إضافة طبيب لإنشاء واحد.';
+	@override String get noDoctorsYet => 'لا يوجد أطباء مسجلون في Doctor Hunt حالياً. أضف أول طبيب للبدء.';
 	@override String get createDoctorTitle => 'إضافة طبيب جديد';
 	@override String get doctorNameLabel => 'اسم الطبيب';
 	@override String get doctorNameHint => 'أدخل اسم الطبيب';
 	@override String get specialtyLabel => 'التخصص';
 	@override String get selectSpecialtyHint => 'اختر التخصص';
-	@override String get doctorImageLabel => 'صورة الطبيب';
-	@override String get uploadDoctorImageTitle => 'رفع صورة الطبيب';
 	@override String get tapToPickImage => 'اضغط لاختيار صورة';
-	@override String get removeImage => 'إزالة الصورة المحددة';
+	@override String get addPhoto => 'إضافة صورة';
+	@override String get tapPhotoToChange => 'اضغط على الصورة لتغييرها';
 	@override String get createDoctorButton => 'إنشاء طبيب';
 	@override String get doctorCreatedSuccess => 'تم إنشاء الطبيب بنجاح';
 	@override String get doctorFeeLabel => 'رسوم الكشف';
@@ -281,7 +286,8 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get edit => 'تعديل';
 	@override String get cancel => 'إلغاء';
 	@override String get editDoctorTitle => 'تعديل بيانات الطبيب';
-	@override String get updateDoctorButton => 'تحديث الطبيب';
+	@override String get manageAvailability => 'إدارة المواعيد';
+	@override String get rating => 'التقييم';
 	@override String get doctorUpdatedSuccess => 'تم تحديث بيانات الطبيب بنجاح';
 	@override String get changeImage => 'تغيير الصورة';
 	@override String get placeholderDoctorName => 'د. طبيب أطفال';
@@ -290,6 +296,7 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get tabDoctors => 'الأطباء';
 	@override String get tabAppointments => 'المواعيد';
 	@override String get tabProfile => 'الملف الشخصي';
+	@override String get myAppointments => 'مواعيدي';
 	@override String get noFavoritesFound => 'لا يوجد أطباء في المفضلة بعد';
 	@override String get appointments => 'المواعيد';
 	@override String get upcoming => 'القادمة';
@@ -327,13 +334,12 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get confirmDeactivateDoctor => 'هل أنت متأكد من إلغاء تفعيل هذا الطبيب؟';
 	@override String get doctorStatusUpdated => 'تم تحديث حالة الطبيب';
 	@override String get doctorAvailability => 'جدول مواعيد الطبيب';
-	@override String get doctorAvailabilitySubtitle => 'حدد أيام العمل وساعات العمل الأسبوعية ومدة الكشف';
 	@override String get workingDays => 'أيام العمل';
+	@override String daysEnabled({required Object count}) => '${count} أيام مفعّلة';
 	@override String get workingHours => 'ساعات العمل';
 	@override String get startTime => 'وقت البدء';
 	@override String get endTime => 'وقت الانتهاء';
 	@override String get slotDuration => 'مدة الموعد';
-	@override String slotsPerDay({required Object count}) => '${count} موعد في اليوم';
 	@override String minutesDuration({required Object count}) => '${count} دقيقة';
 	@override String get errorSelectAtLeastOneDay => 'يرجى تحديد يوم عمل واحد على الأقل';
 	@override String get errorStartMustBeBeforeEnd => 'يجب أن يكون وقت البدء قبل وقت الانتهاء';
@@ -341,6 +347,8 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get availabilityUpdatedSuccess => 'تم تحديث جدول المواعيد بنجاح';
 	@override String get saveAvailability => 'حفظ جدول المواعيد';
 	@override String get adminProfile => 'الملف الشخصي للمسؤول';
+	@override String get adminProfileSubtitle => 'عدّل بياناتك وموقع العيادة';
+	@override String get saveChanges => 'حفظ التغييرات';
 	@override String get clinicAddressAr => 'عنوان العيادة (عربي)';
 	@override String get clinicAddressEn => 'عنوان العيادة (إنجليزي)';
 	@override String get tapMapToSetLocation => 'اضغط في أي مكان على الخريطة لتحديد دبوس موقع العيادة';
@@ -363,6 +371,20 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get patientEmail => 'البريد الإلكتروني';
 	@override String get cancelledByPatient => 'ألغي بواسطة المريض';
 	@override String get cancelledByAdmin => 'ألغي بواسطة الإدارة';
+	@override String get buildVersion => 'إصدار التطبيق';
+	@override String get versionValue => 'v1.0.0';
+	@override String get privacyPolicyTitle => 'سياسة خصوصية تطبيق دكتور هانت';
+	@override String get privacyPolicyIntro => 'هنالك العديد من الأنواع المتوفرة لنصوص لوريم إيبسوم، ولكن الغالبية تم تعديلها بشكل أو بآخر عبر إدخال بعض النوادر أو الكلمات العشوائية إلى النص.';
+	@override String get privacyPolicyBullet1 => 'الجزء القياسي من نص لوريم إيبسوم المستخدم منذ القرن الخامس عشر متاح هنا لمن يهتم.';
+	@override String get privacyPolicyBullet2 => 'الفقرات 1.10.32 و 1.10.33 من كتاب دي فينيبوس بونوروم إيت مالوروم.';
+	@override String get privacyPolicyBullet3 => 'إن الهدف من استخدام لوريم إيبسوم هو الحصول على توزيع متساوٍ للأحرف.';
+	@override String get privacyPolicyBullet4 => 'هناك حقيقة مثبتة أن القارئ سينشغل بالتصميم المقروء لصفحة ما.';
+	@override String get privacyPolicyOutro => 'هناك حقيقة مثبتة منذ زمن طويل وهي أن المحتوى المقروء لصفحة ما سيلهي القارئ عن التركيز على الشكل الخارجي للنص أو شكل توضع الفقرات.';
+	@override String get loadingEllipsis => '...';
+	@override String get doctorNameArLabel => 'اسم الطبيب (عربي)';
+	@override String get doctorNameEnLabel => 'اسم الطبيب (إنجليزي)';
+	@override String get doctorAvailabilitySubtitle => 'حدد أيام العمل وساعات العمل الأسبوعية ومدة الكشف';
+	@override String slotsPerDay({required Object count}) => '${count} موعد في اليوم';
 }
 
 /// The flat map containing all translations for locale <ar>.
@@ -470,8 +492,7 @@ extension on TranslationsAr {
 			'bookNow' => 'احجز الآن',
 			'filterAll' => 'الكل',
 			'favorites' => 'المفضلة',
-			'sortPopular' => 'الأكثر شعبية',
-			'sortTopRated' => 'الأعلى تقييماً',
+			'popularDoctors' => 'الأطباء الأكثر شعبية',
 			'noDoctorsFound' => 'لم يتم العثور على أطباء',
 			'bookingComingSoon' => 'الحجز غير متاح حاليًا.',
 			'doctorNoAvailableTimes' => 'ليس لدى الطبيب مواعيد متاحة بعد',
@@ -509,9 +530,10 @@ extension on TranslationsAr {
 			'female' => 'أنثى',
 			'selectDob' => 'اختر تاريخ الميلاد',
 			'profileUpdatedSuccess' => 'تم تحديث الملف الشخصي بنجاح',
-			'logOutConfirmTitle' => 'تسجيل الخروج؟',
-			'logOutConfirmMessage' => 'ستحتاج إلى تسجيل الدخول مرة أخرى لاستخدام التطبيق.',
+			'logOutConfirmTitle' => 'تسجيل الخروج',
+			'logOutConfirmMessage' => 'هل أنت متأكد أنك تريد تسجيل الخروج؟',
 			'logOut' => 'تسجيل الخروج',
+			'ok' => 'حسناً',
 			'selectTime' => 'اختيار الموعد',
 			'selectDate' => 'اختر التاريخ',
 			'today' => 'اليوم',
@@ -535,6 +557,10 @@ extension on TranslationsAr {
 			'bookAppointment' => 'حجز الموعد',
 			'appointmentBookedSuccess' => ({required Object name, required Object date, required Object time}) => 'تم حجز الموعد بنجاح مع ${name} في يوم ${date} الساعة ${time}',
 			'viewDetails' => 'عرض التفاصيل',
+			'dateLabel' => 'التاريخ',
+			'timeLabel' => 'الوقت',
+			'feeLabel' => 'الرسوم',
+			'appointmentLabel' => 'الموعد',
 			'confirm' => 'تأكيد',
 			'thankYou' => 'شكراً لك !',
 			'appointmentSuccessful' => 'تم حجز موعدك بنجاح',
@@ -572,20 +598,21 @@ extension on TranslationsAr {
 			'secureAdminAccessOnly' => 'وصول آمن للمسؤولين فقط',
 			'doctorsTitle' => 'الأطباء',
 			'totalDoctors' => 'إجمالي الأطباء',
+			'activeDoctors' => 'الأطباء النشطون',
+			'labelWithCount' => ({required Object label, required Object count}) => '${label} (${count})',
 			'activeLabel' => 'نشط',
 			'inactiveLabel' => 'غير نشط',
 			'addDoctor' => 'إضافة طبيب',
 			'searchAdminDoctorsHint' => 'ابحث عن أطباء...',
-			'noDoctorsYet' => 'لا يوجد أطباء بعد. اضغط على إضافة طبيب لإنشاء واحد.',
+			'noDoctorsYet' => 'لا يوجد أطباء مسجلون في Doctor Hunt حالياً. أضف أول طبيب للبدء.',
 			'createDoctorTitle' => 'إضافة طبيب جديد',
 			'doctorNameLabel' => 'اسم الطبيب',
 			'doctorNameHint' => 'أدخل اسم الطبيب',
 			'specialtyLabel' => 'التخصص',
 			'selectSpecialtyHint' => 'اختر التخصص',
-			'doctorImageLabel' => 'صورة الطبيب',
-			'uploadDoctorImageTitle' => 'رفع صورة الطبيب',
 			'tapToPickImage' => 'اضغط لاختيار صورة',
-			'removeImage' => 'إزالة الصورة المحددة',
+			'addPhoto' => 'إضافة صورة',
+			'tapPhotoToChange' => 'اضغط على الصورة لتغييرها',
 			'createDoctorButton' => 'إنشاء طبيب',
 			'doctorCreatedSuccess' => 'تم إنشاء الطبيب بنجاح',
 			'doctorFeeLabel' => 'رسوم الكشف',
@@ -615,7 +642,8 @@ extension on TranslationsAr {
 			'edit' => 'تعديل',
 			'cancel' => 'إلغاء',
 			'editDoctorTitle' => 'تعديل بيانات الطبيب',
-			'updateDoctorButton' => 'تحديث الطبيب',
+			'manageAvailability' => 'إدارة المواعيد',
+			'rating' => 'التقييم',
 			'doctorUpdatedSuccess' => 'تم تحديث بيانات الطبيب بنجاح',
 			'changeImage' => 'تغيير الصورة',
 			'placeholderDoctorName' => 'د. طبيب أطفال',
@@ -624,6 +652,7 @@ extension on TranslationsAr {
 			'tabDoctors' => 'الأطباء',
 			'tabAppointments' => 'المواعيد',
 			'tabProfile' => 'الملف الشخصي',
+			'myAppointments' => 'مواعيدي',
 			'noFavoritesFound' => 'لا يوجد أطباء في المفضلة بعد',
 			'appointments' => 'المواعيد',
 			'upcoming' => 'القادمة',
@@ -661,13 +690,12 @@ extension on TranslationsAr {
 			'confirmDeactivateDoctor' => 'هل أنت متأكد من إلغاء تفعيل هذا الطبيب؟',
 			'doctorStatusUpdated' => 'تم تحديث حالة الطبيب',
 			'doctorAvailability' => 'جدول مواعيد الطبيب',
-			'doctorAvailabilitySubtitle' => 'حدد أيام العمل وساعات العمل الأسبوعية ومدة الكشف',
 			'workingDays' => 'أيام العمل',
+			'daysEnabled' => ({required Object count}) => '${count} أيام مفعّلة',
 			'workingHours' => 'ساعات العمل',
 			'startTime' => 'وقت البدء',
 			'endTime' => 'وقت الانتهاء',
 			'slotDuration' => 'مدة الموعد',
-			'slotsPerDay' => ({required Object count}) => '${count} موعد في اليوم',
 			'minutesDuration' => ({required Object count}) => '${count} دقيقة',
 			'errorSelectAtLeastOneDay' => 'يرجى تحديد يوم عمل واحد على الأقل',
 			'errorStartMustBeBeforeEnd' => 'يجب أن يكون وقت البدء قبل وقت الانتهاء',
@@ -675,6 +703,8 @@ extension on TranslationsAr {
 			'availabilityUpdatedSuccess' => 'تم تحديث جدول المواعيد بنجاح',
 			'saveAvailability' => 'حفظ جدول المواعيد',
 			'adminProfile' => 'الملف الشخصي للمسؤول',
+			'adminProfileSubtitle' => 'عدّل بياناتك وموقع العيادة',
+			'saveChanges' => 'حفظ التغييرات',
 			'clinicAddressAr' => 'عنوان العيادة (عربي)',
 			'clinicAddressEn' => 'عنوان العيادة (إنجليزي)',
 			'tapMapToSetLocation' => 'اضغط في أي مكان على الخريطة لتحديد دبوس موقع العيادة',
@@ -697,6 +727,20 @@ extension on TranslationsAr {
 			'patientEmail' => 'البريد الإلكتروني',
 			'cancelledByPatient' => 'ألغي بواسطة المريض',
 			'cancelledByAdmin' => 'ألغي بواسطة الإدارة',
+			'buildVersion' => 'إصدار التطبيق',
+			'versionValue' => 'v1.0.0',
+			'privacyPolicyTitle' => 'سياسة خصوصية تطبيق دكتور هانت',
+			'privacyPolicyIntro' => 'هنالك العديد من الأنواع المتوفرة لنصوص لوريم إيبسوم، ولكن الغالبية تم تعديلها بشكل أو بآخر عبر إدخال بعض النوادر أو الكلمات العشوائية إلى النص.',
+			'privacyPolicyBullet1' => 'الجزء القياسي من نص لوريم إيبسوم المستخدم منذ القرن الخامس عشر متاح هنا لمن يهتم.',
+			'privacyPolicyBullet2' => 'الفقرات 1.10.32 و 1.10.33 من كتاب دي فينيبوس بونوروم إيت مالوروم.',
+			'privacyPolicyBullet3' => 'إن الهدف من استخدام لوريم إيبسوم هو الحصول على توزيع متساوٍ للأحرف.',
+			'privacyPolicyBullet4' => 'هناك حقيقة مثبتة أن القارئ سينشغل بالتصميم المقروء لصفحة ما.',
+			'privacyPolicyOutro' => 'هناك حقيقة مثبتة منذ زمن طويل وهي أن المحتوى المقروء لصفحة ما سيلهي القارئ عن التركيز على الشكل الخارجي للنص أو شكل توضع الفقرات.',
+			'loadingEllipsis' => '...',
+			'doctorNameArLabel' => 'اسم الطبيب (عربي)',
+			'doctorNameEnLabel' => 'اسم الطبيب (إنجليزي)',
+			'doctorAvailabilitySubtitle' => 'حدد أيام العمل وساعات العمل الأسبوعية ومدة الكشف',
+			'slotsPerDay' => ({required Object count}) => '${count} موعد في اليوم',
 			_ => null,
 		};
 	}

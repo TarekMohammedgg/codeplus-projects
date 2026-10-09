@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
+import 'package:doctor_hunt/apps/features/common/role_selection/data/models/user_role.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
 class AuthService {
@@ -41,6 +42,25 @@ class AuthService {
 
   User? get currentUser => _auth.currentUser;
 
+  /// True when the user can sign in with email + password (so they can
+  /// change it); Google-only accounts cannot.
+  bool get hasPasswordProvider =>
+      currentUser?.providerData.any(
+        (p) => p.providerId == EmailAuthProvider.PROVIDER_ID,
+      ) ??
+      false;
+
+  Future<void> updateDisplayNameAndPhoto(String name, String? photoUrl) async {
+    final user = currentUser;
+    if (user == null) return;
+    await user.updateDisplayName(name);
+    if (photoUrl != null && photoUrl.isNotEmpty) {
+      await user.updatePhotoURL(photoUrl);
+    }
+  }
+
+  bool? _isAdmin;
+
   /// Emits the signed-in user's uid, or null after sign-out.
   Stream<String?> userIdChanges() =>
       _auth.authStateChanges().map((user) => user?.uid);
@@ -49,6 +69,7 @@ class AuthService {
   // solved
 
   Future<void> signOut() async {
+    _isAdmin = null;
     await Future.wait([_auth.signOut(), GoogleSignIn.instance.signOut()]);
   }
 
@@ -69,7 +90,7 @@ class AuthService {
 
     final user = userCredential.user;
     if (user != null) await ensureUserProfile(user);
-
+    _isAdmin = null;
     return userCredential;
   }
 
@@ -83,6 +104,7 @@ class AuthService {
     );
     final user = credential.user;
     if (user != null) await ensureUserProfile(user);
+    _isAdmin = null;
     return credential;
   }
 
@@ -96,6 +118,7 @@ class AuthService {
       final result = await _auth.signInWithCredential(credential);
       final user = result.user;
       if (user != null) await ensureUserProfile(user);
+      _isAdmin = null;
       return result;
     } on GoogleSignInException catch (e) {
       if (e.code == GoogleSignInExceptionCode.canceled) {
@@ -124,6 +147,14 @@ class AuthService {
       if (user.email != null && user.email!.trim().isNotEmpty) {
         updateData['email'] = user.email!.trim();
       }
+      // Sync photoUrl from Firebase Auth when Firestore doesn't have one yet
+      // (e.g. Google sign-in photo that was never persisted to Firestore).
+      final existingPhoto = existingData['photoUrl'] as String?;
+      if ((existingPhoto == null || existingPhoto.trim().isEmpty) &&
+          user.photoURL != null &&
+          user.photoURL!.trim().isNotEmpty) {
+        updateData['photoUrl'] = user.photoURL!.trim();
+      }
       await reference.set(updateData, SetOptions(merge: true));
       return;
     }
@@ -131,7 +162,9 @@ class AuthService {
     await reference.set({
       'displayName': user.displayName?.trim() ?? '',
       'email': user.email?.trim() ?? '',
-      'role': 'patient',
+      if (user.photoURL != null && user.photoURL!.trim().isNotEmpty)
+        'photoUrl': user.photoURL!.trim(),
+      'role': UserRole.patient.name,
       'createdAt': FieldValue.serverTimestamp(),
       'updatedAt': FieldValue.serverTimestamp(),
     });
@@ -139,9 +172,15 @@ class AuthService {
 
   Future<bool> isCurrentUserAdmin() async {
     final user = currentUser;
-    if (user == null) return false;
+    if (user == null) {
+      _isAdmin = null;
+      return false;
+    }
+    if (_isAdmin != null) return _isAdmin!;
     final snapshot = await _firestore.collection('users').doc(user.uid).get();
-    return snapshot.data()?['role'] == 'admin';
+    final isAdmin = snapshot.data()?['role'] == UserRole.admin.name;
+    _isAdmin = isAdmin;
+    return isAdmin;
   }
 
   Future<void> forgetpassword({required String email}) async {

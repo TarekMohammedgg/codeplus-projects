@@ -1,8 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_availability.dart';
-import 'package:doctor_hunt/apps/core/services/specialty_service.dart';
-import 'package:doctor_hunt/apps/features/admin/doctors/data/models/admin_doctor_model.dart';
+import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
+import 'package:doctor_hunt/apps/core/services/doctor_service.dart';
 
+/// Admin side of the `doctors` collection. A thin delegate: every query,
+/// write and parse lives in [DoctorService] (one data source per collection).
 class AdminDoctorService {
   //CR Bad DI: Avoid mixing static singletons and swallowing Firebase uninitialized errors with catch (_) => null.
   //CR Inject non-nullable `FirebaseFirestore` via constructor.
@@ -11,58 +12,17 @@ class AdminDoctorService {
   //CR Bad DI: Avoid mixing static singletons and swallowing Firebase uninitialized errors with catch (_) => null.
   //CR Inject non-nullable `FirebaseFirestore` via constructor.
   // solved
-  AdminDoctorService({
-    required FirebaseFirestore firestore,
-    required SpecialtyService specialtyService,
-    // ignore: prefer_initializing_formals
-  }) : _firestore = firestore,
-       // ignore: prefer_initializing_formals
-       _specialtyService = specialtyService;
+  AdminDoctorService({required this.doctorService});
 
-  final FirebaseFirestore _firestore;
-  final SpecialtyService _specialtyService;
+  final DoctorService doctorService;
 
   //CR Bad DI: Avoid mixing static singletons and swallowing Firebase uninitialized errors with catch (_) => null.
   //CR Inject non-nullable `FirebaseFirestore` via constructor.
   // solved
-  CollectionReference<Map<String, dynamic>> get _doctors =>
-      _firestore.collection('doctors');
+  Stream<List<DoctorModel>> streamDoctors() => doctorService.streamAllDoctors();
 
-  Stream<List<AdminDoctorModel>> streamDoctors() {
-    return _doctors.snapshots().asyncMap((snapshot) async {
-      final specialtyNames = await _specialtyService.fetchSpecialtyNames();
-      final doctors = snapshot.docs
-          .map(
-            (doc) => AdminDoctorModel.fromFirestore(
-              doc.id,
-              doc.data(),
-              specialtyNameAr: specialtyNames[doc.data()['specialtyId']]?.$1,
-              specialtyNameEn: specialtyNames[doc.data()['specialtyId']]?.$2,
-            ),
-          )
-          .toList();
-      doctors.sort((a, b) {
-        final aTime = a.lastModified ?? DateTime.fromMillisecondsSinceEpoch(0);
-        final bTime = b.lastModified ?? DateTime.fromMillisecondsSinceEpoch(0);
-        return bTime.compareTo(aTime);
-      });
-      return doctors;
-    });
-  }
-
-  Stream<AdminDoctorModel?> streamDoctor(String id) {
-    return _doctors.doc(id).snapshots().asyncMap((doc) async {
-      final data = doc.data();
-      if (!doc.exists || data == null) return null;
-      final specialtyNames = await _specialtyService.fetchSpecialtyNames();
-      return AdminDoctorModel.fromFirestore(
-        doc.id,
-        data,
-        specialtyNameAr: specialtyNames[data['specialtyId']]?.$1,
-        specialtyNameEn: specialtyNames[data['specialtyId']]?.$2,
-      );
-    });
-  }
+  Stream<DoctorModel?> streamDoctor(String id) =>
+      doctorService.streamDoctor(id);
 
   Future<void> createDoctor({
     required String fullNameAr,
@@ -70,22 +30,13 @@ class AdminDoctorService {
     required String specialtyId,
     required double consultationFee,
     String? imageUrl,
-  }) async {
-    final collection = _doctors;
-    final id = await _nextDoctorId(collection);
-    final reference = collection.doc(id);
-    if ((await reference.get()).exists) {
-      throw StateError('Doctor id $id already exists');
-    }
-
-    await reference.set(
-      newDoctorData(
-        fullNameAr: fullNameAr,
-        fullNameEn: fullNameEn,
-        specialtyId: specialtyId,
-        consultationFee: consultationFee,
-        imageUrl: imageUrl,
-      ),
+  }) {
+    return doctorService.createDoctor(
+      fullNameAr: fullNameAr,
+      fullNameEn: fullNameEn,
+      specialtyId: specialtyId,
+      consultationFee: consultationFee,
+      imageUrl: imageUrl,
     );
   }
 
@@ -96,78 +47,20 @@ class AdminDoctorService {
     required String specialtyId,
     required double consultationFee,
     String? imageUrl,
-  }) async {
-    await _doctors.doc(id).update({
-      'fullName': {'ar': fullNameAr.trim(), 'en': fullNameEn.trim()},
-      'specialtyId': specialtyId,
-      'imageUrl': _cleanUrl(imageUrl),
-      'consultationFee': consultationFee,
-      'updatedAt': FieldValue.serverTimestamp(),
-    });
+  }) {
+    return doctorService.updateDoctor(
+      id: id,
+      fullNameAr: fullNameAr,
+      fullNameEn: fullNameEn,
+      specialtyId: specialtyId,
+      consultationFee: consultationFee,
+      imageUrl: imageUrl,
+    );
   }
 
-  /// Doctors are never deleted (booking history keeps them); patients only
-  /// see active ones.
-  Future<void> setActive(String id, bool isActive) {
-    return _doctors.doc(id).update({
-      'isActive': isActive,
-      'updatedAt': FieldValue.serverTimestamp(),
-    });
-  }
+  Future<void> setActive(String id, bool isActive) =>
+      doctorService.setActive(id, isActive);
 
-  Future<void> updateAvailability(
-    String id,
-    DoctorAvailability availability,
-  ) async {
-    await _doctors.doc(id).update({
-      'availability': availability.toMap(),
-      'updatedAt': FieldValue.serverTimestamp(),
-    });
-  }
-
-  static Future<String> _nextDoctorId(
-    CollectionReference<Map<String, dynamic>> collection,
-  ) async {
-    final snapshot = await collection.get();
-    var highestNumber = 0;
-    final pattern = RegExp(r'^(?:doc|doctor)_(\d+)$', caseSensitive: false);
-
-    for (final document in snapshot.docs) {
-      final match = pattern.firstMatch(document.id);
-      final number = int.tryParse(match?.group(1) ?? '');
-      if (number != null && number > highestNumber) {
-        highestNumber = number;
-      }
-    }
-
-    return 'doc_${highestNumber + 1}';
-  }
-
-  static String? _cleanUrl(String? value) {
-    final trimmed = value?.trim();
-    return trimmed == null || trimmed.isEmpty ? null : trimmed;
-  }
-}
-
-/// The only fields a new doctor document gets (see Locked decisions):
-/// no location, no experience, no bio/services/flags.
-Map<String, dynamic> newDoctorData({
-  required String fullNameAr,
-  required String fullNameEn,
-  required String specialtyId,
-  required double consultationFee,
-  String? imageUrl,
-}) {
-  final now = FieldValue.serverTimestamp();
-  return {
-    'fullName': {'ar': fullNameAr.trim(), 'en': fullNameEn.trim()},
-    'specialtyId': specialtyId,
-    'imageUrl': AdminDoctorService._cleanUrl(imageUrl),
-    'consultationFee': consultationFee,
-    'rating': 0,
-    'reviewsCount': 0,
-    'isActive': true,
-    'createdAt': now,
-    'updatedAt': now,
-  };
+  Future<void> updateAvailability(String id, DoctorAvailability availability) =>
+      doctorService.updateAvailability(id, availability);
 }

@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
+import 'package:doctor_hunt/apps/core/extensions/context_extensions.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
+import 'package:doctor_hunt/apps/core/utils/formatters.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
+import 'package:doctor_hunt/apps/core/widgets/appointment_info_tile.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_avatar_placeholder.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_image.dart';
-import 'package:doctor_hunt/apps/features/patient/appointments/presentation/widgets/appointment_status_chip.dart';
+import 'package:doctor_hunt/apps/core/widgets/appointment_status_chip.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
@@ -32,7 +34,6 @@ class PatientAppointmentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final locale = LocaleSettings.currentLocale.languageCode;
     final canRate =
         appointment.status == AppointmentStatus.completed &&
         !appointment.isReviewed;
@@ -95,33 +96,27 @@ class PatientAppointmentCard extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: _AppointmentInfo(
+                child: AppointmentInfoTile(
                   icon: Icons.calendar_month_outlined,
                   label: context.tr.appointmentDate,
-                  value: DateFormat(
-                    'dd MMM yyyy',
-                    locale,
-                  ).format(appointment.startAt),
+                  value: formatDate(appointment.startAt, context.localeCode),
                 ),
               ),
               8.horizontalSpace,
               Expanded(
-                child: _AppointmentInfo(
+                child: AppointmentInfoTile(
                   icon: Icons.schedule_rounded,
                   label: context.tr.appointmentTime,
-                  value: DateFormat(
-                    'hh:mm a',
-                    locale,
-                  ).format(appointment.startAt),
+                  value: formatTime(appointment.startAt, context.localeCode),
                 ),
               ),
             ],
           ),
           8.verticalSpace,
-          _AppointmentInfo(
+          AppointmentInfoTile(
             icon: Icons.monetization_on_outlined,
             label: context.tr.consultationFee,
-            value: '\$${appointment.fee.toStringAsFixed(2)}',
+            value: formatFee(appointment.fee),
           ),
           if (canRate) ...[10.verticalSpace, _RatingPrompt(onTap: onRate)],
           if (appointment.status == AppointmentStatus.cancelled) ...[
@@ -145,7 +140,7 @@ class PatientAppointmentCard extends StatelessWidget {
                   borderWidth: 1,
                   borderRadius: _actionRadius,
                   backgroundColor: AppColors.surface,
-                  textStyle: context.medium11Primary,
+                  textStyle: context.medium12Primary,
                 ),
               ),
               if (appointment.status == AppointmentStatus.upcoming) ...[
@@ -160,7 +155,7 @@ class PatientAppointmentCard extends StatelessWidget {
                     borderRadius: _actionRadius,
                     backgroundColor: AppColors.errorLight,
                     foregroundColor: AppColors.error,
-                    textStyle: context.medium11Error,
+                    textStyle: context.medium12Error,
                   ),
                 ),
               ] else if (canRate) ...[
@@ -172,7 +167,7 @@ class PatientAppointmentCard extends StatelessWidget {
                     onPressed: onRate,
                     height: _actionHeight,
                     borderRadius: _actionRadius,
-                    textStyle: context.medium11White,
+                    textStyle: context.medium12White,
                   ),
                 ),
               ] else if (appointment.status == AppointmentStatus.completed) ...[
@@ -187,7 +182,7 @@ class PatientAppointmentCard extends StatelessWidget {
                         color: AppColors.primary,
                       ),
                       6.horizontalSpace,
-                      Text(context.tr.reviewed, style: context.medium11Primary),
+                      Text(context.tr.reviewed, style: context.medium12Primary),
                     ],
                   ),
                 ),
@@ -196,52 +191,6 @@ class PatientAppointmentCard extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-class _AppointmentInfo extends StatelessWidget {
-  const _AppointmentInfo({
-    required this.icon,
-    required this.label,
-    required this.value,
-  });
-
-  final IconData icon;
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Container(
-          width: 28,
-          height: 28,
-          decoration: BoxDecoration(
-            color: AppColors.primaryLight,
-            borderRadius: BorderRadius.circular(6),
-          ),
-          child: Icon(icon, size: 14, color: AppColors.primary),
-        ),
-        7.horizontalSpace,
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: context.regular10TextMain.copyWith(
-                  color: AppColors.textMuted,
-                  fontSize: 9,
-                ),
-              ),
-              2.verticalSpace,
-              Text(value, style: context.medium11TextMain),
-            ],
-          ),
-        ),
-      ],
     );
   }
 }

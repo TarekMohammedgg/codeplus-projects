@@ -1,59 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:doctor_hunt/apps/core/widgets/favorite_heart_icon.dart';
 
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
-import 'package:doctor_hunt/apps/core/utils/doctor_sort.dart';
+import 'package:doctor_hunt/apps/core/utils/formatters.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_avatar_placeholder.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_image.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_profile_card.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
-
-class DoctorSortMenu extends StatelessWidget {
-  const DoctorSortMenu({
-    super.key,
-    required this.sort,
-    required this.onSelected,
-  });
-
-  final DoctorSort sort;
-  final ValueChanged<DoctorSort> onSelected;
-
-  String _label(BuildContext context, DoctorSort sort) => switch (sort) {
-    DoctorSort.popular => context.tr.sortPopular,
-    DoctorSort.topRated => context.tr.sortTopRated,
-  };
-
-  @override
-  Widget build(BuildContext context) {
-    return PopupMenuButton<DoctorSort>(
-      initialValue: sort,
-      onSelected: onSelected,
-      itemBuilder: (context) => [
-        for (final option in DoctorSort.values)
-          CheckedPopupMenuItem(
-            value: option,
-            checked: option == sort,
-            child: Text(_label(context, option)),
-          ),
-      ],
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(
-            Icons.sort_rounded,
-            size: 20,
-            color: AppColors.textSecondary,
-          ),
-          4.horizontalSpace,
-          Text(_label(context, sort), style: context.medium13TextSecondary),
-        ],
-      ),
-    );
-  }
-}
 
 class FindDoctorCard extends StatelessWidget {
   const FindDoctorCard({
@@ -76,16 +33,12 @@ class FindDoctorCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(14),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: AppColors.surface,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(8),
           boxShadow: const [
-            BoxShadow(
-              color: AppColors.shadowCard,
-              blurRadius: 14,
-              offset: Offset(0, 4),
-            ),
+            BoxShadow(color: AppColors.shadowElevated, blurRadius: 20),
           ],
         ),
         child: Column(
@@ -95,18 +48,18 @@ class FindDoctorCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(8),
                   child: DoctorImage(
                     imageUrl: doctor.imageUrl,
-                    width: 90,
-                    height: 90,
+                    width: 82,
+                    height: 82,
                     fallback: const DoctorAvatarPlaceholder(
-                      size: 90,
+                      size: 82,
                       circle: false,
                     ),
                   ),
                 ),
-                14.horizontalSpace,
+                15.horizontalSpace,
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -117,38 +70,48 @@ class FindDoctorCard extends StatelessWidget {
                           Expanded(
                             child: Text(
                               doctor.name,
-                              style: context.bold16TextMain.copyWith(
-                                height: 1.2,
-                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: context.medium18TextMain,
                             ),
                           ),
                           GestureDetector(
                             onTap: onFavoriteTap,
-                            child: Icon(
-                              isFavorite
-                                  ? Icons.favorite_rounded
-                                  : Icons.favorite_border_rounded,
-                              color: isFavorite
-                                  ? AppColors.favorite
-                                  : AppColors.disabled,
-                              size: 20,
+                            child: FavoriteHeartIcon(
+                              isFavorite: isFavorite,
+                              size: 22,
                             ),
                           ),
                         ],
                       ),
-                      3.verticalSpace,
+                      4.verticalSpace,
                       Text(
                         doctor.specialty,
-                        style: context.regular14Primary.copyWith(fontSize: 13),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: context.light14TextSecondary,
                       ),
-                      8.verticalSpace,
+                      10.verticalSpace,
                       Row(
                         children: [
-                          DoctorStarRating(rating: doctor.rating),
-                          5.horizontalSpace,
-                          Text(
-                            '${doctor.reviewsCount} ${context.tr.reviews}',
-                            style: context.medium11TextSecondary,
+                          DoctorStarRating(rating: doctor.rating, size: 16),
+                          const Spacer(),
+                          Text.rich(
+                            TextSpan(
+                              text: doctor.rating.toStringAsFixed(1),
+                              style: context.medium16TextMain,
+                              children: [
+                                TextSpan(
+                                  text:
+                                      ' (${doctor.reviewsCount} ${context.tr.reviews})',
+                                  style: context.regular12TextSecondary
+                                      .copyWith(
+                                        color: AppColors.textSecondary
+                                            .withValues(alpha: 0.8),
+                                      ),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
@@ -157,13 +120,13 @@ class FindDoctorCard extends StatelessWidget {
                 ),
               ],
             ),
-            14.verticalSpace,
+            12.verticalSpace,
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  '\$${doctor.consultationFee.toStringAsFixed(2)}',
+                  formatFee(doctor.consultationFee),
                   style: context.bold16Primary.copyWith(fontSize: 15),
                 ),
                 AppPrimaryButton(

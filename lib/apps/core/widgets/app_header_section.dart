@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
-import 'package:doctor_hunt/apps/core/widgets/app_icon_button.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_back_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_search_bar.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_avatar_placeholder.dart';
 import 'package:doctor_hunt/generated/app_image.dart';
@@ -24,6 +24,8 @@ class AppHeaderSection extends StatelessWidget {
     this.profileImage,
     this.onProfileTap,
     this.showSearchBar = true,
+    this.searchReadOnly = false,
+    this.onSearchTap,
     this.searchController,
     this.onSearchChanged,
     this.onSearchSubmitted,
@@ -49,6 +51,8 @@ class AppHeaderSection extends StatelessWidget {
   final String? profileImage;
   final VoidCallback? onProfileTap;
   final bool showSearchBar;
+  final bool searchReadOnly;
+  final VoidCallback? onSearchTap;
   final TextEditingController? searchController;
   final ValueChanged<String>? onSearchChanged;
   final ValueChanged<String>? onSearchSubmitted;
@@ -117,16 +121,7 @@ class AppHeaderSection extends StatelessWidget {
               if (leading != null)
                 leading!
               else if (onBackTap != null)
-                AppIconButton(
-                  onTap: onBackTap,
-                  backgroundColor: Colors.white.withValues(alpha: 0.2),
-                  boxShadow: const [],
-                  child: const Icon(
-                    Icons.arrow_back_ios_new_rounded,
-                    size: 16,
-                    color: Colors.white,
-                  ),
-                ),
+                AppBackButton(onTap: onBackTap),
               if (leading != null || onBackTap != null) 12.horizontalSpace,
               Expanded(
                 child:
@@ -286,6 +281,8 @@ class AppHeaderSection extends StatelessWidget {
               AppSearchBar(
                 controller: searchController,
                 hintText: searchHintText,
+                readOnly: searchReadOnly,
+                onTap: onSearchTap,
                 onChanged: onSearchChanged,
                 onSubmitted: onSearchSubmitted,
                 onClear: onSearchClear,

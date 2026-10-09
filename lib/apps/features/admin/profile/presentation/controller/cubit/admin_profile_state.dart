@@ -3,6 +3,8 @@ import 'package:latlong2/latlong.dart';
 
 enum AdminProfileStatus { initial, loading, loaded, saving, success, failure }
 
+enum AdminProfileFailure { requiresRecentLogin, unknown }
+
 @immutable
 class AdminProfileState {
   const AdminProfileState({
@@ -15,6 +17,7 @@ class AdminProfileState {
     this.location,
     this.errorMessage,
     this.emailVerificationSent = false,
+    this.failure,
   });
 
   final AdminProfileStatus status;
@@ -26,6 +29,7 @@ class AdminProfileState {
   final LatLng? location;
   final String? errorMessage;
   final bool emailVerificationSent;
+  final AdminProfileFailure? failure;
 
   AdminProfileState copyWith({
     AdminProfileStatus? status,
@@ -37,6 +41,7 @@ class AdminProfileState {
     LatLng? location,
     String? errorMessage,
     bool? emailVerificationSent,
+    AdminProfileFailure? failure,
   }) {
     return AdminProfileState(
       status: status ?? this.status,
@@ -49,6 +54,7 @@ class AdminProfileState {
       errorMessage: errorMessage,
       emailVerificationSent:
           emailVerificationSent ?? this.emailVerificationSent,
+      failure: failure,
     );
   }
 
@@ -64,7 +70,8 @@ class AdminProfileState {
           other.addressEn == addressEn &&
           other.location == location &&
           other.errorMessage == errorMessage &&
-          other.emailVerificationSent == emailVerificationSent;
+          other.emailVerificationSent == emailVerificationSent &&
+          other.failure == failure;
 
   @override
   int get hashCode => Object.hash(
@@ -77,5 +84,6 @@ class AdminProfileState {
     location,
     errorMessage,
     emailVerificationSent,
+    failure,
   );
 }

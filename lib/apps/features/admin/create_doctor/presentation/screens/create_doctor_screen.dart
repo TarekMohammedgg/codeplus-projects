@@ -8,11 +8,13 @@ import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
+import 'package:doctor_hunt/apps/core/utils/image_pick.dart';
 import 'package:doctor_hunt/apps/core/utils/validators.dart';
-import 'package:doctor_hunt/apps/core/widgets/app_header_section.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_field_label.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_back_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_text_field.dart';
-import 'package:doctor_hunt/apps/features/admin/doctors/data/models/admin_doctor_model.dart';
+import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/core/models/specialty_model.dart';
 import 'package:doctor_hunt/apps/features/admin/create_doctor/presentation/controller/cubit/create_doctor_cubit.dart';
 import 'package:doctor_hunt/apps/features/admin/create_doctor/presentation/controller/cubit/create_doctor_state.dart';
@@ -24,7 +26,7 @@ import 'package:skeletonizer/skeletonizer.dart';
 class CreateDoctorScreen extends StatefulWidget {
   const CreateDoctorScreen({super.key, this.doctor});
 
-  final AdminDoctorModel? doctor;
+  final DoctorModel? doctor;
 
   @override
   State<CreateDoctorScreen> createState() => CreateDoctorScreenState();
@@ -35,7 +37,6 @@ class CreateDoctorScreenState extends State<CreateDoctorScreen> {
   final _nameArController = TextEditingController();
   final _nameEnController = TextEditingController();
   final _feeController = TextEditingController();
-  final _imagePicker = ImagePicker();
   late final CreateDoctorCubit _createDoctorCubit;
 
   SpecialtyModel? _specialty;
@@ -84,11 +85,7 @@ class CreateDoctorScreenState extends State<CreateDoctorScreen> {
 
   Future<void> _pickImage() async {
     try {
-      final image = await _imagePicker.pickImage(
-        source: ImageSource.gallery,
-        imageQuality: 85,
-        maxWidth: 1600,
-      );
+      final image = await pickGalleryImage(maxWidth: 1600, maxHeight: null);
       if (image == null) return;
 
       final bytes = await image.readAsBytes();
@@ -191,106 +188,76 @@ class CreateDoctorScreenState extends State<CreateDoctorScreen> {
       builder: (context, state) {
         return Scaffold(
           backgroundColor: AppColors.background,
-          body: Column(
-            children: [
-              AppHeaderSection(
-                title: isEditing ? tr.editDoctorTitle : tr.createDoctorTitle,
-                onBackTap: () => context.pop(),
-                showSearchBar: false,
-              ),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(20, 24, 20, 32),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Text(
-                          '${tr.doctorNameLabel} (AR)',
-                          style: context.semiBold14TextMain,
-                        ),
-                        8.verticalSpace,
-                        AppTextField(
-                          controller: _nameArController,
-                          hintText: tr.doctorNameHint,
-                          prefixIcon: Icons.person_outline_rounded,
-                          textInputAction: TextInputAction.next,
-                          validator: AppValidators.validateDoctorName,
-                        ),
-                        20.verticalSpace,
-                        Text(
-                          '${tr.doctorNameLabel} (EN)',
-                          style: context.semiBold14TextMain,
-                        ),
-                        8.verticalSpace,
-                        AppTextField(
-                          controller: _nameEnController,
-                          hintText: tr.doctorNameHint,
-                          prefixIcon: Icons.person_outline_rounded,
-                          textInputAction: TextInputAction.next,
-                          validator: AppValidators.validateDoctorName,
-                        ),
-                        20.verticalSpace,
-                        Text(
-                          tr.specialtyLabel,
-                          style: context.semiBold14TextMain,
-                        ),
-                        8.verticalSpace,
-                        _buildSpecialtyField(context, state),
-                        20.verticalSpace,
-                        Text(
-                          tr.doctorFeeLabel,
-                          style: context.semiBold14TextMain,
-                        ),
-                        8.verticalSpace,
-                        AppTextField(
-                          controller: _feeController,
-                          hintText: tr.doctorFeeHint,
-                          prefixIcon: Icons.payments_outlined,
-                          keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true,
-                          ),
-                          inputFormatters: [
-                            FilteringTextInputFormatter.allow(
-                              RegExp(r'^\d*\.?\d{0,2}'),
-                            ),
-                          ],
-                          textInputAction: TextInputAction.done,
-                          validator: AppValidators.validateFee,
-                        ),
-                        20.verticalSpace,
-                        Text(
-                          tr.doctorImageLabel,
-                          style: context.semiBold14TextMain,
-                        ),
-                        8.verticalSpace,
-                        DoctorImagePickerField(
-                          imageUrl: _imageUrl,
-                          selectedBytes: _selectedImageBytes,
-                          isUploading: _isUploadingImage,
-                          onPick: _pickImage,
-                          onClear: () => setState(() {
-                            _selectedImage = null;
-                            _selectedImageBytes = null;
-                          }),
-                        ),
-                        32.verticalSpace,
-                        AppPrimaryButton(
-                          label: isEditing
-                              ? tr.updateDoctorButton
-                              : tr.createDoctorButton,
-                          isLoading: _isSaving,
-                          onPressed: _isSaving ? null : _submit,
-                          height: 54,
-                          fontSize: 16,
-                        ),
-                      ],
+          appBar: AppBar(
+            leading: AppBackButton.leading(onTap: () => context.pop()),
+            centerTitle: true,
+            title: Text(
+              isEditing ? tr.editDoctorTitle : tr.createDoctorTitle,
+              style: context.bold18TextMain,
+            ),
+          ),
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Center(
+                    child: DoctorImagePickerField(
+                      imageUrl: _imageUrl,
+                      selectedBytes: _selectedImageBytes,
+                      isUploading: _isUploadingImage,
+                      onPick: _pickImage,
                     ),
                   ),
-                ),
+                  24.verticalSpace,
+                  AppFieldLabel(tr.doctorNameArLabel),
+                  AppTextField(
+                    controller: _nameArController,
+                    hintText: tr.doctorNameHint,
+                    prefixIcon: Icons.person_outline_rounded,
+                    textInputAction: TextInputAction.next,
+                    validator: AppValidators.validateDoctorName,
+                  ),
+                  16.verticalSpace,
+                  AppFieldLabel(tr.doctorNameEnLabel),
+                  AppTextField(
+                    controller: _nameEnController,
+                    hintText: tr.doctorNameHint,
+                    prefixIcon: Icons.person_outline_rounded,
+                    textInputAction: TextInputAction.next,
+                    validator: AppValidators.validateDoctorName,
+                  ),
+                  16.verticalSpace,
+                  AppFieldLabel(tr.specialtyLabel),
+                  _buildSpecialtyField(context, state),
+                  16.verticalSpace,
+                  AppFieldLabel(tr.doctorFeeLabel),
+                  AppTextField(
+                    controller: _feeController,
+                    hintText: tr.doctorFeeHint,
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'^\d*\.?\d{0,2}'),
+                      ),
+                    ],
+                    textInputAction: TextInputAction.done,
+                    validator: AppValidators.validateFee,
+                  ),
+                  32.verticalSpace,
+                  AppPrimaryButton(
+                    label: isEditing ? tr.saveChanges : tr.createDoctorButton,
+                    isLoading: _isSaving,
+                    onPressed: _isSaving ? null : _submit,
+                    height: 52,
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         );
       },

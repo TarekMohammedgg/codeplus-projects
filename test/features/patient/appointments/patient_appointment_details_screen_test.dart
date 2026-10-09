@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:doctor_hunt/apps/features/common/appointment_details/data/repositories/appointment_details_repository.dart';
+import 'package:doctor_hunt/apps/features/common/appointment_details/presentation/controller/cubit/appointment_details_cubit.dart';
 import 'package:latlong2/latlong.dart';
 
 import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
@@ -110,7 +113,7 @@ void main() {
 
       await tester.pumpWidget(
         buildTestApp(
-          PatientAppointmentDetailsScreen(
+          _detailsScreen(
             appointment: appt,
             clinicService: clinicService,
             specialtyService: specialtyService,
@@ -123,7 +126,7 @@ void main() {
       expect(find.text(tr.appointmentDetails), findsOneWidget);
       expect(find.text('Dr. Gregory House'), findsOneWidget);
       expect(find.text('Cardiology'), findsOneWidget);
-      expect(find.text('\$50'), findsWidgets);
+      expect(find.text('\$50.00'), findsWidgets);
       expect(find.text(tr.clinicLocation), findsOneWidget);
       expect(find.text('123 Tahrir St, Cairo'), findsOneWidget);
       expect(find.text(tr.cancelAppointment), findsOneWidget);
@@ -142,7 +145,7 @@ void main() {
 
       await tester.pumpWidget(
         buildTestApp(
-          PatientAppointmentDetailsScreen(
+          _detailsScreen(
             appointment: appt,
             clinicService: clinicService,
             appointmentService: appointmentService,
@@ -167,7 +170,7 @@ void main() {
 
       await tester.pumpWidget(
         buildTestApp(
-          PatientAppointmentDetailsScreen(
+          _detailsScreen(
             appointment: appt,
             clinicService: clinicService,
             appointmentService: appointmentService,
@@ -212,7 +215,7 @@ void main() {
 
         await tester.pumpWidget(
           buildTestApp(
-            PatientAppointmentDetailsScreen(
+            _detailsScreen(
               appointment: apptUnreviewed,
               clinicService: clinicService,
               appointmentService: appointmentService,
@@ -237,7 +240,7 @@ void main() {
 
         await tester.pumpWidget(
           buildTestApp(
-            PatientAppointmentDetailsScreen(
+            _detailsScreen(
               appointment: apptReviewed,
               clinicService: clinicService,
               appointmentService: appointmentService,
@@ -268,7 +271,7 @@ void main() {
 
       await tester.pumpWidget(
         buildTestApp(
-          PatientAppointmentDetailsScreen(
+          _detailsScreen(
             appointment: apptCancelled,
             clinicService: clinicService,
             appointmentService: appointmentService,
@@ -282,4 +285,23 @@ void main() {
       expect(find.byKey(const Key('details_rate_doctor_button')), findsNothing);
     });
   });
+}
+
+/// The screen with its route-provided cubit, backed by the fake services.
+Widget _detailsScreen({
+  required AppointmentModel appointment,
+  ClinicService? clinicService,
+  SpecialtyService? specialtyService,
+  AppointmentService? appointmentService,
+}) {
+  return BlocProvider<AppointmentDetailsCubit>(
+    create: (_) => AppointmentDetailsCubit(
+      repository: AppointmentDetailsRepositoryImpl(
+        clinicService: clinicService ?? _FakeClinicService(),
+        specialtyService: specialtyService ?? _FakeSpecialtyService(),
+        appointmentService: appointmentService ?? _FakeAppointmentService(),
+      ),
+    )..init(appointment),
+    child: PatientAppointmentDetailsScreen(appointment: appointment),
+  );
 }

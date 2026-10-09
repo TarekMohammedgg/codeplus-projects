@@ -8,10 +8,12 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:doctor_hunt/apps/core/di/injection.dart';
 import 'package:doctor_hunt/apps/features/common/auth/data/service/auth_service.dart';
 import 'package:doctor_hunt/apps/features/patient/favorites/presentation/controller/cubit/favorites_cubit.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
+import 'test_fakes.dart';
 
 class _FakeFirebaseAuth extends Fake implements FirebaseAuth {
   @override
@@ -29,12 +31,12 @@ class _FakeFirebaseFirestore extends Fake implements FirebaseFirestore {}
 // than a module-level flag that could go stale. This is test bootstrapping,
 // not the production isRegistered fallback-instantiation pattern the //CR
 // comments flag.
-void ensureTestServiceLocator() {
+void ensureTestServiceLocator({SharedPreferences? preferences}) {
   if (getIt.isRegistered<AuthService>()) return;
   // Registers everything, including the real FirebaseAuth/FirebaseFirestore
   // singletons — but nothing under test resolves them yet (they're lazy),
   // so overriding them with fakes below is safe.
-  setupServiceLocator();
+  setupServiceLocator(preferences: preferences ?? FakeSharedPreferences());
   getIt.allowReassignment = true;
   getIt.registerLazySingleton<FirebaseAuth>(() => _FakeFirebaseAuth());
   getIt.registerLazySingleton<FirebaseFirestore>(
