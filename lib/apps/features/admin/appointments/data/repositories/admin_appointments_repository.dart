@@ -7,7 +7,7 @@ import 'package:doctor_hunt/apps/features/patient/profile/data/service/profile_s
 abstract class AdminAppointmentsRepository {
   Stream<List<AppointmentModel>> streamAppointments();
   Future<List<SpecialtyModel>> getSpecialties();
-  Future<String?> getPatientPhoto(String patientId);
+  Future<Map<String, String>> fetchPatientPhotos(Set<String> patientIds);
   Future<void> cancel(AppointmentModel appointment);
   Future<void> markCompleted(String appointmentId);
 }
@@ -32,8 +32,8 @@ class AdminAppointmentsRepositoryImpl implements AdminAppointmentsRepository {
       specialtyService.fetchActiveSpecialties();
 
   @override
-  Future<String?> getPatientPhoto(String patientId) async =>
-      (await profileService.streamProfile(patientId).first).avatarUrl;
+  Future<Map<String, String>> fetchPatientPhotos(Set<String> patientIds) =>
+      profileService.fetchPhotoUrls(patientIds);
 
   @override
   Future<void> cancel(AppointmentModel appointment) =>

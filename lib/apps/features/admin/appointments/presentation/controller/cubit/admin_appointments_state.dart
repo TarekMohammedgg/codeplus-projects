@@ -43,8 +43,7 @@ class AdminAppointmentsState {
   final List<AppointmentModel> appointments;
   final AdminAppointmentTab selectedTab;
   final Map<String, SpecialtyModel> specialties;
-
-  final Map<String, String?> patientPhotos;
+  final Map<String, String> patientPhotos;
   final String? errorMessage;
 
   List<AppointmentModel> get currentAppointments =>
@@ -55,7 +54,7 @@ class AdminAppointmentsState {
     List<AppointmentModel>? appointments,
     AdminAppointmentTab? selectedTab,
     Map<String, SpecialtyModel>? specialties,
-    Map<String, String?>? patientPhotos,
+    Map<String, String>? patientPhotos,
     String? errorMessage,
   }) {
     return AdminAppointmentsState(

@@ -33,8 +33,16 @@ class _FakeAdminAppointmentsRepository implements AdminAppointmentsRepository {
   @override
   Future<List<SpecialtyModel>> getSpecialties() async => specialtiesToReturn;
 
+  Map<String, String> photos = const {};
+  Object? photoError;
+  final photoRequests = <Set<String>>[];
+
   @override
-  Future<String?> getPatientPhoto(String patientId) async => null;
+  Future<Map<String, String>> fetchPatientPhotos(Set<String> patientIds) async {
+    photoRequests.add(patientIds);
+    if (photoError != null) throw photoError!;
+    return photos;
+  }
 
   final List<String> cancelled = [];
   final List<String> completed = [];
@@ -179,6 +187,47 @@ void main() {
         expect(cubit.state.appointments.length, 3);
         expect(cubit.state.specialties.containsKey('spec_1'), isTrue);
         expect(cubit.state.currentAppointments.length, 3);
+      },
+    );
+
+    test('loads patient photos in one request per new patient', () async {
+      // arrange
+      repo.photos = {'patient_1': 'https://example.com/p1.png'};
+      await cubit.init();
+
+      // act
+      repo.streamController.add(allAppointments);
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+      repo.streamController.add(allAppointments);
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+
+      // assert
+      expect(repo.photoRequests, [
+        {'patient_1', 'patient_2', 'patient_3'},
+      ]);
+      expect(cubit.state.patientPhotos, {
+        'patient_1': 'https://example.com/p1.png',
+      });
+    });
+
+    test(
+      'photo failure keeps the list and retries on the next update',
+      () async {
+        // arrange
+        repo.photoError = StateError('offline');
+        await cubit.init();
+        repo.streamController.add(allAppointments);
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+        repo.photoError = null;
+
+        // act
+        repo.streamController.add(allAppointments);
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+
+        // assert
+        expect(cubit.state.status, AdminAppointmentsStatus.loaded);
+        expect(cubit.state.appointments, hasLength(3));
+        expect(repo.photoRequests, hasLength(2));
       },
     );
 

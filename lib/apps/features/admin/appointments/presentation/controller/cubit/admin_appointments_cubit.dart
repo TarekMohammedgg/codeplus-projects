@@ -14,6 +14,7 @@ class AdminAppointmentsCubit extends Cubit<AdminAppointmentsState> {
 
   final AdminAppointmentsRepository repository;
   StreamSubscription<List<AppointmentModel>>? _subscription;
+  final _requestedPhotoIds = <String>{};
 
   Future<void> init() async {
     emit(state.copyWith(status: AdminAppointmentsStatus.loading));
@@ -50,23 +51,20 @@ class AdminAppointmentsCubit extends Cubit<AdminAppointmentsState> {
   }
 
   Future<void> _loadPatientPhotos(List<AppointmentModel> appointments) async {
-    final ids = appointments
-        .map((a) => a.patientId)
-        .where((id) => !state.patientPhotos.containsKey(id))
-        .toSet();
-    if (ids.isEmpty) return;
-    final photos = await Future.wait(
-      ids.map((id) => repository.getPatientPhoto(id).catchError((_) => null)),
-    );
-    if (isClosed) return;
-    emit(
-      state.copyWith(
-        patientPhotos: {
-          ...state.patientPhotos,
-          ...Map.fromIterables(ids, photos),
-        },
-      ),
-    );
+    final newIds = {for (final a in appointments) a.patientId}
+      ..removeAll(_requestedPhotoIds);
+    if (newIds.isEmpty) return;
+
+    _requestedPhotoIds.addAll(newIds);
+    try {
+      final photos = await repository.fetchPatientPhotos(newIds);
+      if (isClosed) return;
+      emit(state.copyWith(patientPhotos: {...state.patientPhotos, ...photos}));
+    } catch (error, stackTrace) {
+      _requestedPhotoIds.removeAll(newIds);
+      if (isClosed) return;
+      addError(error, stackTrace);
+    }
   }
 
   void selectTab(AdminAppointmentTab tab) {

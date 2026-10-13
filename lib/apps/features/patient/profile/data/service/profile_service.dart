@@ -17,6 +17,30 @@ class ProfileService {
     return UserProfileModel.fromFirestore(await _userDoc(uid).get());
   }
 
+  Future<Map<String, String>> fetchPhotoUrls(Set<String> uids) async {
+    // Firestore allows at most 30 values in a whereIn filter.
+    const batchSize = 30;
+    final ids = uids.toList();
+    final snapshots = await Future.wait([
+      for (var start = 0; start < ids.length; start += batchSize)
+        firestore
+            .collection('users')
+            .where(
+              FieldPath.documentId,
+              whereIn: ids.skip(start).take(batchSize).toList(),
+            )
+            .get(),
+    ]);
+    final photos = <String, String>{};
+    for (final snapshot in snapshots) {
+      for (final doc in snapshot.docs) {
+        final url = UserProfileModel.fromFirestore(doc).avatarUrl;
+        if (url != null) photos[doc.id] = url;
+      }
+    }
+    return photos;
+  }
+
   Future<void> updateProfile({
     required String uid,
     String? displayName,
