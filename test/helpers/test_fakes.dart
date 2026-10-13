@@ -424,11 +424,13 @@ class FakeDoctorDetailsRepository implements DoctorDetailsRepository {
   FakeDoctorDetailsRepository({
     this.reviews = const [],
     this.clinic,
+    this.clinicUpdates,
     this.error,
   });
 
   final List<ReviewModel> reviews;
   final ClinicModel? clinic;
+  final Stream<ClinicModel?>? clinicUpdates;
   final Object? error;
 
   @override
@@ -438,7 +440,7 @@ class FakeDoctorDetailsRepository implements DoctorDetailsRepository {
   }
 
   @override
-  Future<ClinicModel?> fetchClinic() async => clinic;
+  Stream<ClinicModel?> watchClinic() => clinicUpdates ?? Stream.value(clinic);
 }
 
 class FakePatientAppointmentsRepository

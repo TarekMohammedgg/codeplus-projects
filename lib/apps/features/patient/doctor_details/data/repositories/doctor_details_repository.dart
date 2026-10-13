@@ -6,7 +6,7 @@ import 'package:doctor_hunt/apps/core/services/review_service.dart';
 abstract interface class DoctorDetailsRepository {
   Future<List<ReviewModel>> fetchRecentReviews(String doctorId);
 
-  Future<ClinicModel?> fetchClinic();
+  Stream<ClinicModel?> watchClinic();
 }
 
 class FirebaseDoctorDetailsRepository implements DoctorDetailsRepository {
@@ -23,5 +23,5 @@ class FirebaseDoctorDetailsRepository implements DoctorDetailsRepository {
       reviewService.fetchRecentReviews(doctorId);
 
   @override
-  Future<ClinicModel?> fetchClinic() => clinicService.fetchClinic();
+  Stream<ClinicModel?> watchClinic() => clinicService.streamClinic();
 }
