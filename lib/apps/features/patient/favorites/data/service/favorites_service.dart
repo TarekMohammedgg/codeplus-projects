@@ -1,15 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FavoritesService {
-  FavoritesService({
-    required FirebaseFirestore firestore,
-    // ignore: prefer_initializing_formals
-  }) : _firestore = firestore;
+  FavoritesService({required this.firestore});
 
-  final FirebaseFirestore _firestore;
+  final FirebaseFirestore firestore;
 
   CollectionReference<Map<String, dynamic>> _favorites(String userId) =>
-      _firestore.collection('users').doc(userId).collection('favorites');
+      firestore.collection('users').doc(userId).collection('favorites');
 
   Stream<Set<String>> watchFavoriteIds(String userId) {
     return _favorites(

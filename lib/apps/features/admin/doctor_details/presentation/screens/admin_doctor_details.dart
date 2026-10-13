@@ -11,11 +11,11 @@ import 'package:doctor_hunt/apps/core/utils/formatters.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_back_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_status_pill.dart';
-import 'package:doctor_hunt/apps/core/widgets/app_confirm_dialog.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_avatar_placeholder.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_image.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_profile_card.dart';
 import 'package:doctor_hunt/apps/features/admin/doctor_details/presentation/controller/cubit/admin_doctor_details_cubit.dart';
+import 'package:doctor_hunt/apps/features/admin/doctors/presentation/widgets/admin_doctors_widgets.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
@@ -26,31 +26,21 @@ class AdminDoctorDetails extends StatelessWidget {
   Future<void> _confirmToggleStatus(
     BuildContext context,
     AdminDoctorDetailsCubit cubit,
-    bool targetActive,
+    bool activate,
   ) async {
-    final title = targetActive
-        ? context.tr.activateDoctorTitle
-        : context.tr.deactivateDoctorTitle;
-    final message = targetActive
-        ? context.tr.confirmActivateDoctor
-        : context.tr.confirmDeactivateDoctor;
-    final actionLabel = targetActive
-        ? context.tr.activateDoctorTitle
-        : context.tr.deactivateDoctorTitle;
-
-    final confirmed = await showAppConfirmDialog(
+    final confirmed = await showToggleDoctorActiveDialog(
       context,
-      title: title,
-      message: message,
-      confirmLabel: actionLabel,
-      confirmColor: targetActive ? AppColors.primary : AppColors.error,
+      activate: activate,
     );
+    if (!confirmed || !context.mounted) return;
 
-    if (confirmed && context.mounted) {
-      await cubit.toggleActive(targetActive);
-      if (context.mounted) {
-        context.showSuccessSnackBar(context.tr.doctorStatusUpdated);
-      }
+    final toggled = await cubit.toggleActive(activate);
+    if (toggled && context.mounted) {
+      context.showSuccessSnackBar(
+        activate
+            ? context.tr.doctorActivatedSuccess
+            : context.tr.doctorDeactivatedSuccess,
+      );
     }
   }
 

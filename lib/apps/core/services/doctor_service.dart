@@ -2,52 +2,46 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:doctor_hunt/apps/core/models/doctor_availability.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
+import 'package:doctor_hunt/apps/core/models/specialty_model.dart';
 import 'package:doctor_hunt/apps/core/services/specialty_service.dart';
 
 class DoctorService {
-  DoctorService({
-    required FirebaseFirestore firestore,
-    required SpecialtyService specialtyService,
-    // ignore: prefer_initializing_formals
-  }) : _firestore = firestore,
-       // ignore: prefer_initializing_formals
-       _specialtyService = specialtyService;
+  DoctorService({required this.firestore, required this.specialtyService});
 
-  final FirebaseFirestore _firestore;
-  final SpecialtyService _specialtyService;
+  final FirebaseFirestore firestore;
+  final SpecialtyService specialtyService;
 
   CollectionReference<Map<String, dynamic>> get _doctors =>
-      _firestore.collection('doctors');
+      firestore.collection('doctors');
 
   Future<List<DoctorModel>> fetchActiveDoctors() async {
     final snapshot = await _doctors.where('isActive', isEqualTo: true).get();
-    final specialtyNames = await _specialtyService.fetchSpecialtyNames();
+    final specialties = await specialtyService.fetchSpecialtiesById();
     return snapshot.docs
-        .map((doc) => _parse(doc.id, doc.data(), specialtyNames))
+        .map((doc) => _parse(doc.id, doc.data(), specialties))
         .toList();
   }
 
   Stream<List<DoctorModel>> streamAllDoctors() {
     return _doctors.snapshots().asyncMap((snapshot) async {
-      final specialtyNames = await _specialtyService.fetchSpecialtyNames();
-      final doctors = snapshot.docs
-          .map((doc) => _parse(doc.id, doc.data(), specialtyNames))
-          .toList();
-      doctors.sort((a, b) {
-        final aTime = a.lastModified ?? DateTime.fromMillisecondsSinceEpoch(0);
-        final bTime = b.lastModified ?? DateTime.fromMillisecondsSinceEpoch(0);
-        return bTime.compareTo(aTime);
-      });
-      return doctors;
+      final specialties = await specialtyService.fetchSpecialtiesById();
+      return snapshot.docs
+          .map((doc) => _parse(doc.id, doc.data(), specialties))
+          .toList()
+        ..sort(
+          (a, b) => (b.lastModified ?? DateTime(0)).compareTo(
+            a.lastModified ?? DateTime(0),
+          ),
+        );
     });
   }
 
   Stream<DoctorModel?> streamDoctor(String id) {
     return _doctors.doc(id).snapshots().asyncMap((doc) async {
       final data = doc.data();
-      if (!doc.exists || data == null) return null;
-      final specialtyNames = await _specialtyService.fetchSpecialtyNames();
-      return _parse(doc.id, data, specialtyNames);
+      if (data == null) return null;
+      final specialties = await specialtyService.fetchSpecialtiesById();
+      return _parse(doc.id, data, specialties);
     });
   }
 
@@ -57,14 +51,8 @@ class DoctorService {
     required String specialtyId,
     required double consultationFee,
     String? imageUrl,
-  }) async {
-    final id = await _nextDoctorId();
-    final reference = _doctors.doc(id);
-    if ((await reference.get()).exists) {
-      throw StateError('Doctor id $id already exists');
-    }
-
-    await reference.set(
+  }) {
+    return _doctors.add(
       newDoctorData(
         fullNameAr: fullNameAr,
         fullNameEn: fullNameEn,
@@ -82,8 +70,8 @@ class DoctorService {
     required String specialtyId,
     required double consultationFee,
     String? imageUrl,
-  }) async {
-    await _doctors.doc(id).update({
+  }) {
+    return _doctors.doc(id).update({
       'fullName': {'ar': fullNameAr.trim(), 'en': fullNameEn.trim()},
       'specialtyId': specialtyId,
       'imageUrl': _cleanUrl(imageUrl),
@@ -99,11 +87,8 @@ class DoctorService {
     });
   }
 
-  Future<void> updateAvailability(
-    String id,
-    DoctorAvailability availability,
-  ) async {
-    await _doctors.doc(id).update({
+  Future<void> updateAvailability(String id, DoctorAvailability availability) {
+    return _doctors.doc(id).update({
       'availability': availability.toMap(),
       'updatedAt': FieldValue.serverTimestamp(),
     });
@@ -112,31 +97,13 @@ class DoctorService {
   DoctorModel _parse(
     String id,
     Map<String, dynamic> data,
-    Map<String, (String, String)> specialtyNames,
+    Map<String, SpecialtyModel> specialties,
   ) {
-    final names = specialtyNames[data['specialtyId']];
     return DoctorModel.fromFirestore(
       id,
       data,
-      specialtyNameAr: names?.$1,
-      specialtyNameEn: names?.$2,
+      specialty: specialties[data['specialtyId']],
     );
-  }
-
-  Future<String> _nextDoctorId() async {
-    final snapshot = await _doctors.get();
-    var highestNumber = 0;
-    final pattern = RegExp(r'^(?:doc|doctor)_(\d+)$', caseSensitive: false);
-
-    for (final document in snapshot.docs) {
-      final match = pattern.firstMatch(document.id);
-      final number = int.tryParse(match?.group(1) ?? '');
-      if (number != null && number > highestNumber) {
-        highestNumber = number;
-      }
-    }
-
-    return 'doc_${highestNumber + 1}';
   }
 }
 

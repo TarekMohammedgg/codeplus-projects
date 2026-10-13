@@ -32,8 +32,8 @@ class _FakeDoctorAvailabilityRepository extends Fake
 void main() {
   const testDoctor = DoctorModel(
     id: 'doc_1',
-    name: 'Dr. Gregory House',
-    specialty: 'Diagnostic Medicine',
+    nameEn: 'Dr. Gregory House',
+    specialtyEn: 'Diagnostic Medicine',
     consultationFee: 100,
     isActive: true,
   );

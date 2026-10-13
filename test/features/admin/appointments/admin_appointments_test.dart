@@ -33,6 +33,9 @@ class _FakeAdminAppointmentsRepository implements AdminAppointmentsRepository {
   @override
   Future<List<SpecialtyModel>> getSpecialties() async => specialtiesToReturn;
 
+  @override
+  Future<String?> getPatientPhoto(String patientId) async => null;
+
   final List<String> cancelled = [];
   final List<String> completed = [];
 

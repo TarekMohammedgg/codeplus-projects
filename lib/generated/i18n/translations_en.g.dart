@@ -59,9 +59,6 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'Back'
 	String get back => 'Back';
 
-	/// en: 'OR'
-	String get or => 'OR';
-
 	/// en: 'العربية'
 	String get arabicLanguage => 'العربية';
 
@@ -287,9 +284,6 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'No reviews yet'
 	String get noReviewsYet => 'No reviews yet';
 
-	/// en: 'Clinic Location'
-	String get clinicLocation => 'Clinic Location';
-
 	/// en: 'Clinic location has not been set yet'
 	String get clinicLocationNotSet => 'Clinic location has not been set yet';
 
@@ -379,9 +373,6 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// en: 'Gender'
 	String get gender => 'Gender';
-
-	/// en: 'Not set'
-	String get notSet => 'Not set';
 
 	/// en: 'Location'
 	String get location => 'Location';
@@ -491,6 +482,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'Next availability on $date'
 	String nextAvailabilityOn({required Object date}) => 'Next availability on ${date}';
 
+	/// en: 'OR'
+	String get or => 'OR';
+
 	/// en: 'Contact Clinic'
 	String get contactClinic => 'Contact Clinic';
 
@@ -538,9 +532,6 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// en: 'Appointment'
 	String get appointmentLabel => 'Appointment';
-
-	/// en: 'Confirm'
-	String get confirm => 'Confirm';
 
 	/// en: 'Thank You !'
 	String get thankYou => 'Thank You !';
@@ -716,14 +707,8 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'Deactivate'
 	String get deactivate => 'Deactivate';
 
-	/// en: 'Activate Doctor'
-	String get activateDoctorTitle => 'Activate Doctor';
-
 	/// en: 'Patients will see this doctor and can book again.'
 	String get activateDoctorConfirm => 'Patients will see this doctor and can book again.';
-
-	/// en: 'Deactivate Doctor'
-	String get deactivateDoctorTitle => 'Deactivate Doctor';
 
 	/// en: 'Patients will no longer see or book this doctor. Booking history is kept.'
 	String get deactivateDoctorConfirm => 'Patients will no longer see or book this doctor. Booking history is kept.';
@@ -854,6 +839,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'Are you sure you want to cancel this appointment?'
 	String get cancelAppointmentMessage => 'Are you sure you want to cancel this appointment?';
 
+	/// en: 'Confirm'
+	String get confirm => 'Confirm';
+
 	/// en: 'Appointment cancelled successfully'
 	String get appointmentCancelledSuccess => 'Appointment cancelled successfully';
 
@@ -914,14 +902,14 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'Availability'
 	String get availability => 'Availability';
 
-	/// en: 'Are you sure you want to activate this doctor?'
-	String get confirmActivateDoctor => 'Are you sure you want to activate this doctor?';
+	/// en: 'Not set'
+	String get notSet => 'Not set';
 
-	/// en: 'Are you sure you want to deactivate this doctor?'
-	String get confirmDeactivateDoctor => 'Are you sure you want to deactivate this doctor?';
+	/// en: 'Activate Doctor'
+	String get activateDoctorTitle => 'Activate Doctor';
 
-	/// en: 'Doctor status updated'
-	String get doctorStatusUpdated => 'Doctor status updated';
+	/// en: 'Deactivate Doctor'
+	String get deactivateDoctorTitle => 'Deactivate Doctor';
 
 	/// en: 'Doctor Availability'
 	String get doctorAvailability => 'Doctor Availability';
@@ -977,6 +965,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'Clinic Address (English)'
 	String get clinicAddressEn => 'Clinic Address (English)';
 
+	/// en: 'Clinic Location'
+	String get clinicLocation => 'Clinic Location';
+
 	/// en: 'Tap anywhere on the map to set clinic location pin'
 	String get tapMapToSetLocation => 'Tap anywhere on the map to set clinic location pin';
 
@@ -1003,6 +994,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// en: 'Patient: $name'
 	String patientNameLabel({required Object name}) => 'Patient: ${name}';
+
+	/// en: 'Doctor: $name'
+	String doctorWithNameLabel({required Object name}) => 'Doctor: ${name}';
 
 	/// en: 'No appointments found'
 	String get noAppointmentsFound => 'No appointments found';
@@ -1078,6 +1072,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// en: '$count slots per day'
 	String slotsPerDay({required Object count}) => '${count} slots per day';
+
+	/// en: '$duration / slot'
+	String perSlot({required Object duration}) => '${duration} / slot';
 }
 
 /// The flat map containing all translations for locale <en>.
@@ -1094,7 +1091,6 @@ extension on Translations {
 			'getStarted' => 'Get Started',
 			'next' => 'Next',
 			'back' => 'Back',
-			'or' => 'OR',
 			'arabicLanguage' => 'العربية',
 			'englishLanguage' => 'English',
 			'onboardingTitle1' => 'Find Trusted Doctors',
@@ -1170,7 +1166,6 @@ extension on Translations {
 			'ratingSummary' => ({required Object rating, required Object count}) => '${rating} · ${count} Reviews',
 			'recentReviews' => 'Recent Reviews',
 			'noReviewsYet' => 'No reviews yet',
-			'clinicLocation' => 'Clinic Location',
 			'clinicLocationNotSet' => 'Clinic location has not been set yet',
 			'bookingReview' => 'Booking Review',
 			'confirmBooking' => 'Confirm Booking',
@@ -1201,7 +1196,6 @@ extension on Translations {
 			'dateOfBirth' => 'Date of birth',
 			'dateOfBirthPlaceholder' => 'DD MM YYYY',
 			'gender' => 'Gender',
-			'notSet' => 'Not set',
 			'location' => 'Location',
 			'addDetails' => 'Add Details',
 			'settings' => 'Settings',
@@ -1238,6 +1232,7 @@ extension on Translations {
 			'dateOptionSun' => 'Sun, 28 Feb',
 			'noSlotsAvailable' => 'No slots available',
 			'nextAvailabilityOn' => ({required Object date}) => 'Next availability on ${date}',
+			'or' => 'OR',
 			'contactClinic' => 'Contact Clinic',
 			'contactingClinic' => 'Contacting clinic...',
 			'slotsAvailable' => ({required Object count}) => '${count} slots available',
@@ -1254,7 +1249,6 @@ extension on Translations {
 			'timeLabel' => 'Time',
 			'feeLabel' => 'Fee',
 			'appointmentLabel' => 'Appointment',
-			'confirm' => 'Confirm',
 			'thankYou' => 'Thank You !',
 			'appointmentSuccessful' => 'Your Appointment Successful',
 			'appointmentBookedWith' => ({required Object name, required Object date, required Object time}) => 'You booked an appointment with ${name} on ${date}, at ${time}',
@@ -1313,9 +1307,7 @@ extension on Translations {
 			'enterValidFee' => 'Please enter a fee greater than 0',
 			'activate' => 'Activate',
 			'deactivate' => 'Deactivate',
-			'activateDoctorTitle' => 'Activate Doctor',
 			'activateDoctorConfirm' => 'Patients will see this doctor and can book again.',
-			'deactivateDoctorTitle' => 'Deactivate Doctor',
 			'deactivateDoctorConfirm' => 'Patients will no longer see or book this doctor. Booking history is kept.',
 			'doctorActivatedSuccess' => 'Doctor activated',
 			'doctorDeactivatedSuccess' => 'Doctor deactivated',
@@ -1359,6 +1351,7 @@ extension on Translations {
 			'cancelledByClinic' => 'Cancelled by clinic',
 			'cancelAppointmentTitle' => 'Cancel Appointment',
 			'cancelAppointmentMessage' => 'Are you sure you want to cancel this appointment?',
+			'confirm' => 'Confirm',
 			'appointmentCancelledSuccess' => 'Appointment cancelled successfully',
 			'noUpcomingAppointments' => 'No upcoming appointments',
 			'noCompletedAppointments' => 'No completed appointments',
@@ -1379,9 +1372,9 @@ extension on Translations {
 			'appointmentNotCompleted' => 'Only completed appointments can be reviewed',
 			'alreadyReviewed' => 'You have already reviewed this appointment',
 			'availability' => 'Availability',
-			'confirmActivateDoctor' => 'Are you sure you want to activate this doctor?',
-			'confirmDeactivateDoctor' => 'Are you sure you want to deactivate this doctor?',
-			'doctorStatusUpdated' => 'Doctor status updated',
+			'notSet' => 'Not set',
+			'activateDoctorTitle' => 'Activate Doctor',
+			'deactivateDoctorTitle' => 'Deactivate Doctor',
 			'doctorAvailability' => 'Doctor Availability',
 			'workingDays' => 'Working Days',
 			'daysEnabled' => ({required Object count}) => '${count} days enabled',
@@ -1400,6 +1393,7 @@ extension on Translations {
 			'saveChanges' => 'Save Changes',
 			'clinicAddressAr' => 'Clinic Address (Arabic)',
 			'clinicAddressEn' => 'Clinic Address (English)',
+			'clinicLocation' => 'Clinic Location',
 			'tapMapToSetLocation' => 'Tap anywhere on the map to set clinic location pin',
 			'clinicAddressArRequired' => 'Please enter clinic address in Arabic',
 			'clinicAddressEnRequired' => 'Please enter clinic address in English',
@@ -1409,6 +1403,7 @@ extension on Translations {
 			'adminProfileUpdatedSuccess' => 'Admin profile and clinic updated successfully',
 			'all' => 'All',
 			'patientNameLabel' => ({required Object name}) => 'Patient: ${name}',
+			'doctorWithNameLabel' => ({required Object name}) => 'Doctor: ${name}',
 			'noAppointmentsFound' => 'No appointments found',
 			'markCompleted' => 'Mark as Completed',
 			'markCompletedTitle' => 'Mark Appointment Completed',
@@ -1434,6 +1429,7 @@ extension on Translations {
 			'doctorNameEnLabel' => 'Doctor Name (EN)',
 			'doctorAvailabilitySubtitle' => 'Set weekly working days, hours and appointment duration',
 			'slotsPerDay' => ({required Object count}) => '${count} slots per day',
+			'perSlot' => ({required Object duration}) => '${duration} / slot',
 			_ => null,
 		};
 	}

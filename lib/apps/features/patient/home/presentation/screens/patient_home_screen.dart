@@ -24,8 +24,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late final HomeCubit _homeCubit;
-
   @override
   void initState() {
     super.initState();
@@ -41,8 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
     // solved
     //CR Use `getIt<Cubit>()` directly or inject via constructor.
     // solved
-    _homeCubit = context.read<HomeCubit>();
-    _homeCubit.load();
+    context.read<HomeCubit>().load();
   }
 
   String _greeting(User? user) {

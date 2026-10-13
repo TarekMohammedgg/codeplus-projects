@@ -9,7 +9,6 @@ import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_empty_state.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_profile_avatar.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_search_bar.dart';
-import 'package:doctor_hunt/apps/core/widgets/app_confirm_dialog.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_filter_chips.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/presentation/controller/cubit/admin_doctors_cubit.dart';
@@ -17,7 +16,7 @@ import 'package:doctor_hunt/apps/features/admin/doctors/presentation/controller/
 import 'package:doctor_hunt/apps/features/admin/doctors/presentation/widgets/admin_doctors_widgets.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
-import 'package:skeletonizer/skeletonizer.dart';
+import 'package:doctor_hunt/apps/core/widgets/skeleton_placeholders.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_list_skeleton.dart';
 
 class AdminDoctorsScreen extends StatefulWidget {
@@ -60,24 +59,16 @@ class AdminDoctorsScreenState extends State<AdminDoctorsScreen> {
       if (_specialtyId != null && doctor.specialtyId != _specialtyId) {
         return false;
       }
-      if (query.isEmpty) return true;
-      return [
-        doctor.name,
-        doctor.nameAr,
-        doctor.nameEn,
-        doctor.specialty,
-      ].any((text) => text?.toLowerCase().contains(query) ?? false);
+      return doctor.nameContains(query) ||
+          doctor.specialty.toLowerCase().contains(query);
     }).toList();
   }
 
   Future<void> _confirmToggleActive(DoctorModel doctor) async {
     final activate = !doctor.isActive;
-    final confirmed = await showAppConfirmDialog(
+    final confirmed = await showToggleDoctorActiveDialog(
       context,
-      title: activate ? tr.activateDoctorTitle : tr.deactivateDoctorTitle,
-      message: activate ? tr.activateDoctorConfirm : tr.deactivateDoctorConfirm,
-      confirmLabel: activate ? tr.activate : tr.deactivate,
-      confirmColor: activate ? AppColors.success : AppColors.error,
+      activate: activate,
     );
 
     if (!confirmed || !mounted) return;
@@ -167,13 +158,7 @@ class AdminDoctorsScreenState extends State<AdminDoctorsScreen> {
       AdminDoctorsInitial() || AdminDoctorsLoading() => AppListSkeleton(
         padding: const EdgeInsets.fromLTRB(20, 16, 20, 88),
         spacing: 12,
-        itemBuilder: (_) => AdminDoctorListTile(
-          doctor: DoctorModel(
-            id: '',
-            name: BoneMock.fullName,
-            specialty: BoneMock.name,
-          ),
-        ),
+        itemBuilder: (_) => AdminDoctorListTile(doctor: skeletonDoctor()),
       ),
       AdminDoctorsFailure() => Center(
         child: Text(tr.serviceError, style: context.semiBold16TextMain),

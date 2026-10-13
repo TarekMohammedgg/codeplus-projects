@@ -37,3 +37,22 @@ Future<bool> showAppConfirmDialog(
   );
   return confirmed ?? false;
 }
+
+Future<bool> showCancelAppointmentDialog(BuildContext context) {
+  return showAppConfirmDialog(
+    context,
+    title: context.tr.cancelAppointmentTitle,
+    message: context.tr.cancelAppointmentMessage,
+    confirmLabel: context.tr.confirm,
+    confirmColor: AppColors.error,
+  );
+}
+
+Future<bool> showMarkCompletedDialog(BuildContext context) {
+  return showAppConfirmDialog(
+    context,
+    title: context.tr.markCompletedTitle,
+    message: context.tr.markCompletedMessage,
+    confirmLabel: context.tr.confirm,
+  );
+}

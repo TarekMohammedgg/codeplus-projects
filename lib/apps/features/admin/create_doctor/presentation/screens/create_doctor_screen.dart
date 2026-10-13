@@ -63,8 +63,8 @@ class CreateDoctorScreenState extends State<CreateDoctorScreen> {
     _createDoctorCubit.loadSpecialties();
     if (isEditing) {
       final doctor = widget.doctor!;
-      _nameArController.text = doctor.nameAr ?? doctor.name;
-      _nameEnController.text = doctor.nameEn ?? doctor.name;
+      _nameArController.text = doctor.nameAr;
+      _nameEnController.text = doctor.nameEn;
       if (doctor.consultationFee > 0) {
         _feeController.text = _formatFee(doctor.consultationFee);
       }
@@ -293,12 +293,9 @@ class CreateDoctorScreenState extends State<CreateDoctorScreen> {
   void _selectEditingSpecialty(List<SpecialtyModel> specialties) {
     if (!isEditing || _specialty != null || !mounted) return;
 
-    final doctor = widget.doctor!;
-    final specialtyId = doctor.specialtyId?.trim().toLowerCase();
-    final selected = specialties.where((item) {
-      return (specialtyId != null && specialtyId == item.id) ||
-          item.localizedName.toLowerCase() == doctor.specialty.toLowerCase();
-    }).firstOrNull;
+    final selected = specialties
+        .where((item) => item.id == widget.doctor!.specialtyId)
+        .firstOrNull;
 
     if (selected != null) setState(() => _specialty = selected);
   }

@@ -55,18 +55,6 @@ void main() {
   );
 
   group('ProfileCubit', () {
-    test('initialProfile emits ProfileLoaded immediately', () async {
-      final repo = _FakeProfileRepository();
-      final authRepo = FakeAuthRepository();
-      final cubit = ProfileCubit(repository: repo, authRepository: authRepo);
-
-      cubit.init(initialProfile: testProfile);
-
-      expect(cubit.state, isA<ProfileLoaded>());
-      expect((cubit.state as ProfileLoaded).profile.name, 'John Doe');
-      await cubit.close();
-    });
-
     test('streams profile for user from repository', () async {
       final repo = _FakeProfileRepository(profile: testProfile);
       final authRepo = FakeAuthRepository();

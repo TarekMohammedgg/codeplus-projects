@@ -251,28 +251,23 @@ mixin $PatientAppointmentsRoute on GoRouteData {
 }
 
 mixin $ProfileRoute on GoRouteData {
-  static ProfileRoute _fromState(GoRouterState state) =>
-      ProfileRoute(state.extra as UserProfileModel?);
-
-  ProfileRoute get _self => this as ProfileRoute;
+  static ProfileRoute _fromState(GoRouterState state) => const ProfileRoute();
 
   @override
   String get location => GoRouteData.$location('/profile');
 
   @override
-  void go(BuildContext context) => context.go(location, extra: _self.$extra);
+  void go(BuildContext context) => context.go(location);
 
   @override
-  Future<T?> push<T>(BuildContext context) =>
-      context.push<T>(location, extra: _self.$extra);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
   void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location, extra: _self.$extra);
+      context.pushReplacement(location);
 
   @override
-  void replace(BuildContext context) =>
-      context.replace(location, extra: _self.$extra);
+  void replace(BuildContext context) => context.replace(location);
 }
 
 RouteBase get $adminShellRoute => StatefulShellRouteData.$route(
@@ -554,7 +549,7 @@ RouteBase get $adminAppointmentDetailsRoute => GoRouteData.$route(
 
 mixin $AdminAppointmentDetailsRoute on GoRouteData {
   static AdminAppointmentDetailsRoute _fromState(GoRouterState state) =>
-      AdminAppointmentDetailsRoute(state.extra as AppointmentModel?);
+      AdminAppointmentDetailsRoute(state.extra as AppointmentModel);
 
   AdminAppointmentDetailsRoute get _self =>
       this as AdminAppointmentDetailsRoute;
@@ -617,7 +612,7 @@ RouteBase get $doctorDetailsRoute => GoRouteData.$route(
 
 mixin $DoctorDetailsRoute on GoRouteData {
   static DoctorDetailsRoute _fromState(GoRouterState state) =>
-      DoctorDetailsRoute(state.extra as DoctorModel?);
+      DoctorDetailsRoute(state.extra as DoctorModel);
 
   DoctorDetailsRoute get _self => this as DoctorDetailsRoute;
 
@@ -648,7 +643,7 @@ RouteBase get $selectTimeRoute => GoRouteData.$route(
 
 mixin $SelectTimeRoute on GoRouteData {
   static SelectTimeRoute _fromState(GoRouterState state) =>
-      SelectTimeRoute(state.extra as DoctorModel?);
+      SelectTimeRoute(state.extra as DoctorModel);
 
   SelectTimeRoute get _self => this as SelectTimeRoute;
 
@@ -679,7 +674,7 @@ RouteBase get $bookingReviewRoute => GoRouteData.$route(
 
 mixin $BookingReviewRoute on GoRouteData {
   static BookingReviewRoute _fromState(GoRouterState state) =>
-      BookingReviewRoute(state.extra as BookingDraft?);
+      BookingReviewRoute(state.extra as BookingDraft);
 
   BookingReviewRoute get _self => this as BookingReviewRoute;
 
@@ -822,7 +817,7 @@ RouteBase get $patientAppointmentDetailsRoute => GoRouteData.$route(
 
 mixin $PatientAppointmentDetailsRoute on GoRouteData {
   static PatientAppointmentDetailsRoute _fromState(GoRouterState state) =>
-      PatientAppointmentDetailsRoute(state.extra as AppointmentModel?);
+      PatientAppointmentDetailsRoute(state.extra as AppointmentModel);
 
   PatientAppointmentDetailsRoute get _self =>
       this as PatientAppointmentDetailsRoute;
@@ -854,7 +849,7 @@ RouteBase get $patientRateDoctorRoute => GoRouteData.$route(
 
 mixin $PatientRateDoctorRoute on GoRouteData {
   static PatientRateDoctorRoute _fromState(GoRouterState state) =>
-      PatientRateDoctorRoute(state.extra as AppointmentModel?);
+      PatientRateDoctorRoute(state.extra as AppointmentModel);
 
   PatientRateDoctorRoute get _self => this as PatientRateDoctorRoute;
 

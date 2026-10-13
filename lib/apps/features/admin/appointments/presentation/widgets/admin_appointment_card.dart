@@ -9,6 +9,7 @@ import 'package:doctor_hunt/apps/core/utils/formatters.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/appointment_info_tile.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_avatar_placeholder.dart';
+import 'package:doctor_hunt/apps/core/widgets/doctor_image.dart';
 import 'package:doctor_hunt/apps/core/widgets/appointment_status_chip.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
@@ -21,6 +22,7 @@ class AdminAppointmentCard extends StatelessWidget {
     super.key,
     required this.appointment,
     this.specialty,
+    this.patientPhotoUrl,
     this.onTap,
     this.onCancel,
     this.onMarkCompleted,
@@ -28,6 +30,7 @@ class AdminAppointmentCard extends StatelessWidget {
 
   final AppointmentModel appointment;
   final SpecialtyModel? specialty;
+  final String? patientPhotoUrl;
 
   final VoidCallback? onTap;
   final VoidCallback? onCancel;
@@ -60,9 +63,17 @@ class AdminAppointmentCard extends StatelessWidget {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const ClipRRect(
-                      borderRadius: BorderRadius.all(Radius.circular(8)),
-                      child: DoctorAvatarPlaceholder(size: 48, circle: false),
+                    ClipRRect(
+                      borderRadius: const BorderRadius.all(Radius.circular(8)),
+                      child: DoctorImage(
+                        imageUrl: patientPhotoUrl,
+                        width: 48,
+                        height: 48,
+                        fallback: const DoctorAvatarPlaceholder(
+                          size: 48,
+                          circle: false,
+                        ),
+                      ),
                     ),
                     10.horizontalSpace,
                     Expanded(
@@ -70,14 +81,18 @@ class AdminAppointmentCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            appointment.patientName,
+                            context.tr.patientNameLabel(
+                              name: appointment.patientName,
+                            ),
                             style: context.medium16TextMain,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
                           2.verticalSpace,
                           Text(
-                            appointment.doctorName,
+                            context.tr.doctorWithNameLabel(
+                              name: appointment.doctorName,
+                            ),
                             style: context.medium12TextSecondary,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,

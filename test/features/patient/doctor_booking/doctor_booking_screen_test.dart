@@ -10,6 +10,7 @@ import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_profile_card.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_booking/data/repositories/booking_repository.dart';
+import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/controller/cubit/booking_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/screens/doctor_booking_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/widgets/date_selector_list.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/widgets/no_slots_available_section.dart';
@@ -30,16 +31,16 @@ void main() {
 
   final testDoctorWithAvail = DoctorModel(
     id: 'test_doc_1',
-    name: 'Dr. Test Specialist',
-    specialty: 'Cardiologist',
+    nameEn: 'Dr. Test Specialist',
+    specialtyEn: 'Cardiologist',
     consultationFee: 35.0,
     availability: availability,
   );
 
   final testDoctorNoAvail = const DoctorModel(
     id: 'test_doc_2',
-    name: 'Dr. No Avail',
-    specialty: 'Cardiologist',
+    nameEn: 'Dr. No Avail',
+    specialtyEn: 'Cardiologist',
   );
 
   setUp(() {
@@ -62,9 +63,7 @@ void main() {
       tester.view.resetDevicePixelRatio();
     });
 
-    await tester.pumpWidget(
-      buildTestApp(DoctorBookingScreen(doctor: testDoctorNoAvail)),
-    );
+    await tester.pumpWidget(buildTestApp(_bookingScreen(testDoctorNoAvail)));
     await tester.pumpAndSettle();
 
     expect(find.text(tr.doctorNoAvailableTimes), findsOneWidget);
@@ -86,12 +85,7 @@ void main() {
       final todayAt8Am = DateTime(now.year, now.month, now.day, 8, 0);
 
       await tester.pumpWidget(
-        buildTestApp(
-          DoctorBookingScreen(
-            doctor: testDoctorWithAvail,
-            initialTime: todayAt8Am,
-          ),
-        ),
+        buildTestApp(_bookingScreen(testDoctorWithAvail, now: todayAt8Am)),
       );
       await tester.pumpAndSettle();
 
@@ -122,10 +116,8 @@ void main() {
       routes: [
         GoRoute(
           path: '/booking',
-          builder: (context, state) => DoctorBookingScreen(
-            doctor: testDoctorWithAvail,
-            initialTime: todayAt8Am,
-          ),
+          builder: (context, state) =>
+              _bookingScreen(testDoctorWithAvail, now: todayAt8Am),
         ),
         GoRoute(
           path: AppRoutePaths.bookingReview,
@@ -194,12 +186,7 @@ void main() {
     getIt.allowReassignment = false;
 
     await tester.pumpWidget(
-      buildTestApp(
-        DoctorBookingScreen(
-          doctor: testDoctorWithAvail,
-          initialTime: todayAt8Am,
-        ),
-      ),
+      buildTestApp(_bookingScreen(testDoctorWithAvail, now: todayAt8Am)),
     );
     await tester.pumpAndSettle();
 
@@ -224,12 +211,7 @@ void main() {
     final todayAt8Am = DateTime(now.year, now.month, now.day, 8, 0);
 
     await tester.pumpWidget(
-      buildTestApp(
-        DoctorBookingScreen(
-          doctor: testDoctorWithAvail,
-          initialTime: todayAt8Am,
-        ),
-      ),
+      buildTestApp(_bookingScreen(testDoctorWithAvail, now: todayAt8Am)),
     );
     await tester.pumpAndSettle();
 
@@ -258,10 +240,7 @@ void main() {
       buildTestApp(
         BlocProvider<FavoritesCubit>.value(
           value: favoritesCubit,
-          child: DoctorBookingScreen(
-            doctor: testDoctorWithAvail,
-            initialTime: todayAt8Am,
-          ),
+          child: _bookingScreen(testDoctorWithAvail, now: todayAt8Am),
         ),
       ),
     );
@@ -275,4 +254,11 @@ void main() {
     expect(find.byIcon(Icons.favorite_rounded), findsOneWidget);
     expect(favoritesRepo.writes.isNotEmpty, isTrue);
   });
+}
+
+Widget _bookingScreen(DoctorModel doctor, {DateTime? now}) {
+  return BlocProvider<BookingCubit>(
+    create: (_) => getIt<BookingCubit>()..init(doctor, now: now),
+    child: DoctorBookingScreen(doctor: doctor),
+  );
 }

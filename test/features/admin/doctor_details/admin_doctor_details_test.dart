@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,26 +7,10 @@ import 'package:doctor_hunt/apps/core/widgets/app_text_button.dart';
 import 'package:doctor_hunt/apps/features/admin/doctor_details/presentation/controller/cubit/admin_doctor_details_cubit.dart';
 import 'package:doctor_hunt/apps/features/admin/doctor_details/presentation/screens/admin_doctor_details.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
-import 'package:doctor_hunt/apps/features/admin/doctors/data/service/admin_doctor_service.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
 import '../../../helpers/test_app.dart';
-
-class _FakeAdminDoctorService extends Fake implements AdminDoctorService {
-  _FakeAdminDoctorService({Stream<DoctorModel?>? stream})
-    : _stream = stream ?? const Stream.empty();
-
-  final Stream<DoctorModel?> _stream;
-  final activeChanges = <(String, bool)>[];
-
-  @override
-  Stream<DoctorModel?> streamDoctor(String id) => _stream;
-
-  @override
-  Future<void> setActive(String id, bool isActive) async {
-    activeChanges.add((id, isActive));
-  }
-}
+import '../../../helpers/test_fakes.dart';
 
 void main() {
   group('AdminDoctorDetails', () {
@@ -37,17 +19,17 @@ void main() {
       (WidgetTester tester) async {
         const doctor = DoctorModel(
           id: 'doc_1',
-          name: 'Dr. Gregory House',
-          specialty: 'Diagnostic Medicine',
+          nameEn: 'Dr. Gregory House',
+          specialtyEn: 'Diagnostic Medicine',
           consultationFee: 75,
           isActive: true,
           rating: 4.9,
           reviewsCount: 42,
         );
-        final service = _FakeAdminDoctorService();
+        final repository = FakeAdminDoctorsRepository();
         final cubit = AdminDoctorDetailsCubit(
           initialDoctor: doctor,
-          doctorService: service,
+          repository: repository,
         );
 
         await tester.pumpWidget(
@@ -88,8 +70,8 @@ void main() {
     ) async {
       const doctor = DoctorModel(
         id: 'doc_2',
-        name: 'Dr. James Wilson',
-        specialty: 'Oncology',
+        nameEn: 'Dr. James Wilson',
+        specialtyEn: 'Oncology',
         consultationFee: 90,
         isActive: true,
         availability: DoctorAvailability(
@@ -99,10 +81,10 @@ void main() {
           slotMinutes: 30,
         ),
       );
-      final service = _FakeAdminDoctorService();
+      final repository = FakeAdminDoctorsRepository();
       final cubit = AdminDoctorDetailsCubit(
         initialDoctor: doctor,
-        doctorService: service,
+        repository: repository,
       );
 
       await tester.pumpWidget(
@@ -126,14 +108,14 @@ void main() {
     ) async {
       const doctor = DoctorModel(
         id: 'doc_toggle',
-        name: 'Dr. Lisa Cuddy',
-        specialty: 'Administration',
+        nameEn: 'Dr. Lisa Cuddy',
+        specialtyEn: 'Administration',
         isActive: true,
       );
-      final service = _FakeAdminDoctorService();
+      final repository = FakeAdminDoctorsRepository();
       final cubit = AdminDoctorDetailsCubit(
         initialDoctor: doctor,
-        doctorService: service,
+        repository: repository,
       );
 
       await tester.pumpWidget(
@@ -158,16 +140,50 @@ void main() {
         ),
         findsWidgets,
       );
-      expect(find.text(tr.confirmDeactivateDoctor), findsOneWidget);
+      expect(find.text(tr.deactivateDoctorConfirm), findsOneWidget);
 
-      await tester.tap(
-        find.widgetWithText(AppTextButton, tr.deactivateDoctorTitle),
-      );
+      await tester.tap(find.widgetWithText(AppTextButton, tr.deactivate));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      expect(service.activeChanges, [('doc_toggle', false)]);
-      expect(cubit.state.doctor.isActive, false);
+      expect(repository.activeChanges, [('doc_toggle', false)]);
+      expect(find.text(tr.doctorDeactivatedSuccess), findsOneWidget);
+
+      await cubit.close();
+    });
+
+    testWidgets('failed status change shows no success message', (
+      WidgetTester tester,
+    ) async {
+      // arrange
+      const doctor = DoctorModel(id: 'doc_fail', nameEn: 'Dr. Fail');
+      final cubit = AdminDoctorDetailsCubit(
+        initialDoctor: doctor,
+        repository: FakeAdminDoctorsRepository(
+          setActiveError: StateError('offline'),
+        ),
+      );
+      await tester.pumpWidget(
+        buildTestApp(
+          BlocProvider<AdminDoctorDetailsCubit>.value(
+            value: cubit,
+            child: const AdminDoctorDetails(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('admin_doctor_status_menu')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(tr.deactivateDoctorTitle));
+      await tester.pumpAndSettle();
+
+      // act
+      await tester.tap(find.widgetWithText(AppTextButton, tr.deactivate));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      // assert
+      expect(find.text(tr.doctorDeactivatedSuccess), findsNothing);
 
       await cubit.close();
     });

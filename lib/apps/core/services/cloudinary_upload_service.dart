@@ -4,9 +4,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class CloudinaryUploadService {
-  CloudinaryUploadService({Dio? dio}) : _dio = dio ?? Dio();
+  CloudinaryUploadService({required this.dio});
 
-  final Dio _dio;
+  final Dio dio;
 
   String get _cloudName => dotenv.isInitialized
       ? dotenv.maybeGet('CLOUDINARY_CLOUD_NAME') ?? ''
@@ -34,7 +34,7 @@ class CloudinaryUploadService {
       '/v1_1/$_cloudName/image/upload',
     );
     try {
-      final response = await _dio.post<Map<String, dynamic>>(
+      final response = await dio.post<Map<String, dynamic>>(
         uri.toString(),
         data: FormData.fromMap({
           'upload_preset': _uploadPreset,

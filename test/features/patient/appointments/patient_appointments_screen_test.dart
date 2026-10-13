@@ -46,6 +46,35 @@ void main() {
   });
 
   group('PatientAppointmentsCubit', () {
+    test('re-emits when only isReviewed changes after rating', () async {
+      // arrange
+      final completed = _buildTestAppt(
+        id: 'appt_rated',
+        status: AppointmentStatus.completed,
+        startAt: DateTime(2026, 10, 1, 10, 0),
+      );
+      final repo = FakePatientAppointmentsRepository(appointments: [completed]);
+      final cubit = PatientAppointmentsCubit(repository: repo);
+      await cubit.init();
+      await pumpEventQueue();
+
+      // act
+      repo.emitAppointments([
+        _buildTestAppt(
+          id: 'appt_rated',
+          status: AppointmentStatus.completed,
+          startAt: DateTime(2026, 10, 1, 10, 0),
+          isReviewed: true,
+        ),
+      ]);
+      await pumpEventQueue();
+
+      // assert
+      final loaded = cubit.state as PatientAppointmentsLoaded;
+      expect(loaded.grouped.completed.single.isReviewed, isTrue);
+      await cubit.close();
+    });
+
     test('emits loaded state when appointments stream emits', () async {
       final appt = _buildTestAppt(
         id: 'appt_1',
@@ -53,12 +82,7 @@ void main() {
         startAt: DateTime(2026, 10, 5, 10, 0),
       );
       final repo = FakePatientAppointmentsRepository(appointments: [appt]);
-      final fakeUser = FakeUser(uid: 'patient_123');
-      final authService = FakeAuthService(user: fakeUser);
-      final cubit = PatientAppointmentsCubit(
-        repository: repo,
-        authService: authService,
-      );
+      final cubit = PatientAppointmentsCubit(repository: repo);
 
       await cubit.init();
       await pumpEventQueue();
@@ -77,12 +101,7 @@ void main() {
         startAt: DateTime(2026, 10, 5, 10, 0),
       );
       final repo = FakePatientAppointmentsRepository();
-      final fakeUser = FakeUser(uid: 'patient_123');
-      final authService = FakeAuthService(user: fakeUser);
-      final cubit = PatientAppointmentsCubit(
-        repository: repo,
-        authService: authService,
-      );
+      final cubit = PatientAppointmentsCubit(repository: repo);
 
       await cubit.cancelAppointment(appt);
       expect(repo.cancelledAppointments, contains(appt));
@@ -95,12 +114,7 @@ void main() {
       WidgetTester tester,
     ) async {
       final repo = FakePatientAppointmentsRepository();
-      final fakeUser = FakeUser(uid: 'patient_123');
-      final authService = FakeAuthService(user: fakeUser);
-      final cubit = PatientAppointmentsCubit(
-        repository: repo,
-        authService: authService,
-      );
+      final cubit = PatientAppointmentsCubit(repository: repo);
       await cubit.init();
 
       await tester.pumpWidget(
@@ -126,7 +140,6 @@ void main() {
     ) async {
       final cubit = PatientAppointmentsCubit(
         repository: FakePatientAppointmentsRepository(),
-        authService: FakeAuthService(user: FakeUser(uid: 'patient_123')),
       );
       await cubit.init();
       await tester.pumpWidget(
@@ -165,12 +178,7 @@ void main() {
         startAt: DateTime(2026, 10, 5, 10, 0),
       );
       final repo = FakePatientAppointmentsRepository(appointments: [appt]);
-      final fakeUser = FakeUser(uid: 'patient_123');
-      final authService = FakeAuthService(user: fakeUser);
-      final cubit = PatientAppointmentsCubit(
-        repository: repo,
-        authService: authService,
-      );
+      final cubit = PatientAppointmentsCubit(repository: repo);
       await cubit.init();
 
       await tester.pumpWidget(
@@ -241,12 +249,7 @@ void main() {
       final repo = FakePatientAppointmentsRepository(
         appointments: [apptNotReviewed, apptReviewed],
       );
-      final fakeUser = FakeUser(uid: 'patient_123');
-      final authService = FakeAuthService(user: fakeUser);
-      final cubit = PatientAppointmentsCubit(
-        repository: repo,
-        authService: authService,
-      );
+      final cubit = PatientAppointmentsCubit(repository: repo);
       await cubit.init();
 
       await tester.pumpWidget(
@@ -291,12 +294,7 @@ void main() {
       final repo = FakePatientAppointmentsRepository(
         appointments: [apptPatient, apptAdmin],
       );
-      final fakeUser = FakeUser(uid: 'patient_123');
-      final authService = FakeAuthService(user: fakeUser);
-      final cubit = PatientAppointmentsCubit(
-        repository: repo,
-        authService: authService,
-      );
+      final cubit = PatientAppointmentsCubit(repository: repo);
       await cubit.init();
 
       await tester.pumpWidget(
@@ -325,12 +323,7 @@ void main() {
       WidgetTester tester,
     ) async {
       final repo = FakePatientAppointmentsRepository(appointments: []);
-      final fakeUser = FakeUser(uid: 'patient_123');
-      final authService = FakeAuthService(user: fakeUser);
-      final cubit = PatientAppointmentsCubit(
-        repository: repo,
-        authService: authService,
-      );
+      final cubit = PatientAppointmentsCubit(repository: repo);
       await cubit.init();
 
       await tester.pumpWidget(

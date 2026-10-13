@@ -74,13 +74,7 @@ class _AdminAppointmentsView extends StatelessWidget {
 
   Future<void> _cancel(BuildContext context, AppointmentModel appt) async {
     final cubit = context.read<AdminAppointmentsCubit>();
-    final confirmed = await showAppConfirmDialog(
-      context,
-      title: context.tr.cancelAppointmentTitle,
-      message: context.tr.cancelAppointmentMessage,
-      confirmLabel: context.tr.confirm,
-      confirmColor: AppColors.error,
-    );
+    final confirmed = await showCancelAppointmentDialog(context);
     if (!confirmed || !context.mounted) return;
     try {
       await cubit.cancel(appt);
@@ -97,12 +91,7 @@ class _AdminAppointmentsView extends StatelessWidget {
     AppointmentModel appt,
   ) async {
     final cubit = context.read<AdminAppointmentsCubit>();
-    final confirmed = await showAppConfirmDialog(
-      context,
-      title: context.tr.markCompletedTitle,
-      message: context.tr.markCompletedMessage,
-      confirmLabel: context.tr.confirm,
-    );
+    final confirmed = await showMarkCompletedDialog(context);
     if (!confirmed || !context.mounted) return;
     try {
       await cubit.markCompleted(appt.id);
@@ -241,6 +230,8 @@ class _AdminAppointmentsView extends StatelessWidget {
                           return AdminAppointmentCard(
                             appointment: appt,
                             specialty: state.specialties[appt.specialtyId],
+                            patientPhotoUrl:
+                                state.patientPhotos[appt.patientId],
                             onTap: () => AdminAppointmentDetailsRoute(
                               appt,
                             ).push(context),

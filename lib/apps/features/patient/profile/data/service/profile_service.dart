@@ -10,9 +10,11 @@ class ProfileService {
       firestore.collection('users').doc(uid);
 
   Stream<UserProfileModel> streamProfile(String uid) {
-    return _userDoc(uid).snapshots().map((snapshot) {
-      return UserProfileModel.fromFirestore(snapshot);
-    });
+    return _userDoc(uid).snapshots().map(UserProfileModel.fromFirestore);
+  }
+
+  Future<UserProfileModel> fetchProfile(String uid) async {
+    return UserProfileModel.fromFirestore(await _userDoc(uid).get());
   }
 
   Future<void> updateProfile({

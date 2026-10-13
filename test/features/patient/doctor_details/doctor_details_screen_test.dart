@@ -17,8 +17,8 @@ import '../../../helpers/test_fakes.dart';
 
 const _doctor = DoctorModel(
   id: 'doc-1',
-  name: 'Dr. Sara',
-  specialty: 'Dentist',
+  nameEn: 'Dr. Sara',
+  specialtyEn: 'Dentist',
   rating: 4.7,
   reviewsCount: 24,
 );

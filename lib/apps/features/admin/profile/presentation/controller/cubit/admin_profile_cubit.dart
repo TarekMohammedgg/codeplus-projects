@@ -4,19 +4,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:latlong2/latlong.dart';
 
-import 'package:doctor_hunt/apps/core/services/cloudinary_upload_service.dart';
+import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/apps/features/admin/profile/data/repositories/admin_profile_repository.dart';
 import 'package:doctor_hunt/apps/features/admin/profile/presentation/controller/cubit/admin_profile_state.dart';
 
 class AdminProfileCubit extends Cubit<AdminProfileState> {
-  AdminProfileCubit({
-    required this.repository,
-    required this.uploadService,
-    AdminProfileState? initialState,
-  }) : super(initialState ?? const AdminProfileState());
+  AdminProfileCubit({required this.repository, AdminProfileState? initialState})
+    : super(initialState ?? const AdminProfileState());
 
   final AdminProfileRepository repository;
-  final CloudinaryUploadService uploadService;
 
   Future<void> loadCurrentProfile() async {
     final uid = repository.currentUid;
@@ -33,19 +29,19 @@ class AdminProfileCubit extends Cubit<AdminProfileState> {
       emit(
         state.copyWith(
           status: AdminProfileStatus.loaded,
-          displayName: profile?.name ?? '',
-          email: profile?.email ?? '',
-          currentPhotoUrl: profile?.avatarUrl,
+          displayName: profile.name,
+          email: profile.email,
+          currentPhotoUrl: profile.avatarUrl,
           addressAr: clinic?.addressAr ?? '',
           addressEn: clinic?.addressEn ?? '',
-          location: clinic?.location ?? const LatLng(30.0444, 31.2357),
+          location: clinic?.location,
         ),
       );
     } catch (e) {
       emit(
         state.copyWith(
           status: AdminProfileStatus.failure,
-          errorMessage: e.toString(),
+          errorMessage: AppException.from(e).message,
         ),
       );
     }
@@ -86,7 +82,7 @@ class AdminProfileCubit extends Cubit<AdminProfileState> {
     try {
       var photoUrl = state.currentPhotoUrl;
       if (newImageBytes != null) {
-        photoUrl = await uploadService.uploadImage(
+        photoUrl = await repository.uploadPhoto(
           bytes: newImageBytes,
           fileName: newImageName ?? 'admin_profile_$uid.jpg',
         );
@@ -134,7 +130,7 @@ class AdminProfileCubit extends Cubit<AdminProfileState> {
       emit(
         state.copyWith(
           status: AdminProfileStatus.failure,
-          errorMessage: e.toString(),
+          errorMessage: AppException.from(e).message,
           failure: AdminProfileFailure.unknown,
         ),
       );

@@ -80,20 +80,20 @@ void main() {
 
       final doc1 = DoctorModel(
         id: '1',
-        name: 'Doctor 1',
-        specialty: 'Spec 1',
+        nameEn: 'Doctor 1',
+        specialtyEn: 'Spec 1',
         lastModified: t1,
       );
       final doc2 = DoctorModel(
         id: '2',
-        name: 'Doctor 2',
-        specialty: 'Spec 2',
+        nameEn: 'Doctor 2',
+        specialtyEn: 'Spec 2',
         lastModified: t2,
       );
       final doc3 = DoctorModel(
         id: '3',
-        name: 'Doctor 3',
-        specialty: 'Spec 3',
+        nameEn: 'Doctor 3',
+        specialtyEn: 'Spec 3',
         lastModified: t3,
       );
 
@@ -109,20 +109,20 @@ void main() {
 
       final existing1 = DoctorModel(
         id: '1',
-        name: 'Existing A',
-        specialty: 'Dentist',
+        nameEn: 'Existing A',
+        specialtyEn: 'Dentist',
         lastModified: tOld,
       );
       final existing2 = DoctorModel(
         id: '2',
-        name: 'Existing B',
-        specialty: 'Pediatrician',
+        nameEn: 'Existing B',
+        specialtyEn: 'Pediatrician',
         lastModified: tOld.add(const Duration(hours: 1)),
       );
       final newlyAdded = DoctorModel(
         id: '3',
-        name: 'New Doctor',
-        specialty: 'Cardiologist',
+        nameEn: 'New Doctor',
+        specialtyEn: 'Cardiologist',
         lastModified: tNew,
       );
 
@@ -139,14 +139,14 @@ void main() {
 
       final doc1 = DoctorModel(
         id: '1',
-        name: 'Doctor 1',
-        specialty: 'Spec',
+        nameEn: 'Doctor 1',
+        specialtyEn: 'Spec',
         lastModified: tModified,
       );
       final doc2 = DoctorModel(
         id: '2',
-        name: 'Doctor 2',
-        specialty: 'Spec',
+        nameEn: 'Doctor 2',
+        specialtyEn: 'Spec',
         lastModified: t2,
       );
 
@@ -163,20 +163,20 @@ void main() {
 
       final doc1 = DoctorModel(
         id: '1',
-        name: 'Doctor 1',
-        specialty: 'Spec',
+        nameEn: 'Doctor 1',
+        specialtyEn: 'Spec',
         lastModified: t1,
       );
       final doc2 = DoctorModel(
         id: '2',
-        name: 'Doctor 2',
-        specialty: 'Spec',
+        nameEn: 'Doctor 2',
+        specialtyEn: 'Spec',
         lastModified: t2,
       );
       final doc3 = DoctorModel(
         id: '3',
-        name: 'Doctor 3',
-        specialty: 'Spec',
+        nameEn: 'Doctor 3',
+        specialtyEn: 'Spec',
         lastModified: t3,
       );
 

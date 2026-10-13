@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:doctor_hunt/apps/core/di/injection.dart';
 import 'package:doctor_hunt/apps/core/extensions/context_extensions.dart';
 import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
@@ -19,46 +18,17 @@ import 'package:doctor_hunt/apps/features/patient/rate_doctor/presentation/cubit
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
-class RateDoctorScreen extends StatelessWidget {
-  const RateDoctorScreen({super.key, required this.appointment, this.cubit});
-
-  final AppointmentModel appointment;
-  final RateDoctorCubit? cubit;
-
-  @override
-  Widget build(BuildContext context) {
-    if (cubit != null) {
-      return BlocProvider<RateDoctorCubit>.value(
-        value: cubit!,
-        child: _RateDoctorView(appointment: appointment),
-      );
-    }
-
-    return BlocProvider<RateDoctorCubit>(
-      create: (_) =>
-          getIt<RateDoctorCubit>()..loadSpecialty(appointment.specialtyId),
-      child: _RateDoctorView(appointment: appointment),
-    );
-  }
-}
-
-class _RateDoctorView extends StatefulWidget {
-  const _RateDoctorView({required this.appointment});
+class RateDoctorScreen extends StatefulWidget {
+  const RateDoctorScreen({super.key, required this.appointment});
 
   final AppointmentModel appointment;
 
   @override
-  State<_RateDoctorView> createState() => _RateDoctorViewState();
+  State<RateDoctorScreen> createState() => _RateDoctorScreenState();
 }
 
-class _RateDoctorViewState extends State<_RateDoctorView> {
-  late final TextEditingController _commentController;
-
-  @override
-  void initState() {
-    super.initState();
-    _commentController = TextEditingController();
-  }
+class _RateDoctorScreenState extends State<RateDoctorScreen> {
+  final _commentController = TextEditingController();
 
   @override
   void dispose() {

@@ -6,17 +6,15 @@ import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/core/utils/slot_generator.dart';
 
 class AppointmentService {
-  AppointmentService({required FirebaseFirestore firestore})
-    // ignore: prefer_initializing_formals
-    : _firestore = firestore;
+  AppointmentService({required this.firestore});
 
-  final FirebaseFirestore _firestore;
+  final FirebaseFirestore firestore;
 
   CollectionReference<Map<String, dynamic>> get _appointments =>
-      _firestore.collection('appointments');
+      firestore.collection('appointments');
 
   CollectionReference<Map<String, dynamic>> get _bookedSlots =>
-      _firestore.collection('bookedSlots');
+      firestore.collection('bookedSlots');
 
   Future<Set<DateTime>> fetchBookedStarts(String doctorId, DateTime day) async {
     final snapshot = await _bookedSlots
@@ -42,7 +40,7 @@ class AppointmentService {
     final appointmentRef = _appointments.doc();
     final startTimestamp = Timestamp.fromDate(startAt);
 
-    await _firestore.runTransaction((transaction) async {
+    await firestore.runTransaction((transaction) async {
       if ((await transaction.get(slotRef)).exists) {
         throw const SlotAlreadyBookedException();
       }
@@ -59,7 +57,7 @@ class AppointmentService {
         'patientEmail': patientEmail,
         'patientPhone': patientPhone,
         'doctorId': doctor.id,
-        'doctorName': {'ar': doctor.nameAr ?? '', 'en': doctor.nameEn ?? ''},
+        'doctorName': {'ar': doctor.nameAr, 'en': doctor.nameEn},
         'specialtyId': doctor.specialtyId,
         'doctorImageUrl': doctor.imageUrl,
         'fee': doctor.consultationFee,
@@ -78,7 +76,7 @@ class AppointmentService {
     return _appointments
         .where('patientId', isEqualTo: patientId)
         .snapshots()
-        .map((snapshot) => _parse(snapshot)..sort(_bySoonest));
+        .map(_parse);
   }
 
   Stream<List<AppointmentModel>> streamAllAppointments() {
@@ -92,7 +90,7 @@ class AppointmentService {
     AppointmentModel appointment, {
     required CancelledBy cancelledBy,
   }) {
-    return (_firestore.batch()
+    return (firestore.batch()
           ..update(_appointments.doc(appointment.id), {
             'status': AppointmentStatus.cancelled.name,
             'cancelledBy': cancelledBy.name,
@@ -114,7 +112,4 @@ class AppointmentService {
         .map((doc) => AppointmentModel.fromFirestore(doc.id, doc.data()))
         .toList();
   }
-
-  int _bySoonest(AppointmentModel a, AppointmentModel b) =>
-      a.startAt.compareTo(b.startAt);
 }

@@ -63,7 +63,6 @@ class DoctorAvailability {
   }
 
   String formatSummary({String? locale}) {
-    if (workingDays.isEmpty) return 'Not set';
     final sortedDays = List<int>.from(workingDays)..sort();
     final dayNames = sortedDays
         .map((w) => weekdayName(w, locale ?? 'en'))

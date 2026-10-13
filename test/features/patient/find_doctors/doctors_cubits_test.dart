@@ -9,20 +9,18 @@ import '../../../helpers/test_fakes.dart';
 
 const _dentist = DoctorModel(
   id: 'dentist',
-  name: 'Dr. Sara',
   nameAr: 'د. سارة',
   nameEn: 'Dr. Sara',
-  specialty: 'Dentist',
+  specialtyEn: 'Dentist',
   specialtyId: 'dentistry',
   rating: 4.9,
   reviewsCount: 5,
 );
 const _cardiologist = DoctorModel(
   id: 'cardiologist',
-  name: 'Dr. Omar',
   nameAr: 'د. عمر',
   nameEn: 'Dr. Omar',
-  specialty: 'Cardiologist',
+  specialtyEn: 'Cardiologist',
   specialtyId: 'cardiology',
   rating: 4.1,
   reviewsCount: 30,
@@ -101,10 +99,10 @@ void main() {
   });
 
   test('favorites filter keeps only the patient favorites', () async {
-    await cubit.load();
+    // act
+    await cubit.load(favoritesOnly: true);
 
-    cubit.toggleFavoritesOnly();
-
+    // assert
     expect(visibleIds({'dentist'}), ['dentist']);
   });
 
@@ -117,9 +115,8 @@ void main() {
   });
 
   test('applyRouteFilters replaces the current filters', () async {
-    await cubit.load();
+    await cubit.load(favoritesOnly: true);
     cubit.search('Sara');
-    cubit.toggleFavoritesOnly();
 
     cubit.applyRouteFilters(specialtyId: 'cardiology');
 

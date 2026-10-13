@@ -66,10 +66,7 @@ void main() {
 
     test('invalidates incorrect numbers', () {
       expect(PhoneUtils.isValidPhone('12345'), isFalse);
-      expect(
-        PhoneUtils.isValidPhone('01812345678'),
-        isFalse,
-      );
+      expect(PhoneUtils.isValidPhone('01812345678'), isFalse);
       expect(PhoneUtils.isValidPhone(''), isFalse);
 
       expect(AppValidators.validatePhone(''), isNotNull);

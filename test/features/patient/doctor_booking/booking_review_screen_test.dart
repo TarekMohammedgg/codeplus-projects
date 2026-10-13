@@ -20,8 +20,8 @@ import '../../../helpers/test_fakes.dart';
 void main() {
   const testDoctor = DoctorModel(
     id: 'doc_review_1',
-    name: 'Dr. Sarah Connor',
-    specialty: 'Cardiologist',
+    nameEn: 'Dr. Sarah Connor',
+    specialtyEn: 'Cardiologist',
     consultationFee: 50.0,
     rating: 4.8,
     reviewsCount: 15,

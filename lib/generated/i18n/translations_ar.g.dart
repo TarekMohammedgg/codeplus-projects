@@ -45,7 +45,6 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get getStarted => 'ابدأ الآن';
 	@override String get next => 'التالي';
 	@override String get back => 'رجوع';
-	@override String get or => 'أو';
 	@override String get arabicLanguage => 'العربية';
 	@override String get englishLanguage => 'English';
 	@override String get onboardingTitle1 => 'اعثر على أطباء موثوقين';
@@ -121,7 +120,6 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String ratingSummary({required Object rating, required Object count}) => '${rating} · ${count} تقييم';
 	@override String get recentReviews => 'أحدث التقييمات';
 	@override String get noReviewsYet => 'لا توجد تقييمات بعد';
-	@override String get clinicLocation => 'موقع العيادة';
 	@override String get clinicLocationNotSet => 'لم يتم تحديد موقع العيادة بعد';
 	@override String get bookingReview => 'مراجعة الحجز';
 	@override String get confirmBooking => 'تأكيد الحجز';
@@ -152,7 +150,6 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get dateOfBirth => 'تاريخ الميلاد';
 	@override String get dateOfBirthPlaceholder => 'يوم شهر سنة';
 	@override String get gender => 'الجنس';
-	@override String get notSet => 'غير محدد';
 	@override String get location => 'الموقع';
 	@override String get addDetails => 'إضافة تفاصيل';
 	@override String get settings => 'الإعدادات';
@@ -189,6 +186,7 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get dateOptionSun => 'الأحد، 28 فبراير';
 	@override String get noSlotsAvailable => 'لا توجد مواعيد متاحة';
 	@override String nextAvailabilityOn({required Object date}) => 'الموعد التالي المتاح في ${date}';
+	@override String get or => 'أو';
 	@override String get contactClinic => 'الاتصال بالعيادة';
 	@override String get contactingClinic => 'جارٍ الاتصال بالعيادة...';
 	@override String slotsAvailable({required Object count}) => '${count} مواعيد متاحة';
@@ -205,7 +203,6 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get timeLabel => 'الوقت';
 	@override String get feeLabel => 'الرسوم';
 	@override String get appointmentLabel => 'الموعد';
-	@override String get confirm => 'تأكيد';
 	@override String get thankYou => 'شكراً لك !';
 	@override String get appointmentSuccessful => 'تم حجز موعدك بنجاح';
 	@override String appointmentBookedWith({required Object name, required Object date, required Object time}) => 'لقد قمت بحجز موعد مع ${name} في ${date}، الساعة ${time}';
@@ -264,9 +261,7 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get enterValidFee => 'يرجى إدخال رسوم أكبر من 0';
 	@override String get activate => 'تفعيل';
 	@override String get deactivate => 'إيقاف';
-	@override String get activateDoctorTitle => 'تفعيل الطبيب';
 	@override String get activateDoctorConfirm => 'سيظهر الطبيب للمرضى ويمكن الحجز معه مرة أخرى.';
-	@override String get deactivateDoctorTitle => 'إلغاء تفعيل الطبيب';
 	@override String get deactivateDoctorConfirm => 'لن يظهر الطبيب للمرضى ولن يمكن الحجز معه. يتم الاحتفاظ بسجل الحجوزات.';
 	@override String get doctorActivatedSuccess => 'تم تفعيل الطبيب';
 	@override String get doctorDeactivatedSuccess => 'تم إيقاف الطبيب';
@@ -310,6 +305,7 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get cancelledByClinic => 'تم الإلغاء بواسطة العيادة';
 	@override String get cancelAppointmentTitle => 'إلغاء الموعد';
 	@override String get cancelAppointmentMessage => 'هل أنت متأكد من رغبتك في إلغاء هذا الموعد؟';
+	@override String get confirm => 'تأكيد';
 	@override String get appointmentCancelledSuccess => 'تم إلغاء الموعد بنجاح';
 	@override String get noUpcomingAppointments => 'لا توجد مواعيد قادمة';
 	@override String get noCompletedAppointments => 'لا توجد مواعيد مكتملة';
@@ -330,9 +326,9 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get appointmentNotCompleted => 'يمكن تقييم المواعيد المكتملة فقط';
 	@override String get alreadyReviewed => 'لقد قمت بتقييم هذا الموعد بالفعل';
 	@override String get availability => 'المواعيد المتاحة';
-	@override String get confirmActivateDoctor => 'هل أنت متأكد من تفعيل هذا الطبيب؟';
-	@override String get confirmDeactivateDoctor => 'هل أنت متأكد من إلغاء تفعيل هذا الطبيب؟';
-	@override String get doctorStatusUpdated => 'تم تحديث حالة الطبيب';
+	@override String get notSet => 'غير محدد';
+	@override String get activateDoctorTitle => 'تفعيل الطبيب';
+	@override String get deactivateDoctorTitle => 'إلغاء تفعيل الطبيب';
 	@override String get doctorAvailability => 'جدول مواعيد الطبيب';
 	@override String get workingDays => 'أيام العمل';
 	@override String daysEnabled({required Object count}) => '${count} أيام مفعّلة';
@@ -351,6 +347,7 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get saveChanges => 'حفظ التغييرات';
 	@override String get clinicAddressAr => 'عنوان العيادة (عربي)';
 	@override String get clinicAddressEn => 'عنوان العيادة (إنجليزي)';
+	@override String get clinicLocation => 'موقع العيادة';
 	@override String get tapMapToSetLocation => 'اضغط في أي مكان على الخريطة لتحديد دبوس موقع العيادة';
 	@override String get clinicAddressArRequired => 'يرجى إدخال عنوان العيادة بالعربية';
 	@override String get clinicAddressEnRequired => 'يرجى إدخال عنوان العيادة بالإنجليزية';
@@ -360,6 +357,7 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get adminProfileUpdatedSuccess => 'تم تحديث ملف المسؤول وبيانات العيادة بنجاح';
 	@override String get all => 'الكل';
 	@override String patientNameLabel({required Object name}) => 'المريض: ${name}';
+	@override String doctorWithNameLabel({required Object name}) => 'الطبيب: ${name}';
 	@override String get noAppointmentsFound => 'لا توجد مواعيد';
 	@override String get markCompleted => 'تحديد كمكتمل';
 	@override String get markCompletedTitle => 'تحديد الموعد كمكتمل';
@@ -385,6 +383,7 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get doctorNameEnLabel => 'اسم الطبيب (إنجليزي)';
 	@override String get doctorAvailabilitySubtitle => 'حدد أيام العمل وساعات العمل الأسبوعية ومدة الكشف';
 	@override String slotsPerDay({required Object count}) => '${count} موعد في اليوم';
+	@override String perSlot({required Object duration}) => '${duration} لكل موعد';
 }
 
 /// The flat map containing all translations for locale <ar>.
@@ -401,7 +400,6 @@ extension on TranslationsAr {
 			'getStarted' => 'ابدأ الآن',
 			'next' => 'التالي',
 			'back' => 'رجوع',
-			'or' => 'أو',
 			'arabicLanguage' => 'العربية',
 			'englishLanguage' => 'English',
 			'onboardingTitle1' => 'اعثر على أطباء موثوقين',
@@ -477,7 +475,6 @@ extension on TranslationsAr {
 			'ratingSummary' => ({required Object rating, required Object count}) => '${rating} · ${count} تقييم',
 			'recentReviews' => 'أحدث التقييمات',
 			'noReviewsYet' => 'لا توجد تقييمات بعد',
-			'clinicLocation' => 'موقع العيادة',
 			'clinicLocationNotSet' => 'لم يتم تحديد موقع العيادة بعد',
 			'bookingReview' => 'مراجعة الحجز',
 			'confirmBooking' => 'تأكيد الحجز',
@@ -508,7 +505,6 @@ extension on TranslationsAr {
 			'dateOfBirth' => 'تاريخ الميلاد',
 			'dateOfBirthPlaceholder' => 'يوم شهر سنة',
 			'gender' => 'الجنس',
-			'notSet' => 'غير محدد',
 			'location' => 'الموقع',
 			'addDetails' => 'إضافة تفاصيل',
 			'settings' => 'الإعدادات',
@@ -545,6 +541,7 @@ extension on TranslationsAr {
 			'dateOptionSun' => 'الأحد، 28 فبراير',
 			'noSlotsAvailable' => 'لا توجد مواعيد متاحة',
 			'nextAvailabilityOn' => ({required Object date}) => 'الموعد التالي المتاح في ${date}',
+			'or' => 'أو',
 			'contactClinic' => 'الاتصال بالعيادة',
 			'contactingClinic' => 'جارٍ الاتصال بالعيادة...',
 			'slotsAvailable' => ({required Object count}) => '${count} مواعيد متاحة',
@@ -561,7 +558,6 @@ extension on TranslationsAr {
 			'timeLabel' => 'الوقت',
 			'feeLabel' => 'الرسوم',
 			'appointmentLabel' => 'الموعد',
-			'confirm' => 'تأكيد',
 			'thankYou' => 'شكراً لك !',
 			'appointmentSuccessful' => 'تم حجز موعدك بنجاح',
 			'appointmentBookedWith' => ({required Object name, required Object date, required Object time}) => 'لقد قمت بحجز موعد مع ${name} في ${date}، الساعة ${time}',
@@ -620,9 +616,7 @@ extension on TranslationsAr {
 			'enterValidFee' => 'يرجى إدخال رسوم أكبر من 0',
 			'activate' => 'تفعيل',
 			'deactivate' => 'إيقاف',
-			'activateDoctorTitle' => 'تفعيل الطبيب',
 			'activateDoctorConfirm' => 'سيظهر الطبيب للمرضى ويمكن الحجز معه مرة أخرى.',
-			'deactivateDoctorTitle' => 'إلغاء تفعيل الطبيب',
 			'deactivateDoctorConfirm' => 'لن يظهر الطبيب للمرضى ولن يمكن الحجز معه. يتم الاحتفاظ بسجل الحجوزات.',
 			'doctorActivatedSuccess' => 'تم تفعيل الطبيب',
 			'doctorDeactivatedSuccess' => 'تم إيقاف الطبيب',
@@ -666,6 +660,7 @@ extension on TranslationsAr {
 			'cancelledByClinic' => 'تم الإلغاء بواسطة العيادة',
 			'cancelAppointmentTitle' => 'إلغاء الموعد',
 			'cancelAppointmentMessage' => 'هل أنت متأكد من رغبتك في إلغاء هذا الموعد؟',
+			'confirm' => 'تأكيد',
 			'appointmentCancelledSuccess' => 'تم إلغاء الموعد بنجاح',
 			'noUpcomingAppointments' => 'لا توجد مواعيد قادمة',
 			'noCompletedAppointments' => 'لا توجد مواعيد مكتملة',
@@ -686,9 +681,9 @@ extension on TranslationsAr {
 			'appointmentNotCompleted' => 'يمكن تقييم المواعيد المكتملة فقط',
 			'alreadyReviewed' => 'لقد قمت بتقييم هذا الموعد بالفعل',
 			'availability' => 'المواعيد المتاحة',
-			'confirmActivateDoctor' => 'هل أنت متأكد من تفعيل هذا الطبيب؟',
-			'confirmDeactivateDoctor' => 'هل أنت متأكد من إلغاء تفعيل هذا الطبيب؟',
-			'doctorStatusUpdated' => 'تم تحديث حالة الطبيب',
+			'notSet' => 'غير محدد',
+			'activateDoctorTitle' => 'تفعيل الطبيب',
+			'deactivateDoctorTitle' => 'إلغاء تفعيل الطبيب',
 			'doctorAvailability' => 'جدول مواعيد الطبيب',
 			'workingDays' => 'أيام العمل',
 			'daysEnabled' => ({required Object count}) => '${count} أيام مفعّلة',
@@ -707,6 +702,7 @@ extension on TranslationsAr {
 			'saveChanges' => 'حفظ التغييرات',
 			'clinicAddressAr' => 'عنوان العيادة (عربي)',
 			'clinicAddressEn' => 'عنوان العيادة (إنجليزي)',
+			'clinicLocation' => 'موقع العيادة',
 			'tapMapToSetLocation' => 'اضغط في أي مكان على الخريطة لتحديد دبوس موقع العيادة',
 			'clinicAddressArRequired' => 'يرجى إدخال عنوان العيادة بالعربية',
 			'clinicAddressEnRequired' => 'يرجى إدخال عنوان العيادة بالإنجليزية',
@@ -716,6 +712,7 @@ extension on TranslationsAr {
 			'adminProfileUpdatedSuccess' => 'تم تحديث ملف المسؤول وبيانات العيادة بنجاح',
 			'all' => 'الكل',
 			'patientNameLabel' => ({required Object name}) => 'المريض: ${name}',
+			'doctorWithNameLabel' => ({required Object name}) => 'الطبيب: ${name}',
 			'noAppointmentsFound' => 'لا توجد مواعيد',
 			'markCompleted' => 'تحديد كمكتمل',
 			'markCompletedTitle' => 'تحديد الموعد كمكتمل',
@@ -741,6 +738,7 @@ extension on TranslationsAr {
 			'doctorNameEnLabel' => 'اسم الطبيب (إنجليزي)',
 			'doctorAvailabilitySubtitle' => 'حدد أيام العمل وساعات العمل الأسبوعية ومدة الكشف',
 			'slotsPerDay' => ({required Object count}) => '${count} موعد في اليوم',
+			'perSlot' => ({required Object duration}) => '${duration} لكل موعد',
 			_ => null,
 		};
 	}

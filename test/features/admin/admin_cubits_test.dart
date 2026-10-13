@@ -11,7 +11,6 @@ import 'package:doctor_hunt/apps/features/admin/create_doctor/data/repositories/
 import 'package:doctor_hunt/apps/features/admin/create_doctor/presentation/controller/cubit/create_doctor_cubit.dart';
 import 'package:doctor_hunt/apps/features/admin/create_doctor/presentation/controller/cubit/create_doctor_state.dart';
 import 'package:doctor_hunt/apps/features/admin/doctor_details/presentation/controller/cubit/admin_doctor_details_cubit.dart';
-import 'package:doctor_hunt/apps/features/admin/doctors/data/service/admin_doctor_service.dart';
 
 void main() {
   test('AdminDoctorsCubit emits doctors from the Firestore stream', () async {
@@ -26,7 +25,7 @@ void main() {
 
     await cubit.load();
     streamController.add(const [
-      DoctorModel(id: 'doctor-1', name: 'Dr. One', specialty: 'Dentist'),
+      DoctorModel(id: 'doctor-1', nameEn: 'Dr. One', specialtyEn: 'Dentist'),
     ]);
     await states;
 
@@ -77,32 +76,40 @@ void main() {
     'AdminDoctorDetailsCubit streams updates and toggles active state',
     () async {
       final streamController = StreamController<DoctorModel?>();
-      final service = _FakeAdminDoctorService(streamController.stream);
+      final repository = _FakeAdminDoctorsRepository(
+        const Stream.empty(),
+        doctorStream: streamController.stream,
+      );
       const initialDoctor = DoctorModel(
         id: 'doc-1',
-        name: 'Dr. Gregory House',
-        specialty: 'Diagnostics',
+        nameEn: 'Dr. Gregory House',
+        specialtyEn: 'Diagnostics',
         isActive: true,
         consultationFee: 100,
       );
 
       final cubit = AdminDoctorDetailsCubit(
         initialDoctor: initialDoctor,
-        doctorService: service,
+        repository: repository,
       );
 
       expect(cubit.state.doctor.id, 'doc-1');
       expect(cubit.state.doctor.name, 'Dr. Gregory House');
 
-      final updateDoctor = initialDoctor.copyWith(consultationFee: 150);
-      streamController.add(updateDoctor);
+      streamController.add(
+        const DoctorModel(
+          id: 'doc-1',
+          nameEn: 'Dr. Gregory House',
+          consultationFee: 150,
+        ),
+      );
       await Future<void>.delayed(const Duration(milliseconds: 50));
 
       expect(cubit.state.doctor.consultationFee, 150);
 
-      await cubit.toggleActive(false);
-      expect(service.activeChanges, [('doc-1', false)]);
-      expect(cubit.state.doctor.isActive, false);
+      final toggled = await cubit.toggleActive(false);
+      expect(toggled, isTrue);
+      expect(repository.activeChanges, [('doc-1', false)]);
 
       await cubit.close();
       await streamController.close();
@@ -110,29 +117,21 @@ void main() {
   );
 }
 
-class _FakeAdminDoctorService extends Fake implements AdminDoctorService {
-  _FakeAdminDoctorService(this.doctorStream);
+class _FakeAdminDoctorsRepository implements AdminDoctorsRepository {
+  _FakeAdminDoctorsRepository(
+    this.doctorsStream, {
+    this.doctorStream = const Stream.empty(),
+  });
 
+  final Stream<List<DoctorModel>> doctorsStream;
   final Stream<DoctorModel?> doctorStream;
   final activeChanges = <(String, bool)>[];
 
   @override
-  Stream<DoctorModel?> streamDoctor(String id) => doctorStream;
-
-  @override
-  Future<void> setActive(String id, bool isActive) async {
-    activeChanges.add((id, isActive));
-  }
-}
-
-class _FakeAdminDoctorsRepository implements AdminDoctorsRepository {
-  _FakeAdminDoctorsRepository(this.doctorsStream);
-
-  final Stream<List<DoctorModel>> doctorsStream;
-  final activeChanges = <(String, bool)>[];
-
-  @override
   Stream<List<DoctorModel>> streamDoctors() => doctorsStream;
+
+  @override
+  Stream<DoctorModel?> streamDoctor(String id) => doctorStream;
 
   @override
   Future<List<SpecialtyModel>> fetchSpecialties() async => const [

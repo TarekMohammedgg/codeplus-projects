@@ -26,27 +26,16 @@ class DateSelectorList extends StatelessWidget {
     super.key,
     required this.selectedDate,
     required this.bookableDates,
-    required this.slotsCount,
+    required this.slotsByDate,
     required this.isLoadingSlots,
-    this.slotsCountByDate = const {},
-    this.onSelectDate,
+    required this.onSelectDate,
   });
 
   final DateTime selectedDate;
   final List<DateTime> bookableDates;
-  final int slotsCount;
+  final Map<DateTime, List<DateTime>> slotsByDate;
   final bool isLoadingSlots;
-  final Map<DateTime, int> slotsCountByDate;
-  final ValueChanged<DateTime>? onSelectDate;
-
-  int? _findSlotsCount(DateTime date) {
-    for (final entry in slotsCountByDate.entries) {
-      if (DateUtils.isSameDay(entry.key, date)) {
-        return entry.value;
-      }
-    }
-    return null;
-  }
+  final ValueChanged<DateTime> onSelectDate;
 
   @override
   Widget build(BuildContext context) {
@@ -66,28 +55,21 @@ class DateSelectorList extends StatelessWidget {
           final isSelected = DateUtils.isSameDay(date, selectedDate);
           final dayLabel = formatBookingDayLabel(context, date);
 
-          final count = isSelected ? slotsCount : _findSlotsCount(date);
-
+          final slots = slotsByDate[date];
           final String subtitle;
-          if (isSelected && isLoadingSlots && count == 0) {
+          if (slots == null && isLoadingSlots) {
             subtitle = context.tr.loadingEllipsis;
-          } else if (count != null) {
-            if (count > 0) {
-              subtitle = context.tr.slotsAvailable(count: count);
-            } else {
-              subtitle = context.tr.noSlotsAvailable;
-            }
+          } else if (slots == null || slots.isEmpty) {
+            subtitle = context.tr.noSlotsAvailable;
           } else {
-            subtitle = isLoadingSlots
-                ? context.tr.loadingEllipsis
-                : context.tr.noSlotsAvailable;
+            subtitle = context.tr.slotsAvailable(count: slots.length);
           }
 
           return Material(
             color: isSelected ? AppColors.primary : AppColors.surface,
             borderRadius: borderRadius,
             child: InkWell(
-              onTap: () => onSelectDate?.call(date),
+              onTap: () => onSelectDate(date),
               borderRadius: borderRadius,
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 11),

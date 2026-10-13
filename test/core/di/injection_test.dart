@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -21,10 +22,7 @@ import 'package:doctor_hunt/apps/features/patient/favorites/data/repositories/fa
 import 'package:doctor_hunt/apps/features/patient/favorites/data/service/favorites_service.dart';
 import 'package:doctor_hunt/apps/features/patient/favorites/presentation/controller/cubit/favorites_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/data/repositories/doctor_repository.dart';
-import 'package:doctor_hunt/apps/features/patient/find_doctors/data/service/find_doctors_service.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/controller/cubit/find_doctors_cubit.dart';
-import 'package:doctor_hunt/apps/features/patient/home/data/repositories/home_repository.dart';
-import 'package:doctor_hunt/apps/features/patient/home/data/service/home_service.dart';
 import 'package:doctor_hunt/apps/features/patient/home/presentation/controller/cubit/home_cubit.dart';
 
 import '../../helpers/test_fakes.dart';
@@ -48,14 +46,13 @@ void main() {
     test('registers Firebase dependencies as lazy singletons', () {
       expect(getIt.isRegistered<FirebaseAuth>(), isTrue);
       expect(getIt.isRegistered<FirebaseFirestore>(), isTrue);
+      expect(getIt.isRegistered<Dio>(), isTrue);
     });
 
     test('registers all core and feature services as lazy singletons', () {
       expect(getIt.isRegistered<AppPreferencesService>(), isTrue);
       expect(getIt.isRegistered<AuthService>(), isTrue);
       expect(getIt.isRegistered<DoctorService>(), isTrue);
-      expect(getIt.isRegistered<HomeService>(), isTrue);
-      expect(getIt.isRegistered<FindDoctorsService>(), isTrue);
       expect(getIt.isRegistered<SpecialtyService>(), isTrue);
       expect(getIt.isRegistered<AdminDoctorService>(), isTrue);
       expect(getIt.isRegistered<CloudinaryUploadService>(), isTrue);
@@ -68,7 +65,6 @@ void main() {
     test('registers all repositories', () {
       expect(getIt.isRegistered<AuthRepository>(), isTrue);
       expect(getIt.isRegistered<DoctorRepository>(), isTrue);
-      expect(getIt.isRegistered<HomeRepository>(), isTrue);
       expect(getIt.isRegistered<AdminDoctorsRepository>(), isTrue);
       expect(getIt.isRegistered<CreateDoctorRepository>(), isTrue);
       expect(getIt.isRegistered<FavoritesRepository>(), isTrue);

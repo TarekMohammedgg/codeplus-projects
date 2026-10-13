@@ -14,11 +14,15 @@ import '../../../helpers/test_fakes.dart';
 
 List<DoctorModel> testFindDoctors() {
   return const [
-    DoctorModel(id: 'doc_1', name: 'Dr. Shruti Kedia', specialty: 'Dentist'),
+    DoctorModel(
+      id: 'doc_1',
+      nameEn: 'Dr. Shruti Kedia',
+      specialtyEn: 'Dentist',
+    ),
     DoctorModel(
       id: 'doc_5',
-      name: 'Dr. Fillerup Grab',
-      specialty: 'Medicine Specialist',
+      nameEn: 'Dr. Fillerup Grab',
+      specialtyEn: 'Medicine Specialist',
     ),
   ];
 }

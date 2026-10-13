@@ -23,14 +23,8 @@ class AppointmentDetailsRepositoryImpl implements AppointmentDetailsRepository {
   final SpecialtyService specialtyService;
 
   @override
-  Future<String?> fetchSpecialtyName(String? specialtyId) async {
-    if (specialtyId == null || specialtyId.isEmpty) return null;
-    final specialties = await specialtyService.fetchActiveSpecialties();
-    return specialties
-        .where((s) => s.id == specialtyId)
-        .firstOrNull
-        ?.localizedName;
-  }
+  Future<String?> fetchSpecialtyName(String? specialtyId) =>
+      specialtyService.fetchSpecialtyName(specialtyId);
 
   @override
   Stream<ClinicModel?> watchClinic() => clinicService.streamClinic();

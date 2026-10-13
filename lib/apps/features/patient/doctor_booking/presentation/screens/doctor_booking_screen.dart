@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:doctor_hunt/apps/core/di/injection.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
@@ -23,54 +22,39 @@ import 'package:doctor_hunt/generated/style_atoms.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class DoctorBookingScreen extends StatelessWidget {
-  const DoctorBookingScreen({
-    super.key,
-    required this.doctor,
-    this.initialTime,
-  });
+  const DoctorBookingScreen({super.key, required this.doctor});
 
   final DoctorModel doctor;
-  final DateTime? initialTime;
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => getIt<BookingCubit>()..init(doctor, now: initialTime),
-      child: Scaffold(
-        backgroundColor: AppColors.background,
-        appBar: AppBar(
-          leadingWidth: 50,
-          leading: AppBackButton.leading(
-            onTap: () {
-              if (context.canPop()) {
-                context.pop();
-              } else {
-                const HomeRoute().go(context);
-              }
-            },
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      appBar: AppBar(
+        leadingWidth: 50,
+        leading: AppBackButton.leading(
+          onTap: () =>
+              context.canPop() ? context.pop() : const HomeRoute().go(context),
+        ),
+        titleSpacing: 19,
+        title: Text(context.tr.selectTime, style: context.medium18TextMain),
+      ),
+      body: BlocBuilder<BookingCubit, BookingState>(
+        builder: (context, state) => switch (state) {
+          BookingUnavailable() => AppEmptyState(
+            title: context.tr.doctorNoAvailableTimes,
           ),
-          titleSpacing: 19,
-          title: Text(context.tr.selectTime, style: context.medium18TextMain),
-        ),
-        body: BlocBuilder<BookingCubit, BookingState>(
-          builder: (context, state) {
-            if (state is BookingUnavailable) {
-              return AppEmptyState(title: context.tr.doctorNoAvailableTimes);
-            }
-
-            return _BookingLoadedBody(
-              state: state is BookingLoaded
-                  ? state
-                  : BookingLoaded(
-                      doctor: doctor,
-                      bookableDates: const [],
-                      selectedDate: DateTime.now(),
-                      slots: const [],
-                      isLoadingSlots: true,
-                    ),
-            );
-          },
-        ),
+          BookingLoadFailure() => AppEmptyState(title: context.tr.serviceError),
+          BookingLoaded() => _BookingLoadedBody(state: state),
+          _ => _BookingLoadedBody(
+            state: BookingLoaded(
+              doctor: doctor,
+              bookableDates: const [],
+              selectedDate: DateTime.now(),
+              isLoadingSlots: true,
+            ),
+          ),
+        },
       ),
     );
   }
@@ -87,11 +71,7 @@ class _BookingLoadedBody extends StatelessWidget {
     final isFavorite = context.select<FavoritesCubit, bool>(
       (c) => c.state.isFavorite(state.doctor.id),
     );
-    final morningSlots = state.slots.where((s) => s.hour < 12).toList();
-    final afternoonSlots = state.slots
-        .where((s) => s.hour >= 12 && s.hour < 17)
-        .toList();
-    final eveningSlots = state.slots.where((s) => s.hour >= 17).toList();
+    final slots = state.slots;
 
     return Column(
       children: [
@@ -115,8 +95,7 @@ class _BookingLoadedBody extends StatelessWidget {
                 DateSelectorList(
                   selectedDate: state.selectedDate,
                   bookableDates: state.bookableDates,
-                  slotsCount: state.slots.length,
-                  slotsCountByDate: state.slotsCountByDate,
+                  slotsByDate: state.slotsByDate,
                   isLoadingSlots: state.isLoadingSlots,
                   onSelectDate: cubit.selectDate,
                 ),
@@ -128,71 +107,16 @@ class _BookingLoadedBody extends StatelessWidget {
                   ),
                 ),
                 34.verticalSpace,
-                if (state.isLoadingSlots)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Skeletonizer(
-                      child: TimeSlotsSection(
-                        title: BoneMock.title,
-                        slots: List.generate(
-                          8,
-                          (index) => state.selectedDate.add(
-                            Duration(minutes: 30 * index),
-                          ),
-                        ),
-                      ),
-                    ),
-                  )
-                else if (state.slots.isEmpty)
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: NoSlotsAvailableSection(),
-                  )
-                else
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (morningSlots.isNotEmpty) ...[
-                          TimeSlotsSection(
-                            title:
-                                '${context.tr.morningSlots} ${context.tr.slotsCount(count: morningSlots.length)}',
-                            slots: morningSlots,
-                            selectedSlot: state.selectedSlot,
-                            onSelectSlot: cubit.selectSlot,
-                          ),
-                          21.verticalSpace,
-                        ],
-                        if (afternoonSlots.isNotEmpty) ...[
-                          TimeSlotsSection(
-                            title:
-                                '${context.tr.afternoonSlots} ${context.tr.slotsCount(count: afternoonSlots.length)}',
-                            slots: afternoonSlots,
-                            selectedSlot: state.selectedSlot,
-                            onSelectSlot: cubit.selectSlot,
-                          ),
-                          21.verticalSpace,
-                        ],
-                        if (eveningSlots.isNotEmpty) ...[
-                          TimeSlotsSection(
-                            title:
-                                '${context.tr.eveningSlots} ${context.tr.slotsCount(count: eveningSlots.length)}',
-                            slots: eveningSlots,
-                            selectedSlot: state.selectedSlot,
-                            onSelectSlot: cubit.selectSlot,
-                          ),
-                          21.verticalSpace,
-                        ],
-                      ],
-                    ),
-                  ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: _buildSlots(context),
+                ),
                 24.verticalSpace,
               ],
             ),
           ),
         ),
-        if (state.slots.isNotEmpty)
+        if (slots.isNotEmpty)
           SafeArea(
             top: false,
             child: Padding(
@@ -203,24 +127,65 @@ class _BookingLoadedBody extends StatelessWidget {
                 borderRadius: BorderRadius.circular(6),
                 onPressed: state.selectedSlot == null
                     ? null
-                    : () async {
-                        final draft = BookingDraft(
-                          doctor: state.doctor,
-                          startAt: state.selectedSlot!,
-                        );
-                        final slotTaken = await BookingReviewRoute(
-                          draft,
-                        ).push<bool>(context);
-                        if (slotTaken == true && context.mounted) {
-                          context.read<BookingCubit>().selectDate(
-                            state.selectedDate,
-                          );
-                        }
-                      },
+                    : () => _openReview(context),
               ),
             ),
           ),
       ],
     );
+  }
+
+  Widget _buildSlots(BuildContext context) {
+    if (state.isLoadingSlots) {
+      return Skeletonizer(
+        child: TimeSlotsSection(
+          title: BoneMock.title,
+          slots: List.generate(
+            8,
+            (index) => state.selectedDate.add(Duration(minutes: 30 * index)),
+          ),
+        ),
+      );
+    }
+
+    final slots = state.slots;
+    if (slots.isEmpty) return const NoSlotsAvailableSection();
+
+    final slotGroups = [
+      (context.tr.morningSlots, slots.where((s) => s.hour < 12).toList()),
+      (
+        context.tr.afternoonSlots,
+        slots.where((s) => s.hour >= 12 && s.hour < 17).toList(),
+      ),
+      (context.tr.eveningSlots, slots.where((s) => s.hour >= 17).toList()),
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (final (title, groupSlots) in slotGroups)
+          if (groupSlots.isNotEmpty) ...[
+            TimeSlotsSection(
+              title:
+                  '$title ${context.tr.slotsCount(count: groupSlots.length)}',
+              slots: groupSlots,
+              selectedSlot: state.selectedSlot,
+              onSelectSlot: context.read<BookingCubit>().selectSlot,
+            ),
+            21.verticalSpace,
+          ],
+      ],
+    );
+  }
+
+  Future<void> _openReview(BuildContext context) async {
+    final draft = BookingDraft(
+      doctor: state.doctor,
+      startAt: state.selectedSlot!,
+    );
+    final slotTaken = await BookingReviewRoute(draft).push<bool>(context);
+    if (slotTaken == true && context.mounted) {
+      context.read<BookingCubit>().selectDate(state.selectedDate);
+    }
   }
 }

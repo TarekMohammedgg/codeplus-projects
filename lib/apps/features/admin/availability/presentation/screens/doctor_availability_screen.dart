@@ -29,22 +29,28 @@ class DoctorAvailabilityScreen extends StatelessWidget {
     return time.format(context);
   }
 
+  Future<void> _pickTime(
+    BuildContext context,
+    int minutes,
+    ValueChanged<int> onPicked,
+  ) async {
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay(hour: minutes ~/ 60, minute: minutes % 60),
+    );
+    if (picked != null) onPicked(picked.hour * 60 + picked.minute);
+  }
+
   void _showErrorSnackBar(BuildContext context, DoctorAvailabilityState state) {
-    String message;
-    switch (state.validationError) {
-      case AvailabilityValidationError.emptyDays:
-        message = context.tr.errorSelectAtLeastOneDay;
-        break;
-      case AvailabilityValidationError.invalidTimeRange:
-        message = context.tr.errorStartMustBeBeforeEnd;
-        break;
-      case AvailabilityValidationError.slotTooLong:
-        message = context.tr.errorSlotDurationTooLong;
-        break;
-      case AvailabilityValidationError.none:
-        message = state.errorMessage ?? '';
-        break;
-    }
+    final message = switch (state.validationError) {
+      AvailabilityValidationError.emptyDays =>
+        context.tr.errorSelectAtLeastOneDay,
+      AvailabilityValidationError.invalidTimeRange =>
+        context.tr.errorStartMustBeBeforeEnd,
+      AvailabilityValidationError.slotTooLong =>
+        context.tr.errorSlotDurationTooLong,
+      AvailabilityValidationError.none => state.errorMessage ?? '',
+    };
 
     if (message.isNotEmpty) context.showErrorSnackBar(message);
   }
@@ -105,20 +111,12 @@ class DoctorAvailabilityScreen extends StatelessWidget {
                                   child: SizedBox(
                                     width: 56,
                                     height: 56,
-                                    child: doctor.imageUrl != null
-                                        ? DoctorImage(
-                                            imageUrl: doctor.imageUrl!,
-                                            width: 56,
-                                            height: 56,
-                                            fit: BoxFit.cover,
-                                            fallback:
-                                                const DoctorAvatarPlaceholder(
-                                                  size: 56,
-                                                ),
-                                          )
-                                        : const DoctorAvatarPlaceholder(
-                                            size: 56,
-                                          ),
+                                    child: DoctorImage(
+                                      imageUrl: doctor.imageUrl,
+                                      fallback: const DoctorAvatarPlaceholder(
+                                        size: 56,
+                                      ),
+                                    ),
                                   ),
                                 ),
                                 16.horizontalSpace,
@@ -174,15 +172,11 @@ class DoctorAvailabilityScreen extends StatelessWidget {
                               selected: isSelected,
                               showCheckmark: false,
                               label: Text(dayLabel),
-                              labelStyle: TextStyle(
-                                color: isSelected
-                                    ? Colors.white
-                                    : AppColors.textMain,
-                                fontWeight: isSelected
-                                    ? FontWeight.w600
-                                    : FontWeight.w500,
-                                fontSize: 13,
-                              ),
+                              labelStyle: isSelected
+                                  ? context.semiBold13.copyWith(
+                                      color: AppColors.white,
+                                    )
+                                  : context.medium13TextMain,
                               backgroundColor: AppColors.surface,
                               selectedColor: AppColors.primary,
                               shape: RoundedRectangleBorder(
@@ -220,21 +214,11 @@ class DoctorAvailabilityScreen extends StatelessWidget {
                                   context,
                                   state.startMinutes,
                                 ),
-                                onTap: () async {
-                                  final initial = TimeOfDay(
-                                    hour: state.startMinutes ~/ 60,
-                                    minute: state.startMinutes % 60,
-                                  );
-                                  final picked = await showTimePicker(
-                                    context: context,
-                                    initialTime: initial,
-                                  );
-                                  if (picked != null) {
-                                    cubit.setStartMinutes(
-                                      picked.hour * 60 + picked.minute,
-                                    );
-                                  }
-                                },
+                                onTap: () => _pickTime(
+                                  context,
+                                  state.startMinutes,
+                                  cubit.setStartMinutes,
+                                ),
                               ),
                             ),
                             12.horizontalSpace,
@@ -246,21 +230,11 @@ class DoctorAvailabilityScreen extends StatelessWidget {
                                   context,
                                   state.endMinutes,
                                 ),
-                                onTap: () async {
-                                  final initial = TimeOfDay(
-                                    hour: state.endMinutes ~/ 60,
-                                    minute: state.endMinutes % 60,
-                                  );
-                                  final picked = await showTimePicker(
-                                    context: context,
-                                    initialTime: initial,
-                                  );
-                                  if (picked != null) {
-                                    cubit.setEndMinutes(
-                                      picked.hour * 60 + picked.minute,
-                                    );
-                                  }
-                                },
+                                onTap: () => _pickTime(
+                                  context,
+                                  state.endMinutes,
+                                  cubit.setEndMinutes,
+                                ),
                               ),
                             ),
                           ],
@@ -365,7 +339,7 @@ class DoctorAvailabilityScreen extends StatelessWidget {
                                     ),
                                     4.verticalSpace,
                                     Text(
-                                      '${_formatTime(context, state.startMinutes)} – ${_formatTime(context, state.endMinutes)} (${context.tr.minutesDuration(count: state.slotMinutes)} / slot)',
+                                      '${_formatTime(context, state.startMinutes)} – ${_formatTime(context, state.endMinutes)} (${context.tr.perSlot(duration: context.tr.minutesDuration(count: state.slotMinutes))})',
                                       style: context.regular12TextSecondary,
                                     ),
                                   ],

@@ -3,10 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:doctor_hunt/apps/core/models/specialty_model.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
-import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/utils/doctor_sort.dart';
 import 'package:doctor_hunt/apps/features/patient/favorites/presentation/controller/cubit/favorites_cubit.dart';
-import 'package:doctor_hunt/apps/features/patient/home/data/models/doctor_model.dart';
+import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/features/patient/home/presentation/widgets/doctor_category_section.dart';
 import 'package:doctor_hunt/apps/features/patient/home/presentation/widgets/popular_doctor_section.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
@@ -33,19 +32,9 @@ class DoctorsData extends StatelessWidget {
       children: [
         const SizedBox(height: 24),
         DoctorCategorySection(
-          categories: specialties
-              .map(
-                (specialty) => DoctorCategoryItem(
-                  id: specialty.id,
-                  name: specialty.localizedName,
-                  icon: specialty.icon,
-                  primaryColor: AppColors.primary,
-                  secondaryColor: AppColors.primaryLight,
-                ),
-              )
-              .toList(),
-          onCategoryTap: (category) =>
-              FindDoctorsRoute(specialtyId: category.id).push(context),
+          specialties: specialties,
+          onSpecialtyTap: (specialty) =>
+              FindDoctorsRoute(specialtyId: specialty.id).push(context),
         ),
         const SizedBox(height: 24),
         DoctorsSection(

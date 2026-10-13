@@ -94,7 +94,6 @@ class AppSearchBarState extends State<AppSearchBar> {
   Widget build(BuildContext context) {
     final hint = widget.hintText ?? tr.searchDoctorHint;
 
-
     Widget searchBar = SearchBar(
       controller: effectiveController,
       focusNode: effectiveFocusNode,

@@ -37,12 +37,7 @@ class _AdminAppointmentDetailsScreenState
 
   Future<void> _confirmMarkCompleted() async {
     final cubit = context.read<AppointmentDetailsCubit>();
-    final confirmed = await showAppConfirmDialog(
-      context,
-      title: context.tr.markCompletedTitle,
-      message: context.tr.markCompletedMessage,
-      confirmLabel: context.tr.confirm,
-    );
+    final confirmed = await showMarkCompletedDialog(context);
     if (!confirmed || !mounted) return;
 
     setState(() => _isMarkingCompleted = true);
@@ -62,13 +57,7 @@ class _AdminAppointmentDetailsScreenState
 
   Future<void> _confirmCancel() async {
     final cubit = context.read<AppointmentDetailsCubit>();
-    final confirmed = await showAppConfirmDialog(
-      context,
-      title: context.tr.cancelAppointmentTitle,
-      message: context.tr.cancelAppointmentMessage,
-      confirmLabel: context.tr.confirm,
-      confirmColor: AppColors.error,
-    );
+    final confirmed = await showCancelAppointmentDialog(context);
     if (!confirmed || !mounted) return;
 
     setState(() => _isCancelling = true);

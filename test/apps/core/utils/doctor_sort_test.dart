@@ -6,19 +6,19 @@ import 'package:doctor_hunt/apps/core/utils/doctor_sort.dart';
 void main() {
   const mostReviewed = DoctorModel(
     id: 'most-reviewed',
-    name: 'A',
-    specialty: 'S',
+    nameEn: 'A',
+    specialtyEn: 'S',
     rating: 4.2,
     reviewsCount: 40,
   );
   const bestRated = DoctorModel(
     id: 'best-rated',
-    name: 'B',
-    specialty: 'S',
+    nameEn: 'B',
+    specialtyEn: 'S',
     rating: 4.9,
     reviewsCount: 8,
   );
-  const newDoctor = DoctorModel(id: 'new', name: 'C', specialty: 'S');
+  const newDoctor = DoctorModel(id: 'new', nameEn: 'C', specialtyEn: 'S');
   const doctors = [newDoctor, bestRated, mostReviewed];
 
   test('sortByPopularity orders by reviewsCount desc', () {
@@ -36,15 +36,15 @@ void main() {
   test('sortByPopularity breaks reviewsCount ties by rating', () {
     const lowRated = DoctorModel(
       id: 'low',
-      name: 'D',
-      specialty: 'S',
+      nameEn: 'D',
+      specialtyEn: 'S',
       rating: 3,
       reviewsCount: 10,
     );
     const highRated = DoctorModel(
       id: 'high',
-      name: 'E',
-      specialty: 'S',
+      nameEn: 'E',
+      specialtyEn: 'S',
       rating: 5,
       reviewsCount: 10,
     );

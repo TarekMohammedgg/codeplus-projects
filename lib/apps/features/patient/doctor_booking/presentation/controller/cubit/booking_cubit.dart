@@ -1,9 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/apps/core/models/clinic_model.dart';
-import 'package:doctor_hunt/apps/core/models/doctor_availability.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/core/utils/slot_generator.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_booking/data/models/booking_draft.dart';
@@ -12,233 +10,89 @@ import 'package:doctor_hunt/apps/features/patient/doctor_booking/data/repositori
 import 'booking_state.dart';
 
 class BookingCubit extends Cubit<BookingState> {
-  BookingCubit({required this.repository, this.clock})
-    : super(const BookingInitial());
+  BookingCubit({required this.repository}) : super(const BookingInitial());
 
   final BookingRepository repository;
-  final DateTime Function()? clock;
-  DoctorModel? _doctor;
-  DateTime? _overrideNow;
-
-  DateTime get _now =>
-      _overrideNow ?? (clock != null ? clock!() : DateTime.now());
+  DateTime _now = DateTime.now();
 
   Future<void> init(DoctorModel doctor, {DateTime? now}) async {
-    _overrideNow = now;
-    _doctor = doctor;
+    _now = now ?? DateTime.now();
     final availability = doctor.availability;
-    if (availability == null) {
-      emit(const BookingUnavailable());
-      return;
-    }
-
-    final currentTime = _now;
-    final dates = bookableDates(availability, currentTime);
+    final dates = availability == null
+        ? const <DateTime>[]
+        : bookableDates(availability, _now);
     if (dates.isEmpty) {
       emit(const BookingUnavailable());
       return;
     }
 
-    final firstDate = dates.first;
     emit(
       BookingLoaded(
         doctor: doctor,
         bookableDates: dates,
-        selectedDate: firstDate,
-        slots: const [],
+        selectedDate: dates.first,
         isLoadingSlots: true,
       ),
     );
-
-    await _loadSlotsForDates(
-      doctor: doctor,
-      availability: availability,
-      dates: dates,
-      selectedDate: firstDate,
-      currentTime: currentTime,
-    );
-  }
-
-  Future<void> _loadSlotsForDates({
-    required DoctorModel doctor,
-    required DoctorAvailability availability,
-    required List<DateTime> dates,
-    required DateTime selectedDate,
-    required DateTime currentTime,
-  }) async {
     try {
-      final slotsCountMap = <DateTime, int>{};
-      List<DateTime> selectedDateSlots = [];
-
-      final results = await Future.wait(
-        dates.map((date) async {
-          try {
-            final booked = await repository.fetchBookedStarts(doctor.id, date);
-            final daySlots = slotsForDay(
-              availability,
-              date,
-              booked,
-              currentTime,
-            );
-            return MapEntry(
-              DateTime(date.year, date.month, date.day),
-              daySlots,
-            );
-          } catch (error, stackTrace) {
-            addError(error, stackTrace);
-            return MapEntry(
-              DateTime(date.year, date.month, date.day),
-              <DateTime>[],
-            );
-          }
-        }),
+      final slots = await Future.wait(
+        dates.map((date) => _fetchSlots(doctor, date)),
       );
-
-      for (final entry in results) {
-        slotsCountMap[entry.key] = entry.value.length;
-        if (DateUtils.isSameDay(entry.key, selectedDate)) {
-          selectedDateSlots = entry.value;
-        }
-      }
-
-      DateTime? nextDate;
-      if (selectedDateSlots.isEmpty) {
-        final currentIndex = dates.indexWhere(
-          (d) => DateUtils.isSameDay(d, selectedDate),
-        );
-        final startIndex = currentIndex == -1 ? 0 : currentIndex + 1;
-        for (var i = startIndex; i < dates.length; i++) {
-          final candidateDate = dates[i];
-          final count =
-              slotsCountMap[DateTime(
-                candidateDate.year,
-                candidateDate.month,
-                candidateDate.day,
-              )] ??
-              0;
-          if (count > 0) {
-            nextDate = candidateDate;
-            break;
-          }
-        }
-      }
-
+      if (isClosed) return;
       emit(
         BookingLoaded(
           doctor: doctor,
           bookableDates: dates,
-          selectedDate: selectedDate,
-          slots: selectedDateSlots,
-          slotsCountByDate: slotsCountMap,
-          selectedSlot: null,
-          nextAvailableDate: nextDate,
-          isLoadingSlots: false,
+          selectedDate: dates.first,
+          slotsByDate: Map.fromIterables(dates, slots),
         ),
       );
     } catch (error, stackTrace) {
-      addError(error, stackTrace);
-      emit(
-        BookingLoaded(
-          doctor: doctor,
-          bookableDates: dates,
-          selectedDate: selectedDate,
-          slots: const [],
-          slotsCountByDate: const {},
-          selectedSlot: null,
-          isLoadingSlots: false,
-        ),
-      );
+      _emitLoadFailure(error, stackTrace);
     }
   }
 
-  Future<void> selectDate(DateTime date, {DateTime? now}) async {
-    final doctor = _doctor;
-    final availability = doctor?.availability;
-    if (doctor == null || availability == null) return;
-
-    final currentTime = now ?? _now;
-    final currentState = state;
-    final dates = currentState is BookingLoaded
-        ? currentState.bookableDates
-        : bookableDates(availability, currentTime);
-    final currentCounts = currentState is BookingLoaded
-        ? currentState.slotsCountByDate
-        : const <DateTime, int>{};
+  Future<void> selectDate(DateTime date) async {
+    final current = state;
+    if (current is! BookingLoaded) return;
 
     emit(
       BookingLoaded(
-        doctor: doctor,
-        bookableDates: dates,
+        doctor: current.doctor,
+        bookableDates: current.bookableDates,
         selectedDate: date,
-        slots: const [],
-        slotsCountByDate: currentCounts,
-        selectedSlot: null,
+        slotsByDate: current.slotsByDate,
         isLoadingSlots: true,
       ),
     );
-
     try {
-      final booked = await repository.fetchBookedStarts(doctor.id, date);
-      final slots = slotsForDay(availability, date, booked, currentTime);
-
-      final updatedCounts = Map<DateTime, int>.from(currentCounts);
-      updatedCounts[DateTime(date.year, date.month, date.day)] = slots.length;
-
-      DateTime? nextDate;
-      if (slots.isEmpty) {
-        final currentIndex = dates.indexWhere(
-          (d) => DateUtils.isSameDay(d, date),
-        );
-        final startIndex = currentIndex == -1 ? 0 : currentIndex + 1;
-        for (var i = startIndex; i < dates.length; i++) {
-          final candidateDate = dates[i];
-          final count =
-              updatedCounts[DateTime(
-                candidateDate.year,
-                candidateDate.month,
-                candidateDate.day,
-              )] ??
-              0;
-          if (count > 0) {
-            nextDate = candidateDate;
-            break;
-          }
-        }
-        nextDate ??= await _findNextDateWithSlots(
-          fromDate: date,
-          dates: dates,
-          availability: availability,
-          doctorId: doctor.id,
-          now: currentTime,
-        );
-      }
-
+      final slots = await _fetchSlots(current.doctor, date);
+      if (isClosed) return;
       emit(
         BookingLoaded(
-          doctor: doctor,
-          bookableDates: dates,
+          doctor: current.doctor,
+          bookableDates: current.bookableDates,
           selectedDate: date,
-          slots: slots,
-          slotsCountByDate: updatedCounts,
-          selectedSlot: null,
-          nextAvailableDate: nextDate,
-          isLoadingSlots: false,
+          slotsByDate: {...current.slotsByDate, date: slots},
         ),
       );
     } catch (error, stackTrace) {
-      addError(error, stackTrace);
-      emit(
-        BookingLoaded(
-          doctor: doctor,
-          bookableDates: dates,
-          selectedDate: date,
-          slots: const [],
-          slotsCountByDate: currentCounts,
-          selectedSlot: null,
-          isLoadingSlots: false,
-        ),
-      );
+      _emitLoadFailure(error, stackTrace);
     }
+  }
+
+  void selectSlot(DateTime slot) {
+    final current = state;
+    if (current is! BookingLoaded) return;
+    emit(
+      BookingLoaded(
+        doctor: current.doctor,
+        bookableDates: current.bookableDates,
+        selectedDate: current.selectedDate,
+        slotsByDate: current.slotsByDate,
+        selectedSlot: slot,
+      ),
+    );
   }
 
   Stream<ClinicModel?> watchClinic() => repository.watchClinic();
@@ -263,41 +117,14 @@ class BookingCubit extends Cubit<BookingState> {
     }
   }
 
-  void selectSlot(DateTime slot) {
-    final currentState = state;
-    if (currentState is BookingLoaded) {
-      emit(currentState.copyWith(selectedSlot: slot));
-    }
+  Future<List<DateTime>> _fetchSlots(DoctorModel doctor, DateTime day) async {
+    final booked = await repository.fetchBookedStarts(doctor.id, day);
+    return slotsForDay(doctor.availability!, day, booked, _now);
   }
 
-  Future<DateTime?> _findNextDateWithSlots({
-    required DateTime fromDate,
-    required List<DateTime> dates,
-    required DoctorAvailability availability,
-    required String doctorId,
-    required DateTime now,
-  }) async {
-    final currentIndex = dates.indexWhere(
-      (d) => DateUtils.isSameDay(d, fromDate),
-    );
-    final startIndex = currentIndex == -1 ? 0 : currentIndex + 1;
-
-    for (var i = startIndex; i < dates.length; i++) {
-      final candidateDate = dates[i];
-      try {
-        final booked = await repository.fetchBookedStarts(
-          doctorId,
-          candidateDate,
-        );
-        final slots = slotsForDay(availability, candidateDate, booked, now);
-        if (slots.isNotEmpty) {
-          return candidateDate;
-        }
-      } catch (error, stackTrace) {
-        addError(error, stackTrace);
-        continue;
-      }
-    }
-    return null;
+  void _emitLoadFailure(Object error, StackTrace stackTrace) {
+    if (isClosed) return;
+    addError(error, stackTrace);
+    emit(const BookingLoadFailure());
   }
 }

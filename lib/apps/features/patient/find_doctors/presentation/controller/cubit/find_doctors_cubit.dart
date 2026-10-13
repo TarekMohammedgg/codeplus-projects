@@ -15,6 +15,7 @@ class FindDoctorsCubit extends Cubit<FindDoctorsState> {
     String? query,
     String? specialtyId,
     DoctorSort? sort,
+    bool favoritesOnly = false,
   }) async {
     if (state is FindDoctorsLoading) return;
 
@@ -31,6 +32,7 @@ class FindDoctorsCubit extends Cubit<FindDoctorsState> {
           specialties: specialties,
           query: query ?? '',
           specialtyId: specialtyId,
+          favoritesOnly: favoritesOnly,
           sort: sort ?? DoctorSort.popular,
         ),
       );
@@ -61,9 +63,6 @@ class FindDoctorsCubit extends Cubit<FindDoctorsState> {
   void selectSpecialty(String? specialtyId) =>
       _update((state) => state.copyWith(specialtyId: () => specialtyId));
 
-  void toggleFavoritesOnly() =>
-      _update((state) => state.copyWith(favoritesOnly: !state.favoritesOnly));
-
   void sortBy(DoctorSort sort) =>
       _update((state) => state.copyWith(sort: sort));
 
@@ -77,18 +76,12 @@ List<DoctorModel> visibleDoctors(
   FindDoctorsSuccess state,
   Set<String> favoriteIds,
 ) {
-  final query = state.query.trim().toLowerCase();
   final filtered = state.doctors.where((doctor) {
     if (state.specialtyId != null && doctor.specialtyId != state.specialtyId) {
       return false;
     }
     if (state.favoritesOnly && !favoriteIds.contains(doctor.id)) return false;
-    if (query.isEmpty) return true;
-    return [
-      doctor.name,
-      doctor.nameAr,
-      doctor.nameEn,
-    ].any((name) => name?.toLowerCase().contains(query) ?? false);
+    return doctor.nameContains(state.query);
   }).toList();
   return sortDoctors(filtered, state.sort);
 }

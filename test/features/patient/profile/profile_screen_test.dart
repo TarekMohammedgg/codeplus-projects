@@ -1,6 +1,8 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:doctor_hunt/apps/features/patient/profile/presentation/controller/cubit/profile_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
@@ -87,9 +89,7 @@ void main() {
         tester.view.resetDevicePixelRatio();
       });
 
-      await tester.pumpWidget(
-        buildTestApp(ProfileScreen(profile: testProfile)),
-      );
+      await tester.pumpWidget(buildTestApp(_profileScreen(testProfile)));
       await tester.pumpAndSettle();
 
       expect(find.byType(ProfileHeaderSection), findsOneWidget);
@@ -131,9 +131,7 @@ void main() {
       phone: '',
     );
 
-    await tester.pumpWidget(
-      buildTestApp(const ProfileScreen(profile: emptyProfile)),
-    );
+    await tester.pumpWidget(buildTestApp(_profileScreen(emptyProfile)));
     await tester.pumpAndSettle();
 
     expect(find.text(tr.notSet), findsWidgets);
@@ -155,7 +153,7 @@ void main() {
         routes: [
           GoRoute(
             path: '/profile',
-            builder: (context, state) => ProfileScreen(profile: testProfile),
+            builder: (context, state) => _profileScreen(testProfile),
           ),
           GoRoute(
             path: '/profile/edit',
@@ -209,13 +207,21 @@ void main() {
         tester.view.resetDevicePixelRatio();
       });
 
-      await tester.pumpWidget(
-        buildTestApp(ProfileScreen(profile: testProfile)),
-      );
+      await tester.pumpWidget(buildTestApp(_profileScreen(testProfile)));
       await tester.pumpAndSettle();
 
       expect(tester.takeException(), isNull);
       expect(find.byType(ProfileScreen), findsOneWidget);
     },
+  );
+}
+
+Widget _profileScreen(UserProfileModel profile) {
+  return BlocProvider<ProfileCubit>(
+    create: (_) => ProfileCubit(
+      repository: FakeProfileRepository(profile: profile),
+      authRepository: FakeAuthRepository(),
+    )..init(uid: profile.uid),
+    child: const ProfileScreen(),
   );
 }

@@ -4,66 +4,53 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
 import 'package:doctor_hunt/apps/core/models/specialty_model.dart';
-import 'package:doctor_hunt/apps/features/common/auth/data/service/auth_service.dart';
 import 'package:doctor_hunt/apps/features/patient/appointments/data/repositories/patient_appointments_repository.dart';
+import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'patient_appointments_state.dart';
 
 export 'patient_appointments_state.dart';
 
 class PatientAppointmentsCubit extends Cubit<PatientAppointmentsState> {
-  PatientAppointmentsCubit({
-    required this.repository,
-    required this.authService,
-  }) : super(const PatientAppointmentsLoading());
+  PatientAppointmentsCubit({required this.repository})
+    : super(const PatientAppointmentsLoading());
 
   final PatientAppointmentsRepository repository;
-  final AuthService authService;
 
   StreamSubscription<List<AppointmentModel>>? _subscription;
-  Map<String, SpecialtyModel> _specialtiesMap = {};
 
   Future<void> init() async {
-    final user = authService.currentUser;
-    if (user == null) {
-      emit(const PatientAppointmentsError('User not authenticated'));
+    final userId = repository.currentUserId;
+    if (userId == null) {
+      emit(PatientAppointmentsError(tr.userNotFoundError));
       return;
     }
 
     emit(const PatientAppointmentsLoading());
 
+    var specialties = <String, SpecialtyModel>{};
     try {
-      final specialties = await repository.getSpecialties();
-      _specialtiesMap = {for (final s in specialties) s.id: s};
+      specialties = await repository.fetchSpecialties();
     } catch (error, stackTrace) {
       addError(error, stackTrace);
     }
 
     await _subscription?.cancel();
     _subscription = repository
-        .watchPatientAppointments(user.uid)
+        .watchPatientAppointments(userId)
         .listen(
-          (appointments) {
-            emit(
-              PatientAppointmentsLoaded(
-                grouped: groupAppointmentsByStatus(appointments),
-                specialties: _specialtiesMap,
-              ),
-            );
-          },
-          onError: (error) {
-            final appEx = AppException.from(error);
-            emit(PatientAppointmentsError(appEx.message));
-          },
+          (appointments) => emit(
+            PatientAppointmentsLoaded(
+              grouped: groupAppointmentsByStatus(appointments),
+              specialties: specialties,
+            ),
+          ),
+          onError: (Object error) =>
+              emit(PatientAppointmentsError(AppException.from(error).message)),
         );
   }
 
-  Future<void> cancelAppointment(AppointmentModel appointment) async {
-    try {
-      await repository.cancelAppointment(appointment);
-    } catch (e) {
-      throw AppException.from(e);
-    }
-  }
+  Future<void> cancelAppointment(AppointmentModel appointment) =>
+      repository.cancelAppointment(appointment);
 
   @override
   Future<void> close() {

@@ -35,6 +35,7 @@ class AdminAppointmentsCubit extends Cubit<AdminAppointmentsState> {
             appointments: appointments,
           ),
         );
+        _loadPatientPhotos(appointments);
       },
       onError: (error) {
         final ex = AppException.from(error);
@@ -45,6 +46,26 @@ class AdminAppointmentsCubit extends Cubit<AdminAppointmentsState> {
           ),
         );
       },
+    );
+  }
+
+  Future<void> _loadPatientPhotos(List<AppointmentModel> appointments) async {
+    final ids = appointments
+        .map((a) => a.patientId)
+        .where((id) => !state.patientPhotos.containsKey(id))
+        .toSet();
+    if (ids.isEmpty) return;
+    final photos = await Future.wait(
+      ids.map((id) => repository.getPatientPhoto(id).catchError((_) => null)),
+    );
+    if (isClosed) return;
+    emit(
+      state.copyWith(
+        patientPhotos: {
+          ...state.patientPhotos,
+          ...Map.fromIterables(ids, photos),
+        },
+      ),
     );
   }
 

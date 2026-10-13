@@ -31,7 +31,10 @@ class _FakeSpecialtyService extends Fake implements SpecialtyService {
   final List<SpecialtyModel> specialties;
 
   @override
-  Future<List<SpecialtyModel>> fetchActiveSpecialties() async => specialties;
+  Future<String?> fetchSpecialtyName(String? specialtyId) async => specialties
+      .where((specialty) => specialty.id == specialtyId)
+      .firstOrNull
+      ?.localizedName;
 }
 
 class _FakeAppointmentService extends Fake implements AppointmentService {

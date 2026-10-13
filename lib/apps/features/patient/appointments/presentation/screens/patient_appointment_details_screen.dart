@@ -36,13 +36,7 @@ class _PatientAppointmentDetailsScreenState
 
   Future<void> _confirmCancel() async {
     final cubit = context.read<AppointmentDetailsCubit>();
-    final confirmed = await showAppConfirmDialog(
-      context,
-      title: context.tr.cancelAppointmentTitle,
-      message: context.tr.cancelAppointmentMessage,
-      confirmLabel: context.tr.confirm,
-      confirmColor: AppColors.error,
-    );
+    final confirmed = await showCancelAppointmentDialog(context);
     if (!confirmed || !mounted) return;
 
     setState(() => _isCancelling = true);

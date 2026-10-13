@@ -18,15 +18,15 @@ void main() {
 
   final testDoctorWithAvail = DoctorModel(
     id: 'doc-1',
-    name: 'Dr. Test',
-    specialty: 'Cardiologist',
+    nameEn: 'Dr. Test',
+    specialtyEn: 'Cardiologist',
     availability: availability,
   );
 
   final testDoctorNoAvail = const DoctorModel(
     id: 'doc-2',
-    name: 'Dr. No Avail',
-    specialty: 'Cardiologist',
+    nameEn: 'Dr. No Avail',
+    specialtyEn: 'Cardiologist',
   );
 
   group('BookingCubit', () {
@@ -54,8 +54,7 @@ void main() {
         expect(loaded.doctor.id, 'doc-1');
         expect(loaded.bookableDates.isNotEmpty, isTrue);
         expect(loaded.slots.length, 3);
-        expect(loaded.slotsCountByDate.isNotEmpty, isTrue);
-        expect(loaded.slotsCountByDate[DateTime(2026, 3, 2)], 3);
+        expect(loaded.slotsByDate[DateTime(2026, 3, 2)], hasLength(3));
         expect(loaded.selectedSlot, isNull);
 
         await cubit.close();
@@ -78,24 +77,41 @@ void main() {
     });
 
     test(
-      'when selected date is fully booked, finds nextAvailableDate',
+      'a fully booked day has no slots while the next day keeps its slots',
       () async {
-        final fullyBookedDay = [
-          DateTime(2026, 3, 2, 9, 0),
-          DateTime(2026, 3, 2, 10, 0),
-          DateTime(2026, 3, 2, 11, 0),
-        ];
-        final repo = FakeBookingRepository(booked: fullyBookedDay);
+        // arrange
+        final repo = FakeBookingRepository(
+          booked: [
+            DateTime(2026, 3, 2, 9, 0),
+            DateTime(2026, 3, 2, 10, 0),
+            DateTime(2026, 3, 2, 11, 0),
+          ],
+        );
         final cubit = BookingCubit(repository: repo);
-        final testNow = DateTime(2026, 3, 2, 8, 0);
 
-        await cubit.init(testDoctorWithAvail, now: testNow);
+        // act
+        await cubit.init(testDoctorWithAvail, now: DateTime(2026, 3, 2, 8, 0));
 
+        // assert
         final loaded = cubit.state as BookingLoaded;
         expect(loaded.slots, isEmpty);
-        expect(loaded.nextAvailableDate, isNotNull);
-        expect(loaded.nextAvailableDate!.day, 3);
+        expect(loaded.slotsByDate[DateTime(2026, 3, 3)], hasLength(3));
+        await cubit.close();
+      },
+    );
 
+    test(
+      'emits BookingLoadFailure when booked slots cannot be loaded',
+      () async {
+        // arrange
+        final repo = FakeBookingRepository(fetchError: StateError('offline'));
+        final cubit = BookingCubit(repository: repo);
+
+        // act
+        await cubit.init(testDoctorWithAvail, now: DateTime(2026, 3, 2, 8, 0));
+
+        // assert
+        expect(cubit.state, isA<BookingLoadFailure>());
         await cubit.close();
       },
     );

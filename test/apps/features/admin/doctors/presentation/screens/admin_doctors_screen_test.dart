@@ -19,14 +19,14 @@ void main() {
     List<DoctorModel> doctors = const [
       DoctorModel(
         id: 'dentist',
-        name: 'Dr. Sara',
-        specialty: 'Dentistry',
+        nameEn: 'Dr. Sara',
+        specialtyEn: 'Dentistry',
         specialtyId: 'dentistry',
       ),
       DoctorModel(
         id: 'cardiologist',
-        name: 'Dr. Omar',
-        specialty: 'Cardiology',
+        nameEn: 'Dr. Omar',
+        specialtyEn: 'Cardiology',
         specialtyId: 'cardiology',
         isActive: false,
       ),

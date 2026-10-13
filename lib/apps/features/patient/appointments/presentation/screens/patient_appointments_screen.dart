@@ -6,6 +6,7 @@ import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
+import 'package:doctor_hunt/apps/core/models/specialty_model.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_empty_state.dart';
@@ -47,13 +48,7 @@ class _PatientAppointmentsScreenState extends State<PatientAppointmentsScreen>
     BuildContext context,
     AppointmentModel appointment,
   ) async {
-    final confirmed = await showAppConfirmDialog(
-      context,
-      title: context.tr.cancelAppointmentTitle,
-      message: context.tr.cancelAppointmentMessage,
-      confirmLabel: context.tr.confirm,
-      confirmColor: AppColors.error,
-    );
+    final confirmed = await showCancelAppointmentDialog(context);
 
     if (confirmed && context.mounted) {
       try {
@@ -65,8 +60,7 @@ class _PatientAppointmentsScreenState extends State<PatientAppointmentsScreen>
         }
       } catch (e) {
         if (context.mounted) {
-          final appEx = AppException.from(e);
-          context.showErrorSnackBar(appEx.message);
+          context.showErrorSnackBar(AppException.from(e).message);
         }
       }
     }
@@ -222,7 +216,7 @@ class _AppointmentsList extends StatelessWidget {
   });
 
   final List<AppointmentModel> appointments;
-  final Map<String, dynamic> specialties;
+  final Map<String, SpecialtyModel> specialties;
   final String emptyTitle;
   final Widget? emptyAction;
   final ValueChanged<AppointmentModel>? onCancel;
@@ -243,15 +237,10 @@ class _AppointmentsList extends StatelessWidget {
       itemCount: appointments.length,
       itemBuilder: (context, index) {
         final appointment = appointments[index];
-        final specialty = specialties[appointment.specialtyId];
-        final specialtyName = specialty != null
-            ? (specialty.localizedName as String? ?? '')
-            : null;
-
         return PatientAppointmentCard(
           key: Key('patient_appointment_card_${appointment.id}'),
           appointment: appointment,
-          specialtyName: specialtyName,
+          specialtyName: specialties[appointment.specialtyId]?.localizedName,
           onViewDetails: () =>
               PatientAppointmentDetailsRoute(appointment).push(context),
           onCancel: onCancel != null ? () => onCancel!(appointment) : null,

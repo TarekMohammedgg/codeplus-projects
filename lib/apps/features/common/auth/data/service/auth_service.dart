@@ -57,6 +57,10 @@ class AuthService {
     }
   }
 
+  Future<void> requestEmailChange(String newEmail) async {
+    await currentUser?.verifyBeforeUpdateEmail(newEmail);
+  }
+
   bool? _isAdmin;
 
   Stream<String?> userIdChanges() =>

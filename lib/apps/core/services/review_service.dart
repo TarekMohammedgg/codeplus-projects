@@ -6,14 +6,12 @@ import 'package:doctor_hunt/apps/core/models/review_model.dart';
 import 'package:doctor_hunt/apps/core/utils/rating_utils.dart';
 
 class ReviewService {
-  ReviewService({required FirebaseFirestore firestore})
-    // ignore: prefer_initializing_formals
-    : _firestore = firestore;
+  ReviewService({required this.firestore});
 
-  final FirebaseFirestore _firestore;
+  final FirebaseFirestore firestore;
 
   CollectionReference<Map<String, dynamic>> get _reviews =>
-      _firestore.collection('reviews');
+      firestore.collection('reviews');
 
   Future<List<ReviewModel>> fetchRecentReviews(
     String doctorId, {
@@ -44,15 +42,13 @@ class ReviewService {
         appointment.isReviewed) {
       throw const ReviewNotAllowedException();
     }
-    final doctorRef = _firestore
-        .collection('doctors')
-        .doc(appointment.doctorId);
+    final doctorRef = firestore.collection('doctors').doc(appointment.doctorId);
     final reviewRef = _reviews.doc(appointment.id);
-    final appointmentRef = _firestore
+    final appointmentRef = firestore
         .collection('appointments')
         .doc(appointment.id);
 
-    await _firestore.runTransaction((transaction) async {
+    await firestore.runTransaction((transaction) async {
       final doctorData = (await transaction.get(doctorRef)).data();
       final count = (doctorData?['reviewsCount'] as num?)?.toInt() ?? 0;
       final average = (doctorData?['rating'] as num?)?.toDouble() ?? 0;

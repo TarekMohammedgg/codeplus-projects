@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:doctor_hunt/apps/core/widgets/favorite_heart_icon.dart';
-import 'package:doctor_hunt/apps/core/extensions/doctor_accent_color.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
@@ -100,7 +99,7 @@ class PopularDoctorCard extends StatelessWidget {
                   height: 125,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: doctor.accentColor.withValues(alpha: 0.12),
+                    color: AppColors.primary.withValues(alpha: 0.12),
                     borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(16),
                       topRight: Radius.circular(16),

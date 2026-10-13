@@ -1,8 +1,11 @@
 import 'package:skeletonizer/skeletonizer.dart';
 
 import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
+import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/core/models/review_model.dart';
 
+DoctorModel skeletonDoctor() =>
+    DoctorModel(id: '', nameEn: BoneMock.fullName, specialtyEn: BoneMock.name);
 
 AppointmentModel skeletonAppointment() => AppointmentModel(
   id: '',

@@ -16,7 +16,7 @@ import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/widg
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_list_skeleton.dart';
-import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
+import 'package:doctor_hunt/apps/core/widgets/skeleton_placeholders.dart';
 
 class FindDoctorsScreen extends StatefulWidget {
   const FindDoctorsScreen({
@@ -149,7 +149,7 @@ class _FindDoctorsScreenState extends State<FindDoctorsScreen> {
         padding: const EdgeInsets.fromLTRB(20, 14, 20, 32),
         spacing: 14,
         itemBuilder: (_) => FindDoctorCard(
-          doctor: DoctorModel.placeholder(),
+          doctor: skeletonDoctor(),
           isFavorite: false,
           onFavoriteTap: () {},
           onBookNow: () {},

@@ -27,28 +27,11 @@ class PatientSettingsScreen extends StatefulWidget {
 }
 
 class _PatientSettingsScreenState extends State<PatientSettingsScreen> {
-  bool _notificationsEnabled = true;
-  bool _hasLoadedProfile = false;
-
-  void _syncNotifications(ProfileState state) {
-    if (_hasLoadedProfile || state is! ProfileLoaded) return;
-    _hasLoadedProfile = true;
-    _notificationsEnabled = state.profile.notificationsEnabled;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _syncNotifications(context.read<ProfileCubit>().state);
-  }
-
   Future<void> _toggleNotifications(bool value) async {
-    setState(() => _notificationsEnabled = value);
     try {
       await context.read<ProfileCubit>().setNotifications(value);
     } catch (e) {
       if (!mounted) return;
-      setState(() => _notificationsEnabled = !value);
       context.showErrorSnackBar(AppException.from(e).message);
     }
   }
@@ -80,8 +63,7 @@ class _PatientSettingsScreenState extends State<PatientSettingsScreen> {
         leading: AppBackButton.leading(onTap: () => context.pop()),
         title: Text(context.tr.settings, style: context.bold18TextMain),
       ),
-      body: BlocConsumer<ProfileCubit, ProfileState>(
-        listener: (_, state) => setState(() => _syncNotifications(state)),
+      body: BlocBuilder<ProfileCubit, ProfileState>(
         builder: (context, state) => _buildSettingsContent(
           context,
           state is ProfileLoaded ? state.profile : null,
@@ -165,7 +147,7 @@ class _PatientSettingsScreenState extends State<PatientSettingsScreen> {
             iconBackgroundColor: AppColors.settingsNotificationBadge,
             title: tr.notifications,
             trailing: Switch.adaptive(
-              value: _notificationsEnabled,
+              value: profile?.notificationsEnabled ?? true,
               activeTrackColor: AppColors.switchActive,
               onChanged: _toggleNotifications,
             ),

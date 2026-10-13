@@ -6,6 +6,8 @@ import 'package:doctor_hunt/apps/features/admin/doctors/data/service/admin_docto
 abstract interface class AdminDoctorsRepository {
   Stream<List<DoctorModel>> streamDoctors();
 
+  Stream<DoctorModel?> streamDoctor(String id);
+
   Future<List<SpecialtyModel>> fetchSpecialties();
 
   Future<void> setActive(String id, bool isActive);
@@ -24,6 +26,10 @@ class FirebaseAdminDoctorsRepository implements AdminDoctorsRepository {
   Stream<List<DoctorModel>> streamDoctors() {
     return doctorService.streamDoctors();
   }
+
+  @override
+  Stream<DoctorModel?> streamDoctor(String id) =>
+      doctorService.streamDoctor(id);
 
   @override
   Future<List<SpecialtyModel>> fetchSpecialties() {

@@ -37,8 +37,7 @@ class OnboardingScreenState extends State<OnboardingScreen> {
 
   void onNext() {
     if (currentIndex == onboardingPages().length - 1) {
-      widget.preferencesService.setHasSeenOnboarding(true);
-      const RoleSelectionRoute().go(context);
+      onSkip();
       return;
     }
 

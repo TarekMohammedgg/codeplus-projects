@@ -35,6 +35,7 @@ class AdminAppointmentsState {
     this.appointments = const [],
     this.selectedTab = AdminAppointmentTab.all,
     this.specialties = const {},
+    this.patientPhotos = const {},
     this.errorMessage,
   });
 
@@ -42,6 +43,8 @@ class AdminAppointmentsState {
   final List<AppointmentModel> appointments;
   final AdminAppointmentTab selectedTab;
   final Map<String, SpecialtyModel> specialties;
+
+  final Map<String, String?> patientPhotos;
   final String? errorMessage;
 
   List<AppointmentModel> get currentAppointments =>
@@ -52,6 +55,7 @@ class AdminAppointmentsState {
     List<AppointmentModel>? appointments,
     AdminAppointmentTab? selectedTab,
     Map<String, SpecialtyModel>? specialties,
+    Map<String, String?>? patientPhotos,
     String? errorMessage,
   }) {
     return AdminAppointmentsState(
@@ -59,6 +63,7 @@ class AdminAppointmentsState {
       appointments: appointments ?? this.appointments,
       selectedTab: selectedTab ?? this.selectedTab,
       specialties: specialties ?? this.specialties,
+      patientPhotos: patientPhotos ?? this.patientPhotos,
       errorMessage: errorMessage,
     );
   }
@@ -71,6 +76,7 @@ class AdminAppointmentsState {
           listEquals(other.appointments, appointments) &&
           other.selectedTab == selectedTab &&
           mapEquals(other.specialties, specialties) &&
+          mapEquals(other.patientPhotos, patientPhotos) &&
           other.errorMessage == errorMessage;
 
   @override
@@ -79,6 +85,7 @@ class AdminAppointmentsState {
     Object.hashAll(appointments),
     selectedTab,
     Object.hashAll(specialties.entries),
+    Object.hashAll(patientPhotos.entries),
     errorMessage,
   );
 }

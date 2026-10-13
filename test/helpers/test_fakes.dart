@@ -16,8 +16,6 @@ import 'package:doctor_hunt/apps/features/patient/doctor_booking/data/models/boo
 import 'package:doctor_hunt/apps/features/patient/doctor_details/data/repositories/doctor_details_repository.dart';
 import 'package:doctor_hunt/apps/features/patient/favorites/data/repositories/favorites_repository.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/data/repositories/doctor_repository.dart';
-import 'package:doctor_hunt/apps/features/patient/home/data/models/home_data.dart';
-import 'package:doctor_hunt/apps/features/patient/home/data/repositories/home_repository.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_booking/data/repositories/booking_repository.dart';
 import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
 import 'package:doctor_hunt/apps/features/patient/appointments/data/repositories/patient_appointments_repository.dart';
@@ -215,42 +213,31 @@ class FakeDoctorRepository implements DoctorRepository {
   }
 }
 
-class FakeHomeRepository implements HomeRepository {
-  FakeHomeRepository({this.data, this.error});
-
-  final HomeData? data;
-  final Object? error;
-
-  @override
-  Future<HomeData> fetchHomeData() async {
-    if (error != null) throw error!;
-    return data ??
-        const HomeData(
-          popularDoctors: [],
-          topRatedDoctors: [],
-          specialties: [],
-        );
-  }
-}
-
 class FakeAdminDoctorsRepository implements AdminDoctorsRepository {
   FakeAdminDoctorsRepository({
     this.doctors = const [],
     this.specialties = const [],
+    this.setActiveError,
   });
 
   final List<DoctorModel> doctors;
   final List<SpecialtyModel> specialties;
+  final Object? setActiveError;
   final activeChanges = <(String id, bool isActive)>[];
 
   @override
   Stream<List<DoctorModel>> streamDoctors() => Stream.value(doctors);
 
   @override
+  Stream<DoctorModel?> streamDoctor(String id) =>
+      Stream.value(doctors.where((doctor) => doctor.id == id).firstOrNull);
+
+  @override
   Future<List<SpecialtyModel>> fetchSpecialties() async => specialties;
 
   @override
   Future<void> setActive(String id, bool isActive) async {
+    if (setActiveError != null) throw setActiveError!;
     activeChanges.add((id, isActive));
   }
 }
@@ -391,9 +378,14 @@ class FakeProfileRepository implements ProfileRepository {
 }
 
 class FakeBookingRepository implements BookingRepository {
-  FakeBookingRepository({this.booked = const [], this.bookError});
+  FakeBookingRepository({
+    this.booked = const [],
+    this.bookError,
+    this.fetchError,
+  });
 
   final List<DateTime> booked;
+  final Object? fetchError;
 
   Object? bookError;
   final bookedDrafts = <BookingDraft>[];
@@ -401,6 +393,7 @@ class FakeBookingRepository implements BookingRepository {
 
   @override
   Future<Set<DateTime>> fetchBookedStarts(String doctorId, DateTime day) async {
+    if (fetchError != null) throw fetchError!;
     return booked
         .where(
           (b) => b.year == day.year && b.month == day.month && b.day == day.day,
@@ -446,6 +439,7 @@ class FakePatientAppointmentsRepository
     this.specialties = const [],
     this.streamError,
     this.cancelError,
+    this.currentUserId = 'test_uid',
   }) {
     _controller = StreamController<List<AppointmentModel>>.broadcast();
   }
@@ -454,6 +448,8 @@ class FakePatientAppointmentsRepository
   final List<SpecialtyModel> specialties;
   final Object? streamError;
   final Object? cancelError;
+  @override
+  final String? currentUserId;
   late final StreamController<List<AppointmentModel>> _controller;
   final List<AppointmentModel> cancelledAppointments = [];
 
@@ -477,5 +473,7 @@ class FakePatientAppointmentsRepository
   }
 
   @override
-  Future<List<SpecialtyModel>> getSpecialties() async => specialties;
+  Future<Map<String, SpecialtyModel>> fetchSpecialties() async => {
+    for (final specialty in specialties) specialty.id: specialty,
+  };
 }

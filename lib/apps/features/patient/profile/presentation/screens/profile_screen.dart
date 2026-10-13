@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:doctor_hunt/apps/core/di/injection.dart';
 import 'package:doctor_hunt/apps/core/extensions/context_extensions.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/utils/formatters.dart';
@@ -17,44 +16,35 @@ import 'package:doctor_hunt/generated/style_atoms.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key, this.profile});
-
-  final UserProfileModel? profile;
+  const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => getIt<ProfileCubit>()..init(initialProfile: profile),
-      child: Scaffold(
-        backgroundColor: AppColors.background,
-        body: BlocBuilder<ProfileCubit, ProfileState>(
-          builder: (context, state) {
-            return switch (state) {
-              ProfileInitial() || ProfileLoading() => Skeletonizer(
-                child: _ProfileContent(
-                  profile: UserProfileModel(
-                    name: BoneMock.fullName,
-                    email: BoneMock.email,
-                    phone: BoneMock.phone,
-                  ),
-                ),
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      body: BlocBuilder<ProfileCubit, ProfileState>(
+        builder: (context, state) => switch (state) {
+          ProfileInitial() || ProfileLoading() => Skeletonizer(
+            child: _ProfileContent(
+              profile: UserProfileModel(
+                name: BoneMock.fullName,
+                email: BoneMock.email,
+                phone: BoneMock.phone,
               ),
-              ProfileError(:final message) => Center(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Text(
-                    message,
-                    style: context.semiBold16TextSecondary,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
+            ),
+          ),
+          ProfileError(:final message) => Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Text(
+                message,
+                style: context.semiBold16TextSecondary,
+                textAlign: TextAlign.center,
               ),
-              ProfileLoaded(:final profile) => _ProfileContent(
-                profile: profile,
-              ),
-            };
-          },
-        ),
+            ),
+          ),
+          ProfileLoaded(:final profile) => _ProfileContent(profile: profile),
+        },
       ),
     );
   }

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
 import 'package:doctor_hunt/apps/features/patient/rate_doctor/data/repositories/rate_doctor_repository.dart';
+import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
 enum RateDoctorStatus { initial, submitting, success, failure }
 
@@ -95,7 +96,9 @@ class RateDoctorCubit extends Cubit<RateDoctorState> {
       emit(
         state.copyWith(
           status: RateDoctorStatus.failure,
-          errorMessage: 'Only completed, unreviewed appointments can be rated.',
+          errorMessage: appointment.isReviewed
+              ? tr.alreadyReviewed
+              : tr.appointmentNotCompleted,
         ),
       );
       return;
@@ -105,7 +108,7 @@ class RateDoctorCubit extends Cubit<RateDoctorState> {
       emit(
         state.copyWith(
           status: RateDoctorStatus.failure,
-          errorMessage: 'Please select a rating from 1 to 5 stars.',
+          errorMessage: tr.selectRatingRequired,
         ),
       );
       return;

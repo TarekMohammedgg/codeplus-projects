@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_avatar_placeholder.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_image.dart';
 
-/// Circular profile photo; shows a person icon when there is no photo.
 class AppProfileAvatar extends StatelessWidget {
   const AppProfileAvatar({
     super.key,

@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_availability.dart';
 import 'package:doctor_hunt/apps/features/admin/availability/data/repositories/doctor_availability_repository.dart';
 import 'package:doctor_hunt/apps/features/admin/availability/presentation/controller/cubit/doctor_availability_state.dart';
@@ -12,78 +13,33 @@ class DoctorAvailabilityCubit extends Cubit<DoctorAvailabilityState> {
   final DoctorAvailabilityRepository repository;
 
   void toggleDay(int weekday) {
-    final current = Set<int>.from(state.workingDays);
-    if (current.contains(weekday)) {
-      current.remove(weekday);
-    } else {
-      current.add(weekday);
-    }
-    emit(
-      state.copyWith(
-        workingDays: current,
-        status: DoctorAvailabilityStatus.initial,
-        errorMessage: null,
-      ),
-    );
+    final days = Set<int>.from(state.workingDays);
+    if (!days.remove(weekday)) days.add(weekday);
+    _edit(state.copyWith(workingDays: days));
   }
 
-  void setWorkingDays(Set<int> days) {
-    emit(
-      state.copyWith(
-        workingDays: days,
-        status: DoctorAvailabilityStatus.initial,
-        errorMessage: null,
-      ),
-    );
-  }
+  void setWorkingDays(Set<int> days) =>
+      _edit(state.copyWith(workingDays: days));
 
-  void setStartMinutes(int minutes) {
-    emit(
-      state.copyWith(
-        startMinutes: minutes,
-        status: DoctorAvailabilityStatus.initial,
-        errorMessage: null,
-      ),
-    );
-  }
+  void setStartMinutes(int minutes) =>
+      _edit(state.copyWith(startMinutes: minutes));
 
-  void setEndMinutes(int minutes) {
-    emit(
-      state.copyWith(
-        endMinutes: minutes,
-        status: DoctorAvailabilityStatus.initial,
-        errorMessage: null,
-      ),
-    );
-  }
+  void setEndMinutes(int minutes) => _edit(state.copyWith(endMinutes: minutes));
 
-  void setSlotMinutes(int minutes) {
-    emit(
-      state.copyWith(
-        slotMinutes: minutes,
-        status: DoctorAvailabilityStatus.initial,
-        errorMessage: null,
-      ),
-    );
+  void setSlotMinutes(int minutes) =>
+      _edit(state.copyWith(slotMinutes: minutes));
+
+  void _edit(DoctorAvailabilityState edited) {
+    emit(edited.copyWith(status: DoctorAvailabilityStatus.initial));
   }
 
   Future<bool> saveAvailability(String doctorId) async {
     if (!state.isValid) {
-      emit(
-        state.copyWith(
-          status: DoctorAvailabilityStatus.failure,
-          errorMessage: _getValidationErrorMessage(state.validationError),
-        ),
-      );
+      emit(state.copyWith(status: DoctorAvailabilityStatus.failure));
       return false;
     }
 
-    emit(
-      state.copyWith(
-        status: DoctorAvailabilityStatus.saving,
-        errorMessage: null,
-      ),
-    );
+    emit(state.copyWith(status: DoctorAvailabilityStatus.saving));
     try {
       await repository.updateAvailability(doctorId, state.toAvailability());
       emit(state.copyWith(status: DoctorAvailabilityStatus.success));
@@ -92,23 +48,10 @@ class DoctorAvailabilityCubit extends Cubit<DoctorAvailabilityState> {
       emit(
         state.copyWith(
           status: DoctorAvailabilityStatus.failure,
-          errorMessage: e.toString(),
+          errorMessage: AppException.from(e).message,
         ),
       );
       return false;
-    }
-  }
-
-  static String _getValidationErrorMessage(AvailabilityValidationError error) {
-    switch (error) {
-      case AvailabilityValidationError.emptyDays:
-        return 'Please select at least one working day';
-      case AvailabilityValidationError.invalidTimeRange:
-        return 'Start time must be before end time';
-      case AvailabilityValidationError.slotTooLong:
-        return 'Slot duration cannot exceed working hours';
-      case AvailabilityValidationError.none:
-        return '';
     }
   }
 }

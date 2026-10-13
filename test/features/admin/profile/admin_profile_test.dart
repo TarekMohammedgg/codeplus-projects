@@ -6,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:latlong2/latlong.dart';
 
 import 'package:doctor_hunt/apps/core/models/clinic_model.dart';
-import 'package:doctor_hunt/apps/core/services/cloudinary_upload_service.dart';
 import 'package:doctor_hunt/apps/features/admin/profile/data/repositories/admin_profile_repository.dart';
 import 'package:doctor_hunt/apps/features/admin/profile/presentation/controller/cubit/admin_profile_cubit.dart';
 import 'package:doctor_hunt/apps/features/admin/profile/presentation/controller/cubit/admin_profile_state.dart';
@@ -17,7 +16,7 @@ import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import '../../../helpers/test_app.dart';
 
 class _FakeAdminProfileRepository implements AdminProfileRepository {
-  UserProfileModel? profileToReturn = const UserProfileModel(
+  UserProfileModel profileToReturn = const UserProfileModel(
     uid: 'admin_123',
     name: 'Admin Boss',
     email: 'admin@hunt.com',
@@ -41,7 +40,7 @@ class _FakeAdminProfileRepository implements AdminProfileRepository {
   LatLng? lastUpdatedLocation;
 
   @override
-  Future<UserProfileModel?> fetchAdminProfile(String uid) async {
+  Future<UserProfileModel> fetchAdminProfile(String uid) async {
     if (shouldThrow) throw Exception('Fetch profile failed');
     return profileToReturn;
   }
@@ -51,6 +50,12 @@ class _FakeAdminProfileRepository implements AdminProfileRepository {
     if (shouldThrow) throw Exception('Fetch clinic failed');
     return clinicToReturn;
   }
+
+  @override
+  Future<String> uploadPhoto({
+    required Uint8List bytes,
+    required String fileName,
+  }) async => 'https://cloudinary.com/uploaded/$fileName';
 
   @override
   Future<void> updateAdminProfileAndClinic({
@@ -73,30 +78,14 @@ class _FakeAdminProfileRepository implements AdminProfileRepository {
   }
 }
 
-class _FakeCloudinaryUploadService extends Fake
-    implements CloudinaryUploadService {
-  @override
-  Future<String> uploadImage({
-    required Uint8List bytes,
-    required String fileName,
-  }) async {
-    return 'https://cloudinary.com/uploaded/$fileName';
-  }
-}
-
 void main() {
   group('AdminProfileCubit', () {
     late _FakeAdminProfileRepository repository;
-    late _FakeCloudinaryUploadService uploadService;
     late AdminProfileCubit cubit;
 
     setUp(() {
       repository = _FakeAdminProfileRepository();
-      uploadService = _FakeCloudinaryUploadService();
-      cubit = AdminProfileCubit(
-        repository: repository,
-        uploadService: uploadService,
-      );
+      cubit = AdminProfileCubit(repository: repository);
     });
 
     test('loadProfile updates state with profile and clinic data', () async {
@@ -161,7 +150,7 @@ void main() {
 
       expect(success, isFalse);
       expect(cubit.state.status, AdminProfileStatus.failure);
-      expect(cubit.state.errorMessage, contains('Update failed'));
+      expect(cubit.state.errorMessage, tr.unexpectedError);
     });
   });
 
@@ -170,10 +159,8 @@ void main() {
       WidgetTester tester,
     ) async {
       final repository = _FakeAdminProfileRepository();
-      final uploadService = _FakeCloudinaryUploadService();
       final cubit = AdminProfileCubit(
         repository: repository,
-        uploadService: uploadService,
         initialState: const AdminProfileState(
           status: AdminProfileStatus.loaded,
           displayName: 'Admin Boss',
@@ -210,10 +197,8 @@ void main() {
       WidgetTester tester,
     ) async {
       final repository = _FakeAdminProfileRepository();
-      final uploadService = _FakeCloudinaryUploadService();
       final cubit = AdminProfileCubit(
         repository: repository,
-        uploadService: uploadService,
         initialState: const AdminProfileState(
           status: AdminProfileStatus.loaded,
           displayName: '',
@@ -247,10 +232,8 @@ void main() {
       'successful save calls repository and displays success SnackBar',
       (WidgetTester tester) async {
         final repository = _FakeAdminProfileRepository();
-        final uploadService = _FakeCloudinaryUploadService();
         final cubit = AdminProfileCubit(
           repository: repository,
-          uploadService: uploadService,
           initialState: const AdminProfileState(
             status: AdminProfileStatus.loaded,
             displayName: 'Admin Boss',

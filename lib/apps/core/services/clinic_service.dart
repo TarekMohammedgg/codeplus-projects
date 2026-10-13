@@ -4,14 +4,12 @@ import 'package:latlong2/latlong.dart';
 import 'package:doctor_hunt/apps/core/models/clinic_model.dart';
 
 class ClinicService {
-  ClinicService({required FirebaseFirestore firestore})
-    // ignore: prefer_initializing_formals
-    : _firestore = firestore;
+  ClinicService({required this.firestore});
 
-  final FirebaseFirestore _firestore;
+  final FirebaseFirestore firestore;
 
   DocumentReference<Map<String, dynamic>> get _settings =>
-      _firestore.collection('clinic').doc('settings');
+      firestore.collection('clinic').doc('settings');
 
   Stream<ClinicModel?> streamClinic() =>
       _settings.snapshots().map((snapshot) => _parse(snapshot.data()));

@@ -29,7 +29,7 @@ void main() {
     final cubit = ProfileCubit(
       repository: FakeProfileRepository(profile: profile),
       authRepository: FakeAuthRepository(),
-    )..init(initialProfile: profile);
+    )..init(uid: 'patient-1');
     addTearDown(cubit.close);
 
     await tester.pumpWidget(

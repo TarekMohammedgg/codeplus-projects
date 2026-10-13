@@ -20,14 +20,6 @@ class TimeSlotsSection extends StatelessWidget {
   final DateTime? selectedSlot;
   final ValueChanged<DateTime>? onSelectSlot;
 
-  bool _isSameSlot(DateTime a, DateTime b) {
-    return a.year == b.year &&
-        a.month == b.month &&
-        a.day == b.day &&
-        a.hour == b.hour &&
-        a.minute == b.minute;
-  }
-
   @override
   Widget build(BuildContext context) {
     if (slots.isEmpty) return const SizedBox.shrink();
@@ -52,8 +44,7 @@ class TimeSlotsSection extends StatelessWidget {
           ),
           itemBuilder: (context, index) {
             final slot = slots[index];
-            final isSelected =
-                selectedSlot != null && _isSameSlot(slot, selectedSlot!);
+            final isSelected = slot == selectedSlot;
             final formattedTime = DateFormat.jm(locale).format(slot);
 
             return Material(

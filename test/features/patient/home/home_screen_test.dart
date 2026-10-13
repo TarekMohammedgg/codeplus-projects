@@ -3,18 +3,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:doctor_hunt/apps/features/patient/favorites/presentation/controller/cubit/favorites_cubit.dart';
-import 'package:doctor_hunt/apps/features/patient/home/data/models/home_data.dart';
 import 'package:doctor_hunt/apps/features/patient/home/presentation/controller/cubit/home_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/home/presentation/screens/patient_home_screen.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_header_section.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_search_bar.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_avatar_placeholder.dart';
-import 'package:doctor_hunt/apps/features/patient/home/data/models/doctor_model.dart';
+import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
+import 'package:doctor_hunt/apps/core/models/specialty_model.dart';
 import 'package:doctor_hunt/apps/features/patient/home/presentation/widgets/doctor_category_section.dart';
 import 'package:doctor_hunt/apps/features/common/bottom_navigation_bar/presentation/widgets/main_bottom_navigation_bar.dart';
 import 'package:doctor_hunt/apps/features/patient/home/presentation/widgets/popular_doctor_section.dart';
-import 'package:doctor_hunt/generated/app_image.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import '../../../helpers/test_app.dart';
 import '../../../helpers/test_fakes.dart';
@@ -38,15 +37,8 @@ void main() {
           BlocProvider<FavoritesCubit>.value(
             value: favoritesCubit,
             child: BlocProvider<HomeCubit>(
-              create: (_) => HomeCubit(
-                repository: FakeHomeRepository(
-                  data: HomeData(
-                    popularDoctors: doctors,
-                    topRatedDoctors: doctors.reversed.toList(),
-                    specialties: const [],
-                  ),
-                ),
-              ),
+              create: (_) =>
+                  HomeCubit(repository: FakeDoctorRepository(doctors: doctors)),
               child: const HomeScreen(),
             ),
           ),
@@ -131,7 +123,7 @@ void main() {
   });
 
   testWidgets(
-    'DoctorCategoryCard renders image when available, falls back to icon, and handles tap properly',
+    'DoctorCategoryCard renders the specialty icon and handles tap properly',
     (WidgetTester tester) async {
       tester.view.physicalSize = const Size(1080, 2400);
       tester.view.devicePixelRatio = 1.0;
@@ -160,16 +152,11 @@ void main() {
       await tester.pump();
 
       final cardiologyCategory = find.byWidgetPredicate(
-        (w) => w is DoctorCategoryCard && w.category.id == 'cat_cardiology',
-      );
-
-      expect(
-        find.descendant(of: cardiologyCategory, matching: find.byType(Image)),
-        findsOneWidget,
+        (w) => w is DoctorCategoryCard && w.specialty.id == 'cardiologist',
       );
 
       final pediatricCategory = find.byWidgetPredicate(
-        (w) => w is DoctorCategoryCard && w.category.id == 'cat_pediatric',
+        (w) => w is DoctorCategoryCard && w.specialty.id == 'pediatrician',
       );
 
       expect(
@@ -379,15 +366,7 @@ void main() {
         GoRoute(
           path: '/home',
           builder: (context, state) => BlocProvider<HomeCubit>(
-            create: (_) => HomeCubit(
-              repository: FakeHomeRepository(
-                data: HomeData(
-                  popularDoctors: const [],
-                  topRatedDoctors: const [],
-                  specialties: const [],
-                ),
-              ),
-            ),
+            create: (_) => HomeCubit(repository: FakeDoctorRepository()),
             child: const HomeScreen(),
           ),
         ),
@@ -441,8 +420,8 @@ Widget testHomeScreen({
                 children: [
                   const SizedBox(height: 24),
                   DoctorCategorySection(
-                    categories: categories(),
-                    onCategoryTap: (_) => onCategoryTap?.call(),
+                    specialties: testSpecialties(),
+                    onSpecialtyTap: (_) => onCategoryTap?.call(),
                   ),
                   if (popularDoctors.isNotEmpty) ...[
                     const SizedBox(height: 24),
@@ -469,75 +448,35 @@ Widget testHomeScreen({
 }
 
 List<DoctorModel> testHomeDoctors() {
-  return [
-    DoctorModel.fromFirestore('doc_5', {
-      'name': 'Dr. Fillerup Grab',
-      'specialtyKey': 'medicine_specialist',
-      'imageUrl': 'https://res.cloudinary.com/diexaortk/image/upload/popular_1',
-      'rating': 4.9,
-      'reviewsCount': 124,
-      'hourlyRate': 30,
-      'isPopular': true,
-      'popularOrder': 1,
-    }),
-    DoctorModel.fromFirestore('doc_6', {
-      'name': 'Dr. Blessing',
-      'specialtyKey': 'dental_specialist',
-      'imageUrl': 'https://res.cloudinary.com/diexaortk/image/upload/popular_2',
-      'isFavorite': true,
-      'isPopular': true,
-      'popularOrder': 2,
-    }),
+  return const [
+    DoctorModel(
+      id: 'doc_5',
+      nameEn: 'Dr. Fillerup Grab',
+      imageUrl: 'https://res.cloudinary.com/diexaortk/image/upload/popular_1',
+      rating: 4.9,
+      reviewsCount: 124,
+    ),
+    DoctorModel(
+      id: 'doc_6',
+      nameEn: 'Dr. Blessing',
+      imageUrl: 'https://res.cloudinary.com/diexaortk/image/upload/popular_2',
+    ),
   ];
 }
 
-List<DoctorCategoryItem> categories() {
-  return [
-    DoctorCategoryItem(
-      id: 'cat_dental',
-      name: tr.dental,
-      image: Assets.assetsDummyDentist,
-      icon: Icons.medical_services_rounded,
-      primaryColor: const Color(0xFF2B7CEE),
-      secondaryColor: const Color(0xFFE9F2FF),
+List<SpecialtyModel> testSpecialties() {
+  return const [
+    SpecialtyModel(
+      id: 'cardiologist',
+      nameAr: 'طبيب قلب',
+      nameEn: 'Cardiologist',
+      iconKey: 'cardiology',
     ),
-    DoctorCategoryItem(
-      id: 'cat_cardiology',
-      name: tr.cardiology,
-      image: Assets.assetsDummyHeart,
-      icon: Icons.favorite_rounded,
-      primaryColor: const Color(0xFF0EBE7E),
-      secondaryColor: const Color(0xFFE8FBF6),
-    ),
-    DoctorCategoryItem(
-      id: 'cat_eye',
-      name: tr.eyeCare,
-      image: Assets.assetsDummyEye,
-      icon: Icons.remove_red_eye_rounded,
-      primaryColor: const Color(0xFFFE7F44),
-      secondaryColor: const Color(0xFFFFF2EC),
-    ),
-    DoctorCategoryItem(
-      id: 'cat_nutrition',
-      name: tr.nutrition,
-      image: Assets.assetsDummyBody,
-      icon: Icons.apple_rounded,
-      primaryColor: const Color(0xFFFF5C5C),
-      secondaryColor: const Color(0xFFFFEEEE),
-    ),
-    DoctorCategoryItem(
-      id: 'cat_pediatric',
-      name: tr.pediatric,
-      icon: Icons.child_care_rounded,
-      primaryColor: const Color(0xFF9059FF),
-      secondaryColor: const Color(0xFFF4EEFF),
-    ),
-    DoctorCategoryItem(
-      id: 'cat_neurology',
-      name: tr.neurology,
-      icon: Icons.psychology_rounded,
-      primaryColor: const Color(0xFF07D9AD),
-      secondaryColor: const Color(0xFFE7FAF6),
+    SpecialtyModel(
+      id: 'pediatrician',
+      nameAr: 'طبيب أطفال',
+      nameEn: 'Pediatrician',
+      iconKey: 'pediatrics',
     ),
   ];
 }

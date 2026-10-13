@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_back_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_search_bar.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_avatar_placeholder.dart';
+import 'package:doctor_hunt/apps/core/widgets/doctor_image.dart';
 import 'package:doctor_hunt/generated/app_image.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
@@ -217,55 +217,14 @@ class AppHeaderSection extends StatelessWidget {
                             ],
                           ),
                           child: ClipOval(
-                            child:
-                                profileImage != null &&
-                                    profileImage!.trim().isNotEmpty
-                                ? (profileImage!.startsWith('http')
-                                      ? CachedNetworkImage(
-                                          imageUrl: profileImage!,
-                                          width: 48,
-                                          height: 48,
-                                          fit: BoxFit.cover,
-                                          placeholder: (context, url) =>
-                                              const DoctorAvatarPlaceholder(
-                                                size: 48,
-                                                iconColor: AppColors.primary,
-                                                backgroundColor: Color(
-                                                  0xFFE8FBF6,
-                                                ),
-                                              ),
-                                          errorWidget: (context, url, error) =>
-                                              const DoctorAvatarPlaceholder(
-                                                size: 48,
-                                                iconColor: AppColors.primary,
-                                                backgroundColor: Color(
-                                                  0xFFE8FBF6,
-                                                ),
-                                              ),
-                                        )
-                                      : Image.asset(
-                                          profileImage!,
-                                          width: 48,
-                                          height: 48,
-                                          fit: BoxFit.cover,
-                                          errorBuilder:
-                                              (context, error, stackTrace) =>
-                                                  const DoctorAvatarPlaceholder(
-                                                    size: 48,
-                                                    iconColor:
-                                                        AppColors.primary,
-                                                    backgroundColor: Color(
-                                                      0xFFE8FBF6,
-                                                    ),
-                                                  ),
-                                        ))
-                                : const DoctorAvatarPlaceholder(
-                                    size: 48,
-                                    iconColor: AppColors.primary,
-                                    //CR hardcode color
-                                    // Solved
-                                    backgroundColor: AppColors.primaryLight,
-                                  ),
+                            child: DoctorImage(
+                              imageUrl: profileImage,
+                              width: 48,
+                              height: 48,
+                              //CR hardcode color
+                              // Solved
+                              fallback: const DoctorAvatarPlaceholder(),
+                            ),
                           ),
                         ),
                       ),

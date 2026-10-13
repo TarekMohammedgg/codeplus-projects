@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
@@ -75,7 +76,12 @@ void main() {
         final appt = _buildTestAppointment();
 
         await tester.pumpWidget(
-          buildTestApp(RateDoctorScreen(appointment: appt, cubit: cubit)),
+          buildTestApp(
+            BlocProvider<RateDoctorCubit>.value(
+              value: cubit,
+              child: RateDoctorScreen(appointment: appt),
+            ),
+          ),
         );
         await tester.pumpAndSettle();
 
@@ -107,7 +113,12 @@ void main() {
         final appt = _buildTestAppointment();
 
         await tester.pumpWidget(
-          buildTestApp(RateDoctorScreen(appointment: appt, cubit: cubit)),
+          buildTestApp(
+            BlocProvider<RateDoctorCubit>.value(
+              value: cubit,
+              child: RateDoctorScreen(appointment: appt),
+            ),
+          ),
         );
         await tester.pumpAndSettle();
 
@@ -133,7 +144,12 @@ void main() {
         final appt = _buildTestAppointment();
 
         await tester.pumpWidget(
-          buildTestApp(RateDoctorScreen(appointment: appt, cubit: cubit)),
+          buildTestApp(
+            BlocProvider<RateDoctorCubit>.value(
+              value: cubit,
+              child: RateDoctorScreen(appointment: appt),
+            ),
+          ),
         );
         await tester.pumpAndSettle();
 
@@ -166,7 +182,12 @@ void main() {
       );
 
       await tester.pumpWidget(
-        buildTestApp(RateDoctorScreen(appointment: upcomingAppt, cubit: cubit)),
+        buildTestApp(
+          BlocProvider<RateDoctorCubit>.value(
+            value: cubit,
+            child: RateDoctorScreen(appointment: upcomingAppt),
+          ),
+        ),
       );
       await tester.pumpAndSettle();
 
@@ -183,7 +204,12 @@ void main() {
       );
 
       await tester.pumpWidget(
-        buildTestApp(RateDoctorScreen(appointment: reviewedAppt, cubit: cubit)),
+        buildTestApp(
+          BlocProvider<RateDoctorCubit>.value(
+            value: cubit,
+            child: RateDoctorScreen(appointment: reviewedAppt),
+          ),
+        ),
       );
       await tester.pumpAndSettle();
 

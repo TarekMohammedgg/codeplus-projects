@@ -4,9 +4,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_search_bar.dart';
-import 'package:doctor_hunt/apps/features/patient/favorites/presentation/controller/cubit/favorite_doctors_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/favorites/presentation/controller/cubit/favorites_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/favorites/presentation/screens/favorites_screen.dart';
+import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/controller/cubit/find_doctors_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/widgets/find_doctors_widgets.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
@@ -17,8 +17,8 @@ List<DoctorModel> testDoctors() {
   return [
     DoctorModel(
       id: 'doc_1',
-      name: 'Dr. Sarah Smith',
-      specialty: 'Cardiology',
+      nameEn: 'Dr. Sarah Smith',
+      specialtyEn: 'Cardiology',
       specialtyId: 'cardio',
       consultationFee: 50.0,
       rating: 4.8,
@@ -26,8 +26,8 @@ List<DoctorModel> testDoctors() {
     ),
     DoctorModel(
       id: 'doc_2',
-      name: 'Dr. John Doe',
-      specialty: 'Dermatology',
+      nameEn: 'Dr. John Doe',
+      specialtyEn: 'Dermatology',
       specialtyId: 'derma',
       consultationFee: 40.0,
       rating: 4.5,
@@ -62,10 +62,10 @@ void main() {
       buildTestApp(
         BlocProvider<FavoritesCubit>.value(
           value: favoritesCubit,
-          child: BlocProvider<FavoriteDoctorsCubit>(
-            create: (_) => FavoriteDoctorsCubit(
-              doctorRepository: FakeDoctorRepository(doctors: testDoctors()),
-            ),
+          child: BlocProvider<FindDoctorsCubit>(
+            create: (_) => FindDoctorsCubit(
+              repository: FakeDoctorRepository(doctors: testDoctors()),
+            )..load(favoritesOnly: true),
             child: const FavoritesScreen(),
           ),
         ),
