@@ -123,7 +123,6 @@
   "confirmNewPassword": "تأكيد كلمة المرور الجديدة",
   "passwordChangedSuccess": "تم تغيير كلمة المرور بنجاح",
   "passwordsDoNotMatch": "كلمات المرور غير متطابقة",
-  "passwordMinLength": "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل",
   "wrongCurrentPassword": "كلمة المرور الحالية غير صحيحة. يرجى المحاولة مرة أخرى.",
   "editProfile": "تعديل الملف الشخصي",
   "save": "حفظ",

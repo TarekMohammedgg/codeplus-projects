@@ -112,7 +112,8 @@ void main() {
       await tester.tap(find.byKey(const Key('change_password_submit_button')));
       await tester.pumpAndSettle();
 
-      expect(find.text(tr.enterPassword), findsNWidgets(3));
+      expect(find.text(tr.enterPassword), findsNWidgets(2));
+      expect(find.text(tr.useAtLeast8Characters), findsOneWidget);
       expect(fakeRepo.changePasswordCalled, isFalse);
       await cubit.close();
     });
@@ -149,7 +150,7 @@ void main() {
       await tester.tap(find.byKey(const Key('change_password_submit_button')));
       await tester.pumpAndSettle();
 
-      expect(find.text(tr.passwordMinLength), findsOneWidget);
+      expect(find.text(tr.useAtLeast8Characters), findsOneWidget);
       expect(find.text(tr.passwordsDoNotMatch), findsOneWidget);
       expect(fakeRepo.changePasswordCalled, isFalse);
       await cubit.close();

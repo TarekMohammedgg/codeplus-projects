@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
+import 'package:doctor_hunt/apps/core/utils/validators.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_back_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_text_field.dart';
@@ -96,12 +97,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       isPassword: true,
                       enabled: !isLoading,
                       textInputAction: TextInputAction.next,
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return context.tr.enterPassword;
-                        }
-                        return null;
-                      },
+                      validator: AppValidators.validateRequiredPassword,
                     ),
                     20.verticalSpace,
                     Text(
@@ -116,15 +112,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       isPassword: true,
                       enabled: !isLoading,
                       textInputAction: TextInputAction.next,
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return context.tr.enterPassword;
-                        }
-                        if (value.trim().length < 6) {
-                          return context.tr.passwordMinLength;
-                        }
-                        return null;
-                      },
+                      validator: AppValidators.validatePassword,
                     ),
                     20.verticalSpace,
                     Text(
@@ -140,15 +128,11 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       enabled: !isLoading,
                       textInputAction: TextInputAction.done,
                       onFieldSubmitted: (_) => _submit(),
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return context.tr.enterPassword;
-                        }
-                        if (value != _newPasswordController.text) {
-                          return context.tr.passwordsDoNotMatch;
-                        }
-                        return null;
-                      },
+                      validator: (value) =>
+                          AppValidators.validateRequiredPassword(value) ??
+                          (value != _newPasswordController.text
+                              ? context.tr.passwordsDoNotMatch
+                              : null),
                     ),
                     36.verticalSpace,
                     AppPrimaryButton(
