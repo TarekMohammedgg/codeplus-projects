@@ -110,6 +110,11 @@ class BookingCubit extends Cubit<BookingState> {
       emit(
         const BookingConfirmFailure(code: BookingFailureCode.slotAlreadyBooked),
       );
+    } on DoctorUnavailableException {
+      if (isClosed) return;
+      emit(
+        const BookingConfirmFailure(code: BookingFailureCode.doctorUnavailable),
+      );
     } catch (error, stackTrace) {
       if (isClosed) return;
       addError(error, stackTrace);

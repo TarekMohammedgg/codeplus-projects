@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
+import 'package:doctor_hunt/apps/core/models/doctor_availability.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/core/utils/slot_generator.dart';
 
@@ -41,6 +42,24 @@ class AppointmentService {
     final startTimestamp = Timestamp.fromDate(startAt);
 
     await firestore.runTransaction((transaction) async {
+      final doctorDoc = await transaction.get(
+        firestore.collection('doctors').doc(doctor.id),
+      );
+      final doctorData = doctorDoc.data();
+      final availability = DoctorAvailability.tryParse(
+        doctorData?['availability'],
+      );
+      final isBookable =
+          doctorData != null &&
+          doctorData['isActive'] != false &&
+          availability != null &&
+          slotsForDay(
+            availability,
+            startAt,
+            const {},
+            DateTime.now(),
+          ).contains(startAt);
+      if (!isBookable) throw const DoctorUnavailableException();
       if ((await transaction.get(slotRef)).exists) {
         throw const SlotAlreadyBookedException();
       }

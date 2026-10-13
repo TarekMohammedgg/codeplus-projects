@@ -47,7 +47,7 @@ class BookingConfirmed extends BookingState {
   final BookingDraft draft;
 }
 
-enum BookingFailureCode { slotAlreadyBooked, unknown }
+enum BookingFailureCode { slotAlreadyBooked, doctorUnavailable, unknown }
 
 class BookingConfirmFailure extends BookingState {
   const BookingConfirmFailure({required this.code});

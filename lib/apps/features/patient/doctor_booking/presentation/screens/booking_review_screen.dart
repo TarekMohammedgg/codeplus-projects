@@ -52,6 +52,9 @@ class _BookingReviewScreenState extends State<BookingReviewScreen> {
       case BookingConfirmFailure(code: BookingFailureCode.slotAlreadyBooked):
         context.showErrorSnackBar(context.tr.slotAlreadyBooked);
         context.pop(true);
+      case BookingConfirmFailure(code: BookingFailureCode.doctorUnavailable):
+        context.showErrorSnackBar(context.tr.doctorNoAvailableTimes);
+        context.pop(true);
       case BookingConfirmFailure():
         context.showErrorSnackBar(context.tr.serviceError);
       default:

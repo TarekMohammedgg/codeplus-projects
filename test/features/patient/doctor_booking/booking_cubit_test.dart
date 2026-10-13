@@ -151,6 +151,22 @@ void main() {
       await cubit.close();
     });
 
+    test('deactivated doctor gets doctorUnavailable', () async {
+      // arrange
+      final repo = FakeBookingRepository(
+        bookError: const DoctorUnavailableException(),
+      );
+      final cubit = BookingCubit(repository: repo);
+
+      // act
+      await cubit.confirm(draft);
+
+      // assert
+      final state = cubit.state as BookingConfirmFailure;
+      expect(state.code, BookingFailureCode.doctorUnavailable);
+      await cubit.close();
+    });
+
     test('any other error maps to unknown', () async {
       final repo = FakeBookingRepository(bookError: StateError('offline'));
       final cubit = BookingCubit(repository: repo);

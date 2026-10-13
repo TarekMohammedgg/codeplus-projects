@@ -117,6 +117,7 @@ service cloud.firestore {
         && request.resource.data.patientId == request.auth.uid
         && request.resource.data.status == 'upcoming'
         && request.resource.data.isReviewed == false
+        && get(/databases/$(database)/documents/doctors/$(request.resource.data.doctorId)).data.get('isActive', true) == true
         && existsAfter(/databases/$(database)/documents/bookedSlots/$(request.resource.data.slotId));
 
       // Admin: upcoming -> completed (only once the visit time has started),

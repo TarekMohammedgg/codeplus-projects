@@ -101,6 +101,10 @@ class SlotAlreadyBookedException implements Exception {
   const SlotAlreadyBookedException();
 }
 
+class DoctorUnavailableException implements Exception {
+  const DoctorUnavailableException();
+}
+
 class ReviewNotAllowedException implements Exception {
   const ReviewNotAllowedException();
 }
