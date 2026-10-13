@@ -51,8 +51,8 @@ class PatientMenuDrawer extends StatelessWidget {
                   onTap: () => closeThen(() => onTabTap(0)),
                 ),
                 _MenuItem(
-                  icon: Icons.favorite_rounded,
-                  label: context.tr.tabFavorites,
+                  icon: Icons.medical_services_rounded,
+                  label: context.tr.tabDoctors,
                   onTap: () => closeThen(() => onTabTap(1)),
                 ),
                 _MenuItem(

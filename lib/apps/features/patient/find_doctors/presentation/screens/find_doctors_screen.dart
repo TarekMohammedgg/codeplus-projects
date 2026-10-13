@@ -7,6 +7,8 @@ import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/utils/doctor_sort.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_back_button.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_icon_button.dart';
+import 'package:doctor_hunt/apps/core/widgets/favorite_heart_icon.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_search_bar.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_filter_chips.dart';
 import 'package:doctor_hunt/apps/features/patient/favorites/presentation/controller/cubit/favorites_cubit.dart';
@@ -100,7 +102,10 @@ class _FindDoctorsScreenState extends State<FindDoctorsScreen> {
             backgroundColor: AppColors.background,
             appBar: AppBar(
               leadingWidth: 50,
-              leading: AppBackButton.leading(onTap: () => _handleBack(context)),
+              automaticallyImplyLeading: false,
+              leading: widget.sort == null
+                  ? null
+                  : AppBackButton.leading(onTap: () => _handleBack(context)),
               titleSpacing: 19,
               title: Text(title, style: context.medium18TextMain),
             ),
@@ -110,16 +115,38 @@ class _FindDoctorsScreenState extends State<FindDoctorsScreen> {
                   16.verticalSpace,
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: AppSearchBar(
-                      controller: _searchController,
-                      autofocus: widget.focusSearch,
-                      onChanged: cubit.search,
-                      height: 54,
-                      borderRadius: BorderRadius.circular(6),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: AppColors.shadowElevated,
-                          blurRadius: 40,
+                    child: Row(
+                      spacing: 10,
+                      children: [
+                        Expanded(
+                          child: AppSearchBar(
+                            controller: _searchController,
+                            autofocus: widget.focusSearch,
+                            onChanged: cubit.search,
+                            height: 54,
+                            borderRadius: BorderRadius.circular(6),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: AppColors.shadowElevated,
+                                blurRadius: 40,
+                              ),
+                            ],
+                          ),
+                        ),
+                        AppIconButton(
+                          key: const Key('favorites_filter_button'),
+                          tooltip: context.tr.tabFavorites,
+                          onTap: cubit.toggleFavoritesOnly,
+                          width: 54,
+                          height: 54,
+                          backgroundColor: AppColors.surface,
+                          borderRadius: BorderRadius.circular(6),
+                          child: FavoriteHeartIcon(
+                            isFavorite:
+                                state is FindDoctorsSuccess &&
+                                state.favoritesOnly,
+                            size: 22,
+                          ),
                         ),
                       ],
                     ),
@@ -175,7 +202,9 @@ class _DoctorsList extends StatelessWidget {
     if (doctors.isEmpty) {
       return Center(
         child: Text(
-          context.tr.noDoctorsFound,
+          state.favoritesOnly
+              ? context.tr.noFavoritesFound
+              : context.tr.noDoctorsFound,
           style: context.semiBold16TextMain,
         ),
       );

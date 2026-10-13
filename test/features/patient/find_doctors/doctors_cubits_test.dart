@@ -99,8 +99,11 @@ void main() {
   });
 
   test('favorites filter keeps only the patient favorites', () async {
+    // arrange
+    await cubit.load();
+
     // act
-    await cubit.load(favoritesOnly: true);
+    cubit.toggleFavoritesOnly();
 
     // assert
     expect(visibleIds({'dentist'}), ['dentist']);
@@ -115,7 +118,8 @@ void main() {
   });
 
   test('applyRouteFilters replaces the current filters', () async {
-    await cubit.load(favoritesOnly: true);
+    await cubit.load();
+    cubit.toggleFavoritesOnly();
     cubit.search('Sara');
 
     cubit.applyRouteFilters(specialtyId: 'cardiology');

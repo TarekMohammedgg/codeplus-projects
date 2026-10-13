@@ -57,7 +57,7 @@ void main() {
     expect(find.text(profile.name), findsOneWidget);
     expect(find.text(profile.phone), findsOneWidget);
     expect(find.text(tr.tabHome), findsOneWidget);
-    expect(find.text(tr.tabFavorites), findsOneWidget);
+    expect(find.text(tr.tabDoctors), findsOneWidget);
     expect(find.text(tr.myAppointments), findsOneWidget);
     expect(find.text(tr.settings), findsOneWidget);
     expect(find.text(tr.logOut), findsOneWidget);

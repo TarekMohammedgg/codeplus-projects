@@ -69,7 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   title: tr.findYourDoctor,
                   searchReadOnly: true,
                   onSearchTap: () =>
-                      const FindDoctorsRoute(focus: true).push(context),
+                      const FindDoctorsRoute(focus: true).go(context),
                   showLanguageToggle: true,
                   showProfile: true,
                   profileImage: user?.photoURL,

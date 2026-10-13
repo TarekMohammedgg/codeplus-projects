@@ -12,7 +12,6 @@ abstract final class AppRoutePaths {
   static const String adminSettings = '/admin/settings';
   static const String adminProfile = '/admin/profile';
   static const String home = '/home';
-  static const String favorites = '/favorites';
   static const String doctors = '/doctors';
   static const String appointments = '/appointments';
   static const String doctorDetails = '/doctor-details';

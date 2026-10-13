@@ -8,6 +8,7 @@ import 'package:doctor_hunt/apps/core/utils/doctor_sort.dart';
 import 'package:doctor_hunt/apps/features/patient/favorites/presentation/controller/cubit/favorites_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/controller/cubit/find_doctors_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/screens/find_doctors_screen.dart';
+import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/widgets/find_doctors_widgets.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import '../../../helpers/test_app.dart';
 import '../../../helpers/test_fakes.dart';
@@ -83,7 +84,7 @@ void main() {
     expect(find.text(tr.findDoctors), findsOneWidget);
     expect(find.text('Dr. Shruti Kedia'), findsOneWidget);
     expect(find.text('Dr. Fillerup Grab'), findsOneWidget);
-    expect(find.byIcon(Icons.arrow_back_ios_new_rounded), findsOneWidget);
+    expect(find.byIcon(Icons.arrow_back_ios_new_rounded), findsNothing);
   });
 
   testWidgets(
@@ -104,12 +105,52 @@ void main() {
   ) async {
     await pumpScreen(tester, favorites: {});
 
-    await tester.tap(find.byIcon(Icons.favorite_border_rounded).first);
+    await tester.tap(
+      find
+          .descendant(
+            of: find.byType(FindDoctorCard),
+            matching: find.byIcon(Icons.favorite_border_rounded),
+          )
+          .first,
+    );
     await tester.pump();
 
     expect(favoritesRepository.writes, hasLength(1));
     expect(favoritesRepository.writes.single.$3, isTrue);
   });
+
+  testWidgets('heart filter shows only the favorite doctors', (
+    WidgetTester tester,
+  ) async {
+    // arrange
+    await pumpScreen(tester, favorites: {'doc_1'});
+
+    // act
+    await tester.tap(find.byKey(const Key('favorites_filter_button')));
+    await tester.pump();
+
+    // assert
+    expect(find.text('Dr. Shruti Kedia'), findsOneWidget);
+    expect(find.text('Dr. Fillerup Grab'), findsNothing);
+  });
+
+  testWidgets(
+    'heart filter with no favorites shows the favorites empty state',
+    (WidgetTester tester) async {
+      // arrange
+      await pumpScreen(tester, favorites: {});
+
+      // act
+      await tester.tap(find.byKey(const Key('favorites_filter_button')));
+      await tester.pump();
+
+      // assert
+      expect(
+        find.text(AppLocale.en.buildSync().noFavoritesFound),
+        findsOneWidget,
+      );
+    },
+  );
 
   testWidgets('search with no match shows the empty state', (
     WidgetTester tester,
@@ -140,7 +181,7 @@ void main() {
                 create: (_) => FindDoctorsCubit(
                   repository: FakeDoctorRepository(doctors: testFindDoctors()),
                 ),
-                child: const FindDoctorsScreen(),
+                child: const FindDoctorsScreen(sort: DoctorSort.popular),
               ),
             ),
           ),
@@ -174,7 +215,7 @@ void main() {
                 create: (_) => FindDoctorsCubit(
                   repository: FakeDoctorRepository(doctors: testFindDoctors()),
                 ),
-                child: const FindDoctorsScreen(),
+                child: const FindDoctorsScreen(sort: DoctorSort.popular),
               ),
             ),
           ),
@@ -213,7 +254,7 @@ void main() {
               create: (_) => FindDoctorsCubit(
                 repository: FakeDoctorRepository(doctors: testFindDoctors()),
               ),
-              child: const FindDoctorsScreen(),
+              child: const FindDoctorsScreen(sort: DoctorSort.popular),
             ),
           ),
         ),

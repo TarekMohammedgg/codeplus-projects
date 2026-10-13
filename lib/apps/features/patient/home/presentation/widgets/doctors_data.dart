@@ -34,7 +34,7 @@ class DoctorsData extends StatelessWidget {
         DoctorCategorySection(
           specialties: specialties,
           onSpecialtyTap: (specialty) =>
-              FindDoctorsRoute(specialtyId: specialty.id).push(context),
+              FindDoctorsRoute(specialtyId: specialty.id).go(context),
         ),
         const SizedBox(height: 24),
         DoctorsSection(
@@ -43,7 +43,7 @@ class DoctorsData extends StatelessWidget {
           favoriteIds: favoriteIds,
           onFavoriteTap: toggleFavorite,
           onSeeAllPressed: () =>
-              const FindDoctorsRoute(sort: DoctorSort.popular).push(context),
+              const FindDoctorsRoute(sort: DoctorSort.popular).go(context),
         ),
         const SizedBox(height: 24),
         DoctorsSection(
@@ -52,7 +52,7 @@ class DoctorsData extends StatelessWidget {
           favoriteIds: favoriteIds,
           onFavoriteTap: toggleFavorite,
           onSeeAllPressed: () =>
-              const FindDoctorsRoute(sort: DoctorSort.topRated).push(context),
+              const FindDoctorsRoute(sort: DoctorSort.topRated).go(context),
         ),
         const SizedBox(height: 32),
       ],

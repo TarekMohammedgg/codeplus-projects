@@ -15,7 +15,6 @@ class FindDoctorsCubit extends Cubit<FindDoctorsState> {
     String? query,
     String? specialtyId,
     DoctorSort? sort,
-    bool favoritesOnly = false,
   }) async {
     if (state is FindDoctorsLoading) return;
 
@@ -32,7 +31,6 @@ class FindDoctorsCubit extends Cubit<FindDoctorsState> {
           specialties: specialties,
           query: query ?? '',
           specialtyId: specialtyId,
-          favoritesOnly: favoritesOnly,
           sort: sort ?? DoctorSort.popular,
         ),
       );
@@ -59,6 +57,9 @@ class FindDoctorsCubit extends Cubit<FindDoctorsState> {
   }
 
   void search(String query) => _update((state) => state.copyWith(query: query));
+
+  void toggleFavoritesOnly() =>
+      _update((state) => state.copyWith(favoritesOnly: !state.favoritesOnly));
 
   void selectSpecialty(String? specialtyId) =>
       _update((state) => state.copyWith(specialtyId: () => specialtyId));

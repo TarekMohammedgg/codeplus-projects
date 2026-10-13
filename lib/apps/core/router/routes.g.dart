@@ -13,7 +13,6 @@ List<RouteBase> get $appRoutes => [
   $roleSelectionRoute,
   $patientShellRoute,
   $adminShellRoute,
-  $findDoctorsRoute,
   $createDoctorRoute,
   $adminProfileRoute,
   $adminDoctorDetailsRoute,
@@ -156,9 +155,9 @@ RouteBase get $patientShellRoute => StatefulShellRouteData.$route(
     StatefulShellBranchData.$branch(
       routes: [
         GoRouteData.$route(
-          path: '/favorites',
+          path: '/doctors',
           hasOverriddenOnExit: false,
-          factory: $FavoritesRoute._fromState,
+          factory: $FindDoctorsRoute._fromState,
         ),
       ],
     ),
@@ -208,12 +207,36 @@ mixin $HomeRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin $FavoritesRoute on GoRouteData {
-  static FavoritesRoute _fromState(GoRouterState state) =>
-      const FavoritesRoute();
+mixin $FindDoctorsRoute on GoRouteData {
+  static FindDoctorsRoute _fromState(GoRouterState state) => FindDoctorsRoute(
+    q: state.uri.queryParameters['q'],
+    specialtyId: state.uri.queryParameters['specialty-id'],
+    sort: _$convertMapValue(
+      'sort',
+      state.uri.queryParameters,
+      _$DoctorSortEnumMap._$fromName,
+    ),
+    focus:
+        _$convertMapValue(
+          'focus',
+          state.uri.queryParameters,
+          _$boolConverter,
+        ) ??
+        false,
+  );
+
+  FindDoctorsRoute get _self => this as FindDoctorsRoute;
 
   @override
-  String get location => GoRouteData.$location('/favorites');
+  String get location => GoRouteData.$location(
+    '/doctors',
+    queryParams: {
+      if (_self.q != null) 'q': _self.q,
+      if (_self.specialtyId != null) 'specialty-id': _self.specialtyId,
+      if (_self.sort != null) 'sort': _$DoctorSortEnumMap[_self.sort!],
+      if (_self.focus != false) 'focus': _self.focus.toString(),
+    },
+  );
 
   @override
   void go(BuildContext context) => context.go(location);
@@ -228,6 +251,11 @@ mixin $FavoritesRoute on GoRouteData {
   @override
   void replace(BuildContext context) => context.replace(location);
 }
+
+const _$DoctorSortEnumMap = {
+  DoctorSort.popular: 'popular',
+  DoctorSort.topRated: 'top-rated',
+};
 
 mixin $PatientAppointmentsRoute on GoRouteData {
   static PatientAppointmentsRoute _fromState(GoRouterState state) =>
@@ -268,6 +296,31 @@ mixin $ProfileRoute on GoRouteData {
 
   @override
   void replace(BuildContext context) => context.replace(location);
+}
+
+T? _$convertMapValue<T>(
+  String key,
+  Map<String, String> map,
+  T? Function(String) converter,
+) {
+  final value = map[key];
+  return value == null ? null : converter(value);
+}
+
+bool _$boolConverter(String value) {
+  switch (value) {
+    case 'true':
+      return true;
+    case 'false':
+      return false;
+    default:
+      throw UnsupportedError('Cannot convert "$value" into a bool.');
+  }
+}
+
+extension<T extends Enum> on Map<T, String> {
+  T? _$fromName(String? value) =>
+      entries.where((element) => element.value == value).firstOrNull?.key;
 }
 
 RouteBase get $adminShellRoute => StatefulShellRouteData.$route(
@@ -369,87 +422,6 @@ mixin $AdminSettingsRoute on GoRouteData {
 
   @override
   void replace(BuildContext context) => context.replace(location);
-}
-
-RouteBase get $findDoctorsRoute => GoRouteData.$route(
-  path: '/doctors',
-  hasOverriddenOnExit: false,
-  factory: $FindDoctorsRoute._fromState,
-);
-
-mixin $FindDoctorsRoute on GoRouteData {
-  static FindDoctorsRoute _fromState(GoRouterState state) => FindDoctorsRoute(
-    q: state.uri.queryParameters['q'],
-    specialtyId: state.uri.queryParameters['specialty-id'],
-    sort: _$convertMapValue(
-      'sort',
-      state.uri.queryParameters,
-      _$DoctorSortEnumMap._$fromName,
-    ),
-    focus:
-        _$convertMapValue(
-          'focus',
-          state.uri.queryParameters,
-          _$boolConverter,
-        ) ??
-        false,
-  );
-
-  FindDoctorsRoute get _self => this as FindDoctorsRoute;
-
-  @override
-  String get location => GoRouteData.$location(
-    '/doctors',
-    queryParams: {
-      if (_self.q != null) 'q': _self.q,
-      if (_self.specialtyId != null) 'specialty-id': _self.specialtyId,
-      if (_self.sort != null) 'sort': _$DoctorSortEnumMap[_self.sort!],
-      if (_self.focus != false) 'focus': _self.focus.toString(),
-    },
-  );
-
-  @override
-  void go(BuildContext context) => context.go(location);
-
-  @override
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
-
-  @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
-
-  @override
-  void replace(BuildContext context) => context.replace(location);
-}
-
-const _$DoctorSortEnumMap = {
-  DoctorSort.popular: 'popular',
-  DoctorSort.topRated: 'top-rated',
-};
-
-T? _$convertMapValue<T>(
-  String key,
-  Map<String, String> map,
-  T? Function(String) converter,
-) {
-  final value = map[key];
-  return value == null ? null : converter(value);
-}
-
-bool _$boolConverter(String value) {
-  switch (value) {
-    case 'true':
-      return true;
-    case 'false':
-      return false;
-    default:
-      throw UnsupportedError('Cannot convert "$value" into a bool.');
-  }
-}
-
-extension<T extends Enum> on Map<T, String> {
-  T? _$fromName(String? value) =>
-      entries.where((element) => element.value == value).firstOrNull?.key;
 }
 
 RouteBase get $createDoctorRoute => GoRouteData.$route(

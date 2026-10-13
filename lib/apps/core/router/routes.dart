@@ -41,7 +41,6 @@ import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/sc
 import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/screens/doctor_booking_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_details/presentation/controller/cubit/doctor_details_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_details/presentation/screens/patient_doctor_details_screen.dart';
-import 'package:doctor_hunt/apps/features/patient/favorites/presentation/screens/favorites_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/controller/cubit/find_doctors_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/screens/find_doctors_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/home/presentation/controller/cubit/home_cubit.dart';
@@ -112,8 +111,8 @@ class RoleSelectionRoute extends GoRouteData with $RoleSelectionRoute {
     TypedStatefulShellBranch<PatientHomeBranch>(
       routes: [TypedGoRoute<HomeRoute>(path: AppRoutePaths.home)],
     ),
-    TypedStatefulShellBranch<PatientFavoritesBranch>(
-      routes: [TypedGoRoute<FavoritesRoute>(path: AppRoutePaths.favorites)],
+    TypedStatefulShellBranch<PatientDoctorsBranch>(
+      routes: [TypedGoRoute<FindDoctorsRoute>(path: AppRoutePaths.doctors)],
     ),
     TypedStatefulShellBranch<PatientAppointmentsBranch>(
       routes: [
@@ -152,8 +151,8 @@ class PatientHomeBranch extends StatefulShellBranchData {
   const PatientHomeBranch();
 }
 
-class PatientFavoritesBranch extends StatefulShellBranchData {
-  const PatientFavoritesBranch();
+class PatientDoctorsBranch extends StatefulShellBranchData {
+  const PatientDoctorsBranch();
 }
 
 class PatientAppointmentsBranch extends StatefulShellBranchData {
@@ -172,18 +171,6 @@ class HomeRoute extends GoRouteData with $HomeRoute {
     return BlocProvider<HomeCubit>(
       create: (_) => getIt<HomeCubit>(),
       child: HomeScreen(user: getIt<AuthRepository>().currentUser),
-    );
-  }
-}
-
-class FavoritesRoute extends GoRouteData with $FavoritesRoute {
-  const FavoritesRoute();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) {
-    return BlocProvider<FindDoctorsCubit>(
-      create: (_) => getIt<FindDoctorsCubit>()..load(favoritesOnly: true),
-      child: const FavoritesScreen(),
     );
   }
 }
@@ -296,7 +283,6 @@ class AdminSettingsRoute extends GoRouteData with $AdminSettingsRoute {
   }
 }
 
-@TypedGoRoute<FindDoctorsRoute>(path: AppRoutePaths.doctors)
 class FindDoctorsRoute extends GoRouteData with $FindDoctorsRoute {
   const FindDoctorsRoute({
     this.q,

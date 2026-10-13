@@ -23,7 +23,6 @@ import 'package:doctor_hunt/apps/features/common/auth/presentation/screens/signu
 import 'package:doctor_hunt/apps/features/common/auth/presentation/widgets/forgot_password_bottom_sheet.dart';
 import 'package:doctor_hunt/apps/features/common/role_selection/data/models/user_role.dart';
 import 'package:doctor_hunt/apps/features/patient/favorites/presentation/controller/cubit/favorites_cubit.dart';
-import 'package:doctor_hunt/apps/features/patient/favorites/presentation/screens/favorites_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/data/repositories/doctor_repository.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/controller/cubit/find_doctors_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/presentation/screens/find_doctors_screen.dart';
@@ -286,32 +285,6 @@ void main() {
     );
 
     testWidgets(
-      'FavoritesRoute mounts FavoritesScreen and provides FindDoctorsCubit',
-      (WidgetTester tester) async {
-        tester.view.physicalSize = const Size(1080, 2400);
-        tester.view.devicePixelRatio = 1.0;
-        addTearDown(() {
-          tester.view.resetPhysicalSize();
-          tester.view.resetDevicePixelRatio();
-        });
-
-        final router = GoRouter(
-          initialLocation: '/favorites',
-          routes: $appRoutes,
-        );
-        await tester.pumpWidget(buildTestRouterApp(router));
-        await tester.pumpAndSettle();
-
-        expect(find.byType(FavoritesScreen), findsOneWidget);
-        final favoritesElement = tester.element(find.byType(FavoritesScreen));
-        expect(
-          favoritesElement.read<FindDoctorsCubit>(),
-          isA<FindDoctorsCubit>(),
-        );
-      },
-    );
-
-    testWidgets(
       'AdminDoctorsRoute mounts AdminDoctorsScreen and provides AdminDoctorsCubit',
       (WidgetTester tester) async {
         tester.view.physicalSize = const Size(1080, 2400);
@@ -483,39 +456,6 @@ void main() {
         expect(captured!.isClosed, isTrue);
       },
     );
-
-    testWidgets('FindDoctorsCubit is disposed when FavoritesRoute is popped', (
-      WidgetTester tester,
-    ) async {
-      FindDoctorsCubit? captured;
-      await setupFakeServiceLocator(
-        onFindDoctorsCubitCreated: (c) => captured = c,
-      );
-
-      final router = GoRouter(
-        initialLocation: '/start',
-        routes: [
-          GoRoute(
-            path: '/start',
-            builder: (context, state) => const Scaffold(body: Text('Start')),
-          ),
-          ...$appRoutes,
-        ],
-      );
-      await tester.pumpWidget(buildTestRouterApp(router));
-      await tester.pumpAndSettle();
-
-      const FavoritesRoute().push(tester.element(find.text('Start')));
-      await tester.pumpAndSettle();
-
-      expect(captured, isNotNull);
-      expect(captured!.isClosed, isFalse);
-
-      router.pop();
-      await tester.pumpAndSettle();
-
-      expect(captured!.isClosed, isTrue);
-    });
 
     testWidgets(
       'AdminDoctorsCubit is disposed when AdminDoctorsRoute is popped',
