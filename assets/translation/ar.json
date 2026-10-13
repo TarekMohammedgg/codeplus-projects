@@ -144,6 +144,7 @@
   "dateOptionSat": "السبت، 27 فبراير",
   "dateOptionSun": "الأحد، 28 فبراير",
   "noSlotsAvailable": "لا توجد مواعيد متاحة",
+  "availableSlots": "المواعيد المتاحة",
   "nextAvailabilityOn(date)": "الموعد التالي المتاح في $date",
   "or": "أو",
   "contactClinic": "الاتصال بالعيادة",

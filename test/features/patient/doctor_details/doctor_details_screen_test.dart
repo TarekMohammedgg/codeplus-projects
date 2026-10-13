@@ -8,6 +8,9 @@ import 'package:doctor_hunt/apps/core/models/clinic_model.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/core/models/review_model.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_profile_card.dart';
+import 'package:doctor_hunt/apps/core/models/doctor_availability.dart';
+import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/controller/cubit/booking_cubit.dart';
+import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/widgets/time_slots_section.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_details/presentation/controller/cubit/doctor_details_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/doctor_details/presentation/screens/patient_doctor_details_screen.dart';
 import 'package:doctor_hunt/apps/core/widgets/clinic_location_map.dart';
@@ -26,8 +29,9 @@ const _doctor = DoctorModel(
 void main() {
   Future<void> pumpDetails(
     WidgetTester tester,
-    FakeDoctorDetailsRepository repository,
-  ) async {
+    FakeDoctorDetailsRepository repository, {
+    DoctorModel doctor = _doctor,
+  }) async {
     tester.view.physicalSize = const Size(1080, 2400);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(() {
@@ -36,12 +40,22 @@ void main() {
     });
     await tester.pumpWidget(
       buildTestApp(
-        BlocProvider<DoctorDetailsCubit>(
-          create: (_) => DoctorDetailsCubit(repository: repository),
-          child: const DoctorDetailsScreen(doctor: _doctor),
+        MultiBlocProvider(
+          providers: [
+            BlocProvider<DoctorDetailsCubit>(
+              create: (_) => DoctorDetailsCubit(repository: repository),
+            ),
+            BlocProvider<BookingCubit>(
+              create: (_) =>
+                  BookingCubit(repository: FakeBookingRepository())
+                    ..init(doctor),
+            ),
+          ],
+          child: DoctorDetailsScreen(doctor: doctor),
         ),
       ),
     );
+    await tester.pump();
     await tester.pump();
   }
 
@@ -105,5 +119,45 @@ void main() {
     expect(find.byType(TileLayer), findsOneWidget);
     expect(find.byType(MarkerLayer), findsOneWidget);
     expect(find.byIcon(Icons.location_on_rounded), findsOneWidget);
+  });
+
+  testWidgets(
+    'shows the next available slots when the doctor has availability',
+    (WidgetTester tester) async {
+      // arrange
+      final doctor = DoctorModel(
+        id: 'doc-1',
+        nameEn: 'Dr. Sara',
+        availability: DoctorAvailability(
+          workingDays: const [1, 2, 3, 4, 5, 6, 7],
+          startMinutes: 0,
+          endMinutes: 24 * 60,
+          slotMinutes: 60,
+        ),
+      );
+
+      // act
+      await pumpDetails(tester, FakeDoctorDetailsRepository(), doctor: doctor);
+
+      // assert
+      expect(
+        find.text(AppLocale.en.buildSync().availableSlots),
+        findsOneWidget,
+      );
+      expect(find.byType(TimeSlotsSection), findsOneWidget);
+    },
+  );
+
+  testWidgets('shows the no available times message without availability', (
+    WidgetTester tester,
+  ) async {
+    // act
+    await pumpDetails(tester, FakeDoctorDetailsRepository());
+
+    // assert
+    expect(
+      find.text(AppLocale.en.buildSync().doctorNoAvailableTimes),
+      findsOneWidget,
+    );
   });
 }

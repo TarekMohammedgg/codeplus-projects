@@ -96,6 +96,7 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
                         ),
                     },
                   ),
+                  AvailableSlotsSection(doctor: doctor),
                 ],
               ),
             ),

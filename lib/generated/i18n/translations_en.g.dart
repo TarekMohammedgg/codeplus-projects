@@ -476,6 +476,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'No slots available'
 	String get noSlotsAvailable => 'No slots available';
 
+	/// en: 'Available Slots'
+	String get availableSlots => 'Available Slots';
+
 	/// en: 'Next availability on $date'
 	String nextAvailabilityOn({required Object date}) => 'Next availability on ${date}';
 
@@ -1227,6 +1230,7 @@ extension on Translations {
 			'dateOptionSat' => 'Sat, 27 Feb',
 			'dateOptionSun' => 'Sun, 28 Feb',
 			'noSlotsAvailable' => 'No slots available',
+			'availableSlots' => 'Available Slots',
 			'nextAvailabilityOn' => ({required Object date}) => 'Next availability on ${date}',
 			'or' => 'OR',
 			'contactClinic' => 'Contact Clinic',

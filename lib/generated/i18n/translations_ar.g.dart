@@ -184,6 +184,7 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get dateOptionSat => 'السبت، 27 فبراير';
 	@override String get dateOptionSun => 'الأحد، 28 فبراير';
 	@override String get noSlotsAvailable => 'لا توجد مواعيد متاحة';
+	@override String get availableSlots => 'المواعيد المتاحة';
 	@override String nextAvailabilityOn({required Object date}) => 'الموعد التالي المتاح في ${date}';
 	@override String get or => 'أو';
 	@override String get contactClinic => 'الاتصال بالعيادة';
@@ -538,6 +539,7 @@ extension on TranslationsAr {
 			'dateOptionSat' => 'السبت، 27 فبراير',
 			'dateOptionSun' => 'الأحد، 28 فبراير',
 			'noSlotsAvailable' => 'لا توجد مواعيد متاحة',
+			'availableSlots' => 'المواعيد المتاحة',
 			'nextAvailabilityOn' => ({required Object date}) => 'الموعد التالي المتاح في ${date}',
 			'or' => 'أو',
 			'contactClinic' => 'الاتصال بالعيادة',

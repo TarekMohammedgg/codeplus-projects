@@ -398,8 +398,15 @@ class DoctorDetailsRoute extends GoRouteData with $DoctorDetailsRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return BlocProvider<DoctorDetailsCubit>(
-      create: (_) => getIt<DoctorDetailsCubit>(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<DoctorDetailsCubit>(
+          create: (_) => getIt<DoctorDetailsCubit>(),
+        ),
+        BlocProvider<BookingCubit>(
+          create: (_) => getIt<BookingCubit>()..init($extra),
+        ),
+      ],
       child: DoctorDetailsScreen(doctor: $extra),
     );
   }

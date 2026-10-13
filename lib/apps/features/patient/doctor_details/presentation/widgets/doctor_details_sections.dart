@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import 'package:doctor_hunt/apps/core/extensions/context_extensions.dart';
@@ -8,7 +9,12 @@ import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/core/models/review_model.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_profile_card.dart';
+import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/widgets/clinic_location_map.dart';
+import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/controller/cubit/booking_cubit.dart';
+import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/controller/cubit/booking_state.dart';
+import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/widgets/date_selector_list.dart';
+import 'package:doctor_hunt/apps/features/patient/doctor_booking/presentation/widgets/time_slots_section.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
@@ -31,6 +37,71 @@ class DoctorRatingSummary extends StatelessWidget {
           style: context.semiBold16TextMain,
         ),
       ],
+    );
+  }
+}
+
+class AvailableSlotsSection extends StatelessWidget {
+  const AvailableSlotsSection({super.key, required this.doctor});
+
+  final DoctorModel doctor;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<BookingCubit, BookingState>(
+      builder: (context, state) {
+        final message = switch (state) {
+          BookingUnavailable() => context.tr.doctorNoAvailableTimes,
+          BookingLoadFailure() => context.tr.serviceError,
+          _ => null,
+        };
+        if (state is BookingLoaded && !state.isLoadingSlots) {
+          return _buildSlots(context, state);
+        }
+        return message == null
+            ? const SizedBox.shrink()
+            : _section(
+                context,
+                Text(message, style: context.regular14TextSecondary),
+              );
+      },
+    );
+  }
+
+  Widget _buildSlots(BuildContext context, BookingLoaded state) {
+    final day = state.bookableDates
+        .where((date) => state.slotsByDate[date]?.isNotEmpty ?? false)
+        .firstOrNull;
+    if (day == null) {
+      return _section(
+        context,
+        Text(
+          context.tr.noSlotsAvailable,
+          style: context.regular14TextSecondary,
+        ),
+      );
+    }
+    return _section(
+      context,
+      TimeSlotsSection(
+        title: formatBookingDayLabel(context, day),
+        slots: state.slotsByDate[day]!.take(4).toList(),
+        onSelectSlot: (_) => SelectTimeRoute(doctor).push(context),
+      ),
+    );
+  }
+
+  Widget _section(BuildContext context, Widget child) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(context.tr.availableSlots, style: context.medium18TextMain),
+          12.verticalSpace,
+          child,
+        ],
+      ),
     );
   }
 }
