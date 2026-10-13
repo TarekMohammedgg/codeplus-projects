@@ -96,7 +96,7 @@ The original design contains extensive modules intentionally removed to keep the
 [ Step 4: Confirm Booking ]
        │ Click Confirm → Status set to Upcoming
        ▼
-[ Success Confirmation Screen ]
+[ Success Confirmation Dialog ]
 ```
 
 ---
@@ -134,7 +134,7 @@ The original design contains extensive modules intentionally removed to keep the
 ### Review Flow & Strict Eligibility
 * **Eligibility Condition:** Strictly `Appointment.status == completed`. Patients cannot review Upcoming or Cancelled visits.
 * **Submission Flow:** `Completed` $\rightarrow$ `Rate Doctor` $\rightarrow$ Select 1–5 Stars $\rightarrow$ Optional Comment $\rightarrow$ `Submit` $\rightarrow$ Review Added.
-* **Doctor Aggregation:** Doctor document maintains aggregated rating (`avgRating`) & `reviewsCount`. Full review records reside in the `reviews` collection.
+* **Doctor Aggregation:** Doctor document maintains aggregated rating (`rating`) & `reviewsCount`. Full review records reside in the `reviews` collection.
 
 ### Review Schema & Exclusions
 * **Schema Definition:**
@@ -157,7 +157,7 @@ The original design contains extensive modules intentionally removed to keep the
 ## 8. Patient Profile & Navigation Structure
 
 ### Profile & Minimal Settings
-* **Profile Fields:** Photo, Full Name, Email, Phone, DOB, Gender (View / Edit).
+* **Profile Fields:** Photo, Full Name, Email (view only, cannot be changed), Phone, DOB, Gender (View / Edit). The photo is uploaded by the user; without one a person icon is shown.
 * **Settings:** Change Password, Notifications toggle, Language, Logout confirmation modal.
 
 ### Patient App 4-Tab Navigation
