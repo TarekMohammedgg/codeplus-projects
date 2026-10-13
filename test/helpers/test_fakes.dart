@@ -39,6 +39,15 @@ class FakeSharedPreferences extends Fake implements SharedPreferences {
     _values[key] = value;
     return true;
   }
+
+  @override
+  String? getString(String key) => _values[key] as String?;
+
+  @override
+  Future<bool> setString(String key, String value) async {
+    _values[key] = value;
+    return true;
+  }
 }
 
 class FakeUser extends Fake implements User {

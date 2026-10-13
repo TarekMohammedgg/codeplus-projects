@@ -7,6 +7,13 @@ class AppPreferencesService {
 
   static const String _keyHasSeenOnboarding = 'has_seen_onboarding';
 
+  static const String _keyLanguageCode = 'language_code';
+
+  String? get languageCode => preferences.getString(_keyLanguageCode);
+
+  Future<bool> setLanguageCode(String code) =>
+      preferences.setString(_keyLanguageCode, code);
+
   bool get hasSeenOnboarding =>
       preferences.getBool(_keyHasSeenOnboarding) ?? false;
 

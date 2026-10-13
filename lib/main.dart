@@ -6,6 +6,7 @@ import 'package:intl/date_symbol_data_local.dart';
 
 import 'apps/core/di/injection.dart';
 import 'apps/core/router/app_router.dart';
+import 'apps/core/services/app_preferences_service.dart';
 import 'apps/core/theme/app_theme.dart';
 import 'generated/i18n/translations.g.dart';
 
@@ -41,7 +42,16 @@ void main() async {
     }
   }
 
-  LocaleSettings.useDeviceLocale();
+  final preferencesService = getIt<AppPreferencesService>();
+  final savedLanguage = preferencesService.languageCode;
+  if (savedLanguage == null) {
+    LocaleSettings.useDeviceLocale();
+  } else {
+    LocaleSettings.setLocaleRawSync(savedLanguage);
+  }
+  LocaleSettings.getLocaleStream().listen(
+    (locale) => preferencesService.setLanguageCode(locale.languageCode),
+  );
   runApp(TranslationProvider(child: const DoctorHuntApp()));
 }
 
