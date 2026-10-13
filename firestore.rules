@@ -119,22 +119,27 @@ service cloud.firestore {
         && request.resource.data.isReviewed == false
         && existsAfter(/databases/$(database)/documents/bookedSlots/$(request.resource.data.slotId));
 
-      // Admin: upcoming -> completed, or upcoming -> cancelled by admin.
+      // Admin: upcoming -> completed (only once the visit time has started),
+      // or upcoming -> cancelled by admin.
       allow update: if isAdmin()
         && resource.data.status == 'upcoming'
         && changedOnly(['status', 'cancelledBy', 'updatedAt'])
         && (
-          request.resource.data.status == 'completed'
+          (
+            request.resource.data.status == 'completed'
+            && request.time >= resource.data.startAt
+          )
           || (
             request.resource.data.status == 'cancelled'
             && request.resource.data.cancelledBy == 'admin'
           )
         );
 
-      // Patient: cancel own upcoming appointment.
+      // Patient: cancel own upcoming appointment, before its time.
       allow update: if signedIn()
         && resource.data.patientId == request.auth.uid
         && resource.data.status == 'upcoming'
+        && request.time < resource.data.startAt
         && request.resource.data.status == 'cancelled'
         && request.resource.data.cancelledBy == 'patient'
         && changedOnly(['status', 'cancelledBy', 'updatedAt']);

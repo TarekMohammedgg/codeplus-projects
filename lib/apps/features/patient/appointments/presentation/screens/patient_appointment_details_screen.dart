@@ -105,7 +105,8 @@ class _PatientAppointmentDetailsScreenState
               ),
             ),
           ),
-          if (appointment.status == AppointmentStatus.upcoming)
+          if (appointment.status == AppointmentStatus.upcoming &&
+              !appointment.hasStarted)
             SafeArea(
               top: false,
               child: Padding(

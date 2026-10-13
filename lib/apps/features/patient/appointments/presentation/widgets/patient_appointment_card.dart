@@ -143,7 +143,8 @@ class PatientAppointmentCard extends StatelessWidget {
                   textStyle: context.medium12Primary,
                 ),
               ),
-              if (appointment.status == AppointmentStatus.upcoming) ...[
+              if (appointment.status == AppointmentStatus.upcoming &&
+                  !appointment.hasStarted) ...[
                 8.horizontalSpace,
                 Expanded(
                   child: AppPrimaryButton.outlined(

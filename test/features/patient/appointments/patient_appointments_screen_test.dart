@@ -51,7 +51,7 @@ void main() {
       final completed = _buildTestAppt(
         id: 'appt_rated',
         status: AppointmentStatus.completed,
-        startAt: DateTime(2026, 10, 1, 10, 0),
+        startAt: DateTime.now().add(const Duration(days: 7)),
       );
       final repo = FakePatientAppointmentsRepository(appointments: [completed]);
       final cubit = PatientAppointmentsCubit(repository: repo);
@@ -63,7 +63,7 @@ void main() {
         _buildTestAppt(
           id: 'appt_rated',
           status: AppointmentStatus.completed,
-          startAt: DateTime(2026, 10, 1, 10, 0),
+          startAt: DateTime.now().add(const Duration(days: 7)),
           isReviewed: true,
         ),
       ]);
@@ -79,7 +79,7 @@ void main() {
       final appt = _buildTestAppt(
         id: 'appt_1',
         status: AppointmentStatus.upcoming,
-        startAt: DateTime(2026, 10, 5, 10, 0),
+        startAt: DateTime.now().add(const Duration(days: 7)),
       );
       final repo = FakePatientAppointmentsRepository(appointments: [appt]);
       final cubit = PatientAppointmentsCubit(repository: repo);
@@ -98,7 +98,7 @@ void main() {
       final appt = _buildTestAppt(
         id: 'appt_1',
         status: AppointmentStatus.upcoming,
-        startAt: DateTime(2026, 10, 5, 10, 0),
+        startAt: DateTime.now().add(const Duration(days: 7)),
       );
       final repo = FakePatientAppointmentsRepository();
       final cubit = PatientAppointmentsCubit(repository: repo);
@@ -175,7 +175,7 @@ void main() {
       final appt = _buildTestAppt(
         id: 'upcoming_1',
         status: AppointmentStatus.upcoming,
-        startAt: DateTime(2026, 10, 5, 10, 0),
+        startAt: DateTime.now().add(const Duration(days: 7)),
       );
       final repo = FakePatientAppointmentsRepository(appointments: [appt]);
       final cubit = PatientAppointmentsCubit(repository: repo);

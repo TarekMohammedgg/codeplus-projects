@@ -51,6 +51,8 @@ class AppointmentModel {
       ? doctorNameAr
       : doctorNameEn;
 
+  bool get hasStarted => !startAt.isAfter(DateTime.now());
+
   factory AppointmentModel.fromFirestore(String id, Map<String, dynamic> data) {
     final doctorName = data['doctorName'] is Map
         ? Map<String, dynamic>.from(data['doctorName'] as Map)

@@ -137,14 +137,16 @@ class _AdminAppointmentDetailsScreenState
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    AppPrimaryButton(
-                      key: const Key('admin_mark_completed_button'),
-                      label: context.tr.markCompleted,
-                      icon: Icons.check_circle_outline_rounded,
-                      isLoading: _isMarkingCompleted,
-                      onPressed: isBusy ? null : _confirmMarkCompleted,
-                    ),
-                    12.verticalSpace,
+                    if (appointment.hasStarted) ...[
+                      AppPrimaryButton(
+                        key: const Key('admin_mark_completed_button'),
+                        label: context.tr.markCompleted,
+                        icon: Icons.check_circle_outline_rounded,
+                        isLoading: _isMarkingCompleted,
+                        onPressed: isBusy ? null : _confirmMarkCompleted,
+                      ),
+                      12.verticalSpace,
+                    ],
                     AppPrimaryButton.outlined(
                       key: const Key('admin_cancel_appointment_button'),
                       label: context.tr.cancelAppointment,

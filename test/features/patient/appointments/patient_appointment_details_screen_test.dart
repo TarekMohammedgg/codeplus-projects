@@ -92,7 +92,7 @@ void main() {
       final appt = _buildTestAppt(
         id: 'appt_1',
         status: AppointmentStatus.upcoming,
-        startAt: DateTime(2026, 10, 10, 14, 30),
+        startAt: DateTime.now().add(const Duration(days: 7)),
         specialtyId: 'spec_cardio',
       );
       final fakeClinic = const ClinicModel(
@@ -141,7 +141,7 @@ void main() {
       final appt = _buildTestAppt(
         id: 'appt_1',
         status: AppointmentStatus.upcoming,
-        startAt: DateTime(2026, 10, 10, 14, 30),
+        startAt: DateTime.now().add(const Duration(days: 7)),
       );
       final clinicService = _FakeClinicService(clinic: null);
       final appointmentService = _FakeAppointmentService();
@@ -166,7 +166,7 @@ void main() {
       final appt = _buildTestAppt(
         id: 'appt_cancel',
         status: AppointmentStatus.upcoming,
-        startAt: DateTime(2026, 10, 10, 14, 30),
+        startAt: DateTime.now().add(const Duration(days: 7)),
       );
       final clinicService = _FakeClinicService();
       final appointmentService = _FakeAppointmentService();

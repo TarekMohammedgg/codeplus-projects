@@ -167,16 +167,17 @@ class AdminAppointmentCard extends StatelessWidget {
                           textStyle: context.medium12Error,
                         ),
                       ),
-                      Expanded(
-                        child: AppPrimaryButton(
-                          key: Key('admin_complete_button_${appointment.id}'),
-                          label: context.tr.markCompleted,
-                          onPressed: onMarkCompleted,
-                          height: _actionHeight,
-                          borderRadius: _actionRadius,
-                          textStyle: context.medium12White,
+                      if (appointment.hasStarted)
+                        Expanded(
+                          child: AppPrimaryButton(
+                            key: Key('admin_complete_button_${appointment.id}'),
+                            label: context.tr.markCompleted,
+                            onPressed: onMarkCompleted,
+                            height: _actionHeight,
+                            borderRadius: _actionRadius,
+                            textStyle: context.medium12White,
+                          ),
                         ),
-                      ),
                     ],
                   )
                 else

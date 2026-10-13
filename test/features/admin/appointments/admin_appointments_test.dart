@@ -61,7 +61,7 @@ class _FakeAdminAppointmentsRepository implements AdminAppointmentsRepository {
 }
 
 void main() {
-  final testDateTime = DateTime(2026, 10, 15, 10, 30);
+  final testDateTime = DateTime.now().subtract(const Duration(hours: 3));
 
   final sampleUpcoming = AppointmentModel(
     id: 'appt_1',

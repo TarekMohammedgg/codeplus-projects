@@ -92,7 +92,7 @@ AppointmentModel _buildTestAppt({
 }
 
 void main() {
-  final testDate = DateTime(2026, 11, 20, 14, 0);
+  final testDate = DateTime.now().subtract(const Duration(days: 1));
 
   final testClinic = const ClinicModel(
     addressAr: 'شارع التحرير، القاهرة',
@@ -163,6 +163,43 @@ void main() {
         );
       },
     );
+
+    testWidgets('hides mark completed before the appointment time', (
+      tester,
+    ) async {
+      // arrange
+      final appt = _buildTestAppt(
+        id: 'appt_future',
+        status: AppointmentStatus.upcoming,
+        startAt: DateTime.now().add(const Duration(days: 1)),
+        specialtyId: 'spec_cardio',
+      );
+      await tester.pumpWidget(
+        buildTestApp(
+          _detailsScreen(
+            appointment: appt,
+            clinicService: _FakeClinicService(clinic: testClinic),
+            specialtyService: _FakeSpecialtyService(
+              specialties: testSpecialties,
+            ),
+            appointmentService: _FakeAppointmentService(),
+          ),
+        ),
+      );
+
+      // act
+      await tester.pumpAndSettle();
+
+      // assert
+      expect(
+        find.byKey(const Key('admin_mark_completed_button')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const Key('admin_cancel_appointment_button')),
+        findsOneWidget,
+      );
+    });
 
     testWidgets(
       'mark completed button triggers confirmation and completes appointment',
