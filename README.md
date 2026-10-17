@@ -196,7 +196,7 @@ Each step of the workflow and where its code lives (`lib/apps/features/...`):
 
 ---
 
-## 🗂️ Project Structure
+## 📂 Project Structure
 
 ```text
 lib/
