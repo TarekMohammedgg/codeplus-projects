@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:doctor_hunt/apps/features/patient/profile/presentation/controller/cubit/profile_cubit.dart';
+import 'package:doctor_hunt/apps/features/patient/profile/presentation/controller/cubit/edit_profile_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:doctor_hunt/apps/core/di/injection.dart';
@@ -153,8 +153,8 @@ void main() {
 }
 
 Widget _editScreen(UserProfileModel profile, [FakeProfileRepository? repo]) {
-  return BlocProvider<ProfileCubit>(
-    create: (_) => ProfileCubit(
+  return BlocProvider<EditProfileCubit>(
+    create: (_) => EditProfileCubit(
       repository: repo ?? FakeProfileRepository(),
       authRepository: FakeAuthRepository(
         currentUser: FakeUser(uid: 'user_123'),

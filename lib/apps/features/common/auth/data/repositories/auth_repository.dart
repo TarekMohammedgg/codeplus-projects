@@ -88,7 +88,7 @@ class FirebaseAuthRepository implements AuthRepository {
 
   @override
   Future<void> resetPassword({required String email}) {
-    return authService.forgetpassword(email: email);
+    return authService.resetPassword(email: email);
   }
 
   @override

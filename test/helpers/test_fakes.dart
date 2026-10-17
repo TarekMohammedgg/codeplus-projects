@@ -252,9 +252,17 @@ class FakeAdminDoctorsRepository implements AdminDoctorsRepository {
 }
 
 class FakeCreateDoctorRepository implements CreateDoctorRepository {
-  FakeCreateDoctorRepository({this.specialties = const []});
+  FakeCreateDoctorRepository({
+    this.specialties = const [],
+    this.uploadError,
+    this.saveError,
+  });
 
   final List<SpecialtyModel> specialties;
+  final Object? uploadError;
+  final Object? saveError;
+  String? createdImageUrl;
+  String? updatedDoctorId;
 
   @override
   Future<List<SpecialtyModel>> fetchSpecialties() async => specialties;
@@ -263,7 +271,10 @@ class FakeCreateDoctorRepository implements CreateDoctorRepository {
   Future<String> uploadImage({
     required Uint8List bytes,
     required String fileName,
-  }) async => '';
+  }) async {
+    if (uploadError != null) throw uploadError!;
+    return 'https://img/$fileName';
+  }
 
   @override
   Future<void> createDoctor({
@@ -272,7 +283,10 @@ class FakeCreateDoctorRepository implements CreateDoctorRepository {
     required String specialtyId,
     required double consultationFee,
     String? imageUrl,
-  }) async {}
+  }) async {
+    if (saveError != null) throw saveError!;
+    createdImageUrl = imageUrl;
+  }
 
   @override
   Future<void> updateDoctor({
@@ -282,7 +296,10 @@ class FakeCreateDoctorRepository implements CreateDoctorRepository {
     required String specialtyId,
     required double consultationFee,
     String? imageUrl,
-  }) async {}
+  }) async {
+    if (saveError != null) throw saveError!;
+    updatedDoctorId = id;
+  }
 }
 
 class FakeFavoritesRepository implements FavoritesRepository {
@@ -329,9 +346,10 @@ class FakeFavoritesRepository implements FavoritesRepository {
 }
 
 class FakeProfileRepository implements ProfileRepository {
-  FakeProfileRepository({this.profile});
+  FakeProfileRepository({this.profile, this.saveError});
 
   final UserProfileModel? profile;
+  final Object? saveError;
   String? lastUpdatedUid;
   String? lastUpdatedDisplayName;
   String? lastUpdatedPhone;
@@ -374,7 +392,8 @@ class FakeProfileRepository implements ProfileRepository {
     String? currentPhotoUrl,
     Uint8List? newImageBytes,
     String? newImageName,
-  }) {
+  }) async {
+    if (saveError != null) throw saveError!;
     return updateProfile(
       uid: uid,
       displayName: name,
@@ -400,14 +419,17 @@ class FakeBookingRepository implements BookingRepository {
   final bookedDrafts = <BookingDraft>[];
   final clinic = StreamController<ClinicModel?>.broadcast();
 
+  /// Push a new booked set to simulate a live change (cancel / new booking).
+  final bookedChanges = StreamController<Set<DateTime>>.broadcast();
+
   @override
-  Future<Set<DateTime>> fetchBookedStarts(String doctorId, DateTime day) async {
+  Stream<Set<DateTime>> watchBookedStarts(
+    String doctorId,
+    List<DateTime> days,
+  ) async* {
     if (fetchError != null) throw fetchError!;
-    return booked
-        .where(
-          (b) => b.year == day.year && b.month == day.month && b.day == day.day,
-        )
-        .toSet();
+    yield booked.toSet();
+    yield* bookedChanges.stream;
   }
 
   @override

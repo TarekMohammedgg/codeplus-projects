@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
-import 'package:doctor_hunt/apps/core/widgets/app_back_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_card.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_logout_dialog.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
@@ -15,7 +13,7 @@ import 'package:doctor_hunt/apps/features/common/auth/presentation/controller/cu
 import 'package:doctor_hunt/apps/features/patient/profile/data/models/user_profile_model.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/presentation/controller/cubit/profile_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/presentation/controller/cubit/profile_state.dart';
-import 'package:doctor_hunt/apps/features/patient/profile/presentation/widgets/profile_avatar.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_profile_avatar.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
@@ -60,7 +58,7 @@ class _PatientSettingsScreenState extends State<PatientSettingsScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        leading: AppBackButton.leading(onTap: () => context.pop()),
+        automaticallyImplyLeading: false,
         title: Text(context.tr.settings, style: context.bold18TextMain),
       ),
       body: BlocBuilder<ProfileCubit, ProfileState>(
@@ -102,9 +100,11 @@ class _PatientSettingsScreenState extends State<PatientSettingsScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           AppCard(
+            key: const Key('settings_profile_card'),
+            onTap: () => const ProfileRoute().push(context),
             child: Row(
               children: [
-                ProfileAvatar(avatarUrl: avatarUrl, size: 56),
+                AppProfileAvatar(imageUrl: avatarUrl, size: 56, elevated: true),
                 16.horizontalSpace,
                 Expanded(
                   child: Column(
@@ -127,6 +127,7 @@ class _PatientSettingsScreenState extends State<PatientSettingsScreen> {
                     ],
                   ),
                 ),
+                chevron,
               ],
             ),
           ),

@@ -15,6 +15,7 @@ class FindDoctorsCubit extends Cubit<FindDoctorsState> {
     String? query,
     String? specialtyId,
     DoctorSort? sort,
+    bool favoritesOnly = false,
   }) async {
     if (state is FindDoctorsLoading) return;
 
@@ -31,6 +32,7 @@ class FindDoctorsCubit extends Cubit<FindDoctorsState> {
           specialties: specialties,
           query: query ?? '',
           specialtyId: specialtyId,
+          favoritesOnly: favoritesOnly,
           sort: sort ?? DoctorSort.popular,
         ),
       );
@@ -38,6 +40,31 @@ class FindDoctorsCubit extends Cubit<FindDoctorsState> {
       if (isClosed) return;
       addError(error, stackTrace);
       emit(FindDoctorsFailure(errorMessage: error.toString()));
+    }
+  }
+
+  /// Pull-to-refresh: reloads the doctors and keeps the current filters.
+  Future<void> refresh() async {
+    final current = state;
+    if (current is! FindDoctorsSuccess) return load();
+    try {
+      final (doctors, specialties) = await (
+        repository.fetchDoctors(),
+        repository.fetchSpecialties(),
+      ).wait;
+      if (isClosed) return;
+      emit(
+        FindDoctorsSuccess(
+          doctors: doctors,
+          specialties: specialties,
+          query: current.query,
+          specialtyId: current.specialtyId,
+          favoritesOnly: current.favoritesOnly,
+          sort: current.sort,
+        ),
+      );
+    } catch (error, stackTrace) {
+      if (!isClosed) addError(error, stackTrace);
     }
   }
 

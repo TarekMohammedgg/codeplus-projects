@@ -5,7 +5,7 @@ import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/presentation/controller/cubit/profile_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/presentation/controller/cubit/profile_state.dart';
-import 'package:doctor_hunt/apps/features/patient/profile/presentation/widgets/profile_avatar.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_profile_avatar.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
@@ -13,12 +13,10 @@ class PatientMenuDrawer extends StatelessWidget {
   const PatientMenuDrawer({
     super.key,
     required this.onTabTap,
-    required this.onSettingsTap,
     required this.onLogoutTap,
   });
 
   final ValueChanged<int> onTabTap;
-  final VoidCallback onSettingsTap;
   final VoidCallback onLogoutTap;
 
   @override
@@ -51,8 +49,8 @@ class PatientMenuDrawer extends StatelessWidget {
                   onTap: () => closeThen(() => onTabTap(0)),
                 ),
                 _MenuItem(
-                  icon: Icons.medical_services_rounded,
-                  label: context.tr.tabDoctors,
+                  icon: Icons.favorite_rounded,
+                  label: context.tr.tabFavorites,
                   onTap: () => closeThen(() => onTabTap(1)),
                 ),
                 _MenuItem(
@@ -63,7 +61,7 @@ class PatientMenuDrawer extends StatelessWidget {
                 _MenuItem(
                   icon: Icons.settings_rounded,
                   label: context.tr.settings,
-                  onTap: () => closeThen(onSettingsTap),
+                  onTap: () => closeThen(() => onTabTap(3)),
                 ),
                 const Spacer(),
                 ListTile(
@@ -96,12 +94,7 @@ class _MenuProfileHeader extends StatelessWidget {
 
     return Row(
       children: [
-        ProfileAvatar(
-          avatarUrl: profile?.avatarUrl,
-          size: 44,
-          borderWidth: 0,
-          boxShadow: const [],
-        ),
+        AppProfileAvatar(imageUrl: profile?.avatarUrl, size: 44),
         12.horizontalSpace,
         Expanded(
           child: Column(

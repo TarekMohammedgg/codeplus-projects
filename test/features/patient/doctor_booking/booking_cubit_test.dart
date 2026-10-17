@@ -49,6 +49,8 @@ void main() {
 
         await cubit.init(testDoctorWithAvail, now: testNow);
 
+        await Future<void>.delayed(Duration.zero);
+
         expect(cubit.state, isA<BookingLoaded>());
         final loaded = cubit.state as BookingLoaded;
         expect(loaded.doctor.id, 'doc-1');
@@ -67,6 +69,8 @@ void main() {
       final testNow = DateTime(2026, 3, 2, 8, 0);
 
       await cubit.init(testDoctorWithAvail, now: testNow);
+
+      await Future<void>.delayed(Duration.zero);
       final loaded = cubit.state as BookingLoaded;
       final slotToSelect = loaded.slots.first;
 
@@ -91,11 +95,43 @@ void main() {
 
         // act
         await cubit.init(testDoctorWithAvail, now: DateTime(2026, 3, 2, 8, 0));
+        await Future<void>.delayed(Duration.zero);
 
         // assert
         final loaded = cubit.state as BookingLoaded;
         expect(loaded.slots, isEmpty);
         expect(loaded.slotsByDate[DateTime(2026, 3, 3)], hasLength(3));
+        await cubit.close();
+      },
+    );
+
+    test(
+      'a slot freed by a cancel reappears and a taken slot disappears live',
+      () async {
+        // arrange
+        final taken = DateTime(2026, 3, 2, 9, 0);
+        final repo = FakeBookingRepository(booked: [taken]);
+        final cubit = BookingCubit(repository: repo);
+        await cubit.init(testDoctorWithAvail, now: DateTime(2026, 3, 2, 8, 0));
+        await Future<void>.delayed(Duration.zero);
+        expect((cubit.state as BookingLoaded).slots, isNot(contains(taken)));
+
+        // act: admin cancels -> lock deleted
+        repo.bookedChanges.add({});
+        await Future<void>.delayed(Duration.zero);
+
+        // assert
+        expect((cubit.state as BookingLoaded).slots, contains(taken));
+
+        // act: patient selects, then someone else books that slot
+        cubit.selectSlot(taken);
+        repo.bookedChanges.add({taken});
+        await Future<void>.delayed(Duration.zero);
+
+        // assert
+        final loaded = cubit.state as BookingLoaded;
+        expect(loaded.slots, isNot(contains(taken)));
+        expect(loaded.selectedSlot, isNull);
         await cubit.close();
       },
     );
@@ -109,6 +145,7 @@ void main() {
 
         // act
         await cubit.init(testDoctorWithAvail, now: DateTime(2026, 3, 2, 8, 0));
+        await Future<void>.delayed(Duration.zero);
 
         // assert
         expect(cubit.state, isA<BookingLoadFailure>());

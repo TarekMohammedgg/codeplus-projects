@@ -123,8 +123,7 @@ class LoginScreenState extends State<LoginScreen> {
                       onTap: () => const RoleSelectionRoute().go(context),
                     ),
                   ),
-                  16.verticalSpace,
-                  28.verticalSpace,
+                  44.verticalSpace,
                   AuthHeader(
                     title: isAdmin ? tr.adminLoginTitle : tr.welcomeBack,
                     subtitle: isAdmin

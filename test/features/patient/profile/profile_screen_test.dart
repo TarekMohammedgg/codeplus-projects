@@ -79,7 +79,7 @@ void main() {
   });
 
   testWidgets(
-    'ProfileScreen renders header, personal information cards without location, and settings row',
+    'ProfileScreen renders header and personal information cards without location',
     (WidgetTester tester) async {
       final tr = AppLocale.en.buildSync();
       tester.view.physicalSize = const Size(1080, 2400);
@@ -105,11 +105,11 @@ void main() {
 
       expect(find.text(tr.location), findsNothing);
 
-      expect(find.byIcon(Icons.arrow_back_ios_new_rounded), findsNothing);
+      // Pushed from the Settings tab, so it has a back button.
+      expect(find.byIcon(Icons.arrow_back_ios_new_rounded), findsOneWidget);
 
       expect(find.widgetWithText(AppPrimaryButton, tr.edit), findsNothing);
-      expect(find.text(tr.settings), findsOneWidget);
-      expect(find.byIcon(Icons.settings_outlined), findsOneWidget);
+      expect(find.text(tr.settings), findsNothing);
     },
   );
 
@@ -138,9 +138,8 @@ void main() {
   });
 
   testWidgets(
-    'Tapping header edit button and Settings row triggers navigation',
+    'Tapping header edit and camera buttons opens edit profile',
     (WidgetTester tester) async {
-      final tr = AppLocale.en.buildSync();
       tester.view.physicalSize = const Size(1080, 2400);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(() {
@@ -159,11 +158,6 @@ void main() {
             path: '/profile/edit',
             builder: (context, state) =>
                 const Scaffold(body: Text('Edit Profile Screen')),
-          ),
-          GoRoute(
-            path: '/settings',
-            builder: (context, state) =>
-                const Scaffold(body: Text('Settings Screen')),
           ),
         ],
       );
@@ -187,13 +181,6 @@ void main() {
       await tester.tap(find.byIcon(Icons.camera_alt_outlined));
       await tester.pumpAndSettle();
       expect(find.text('Edit Profile Screen'), findsOneWidget);
-
-      router.go('/profile');
-      await tester.pumpAndSettle();
-
-      await tester.tap(find.text(tr.settings));
-      await tester.pumpAndSettle();
-      expect(find.text('Settings Screen'), findsOneWidget);
     },
   );
 

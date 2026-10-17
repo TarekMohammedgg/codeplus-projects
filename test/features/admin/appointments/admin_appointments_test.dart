@@ -7,7 +7,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
 import 'package:doctor_hunt/apps/core/models/specialty_model.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_list_skeleton.dart';
-import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/features/admin/appointments/data/repositories/admin_appointments_repository.dart';
 import 'package:doctor_hunt/apps/features/admin/appointments/presentation/controller/cubit/admin_appointments_cubit.dart';
 import 'package:doctor_hunt/apps/features/admin/appointments/presentation/controller/cubit/admin_appointments_state.dart';
@@ -352,16 +351,10 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Appointments'), findsWidgets);
-      expect(find.widgetWithText(AppPrimaryButton, 'All'), findsOneWidget);
-      expect(find.widgetWithText(AppPrimaryButton, 'Upcoming'), findsOneWidget);
-      expect(
-        find.widgetWithText(AppPrimaryButton, 'Completed'),
-        findsOneWidget,
-      );
-      expect(
-        find.widgetWithText(AppPrimaryButton, 'Cancelled'),
-        findsOneWidget,
-      );
+      expect(find.widgetWithText(Tab, 'All'), findsOneWidget);
+      expect(find.widgetWithText(Tab, 'Upcoming'), findsOneWidget);
+      expect(find.widgetWithText(Tab, 'Completed'), findsOneWidget);
+      expect(find.widgetWithText(Tab, 'Cancelled'), findsOneWidget);
 
       expect(find.byType(AdminAppointmentCard), findsNWidgets(3));
       expect(find.textContaining('Jane Patient'), findsOneWidget);
@@ -393,7 +386,7 @@ void main() {
 
       expect(find.byType(AdminAppointmentCard), findsNWidgets(3));
 
-      await tester.tap(find.widgetWithText(AppPrimaryButton, 'Upcoming'));
+      await tester.tap(find.widgetWithText(Tab, 'Upcoming'));
       await tester.pumpAndSettle();
 
       expect(cubit.state.selectedTab, AdminAppointmentTab.upcoming);
@@ -401,14 +394,14 @@ void main() {
       expect(find.textContaining('Jane Patient'), findsOneWidget);
       expect(find.textContaining('Bob Smith'), findsNothing);
 
-      await tester.tap(find.widgetWithText(AppPrimaryButton, 'Completed'));
+      await tester.tap(find.widgetWithText(Tab, 'Completed'));
       await tester.pumpAndSettle();
 
       expect(cubit.state.selectedTab, AdminAppointmentTab.completed);
       expect(find.byType(AdminAppointmentCard), findsOneWidget);
       expect(find.textContaining('Bob Smith'), findsOneWidget);
 
-      await tester.tap(find.widgetWithText(AppPrimaryButton, 'Cancelled'));
+      await tester.tap(find.widgetWithText(Tab, 'Cancelled'));
       await tester.pumpAndSettle();
 
       expect(cubit.state.selectedTab, AdminAppointmentTab.cancelled);

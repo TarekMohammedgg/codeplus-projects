@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:doctor_hunt/apps/features/admin/doctors/data/service/admin_doctor_service.dart';
+import 'package:doctor_hunt/apps/core/services/doctor_service.dart';
 import 'package:doctor_hunt/apps/core/models/specialty_model.dart';
 import 'package:doctor_hunt/apps/core/services/specialty_service.dart';
 import 'package:doctor_hunt/apps/core/services/cloudinary_upload_service.dart';
@@ -38,7 +38,7 @@ class FirebaseCreateDoctorRepository implements CreateDoctorRepository {
     required this.uploadService,
   });
 
-  final AdminDoctorService doctorService;
+  final DoctorService doctorService;
   final SpecialtyService specialtyService;
   final CloudinaryUploadService uploadService;
 

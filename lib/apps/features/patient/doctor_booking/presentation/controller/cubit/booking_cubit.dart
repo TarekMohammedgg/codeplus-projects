@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
@@ -14,6 +16,7 @@ class BookingCubit extends Cubit<BookingState> {
 
   final BookingRepository repository;
   DateTime _now = DateTime.now();
+  StreamSubscription<Set<DateTime>>? _bookedSubscription;
 
   Future<void> init(DoctorModel doctor, {DateTime? now}) async {
     _now = now ?? DateTime.now();
@@ -34,51 +37,49 @@ class BookingCubit extends Cubit<BookingState> {
         isLoadingSlots: true,
       ),
     );
-    try {
-      final slots = await Future.wait(
-        dates.map((date) => _fetchSlots(doctor, date)),
-      );
-      if (isClosed) return;
-      emit(
-        BookingLoaded(
-          doctor: doctor,
-          bookableDates: dates,
-          selectedDate: dates.first,
-          slotsByDate: Map.fromIterables(dates, slots),
-        ),
-      );
-    } catch (error, stackTrace) {
-      _emitLoadFailure(error, stackTrace);
-    }
+    await _bookedSubscription?.cancel();
+    _bookedSubscription = repository
+        .watchBookedStarts(doctor.id, dates)
+        .listen(_onBookedChanged, onError: _emitLoadFailure);
   }
 
-  Future<void> selectDate(DateTime date) async {
+  /// Rebuilds every day's slots from the live booked set and keeps the
+  /// patient's selection while it is still free.
+  void _onBookedChanged(Set<DateTime> booked) {
     final current = state;
     if (current is! BookingLoaded) return;
+    final slotsByDate = {
+      for (final date in current.bookableDates)
+        date: slotsForDay(current.doctor.availability!, date, booked, _now),
+    };
+    final selectedSlot = current.selectedSlot;
+    emit(
+      BookingLoaded(
+        doctor: current.doctor,
+        bookableDates: current.bookableDates,
+        selectedDate: current.selectedDate,
+        slotsByDate: slotsByDate,
+        selectedSlot:
+            selectedSlot != null &&
+                slotsByDate[current.selectedDate]!.contains(selectedSlot)
+            ? selectedSlot
+            : null,
+      ),
+    );
+  }
 
+  void selectDate(DateTime date) {
+    final current = state;
+    if (current is! BookingLoaded) return;
     emit(
       BookingLoaded(
         doctor: current.doctor,
         bookableDates: current.bookableDates,
         selectedDate: date,
         slotsByDate: current.slotsByDate,
-        isLoadingSlots: true,
+        isLoadingSlots: current.isLoadingSlots,
       ),
     );
-    try {
-      final slots = await _fetchSlots(current.doctor, date);
-      if (isClosed) return;
-      emit(
-        BookingLoaded(
-          doctor: current.doctor,
-          bookableDates: current.bookableDates,
-          selectedDate: date,
-          slotsByDate: {...current.slotsByDate, date: slots},
-        ),
-      );
-    } catch (error, stackTrace) {
-      _emitLoadFailure(error, stackTrace);
-    }
   }
 
   void selectSlot(DateTime slot) {
@@ -122,14 +123,15 @@ class BookingCubit extends Cubit<BookingState> {
     }
   }
 
-  Future<List<DateTime>> _fetchSlots(DoctorModel doctor, DateTime day) async {
-    final booked = await repository.fetchBookedStarts(doctor.id, day);
-    return slotsForDay(doctor.availability!, day, booked, _now);
-  }
-
   void _emitLoadFailure(Object error, StackTrace stackTrace) {
     if (isClosed) return;
     addError(error, stackTrace);
     emit(const BookingLoadFailure());
+  }
+
+  @override
+  Future<void> close() async {
+    await _bookedSubscription?.cancel();
+    return super.close();
   }
 }

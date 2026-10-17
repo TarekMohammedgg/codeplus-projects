@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:doctor_hunt/apps/core/extensions/context_extensions.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
@@ -81,7 +82,7 @@ class _ProfileContent extends StatelessWidget {
         children: [
           ProfileHeaderSection(
             avatarUrl: profile.avatarUrl,
-            onBackTap: null,
+            onBackTap: () => context.pop(),
             onEditTap: () => EditProfileRoute(profile).push(context),
             onCameraTap: () => EditProfileRoute(profile).push(context),
           ),
@@ -118,67 +119,10 @@ class _ProfileContent extends StatelessWidget {
                 10.verticalSpace,
                 ProfileInfoCard(label: tr.gender, value: genderFormatted),
                 24.verticalSpace,
-                _SettingsTile(
-                  onTap: () => const PatientSettingsRoute().push(context),
-                ),
-                24.verticalSpace,
               ],
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _SettingsTile extends StatelessWidget {
-  const _SettingsTile({required this.onTap});
-
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.surface,
-      borderRadius: BorderRadius.circular(12),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.outline.withValues(alpha: 0.6)),
-            boxShadow: const [
-              BoxShadow(
-                color: AppColors.shadowSubtle,
-                blurRadius: 10,
-                offset: Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Row(
-            children: [
-              const Icon(
-                Icons.settings_outlined,
-                color: AppColors.primary,
-                size: 22,
-              ),
-              12.horizontalSpace,
-              Expanded(
-                child: Text(
-                  context.tr.settings,
-                  style: context.semiBold16TextMain,
-                ),
-              ),
-              const Icon(
-                Icons.arrow_forward_ios_rounded,
-                size: 16,
-                color: AppColors.textSecondary,
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

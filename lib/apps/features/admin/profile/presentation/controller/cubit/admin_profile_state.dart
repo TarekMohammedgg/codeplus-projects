@@ -1,11 +1,9 @@
-import 'package:flutter/foundation.dart';
 import 'package:latlong2/latlong.dart';
 
 enum AdminProfileStatus { initial, loading, loaded, saving, success, failure }
 
 enum AdminProfileFailure { requiresRecentLogin, unknown }
 
-@immutable
 class AdminProfileState {
   const AdminProfileState({
     this.status = AdminProfileStatus.initial,
@@ -57,33 +55,4 @@ class AdminProfileState {
       failure: failure,
     );
   }
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is AdminProfileState &&
-          other.status == status &&
-          other.displayName == displayName &&
-          other.email == email &&
-          other.currentPhotoUrl == currentPhotoUrl &&
-          other.addressAr == addressAr &&
-          other.addressEn == addressEn &&
-          other.location == location &&
-          other.errorMessage == errorMessage &&
-          other.emailVerificationSent == emailVerificationSent &&
-          other.failure == failure;
-
-  @override
-  int get hashCode => Object.hash(
-    status,
-    displayName,
-    email,
-    currentPhotoUrl,
-    addressAr,
-    addressEn,
-    location,
-    errorMessage,
-    emailVerificationSent,
-    failure,
-  );
 }

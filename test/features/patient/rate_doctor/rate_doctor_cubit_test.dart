@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
 import 'package:doctor_hunt/apps/features/patient/rate_doctor/data/repositories/rate_doctor_repository.dart';
-import 'package:doctor_hunt/apps/features/patient/rate_doctor/presentation/cubit/rate_doctor_cubit.dart';
+import 'package:doctor_hunt/apps/features/patient/rate_doctor/presentation/controller/cubit/rate_doctor_cubit.dart';
 
 class _MockRateDoctorRepository implements RateDoctorRepository {
   bool submitCalled = false;

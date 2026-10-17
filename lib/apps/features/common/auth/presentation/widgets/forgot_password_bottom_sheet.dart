@@ -22,7 +22,8 @@ class ForgotPasswordBottomSheet extends StatefulWidget {
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
-      backgroundColor: AppColors.transparent,
+      showDragHandle: true,
+      backgroundColor: AppColors.surface,
       builder: (modalContext) => BlocProvider<AuthCubit>(
         create: (_) => getIt<AuthCubit>(),
         child: const ForgotPasswordBottomSheet(),
@@ -91,61 +92,43 @@ class ForgotPasswordBottomSheetState extends State<ForgotPasswordBottomSheet> {
 
         return Padding(
           padding: EdgeInsets.only(bottom: bottomInset),
-          child: Container(
-            decoration: const BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-            ),
-            child: SafeArea(
-              top: false,
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(24, 14, 24, 24),
-                child: Form(
-                  key: formKey,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Center(
-                        child: Container(
-                          width: 54,
-                          height: 4,
-                          decoration: BoxDecoration(
-                            color: AppColors.outline,
-                            borderRadius: BorderRadius.circular(2),
-                          ),
-                        ),
+          child: SafeArea(
+            top: false,
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+              child: Form(
+                key: formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(tr.forgotPassword, style: context.bold24TextMain),
+                    10.verticalSpace,
+                    Text(
+                      tr.forgotPasswordSubtitle,
+                      style: context.regular14TextSecondary.copyWith(
+                        height: 1.4,
                       ),
-                      24.verticalSpace,
-                      Text(tr.forgotPassword, style: context.bold24TextMain),
-                      10.verticalSpace,
-                      Text(
-                        tr.forgotPasswordSubtitle,
-                        style: context.regular14TextSecondary.copyWith(
-                          height: 1.4,
-                        ),
-                      ),
-                      24.verticalSpace,
-                      AppTextField(
-                        controller: emailController,
-                        hintText: tr.emailAddress,
-                        keyboardType: TextInputType.emailAddress,
-                        textInputAction: TextInputAction.done,
-                        autofillHints: const [AutofillHints.email],
-                        validator: (value) =>
-                            AppValidators.validateEmail(value),
-                        onFieldSubmitted: (_) => onContinue(),
-                      ),
-                      24.verticalSpace,
-                      AppPrimaryButton(
-                        label: tr.continueText,
-                        isLoading: isLoading,
-                        onPressed: isLoading ? null : onContinue,
-                        height: 52,
-                      ),
-                      8.verticalSpace,
-                    ],
-                  ),
+                    ),
+                    24.verticalSpace,
+                    AppTextField(
+                      controller: emailController,
+                      hintText: tr.emailAddress,
+                      keyboardType: TextInputType.emailAddress,
+                      textInputAction: TextInputAction.done,
+                      autofillHints: const [AutofillHints.email],
+                      validator: (value) => AppValidators.validateEmail(value),
+                      onFieldSubmitted: (_) => onContinue(),
+                    ),
+                    24.verticalSpace,
+                    AppPrimaryButton(
+                      label: tr.continueText,
+                      isLoading: isLoading,
+                      onPressed: isLoading ? null : onContinue,
+                      height: 52,
+                    ),
+                    8.verticalSpace,
+                  ],
                 ),
               ),
             ),

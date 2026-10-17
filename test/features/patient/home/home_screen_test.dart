@@ -102,7 +102,7 @@ void main() {
     expect(
       find.descendant(
         of: navBarFinder,
-        matching: find.byIcon(Icons.medical_services_rounded),
+        matching: find.byIcon(Icons.favorite_rounded),
       ),
       findsOneWidget,
     );
@@ -116,7 +116,7 @@ void main() {
     expect(
       find.descendant(
         of: navBarFinder,
-        matching: find.byIcon(Icons.person_rounded),
+        matching: find.byIcon(Icons.settings_rounded),
       ),
       findsOneWidget,
     );
@@ -203,7 +203,7 @@ void main() {
     );
     await tester.pump();
 
-    await tester.tap(find.byIcon(Icons.medical_services_rounded));
+    await tester.tap(find.byIcon(Icons.favorite_rounded));
     await tester.pumpAndSettle();
     expect(currentIndex, 1);
 
@@ -211,7 +211,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(currentIndex, 2);
 
-    await tester.tap(find.byIcon(Icons.person_rounded));
+    await tester.tap(find.byIcon(Icons.settings_rounded));
     await tester.pumpAndSettle();
     expect(currentIndex, 3);
 

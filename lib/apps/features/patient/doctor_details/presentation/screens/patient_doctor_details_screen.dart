@@ -46,7 +46,7 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
         children: [
           DoctorDetailsAppBar(
             onBack: () => context.pop(),
-            onSearch: () => const FindDoctorsRoute().go(context),
+            onSearch: () => const FindDoctorsRoute().push(context),
           ),
           Expanded(
             child: SingleChildScrollView(

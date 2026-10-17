@@ -60,47 +60,51 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (context, state) {
         return Scaffold(
           backgroundColor: AppColors.background,
-          body: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AppHeaderSection(
-                  greeting: _greeting(user),
-                  title: tr.findYourDoctor,
-                  searchReadOnly: true,
-                  onSearchTap: () =>
-                      const FindDoctorsRoute(focus: true).go(context),
-                  showLanguageToggle: true,
-                  showProfile: true,
-                  profileImage: user?.photoURL,
-                  leading: AppIconButton(
-                    icon: Icons.menu_rounded,
-                    iconSize: 22,
-                    iconColor: AppColors.white,
-                    backgroundColor: AppColors.white.withValues(alpha: 0.2),
-                    boxShadow: const [],
-                    tooltip: MaterialLocalizations.of(
-                      context,
-                    ).openAppDrawerTooltip,
-                    onTap: () => Scaffold.of(context).openDrawer(),
+          body: RefreshIndicator(
+            onRefresh: context.read<HomeCubit>().load,
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AppHeaderSection(
+                    greeting: _greeting(user),
+                    title: tr.findYourDoctor,
+                    searchReadOnly: true,
+                    onSearchTap: () =>
+                        const FindDoctorsRoute(focus: true).push(context),
+                    showLanguageToggle: true,
+                    showProfile: true,
+                    profileImage: user?.photoURL,
+                    leading: AppIconButton(
+                      icon: Icons.menu_rounded,
+                      iconSize: 22,
+                      iconColor: AppColors.white,
+                      backgroundColor: AppColors.white.withValues(alpha: 0.2),
+                      boxShadow: const [],
+                      tooltip: MaterialLocalizations.of(
+                        context,
+                      ).openAppDrawerTooltip,
+                      onTap: () => Scaffold.of(context).openDrawer(),
+                    ),
+                    onProfileTap: () => const ProfileRoute().push(context),
                   ),
-                  onProfileTap: () => const ProfileRoute().go(context),
-                ),
-                switch (state) {
-                  HomeInitial() || HomeLoading() => const DoctorsLoading(),
-                  HomeFailure() => HomeLoadError(
-                    onRetry: () => context.read<HomeCubit>().load(),
-                  ),
-                  HomeSuccess(:final popularDoctors)
-                      when popularDoctors.isEmpty =>
-                    const DoctorsIsEmpty(),
-                  HomeSuccess() => DoctorsData(
-                    popularDoctors: state.popularDoctors,
-                    topRatedDoctors: state.topRatedDoctors,
-                    specialties: state.specialties,
-                  ),
-                },
-              ],
+                  switch (state) {
+                    HomeInitial() || HomeLoading() => const DoctorsLoading(),
+                    HomeFailure() => HomeLoadError(
+                      onRetry: () => context.read<HomeCubit>().load(),
+                    ),
+                    HomeSuccess(:final popularDoctors)
+                        when popularDoctors.isEmpty =>
+                      const DoctorsIsEmpty(),
+                    HomeSuccess() => DoctorsData(
+                      popularDoctors: state.popularDoctors,
+                      topRatedDoctors: state.topRatedDoctors,
+                      specialties: state.specialties,
+                    ),
+                  },
+                ],
+              ),
             ),
           ),
         );

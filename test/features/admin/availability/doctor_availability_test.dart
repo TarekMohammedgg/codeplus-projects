@@ -80,7 +80,7 @@ void main() {
       final repo = _FakeDoctorAvailabilityRepository();
       final cubit = DoctorAvailabilityCubit(repository: repo);
 
-      cubit.setWorkingDays({});
+      [1, 2, 3, 4, 5].forEach(cubit.toggleDay);
       expect(cubit.state.isWorkingDaysValid, isFalse);
       expect(cubit.state.isValid, isFalse);
       expect(
@@ -259,7 +259,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      cubit.setWorkingDays({});
+      [1, 2, 3, 4, 5].forEach(cubit.toggleDay);
       await tester.pumpAndSettle();
 
       final saveBtn = find.byKey(const Key('availability_save_button'));

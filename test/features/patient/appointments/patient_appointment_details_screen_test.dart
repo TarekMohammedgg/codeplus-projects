@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -38,6 +40,11 @@ class _FakeSpecialtyService extends Fake implements SpecialtyService {
 }
 
 class _FakeAppointmentService extends Fake implements AppointmentService {
+  final updates = StreamController<AppointmentModel?>.broadcast();
+
+  @override
+  Stream<AppointmentModel?> streamAppointment(String id) => updates.stream;
+
   AppointmentModel? cancelledAppointment;
   CancelledBy? lastCancelledBy;
 
@@ -257,6 +264,45 @@ void main() {
       },
     );
 
+    testWidgets('live update hides Rate Doctor once the review is saved', (
+      WidgetTester tester,
+    ) async {
+      final appointment = _buildTestAppt(
+        id: 'appt_live',
+        status: AppointmentStatus.completed,
+        startAt: DateTime(2026, 9, 1, 10, 0),
+      );
+      final appointmentService = _FakeAppointmentService();
+
+      await tester.pumpWidget(
+        buildTestApp(
+          _detailsScreen(
+            appointment: appointment,
+            clinicService: _FakeClinicService(),
+            appointmentService: appointmentService,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const Key('details_rate_doctor_button')),
+        findsOneWidget,
+      );
+
+      appointmentService.updates.add(
+        _buildTestAppt(
+          id: 'appt_live',
+          status: AppointmentStatus.completed,
+          startAt: DateTime(2026, 9, 1, 10, 0),
+          isReviewed: true,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('details_rate_doctor_button')), findsNothing);
+      expect(find.text(tr.reviewed), findsOneWidget);
+    });
+
     testWidgets('Cancelled: shows cancelledBy text and no action button', (
       WidgetTester tester,
     ) async {
@@ -294,13 +340,15 @@ Widget _detailsScreen({
   AppointmentService? appointmentService,
 }) {
   return BlocProvider<AppointmentDetailsCubit>(
+    key: ValueKey(appointment.id),
     create: (_) => AppointmentDetailsCubit(
       repository: AppointmentDetailsRepositoryImpl(
         clinicService: clinicService ?? _FakeClinicService(),
         specialtyService: specialtyService ?? _FakeSpecialtyService(),
         appointmentService: appointmentService ?? _FakeAppointmentService(),
       ),
-    )..init(appointment),
-    child: PatientAppointmentDetailsScreen(appointment: appointment),
+      appointment: appointment,
+    )..init(),
+    child: const PatientAppointmentDetailsScreen(),
   );
 }

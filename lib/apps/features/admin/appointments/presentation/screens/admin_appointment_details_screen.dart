@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/apps/core/extensions/context_extensions.dart';
 import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
@@ -20,146 +19,139 @@ import 'package:doctor_hunt/apps/features/common/appointment_details/presentatio
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
-class AdminAppointmentDetailsScreen extends StatefulWidget {
-  const AdminAppointmentDetailsScreen({super.key, required this.appointment});
+class AdminAppointmentDetailsScreen extends StatelessWidget {
+  const AdminAppointmentDetailsScreen({super.key});
 
-  final AppointmentModel appointment;
-
-  @override
-  State<AdminAppointmentDetailsScreen> createState() =>
-      _AdminAppointmentDetailsScreenState();
-}
-
-class _AdminAppointmentDetailsScreenState
-    extends State<AdminAppointmentDetailsScreen> {
-  bool _isCancelling = false;
-  bool _isMarkingCompleted = false;
-
-  Future<void> _confirmMarkCompleted() async {
+  Future<void> _confirmMarkCompleted(BuildContext context) async {
     final cubit = context.read<AppointmentDetailsCubit>();
-    final confirmed = await showMarkCompletedDialog(context);
-    if (!confirmed || !mounted) return;
-
-    setState(() => _isMarkingCompleted = true);
-    try {
-      await cubit.markCompleted(widget.appointment.id);
-    } catch (e) {
-      if (!mounted) return;
-      context.showErrorSnackBar(AppException.from(e).message);
-      return;
-    } finally {
-      if (mounted) setState(() => _isMarkingCompleted = false);
-    }
-    if (!mounted) return;
-    context.showSuccessSnackBar(context.tr.appointmentMarkedCompletedSuccess);
-    Navigator.of(context).maybePop();
+    if (await showMarkCompletedDialog(context)) await cubit.markCompleted();
   }
 
-  Future<void> _confirmCancel() async {
+  Future<void> _confirmCancel(BuildContext context) async {
     final cubit = context.read<AppointmentDetailsCubit>();
-    final confirmed = await showCancelAppointmentDialog(context);
-    if (!confirmed || !mounted) return;
-
-    setState(() => _isCancelling = true);
-    try {
-      await cubit.cancel(widget.appointment, CancelledBy.admin);
-    } catch (e) {
-      if (!mounted) return;
-      context.showErrorSnackBar(AppException.from(e).message);
-      return;
-    } finally {
-      if (mounted) setState(() => _isCancelling = false);
+    if (await showCancelAppointmentDialog(context)) {
+      await cubit.cancel(CancelledBy.admin);
     }
-    if (!mounted) return;
-    context.showSuccessSnackBar(context.tr.appointmentCancelledSuccess);
-    Navigator.of(context).maybePop();
+  }
+
+  void _onActionChanged(BuildContext context, AppointmentDetailsState state) {
+    switch (state.action) {
+      case AppointmentActionStatus.completed:
+        context.showSuccessSnackBar(
+          context.tr.appointmentMarkedCompletedSuccess,
+        );
+        Navigator.of(context).maybePop();
+      case AppointmentActionStatus.cancelled:
+        context.showSuccessSnackBar(context.tr.appointmentCancelledSuccess);
+        Navigator.of(context).maybePop();
+      case AppointmentActionStatus.failed:
+        context.showErrorSnackBar(
+          state.errorMessage ?? context.tr.serviceError,
+        );
+      default:
+        break;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final appointment = widget.appointment;
     final state = context.watch<AppointmentDetailsCubit>().state;
-    final isBusy = _isMarkingCompleted || _isCancelling;
+    final appointment = state.appointment;
 
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        leading: const AppBackButton.leading(),
-        centerTitle: true,
-        title: Text(
-          context.tr.appointmentDetails,
-          style: context.bold18TextMain,
-        ),
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AppointmentDoctorCard(
-                    appointment: appointment,
-                    specialtyName: state.specialtyName,
-                  ),
-                  20.verticalSpace,
-                  _PatientInfoCard(appointment: appointment),
-                  20.verticalSpace,
-                  AppointmentSummaryCard(
-                    date: formatDate(appointment.startAt, context.localeCode),
-                    time: formatTime(appointment.startAt, context.localeCode),
-                    fee: formatFee(appointment.fee),
-                    extraRows: [
-                      if (appointment.status == AppointmentStatus.cancelled)
-                        AppointmentDetailRow(
-                          icon: Icons.cancel_outlined,
-                          label: context.tr.statusCancelled,
-                          value: appointment.cancelledBy == CancelledBy.patient
-                              ? context.tr.cancelledByPatient
-                              : context.tr.cancelledByAdmin,
-                          valueColor: AppColors.error,
-                        ),
-                    ],
-                  ),
-                  20.verticalSpace,
-                  ClinicLocationCard(clinic: state.clinic),
-                  24.verticalSpace,
-                ],
-              ),
-            ),
+    return BlocListener<AppointmentDetailsCubit, AppointmentDetailsState>(
+      listenWhen: (previous, current) => previous.action != current.action,
+      listener: _onActionChanged,
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(
+          leading: const AppBackButton.leading(),
+          centerTitle: true,
+          title: Text(
+            context.tr.appointmentDetails,
+            style: context.bold18TextMain,
           ),
-          if (appointment.status == AppointmentStatus.upcoming)
-            SafeArea(
-              top: false,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+        ),
+        body: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 16,
+                ),
                 child: Column(
-                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (appointment.hasStarted) ...[
-                      AppPrimaryButton(
-                        key: const Key('admin_mark_completed_button'),
-                        label: context.tr.markCompleted,
-                        icon: Icons.check_circle_outline_rounded,
-                        isLoading: _isMarkingCompleted,
-                        onPressed: isBusy ? null : _confirmMarkCompleted,
-                      ),
-                      12.verticalSpace,
-                    ],
-                    AppPrimaryButton.outlined(
-                      key: const Key('admin_cancel_appointment_button'),
-                      label: context.tr.cancelAppointment,
-                      foregroundColor: AppColors.error,
-                      borderColor: AppColors.error,
-                      isLoading: _isCancelling,
-                      onPressed: isBusy ? null : _confirmCancel,
+                    AppointmentDoctorCard(
+                      appointment: appointment,
+                      specialtyName: state.specialtyName,
                     ),
+                    20.verticalSpace,
+                    _PatientInfoCard(appointment: appointment),
+                    20.verticalSpace,
+                    AppointmentSummaryCard(
+                      date: formatDate(appointment.startAt, context.localeCode),
+                      time: formatTime(appointment.startAt, context.localeCode),
+                      fee: formatFee(appointment.fee),
+                      extraRows: [
+                        if (appointment.status == AppointmentStatus.cancelled)
+                          AppointmentDetailRow(
+                            icon: Icons.cancel_outlined,
+                            label: context.tr.statusCancelled,
+                            value:
+                                appointment.cancelledBy == CancelledBy.patient
+                                ? context.tr.cancelledByPatient
+                                : context.tr.cancelledByAdmin,
+                            valueColor: AppColors.error,
+                          ),
+                      ],
+                    ),
+                    20.verticalSpace,
+                    ClinicLocationCard(clinic: state.clinic),
+                    24.verticalSpace,
                   ],
                 ),
               ),
             ),
-        ],
+            if (appointment.status == AppointmentStatus.upcoming)
+              SafeArea(
+                top: false,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (appointment.hasStarted) ...[
+                        AppPrimaryButton(
+                          key: const Key('admin_mark_completed_button'),
+                          label: context.tr.markCompleted,
+                          icon: Icons.check_circle_outline_rounded,
+                          isLoading:
+                              state.action ==
+                              AppointmentActionStatus.completing,
+                          onPressed: state.isBusy
+                              ? null
+                              : () => _confirmMarkCompleted(context),
+                        ),
+                        12.verticalSpace,
+                      ],
+                      AppPrimaryButton.outlined(
+                        key: const Key('admin_cancel_appointment_button'),
+                        label: context.tr.cancelAppointment,
+                        foregroundColor: AppColors.error,
+                        borderColor: AppColors.error,
+                        isLoading:
+                            state.action == AppointmentActionStatus.cancelling,
+                        onPressed: state.isBusy
+                            ? null
+                            : () => _confirmCancel(context),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }

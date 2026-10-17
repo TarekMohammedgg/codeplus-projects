@@ -10,9 +10,6 @@ class AuthService {
   static String get serverClientId =>
       (dotenv.isInitialized ? dotenv.maybeGet('SERVER_CLIENT_ID') : null) ?? '';
 
-  final FirebaseAuth _auth;
-  final FirebaseFirestore _firestore;
-
   //CR [Correct DI Approach for Service Layer]:
   //CR Do not use nullable `_auth` or `_safeAuth()` fallback that catches and swallows startup errors.
   //CR Step 1: Register FirebaseAuth in `injection.dart`:
@@ -25,13 +22,13 @@ class AuthService {
   //CR   }
   //CR   ```
   // solved
-  AuthService({
-    required FirebaseAuth auth,
-    required FirebaseFirestore firestore,
-    // ignore: prefer_initializing_formals
-  }) : _auth = auth,
-       // ignore: prefer_initializing_formals
-       _firestore = firestore;
+  AuthService({required this.auth, required this.firestore});
+
+  final FirebaseAuth auth;
+  final FirebaseFirestore firestore;
+
+  // Cached role of the signed-in user; reset on every sign-in / sign-out.
+  bool? _isAdmin;
 
   static Future<void> initialize() async {
     final clientId = serverClientId;
@@ -40,7 +37,7 @@ class AuthService {
     );
   }
 
-  User? get currentUser => _auth.currentUser;
+  User? get currentUser => auth.currentUser;
 
   bool get hasPasswordProvider =>
       currentUser?.providerData.any(
@@ -61,17 +58,15 @@ class AuthService {
     await currentUser?.verifyBeforeUpdateEmail(newEmail);
   }
 
-  bool? _isAdmin;
-
   Stream<String?> userIdChanges() =>
-      _auth.authStateChanges().map((user) => user?.uid);
+      auth.authStateChanges().map((user) => user?.uid);
 
   //CR Layer separation defect: Data service must never take BuildContext or handle UI greetings/translations.
   // solved
 
   Future<void> signOut() async {
     _isAdmin = null;
-    await Future.wait([_auth.signOut(), GoogleSignIn.instance.signOut()]);
+    await Future.wait([auth.signOut(), GoogleSignIn.instance.signOut()]);
   }
 
   Future<UserCredential> signUpWithEmailAndPassword({
@@ -79,7 +74,7 @@ class AuthService {
     required String password,
     String? name,
   }) async {
-    final userCredential = await _auth.createUserWithEmailAndPassword(
+    final userCredential = await auth.createUserWithEmailAndPassword(
       email: email.trim(),
       password: password,
     );
@@ -99,7 +94,7 @@ class AuthService {
     required String email,
     required String password,
   }) async {
-    final credential = await _auth.signInWithEmailAndPassword(
+    final credential = await auth.signInWithEmailAndPassword(
       email: email.trim(),
       password: password,
     );
@@ -116,7 +111,7 @@ class AuthService {
         idToken: googleUser.authentication.idToken,
       );
 
-      final result = await _auth.signInWithCredential(credential);
+      final result = await auth.signInWithCredential(credential);
       final user = result.user;
       if (user != null) await ensureUserProfile(user);
       _isAdmin = null;
@@ -130,14 +125,13 @@ class AuthService {
   }
 
   Future<void> ensureUserProfile(User user) async {
-    final reference = _firestore.collection('users').doc(user.uid);
+    final reference = firestore.collection('users').doc(user.uid);
     final snapshot = await reference.get();
 
     if (snapshot.exists) {
       final existingData = snapshot.data() ?? const <String, dynamic>{};
       final updateData = <String, dynamic>{
         'updatedAt': FieldValue.serverTimestamp(),
-        'permissions': FieldValue.delete(),
       };
       final existingName = existingData['displayName'] as String?;
       if ((existingName == null || existingName.trim().isEmpty) &&
@@ -176,15 +170,15 @@ class AuthService {
       return false;
     }
     if (_isAdmin != null) return _isAdmin!;
-    final snapshot = await _firestore.collection('users').doc(user.uid).get();
+    final snapshot = await firestore.collection('users').doc(user.uid).get();
     final isAdmin = snapshot.data()?['role'] == UserRole.admin.name;
     _isAdmin = isAdmin;
     return isAdmin;
   }
 
-  Future<void> forgetpassword({required String email}) async {
+  Future<void> resetPassword({required String email}) async {
     try {
-      await _auth.sendPasswordResetEmail(email: email.trim());
+      await auth.sendPasswordResetEmail(email: email.trim());
     } on FirebaseAuthException catch (e) {
       throw AppException.fromFirebaseAuth(e);
     } catch (e) {

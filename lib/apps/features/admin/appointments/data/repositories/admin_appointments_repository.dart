@@ -4,7 +4,7 @@ import 'package:doctor_hunt/apps/core/services/appointment_service.dart';
 import 'package:doctor_hunt/apps/core/services/specialty_service.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/data/service/profile_service.dart';
 
-abstract class AdminAppointmentsRepository {
+abstract interface class AdminAppointmentsRepository {
   Stream<List<AppointmentModel>> streamAppointments();
   Future<List<SpecialtyModel>> getSpecialties();
   Future<Map<String, String>> fetchPatientPhotos(Set<String> patientIds);

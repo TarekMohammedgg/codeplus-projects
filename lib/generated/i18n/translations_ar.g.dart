@@ -288,9 +288,7 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get placeholderDoctorName => 'د. طبيب أطفال';
 	@override String get tabHome => 'الرئيسية';
 	@override String get tabFavorites => 'المفضلة';
-	@override String get tabDoctors => 'الأطباء';
 	@override String get tabAppointments => 'المواعيد';
-	@override String get tabProfile => 'الملف الشخصي';
 	@override String get myAppointments => 'مواعيدي';
 	@override String get noFavoritesFound => 'لا يوجد أطباء في المفضلة بعد';
 	@override String get appointments => 'المواعيد';
@@ -643,9 +641,7 @@ extension on TranslationsAr {
 			'placeholderDoctorName' => 'د. طبيب أطفال',
 			'tabHome' => 'الرئيسية',
 			'tabFavorites' => 'المفضلة',
-			'tabDoctors' => 'الأطباء',
 			'tabAppointments' => 'المواعيد',
-			'tabProfile' => 'الملف الشخصي',
 			'myAppointments' => 'مواعيدي',
 			'noFavoritesFound' => 'لا يوجد أطباء في المفضلة بعد',
 			'appointments' => 'المواعيد',

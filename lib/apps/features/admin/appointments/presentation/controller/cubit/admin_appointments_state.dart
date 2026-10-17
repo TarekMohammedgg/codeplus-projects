@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
 import 'package:doctor_hunt/apps/core/models/specialty_model.dart';
 
@@ -9,26 +8,10 @@ enum AdminAppointmentsStatus { initial, loading, loaded, failure }
 List<AppointmentModel> filterAppointmentsByTab(
   List<AppointmentModel> appointments,
   AdminAppointmentTab tab,
-) {
-  switch (tab) {
-    case AdminAppointmentTab.all:
-      return appointments;
-    case AdminAppointmentTab.upcoming:
-      return appointments
-          .where((a) => a.status == AppointmentStatus.upcoming)
-          .toList();
-    case AdminAppointmentTab.completed:
-      return appointments
-          .where((a) => a.status == AppointmentStatus.completed)
-          .toList();
-    case AdminAppointmentTab.cancelled:
-      return appointments
-          .where((a) => a.status == AppointmentStatus.cancelled)
-          .toList();
-  }
-}
+) => tab == AdminAppointmentTab.all
+    ? appointments
+    : appointments.where((a) => a.status.name == tab.name).toList();
 
-@immutable
 class AdminAppointmentsState {
   const AdminAppointmentsState({
     this.status = AdminAppointmentsStatus.initial,
@@ -66,25 +49,4 @@ class AdminAppointmentsState {
       errorMessage: errorMessage,
     );
   }
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is AdminAppointmentsState &&
-          other.status == status &&
-          listEquals(other.appointments, appointments) &&
-          other.selectedTab == selectedTab &&
-          mapEquals(other.specialties, specialties) &&
-          mapEquals(other.patientPhotos, patientPhotos) &&
-          other.errorMessage == errorMessage;
-
-  @override
-  int get hashCode => Object.hash(
-    status,
-    Object.hashAll(appointments),
-    selectedTab,
-    Object.hashAll(specialties.entries),
-    Object.hashAll(patientPhotos.entries),
-    errorMessage,
-  );
 }

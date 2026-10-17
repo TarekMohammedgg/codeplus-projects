@@ -4,6 +4,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_icon_button.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_text_button.dart';
 import 'package:doctor_hunt/apps/features/common/onboarding/data/onboarding_data.dart';
 import 'package:doctor_hunt/apps/features/common/onboarding/data/models/onboarding_model.dart';
@@ -36,11 +37,6 @@ class OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   void onNext() {
-    if (currentIndex == onboardingPages().length - 1) {
-      onSkip();
-      return;
-    }
-
     controller.nextPage(
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeOutCubic,
@@ -82,17 +78,26 @@ class OnboardingScreenState extends State<OnboardingScreen> {
                   foregroundColor: AppColors.textSecondary,
                 ),
                 const Spacer(),
-                AppIconButton(
-                  onTap: onNext,
-                  icon: Icons.arrow_forward_rounded,
-                  iconColor: AppColors.white,
-                  iconSize: 24,
-                  backgroundColor: AppColors.primary,
-                  width: 58,
-                  height: 58,
-                  borderRadius: BorderRadius.circular(29),
-                  boxShadow: const [],
-                ),
+                if (currentIndex == pages.length - 1)
+                  AppPrimaryButton(
+                    key: const Key('onboarding_get_started_button'),
+                    label: tr.getStarted,
+                    onPressed: onSkip,
+                    width: 160,
+                    height: 52,
+                  )
+                else
+                  AppIconButton(
+                    onTap: onNext,
+                    icon: Icons.arrow_forward_rounded,
+                    iconColor: AppColors.white,
+                    iconSize: 24,
+                    backgroundColor: AppColors.primary,
+                    width: 58,
+                    height: 58,
+                    borderRadius: BorderRadius.circular(29),
+                    boxShadow: const [],
+                  ),
               ],
             ),
           ),

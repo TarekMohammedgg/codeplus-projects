@@ -9,7 +9,7 @@ import 'package:doctor_hunt/apps/features/common/auth/data/service/auth_service.
 import 'package:doctor_hunt/apps/features/patient/profile/data/models/user_profile_model.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/data/service/profile_service.dart';
 
-abstract class AdminProfileRepository {
+abstract interface class AdminProfileRepository {
   String? get currentUid;
   Future<UserProfileModel> fetchAdminProfile(String uid);
   Future<ClinicModel?> fetchClinic();

@@ -43,6 +43,7 @@ void main() {
     WidgetTester tester, {
     Set<String>? favorites,
     DoctorSort? sort,
+    bool favoritesOnly = false,
   }) async {
     tester.view.physicalSize = const Size(1080, 2400);
     tester.view.devicePixelRatio = 1.0;
@@ -58,7 +59,7 @@ void main() {
             create: (_) => FindDoctorsCubit(
               repository: FakeDoctorRepository(doctors: testFindDoctors()),
             ),
-            child: FindDoctorsScreen(sort: sort),
+            child: FindDoctorsScreen(sort: sort, favoritesOnly: favoritesOnly),
           ),
         ),
       ),
@@ -84,7 +85,8 @@ void main() {
     expect(find.text(tr.findDoctors), findsOneWidget);
     expect(find.text('Dr. Shruti Kedia'), findsOneWidget);
     expect(find.text('Dr. Fillerup Grab'), findsOneWidget);
-    expect(find.byIcon(Icons.arrow_back_ios_new_rounded), findsNothing);
+    // Pushed from Home (search / specialty), so it has a back button.
+    expect(find.byIcon(Icons.arrow_back_ios_new_rounded), findsOneWidget);
   });
 
   testWidgets(
@@ -132,6 +134,29 @@ void main() {
     // assert
     expect(find.text('Dr. Shruti Kedia'), findsOneWidget);
     expect(find.text('Dr. Fillerup Grab'), findsNothing);
+  });
+
+  testWidgets('Favorites tab lists only favorites, no search or back', (
+    WidgetTester tester,
+  ) async {
+    // arrange: patient already signed in with one favorite
+    addTearDown(favoritesCubit.close);
+    favoritesRepository = FakeFavoritesRepository(
+      initialUserId: 'patient-1',
+      initialFavorites: {'doc_1'},
+    );
+    favoritesCubit = FavoritesCubit(repository: favoritesRepository);
+
+    // act
+    await pumpScreen(tester, favoritesOnly: true);
+    await tester.pump();
+
+    // assert
+    expect(find.text(AppLocale.en.buildSync().tabFavorites), findsOneWidget);
+    expect(find.text('Dr. Shruti Kedia'), findsOneWidget);
+    expect(find.text('Dr. Fillerup Grab'), findsNothing);
+    expect(find.byType(TextField), findsNothing);
+    expect(find.byIcon(Icons.arrow_back_ios_new_rounded), findsNothing);
   });
 
   testWidgets(

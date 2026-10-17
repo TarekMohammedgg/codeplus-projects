@@ -63,16 +63,14 @@ class DoctorAvailability {
   }
 
   String formatSummary({String? locale}) {
-    final sortedDays = List<int>.from(workingDays)..sort();
-    final dayNames = sortedDays
-        .map((w) => weekdayName(w, locale ?? 'en'))
-        .join(', ');
+    final code = locale ?? 'en';
+    final dayNames = ([
+      ...workingDays,
+    ]..sort()).map((day) => weekdayName(day, code)).join(', ');
+    String time(int minutes) =>
+        DateFormat.Hm(code).format(DateTime(2000, 1, 1, 0, minutes));
 
-    final startH = (startMinutes ~/ 60).toString().padLeft(2, '0');
-    final startM = (startMinutes % 60).toString().padLeft(2, '0');
-    final endH = (endMinutes ~/ 60).toString().padLeft(2, '0');
-    final endM = (endMinutes % 60).toString().padLeft(2, '0');
-
-    return '$dayNames · $startH:$startM–$endH:$endM · $slotMinutes min';
+    return '$dayNames · ${time(startMinutes)}–${time(endMinutes)} · '
+        '$slotMinutes min';
   }
 }

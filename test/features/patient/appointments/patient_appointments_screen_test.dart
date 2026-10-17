@@ -3,8 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
-import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
-import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/features/patient/appointments/presentation/controller/cubit/patient_appointments_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/appointments/presentation/screens/patient_appointments_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/appointments/presentation/widgets/patient_appointment_card.dart';
@@ -135,7 +133,7 @@ void main() {
       await cubit.close();
     });
 
-    testWidgets('pill follows the swipe before the page settles', (
+    testWidgets('swiping the page moves the tab bar to the next tab', (
       WidgetTester tester,
     ) async {
       final cubit = PatientAppointmentsCubit(
@@ -151,21 +149,16 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      final gesture = await tester.startGesture(
-        tester.getCenter(find.byType(TabBarView)),
-      );
 
-      await gesture.moveBy(
+      await tester.fling(
+        find.byType(TabBarView),
         Offset(-tester.getSize(find.byType(TabBarView)).width * 0.6, 0),
+        1000,
       );
-      await tester.pump();
-
-      final completedPill = tester.widget<AppPrimaryButton>(
-        find.widgetWithText(AppPrimaryButton, tr.completed),
-      );
-      expect(completedPill.backgroundColor, AppColors.primary);
-      await gesture.up();
       await tester.pumpAndSettle();
+
+      final tabBar = tester.widget<TabBar>(find.byType(TabBar));
+      expect(tabBar.controller!.index, 1);
       await cubit.close();
     });
 

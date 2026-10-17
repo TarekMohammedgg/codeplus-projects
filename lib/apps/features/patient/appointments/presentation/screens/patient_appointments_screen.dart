@@ -13,6 +13,7 @@ import 'package:doctor_hunt/apps/core/widgets/app_empty_state.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_back_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_confirm_dialog.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_segmented_tab_bar.dart';
 import 'package:doctor_hunt/apps/features/patient/appointments/presentation/controller/cubit/patient_appointments_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/appointments/presentation/widgets/patient_appointment_card.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
@@ -82,40 +83,13 @@ class _PatientAppointmentsScreenState extends State<PatientAppointmentsScreen>
           preferredSize: const Size.fromHeight(46),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
-            child: AnimatedBuilder(
-              animation: _tabController.animation!,
-              builder: (context, _) {
-                final selected = _tabController.animation!.value.round();
-                return Row(
-                  spacing: 8,
-                  children: [
-                    for (final (index, label) in [
-                      context.tr.upcoming,
-                      context.tr.completed,
-                      context.tr.cancelled,
-                    ].indexed)
-                      Expanded(
-                        child: AppPrimaryButton(
-                          label: label,
-                          height: 38,
-                          borderRadius: const BorderRadius.all(
-                            Radius.circular(6),
-                          ),
-                          backgroundColor: selected == index
-                              ? AppColors.primary
-                              : AppColors.primaryLight,
-                          textStyle: selected == index
-                              ? context.medium12White
-                              : context.regular12Primary,
-                          foregroundColor: selected == index
-                              ? AppColors.white
-                              : AppColors.primary,
-                          onPressed: () => _tabController.animateTo(index),
-                        ),
-                      ),
-                  ],
-                );
-              },
+            child: AppSegmentedTabBar(
+              controller: _tabController,
+              labels: [
+                context.tr.upcoming,
+                context.tr.completed,
+                context.tr.cancelled,
+              ],
             ),
           ),
         ),
@@ -176,7 +150,7 @@ class _PatientAppointmentsScreenState extends State<PatientAppointmentsScreen>
                     label: context.tr.bookAppointment,
                     width: 200,
                     height: 48,
-                    onPressed: () => const FindDoctorsRoute().go(context),
+                    onPressed: () => const FindDoctorsRoute().push(context),
                   ),
                   onCancel: (appt) => _confirmCancel(context, appt),
                 ),

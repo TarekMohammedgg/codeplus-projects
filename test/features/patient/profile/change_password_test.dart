@@ -49,7 +49,9 @@ void main() {
         cubit.stream,
         emitsInOrder([
           const ChangePasswordSubmitting(),
-          const ChangePasswordFailure(
+          isA<ChangePasswordFailure>().having(
+            (state) => state.message,
+            'message',
             'Wrong current password. Please try again.',
           ),
         ]),

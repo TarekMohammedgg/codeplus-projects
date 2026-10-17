@@ -5,6 +5,7 @@ import 'package:doctor_hunt/apps/core/services/clinic_service.dart';
 import 'package:doctor_hunt/apps/core/services/specialty_service.dart';
 
 abstract interface class AppointmentDetailsRepository {
+  Stream<AppointmentModel?> watchAppointment(String appointmentId);
   Future<String?> fetchSpecialtyName(String? specialtyId);
   Stream<ClinicModel?> watchClinic();
   Future<void> cancel(AppointmentModel appointment, CancelledBy cancelledBy);
@@ -21,6 +22,10 @@ class AppointmentDetailsRepositoryImpl implements AppointmentDetailsRepository {
   final AppointmentService appointmentService;
   final ClinicService clinicService;
   final SpecialtyService specialtyService;
+
+  @override
+  Stream<AppointmentModel?> watchAppointment(String appointmentId) =>
+      appointmentService.streamAppointment(appointmentId);
 
   @override
   Future<String?> fetchSpecialtyName(String? specialtyId) =>

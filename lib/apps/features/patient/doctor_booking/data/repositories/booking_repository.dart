@@ -6,7 +6,7 @@ import 'package:doctor_hunt/apps/features/patient/doctor_booking/data/models/boo
 import 'package:doctor_hunt/apps/features/patient/profile/data/service/profile_service.dart';
 
 abstract interface class BookingRepository {
-  Future<Set<DateTime>> fetchBookedStarts(String doctorId, DateTime day);
+  Stream<Set<DateTime>> watchBookedStarts(String doctorId, List<DateTime> days);
 
   Stream<ClinicModel?> watchClinic();
 
@@ -27,8 +27,11 @@ class BookingRepositoryImpl implements BookingRepository {
   final ProfileService profileService;
 
   @override
-  Future<Set<DateTime>> fetchBookedStarts(String doctorId, DateTime day) {
-    return appointmentService.fetchBookedStarts(doctorId, day);
+  Stream<Set<DateTime>> watchBookedStarts(
+    String doctorId,
+    List<DateTime> days,
+  ) {
+    return appointmentService.watchBookedStarts(doctorId, days);
   }
 
   @override

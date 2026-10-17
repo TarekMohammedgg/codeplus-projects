@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:typed_data';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -44,29 +43,6 @@ class ProfileCubit extends Cubit<ProfileState> {
   }
 
   User? get currentUser => authRepository.currentUser;
-
-  Future<void> saveProfile({
-    required String name,
-    required String phone,
-    DateTime? dob,
-    String? gender,
-    String? currentPhotoUrl,
-    Uint8List? newImageBytes,
-    String? newImageName,
-  }) async {
-    final uid = currentUser?.uid;
-    if (uid == null) return;
-    await repository.saveProfile(
-      uid: uid,
-      name: name,
-      phone: phone,
-      dob: dob,
-      gender: gender,
-      currentPhotoUrl: currentPhotoUrl,
-      newImageBytes: newImageBytes,
-      newImageName: newImageName,
-    );
-  }
 
   Future<void> setNotifications(bool enabled) async {
     final uid = currentUser?.uid;

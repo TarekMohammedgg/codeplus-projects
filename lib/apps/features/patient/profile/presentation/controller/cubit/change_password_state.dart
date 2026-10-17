@@ -18,14 +18,4 @@ final class ChangePasswordFailure extends ChangePasswordState {
   const ChangePasswordFailure(this.message);
 
   final String message;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is ChangePasswordFailure &&
-          runtimeType == other.runtimeType &&
-          message == other.message;
-
-  @override
-  int get hashCode => message.hashCode;
 }

@@ -3,6 +3,7 @@ import 'package:skeletonizer/skeletonizer.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/models/specialty_model.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
+import 'package:doctor_hunt/generated/style_atoms.dart';
 
 class DoctorCategorySection extends StatelessWidget {
   const DoctorCategorySection({
@@ -17,7 +18,7 @@ class DoctorCategorySection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 54,
+      height: 84,
       child: ListView.separated(
         padding: const EdgeInsets.symmetric(horizontal: 24),
         scrollDirection: Axis.horizontal,
@@ -47,25 +48,43 @@ class DoctorCategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.primaryLight,
-      borderRadius: BorderRadius.circular(14),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        splashColor: AppColors.primary.withValues(alpha: 0.18),
-        highlightColor: AppColors.primary.withValues(alpha: 0.08),
-        child: SizedBox(
-          width: 54,
-          height: 54,
-          child: Center(
-            child: Skeleton.replace(
-              width: 26,
-              height: 26,
-              child: Icon(specialty.icon, color: AppColors.primary, size: 26),
+    return SizedBox(
+      width: 64,
+      child: Column(
+        children: [
+          Material(
+            color: AppColors.primaryLight,
+            borderRadius: BorderRadius.circular(14),
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              onTap: onTap,
+              splashColor: AppColors.primary.withValues(alpha: 0.18),
+              highlightColor: AppColors.primary.withValues(alpha: 0.08),
+              child: SizedBox.square(
+                dimension: 54,
+                child: Center(
+                  child: Skeleton.replace(
+                    width: 26,
+                    height: 26,
+                    child: Icon(
+                      specialty.icon,
+                      color: AppColors.primary,
+                      size: 26,
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
-        ),
+          6.verticalSpace,
+          Text(
+            specialty.localizedName,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            style: context.regular12TextSecondary,
+          ),
+        ],
       ),
     );
   }

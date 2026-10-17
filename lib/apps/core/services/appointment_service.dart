@@ -17,15 +17,22 @@ class AppointmentService {
   CollectionReference<Map<String, dynamic>> get _bookedSlots =>
       firestore.collection('bookedSlots');
 
-  Future<Set<DateTime>> fetchBookedStarts(String doctorId, DateTime day) async {
-    final snapshot = await _bookedSlots
+  /// Live booked starts for [days], so a slot freed by a cancel (patient or
+  /// admin) or taken by another patient updates open booking screens.
+  Stream<Set<DateTime>> watchBookedStarts(
+    String doctorId,
+    List<DateTime> days,
+  ) {
+    return _bookedSlots
         .where('doctorId', isEqualTo: doctorId)
-        .where('dateKey', isEqualTo: dateKeyFor(day))
-        .get();
-    return {
-      for (final doc in snapshot.docs)
-        (doc.data()['startAt'] as Timestamp).toDate(),
-    };
+        .where('dateKey', whereIn: days.map(dateKeyFor).toList())
+        .snapshots()
+        .map(
+          (snapshot) => {
+            for (final doc in snapshot.docs)
+              (doc.data()['startAt'] as Timestamp).toDate(),
+          },
+        );
   }
 
   Future<void> book({
@@ -96,6 +103,13 @@ class AppointmentService {
         .where('patientId', isEqualTo: patientId)
         .snapshots()
         .map(_parse);
+  }
+
+  Stream<AppointmentModel?> streamAppointment(String id) {
+    return _appointments.doc(id).snapshots().map((doc) {
+      final data = doc.data();
+      return data == null ? null : AppointmentModel.fromFirestore(doc.id, data);
+    });
   }
 
   Stream<List<AppointmentModel>> streamAllAppointments() {

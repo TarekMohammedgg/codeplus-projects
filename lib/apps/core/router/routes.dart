@@ -23,6 +23,7 @@ import 'package:doctor_hunt/apps/features/admin/settings/presentation/screens/ad
 import 'package:doctor_hunt/apps/features/common/auth/data/repositories/auth_repository.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/controller/cubit/auth_cubit.dart';
 import 'package:doctor_hunt/apps/features/common/appointment_details/presentation/controller/cubit/appointment_details_cubit.dart';
+import 'package:doctor_hunt/apps/features/patient/profile/presentation/controller/cubit/edit_profile_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/presentation/controller/cubit/profile_cubit.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/screens/login_screen.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/screens/signup_screen.dart';
@@ -53,7 +54,7 @@ import 'package:doctor_hunt/apps/core/services/app_preferences_service.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/presentation/screens/patient_settings_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/presentation/screens/privacy_policy_screen.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/presentation/screens/profile_screen.dart';
-import 'package:doctor_hunt/apps/features/patient/rate_doctor/presentation/cubit/rate_doctor_cubit.dart';
+import 'package:doctor_hunt/apps/features/patient/rate_doctor/presentation/controller/cubit/rate_doctor_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/rate_doctor/presentation/screens/rate_doctor_screen.dart';
 
 part 'routes.g.dart';
@@ -111,8 +112,8 @@ class RoleSelectionRoute extends GoRouteData with $RoleSelectionRoute {
     TypedStatefulShellBranch<PatientHomeBranch>(
       routes: [TypedGoRoute<HomeRoute>(path: AppRoutePaths.home)],
     ),
-    TypedStatefulShellBranch<PatientDoctorsBranch>(
-      routes: [TypedGoRoute<FindDoctorsRoute>(path: AppRoutePaths.doctors)],
+    TypedStatefulShellBranch<PatientFavoritesBranch>(
+      routes: [TypedGoRoute<FavoritesRoute>(path: AppRoutePaths.favorites)],
     ),
     TypedStatefulShellBranch<PatientAppointmentsBranch>(
       routes: [
@@ -121,8 +122,10 @@ class RoleSelectionRoute extends GoRouteData with $RoleSelectionRoute {
         ),
       ],
     ),
-    TypedStatefulShellBranch<PatientProfileBranch>(
-      routes: [TypedGoRoute<ProfileRoute>(path: AppRoutePaths.profile)],
+    TypedStatefulShellBranch<PatientSettingsBranch>(
+      routes: [
+        TypedGoRoute<PatientSettingsRoute>(path: AppRoutePaths.patientSettings),
+      ],
     ),
   ],
 )
@@ -151,16 +154,16 @@ class PatientHomeBranch extends StatefulShellBranchData {
   const PatientHomeBranch();
 }
 
-class PatientDoctorsBranch extends StatefulShellBranchData {
-  const PatientDoctorsBranch();
+class PatientFavoritesBranch extends StatefulShellBranchData {
+  const PatientFavoritesBranch();
 }
 
 class PatientAppointmentsBranch extends StatefulShellBranchData {
   const PatientAppointmentsBranch();
 }
 
-class PatientProfileBranch extends StatefulShellBranchData {
-  const PatientProfileBranch();
+class PatientSettingsBranch extends StatefulShellBranchData {
+  const PatientSettingsBranch();
 }
 
 class HomeRoute extends GoRouteData with $HomeRoute {
@@ -188,12 +191,25 @@ class PatientAppointmentsRoute extends GoRouteData
   }
 }
 
-class ProfileRoute extends GoRouteData with $ProfileRoute {
-  const ProfileRoute();
+class FavoritesRoute extends GoRouteData with $FavoritesRoute {
+  const FavoritesRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const ProfileScreen();
+    return BlocProvider<FindDoctorsCubit>(
+      create: (_) => getIt<FindDoctorsCubit>(),
+      child: const FindDoctorsScreen(favoritesOnly: true),
+    );
+  }
+}
+
+/// Settings tab; [ProfileCubit] and [AuthCubit] come from [PatientShellRoute].
+class PatientSettingsRoute extends GoRouteData with $PatientSettingsRoute {
+  const PatientSettingsRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const PatientSettingsScreen();
   }
 }
 
@@ -283,6 +299,7 @@ class AdminSettingsRoute extends GoRouteData with $AdminSettingsRoute {
   }
 }
 
+@TypedGoRoute<FindDoctorsRoute>(path: AppRoutePaths.doctors)
 class FindDoctorsRoute extends GoRouteData with $FindDoctorsRoute {
   const FindDoctorsRoute({
     this.q,
@@ -367,8 +384,8 @@ class AdminAppointmentDetailsRoute extends GoRouteData
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return BlocProvider<AppointmentDetailsCubit>(
-      create: (_) => getIt<AppointmentDetailsCubit>()..init($extra),
-      child: AdminAppointmentDetailsScreen(appointment: $extra),
+      create: (_) => getIt<AppointmentDetailsCubit>(param1: $extra)..init(),
+      child: const AdminAppointmentDetailsScreen(),
     );
   }
 }
@@ -450,27 +467,22 @@ class EditProfileRoute extends GoRouteData with $EditProfileRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return BlocProvider<ProfileCubit>(
-      create: (_) => getIt<ProfileCubit>(),
+    return BlocProvider<EditProfileCubit>(
+      create: (_) => getIt<EditProfileCubit>(),
       child: EditProfileScreen(profile: $extra),
     );
   }
 }
 
-@TypedGoRoute<PatientSettingsRoute>(path: AppRoutePaths.patientSettings)
-class PatientSettingsRoute extends GoRouteData with $PatientSettingsRoute {
-  const PatientSettingsRoute();
+@TypedGoRoute<ProfileRoute>(path: AppRoutePaths.profile)
+class ProfileRoute extends GoRouteData with $ProfileRoute {
+  const ProfileRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<AuthCubit>(create: (_) => getIt<AuthCubit>()),
-        BlocProvider<ProfileCubit>(
-          create: (_) => getIt<ProfileCubit>()..init(),
-        ),
-      ],
-      child: const PatientSettingsScreen(),
+    return BlocProvider<ProfileCubit>(
+      create: (_) => getIt<ProfileCubit>()..init(),
+      child: const ProfileScreen(),
     );
   }
 }
@@ -510,8 +522,8 @@ class PatientAppointmentDetailsRoute extends GoRouteData
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return BlocProvider<AppointmentDetailsCubit>(
-      create: (_) => getIt<AppointmentDetailsCubit>()..init($extra),
-      child: PatientAppointmentDetailsScreen(appointment: $extra),
+      create: (_) => getIt<AppointmentDetailsCubit>(param1: $extra)..init(),
+      child: const PatientAppointmentDetailsScreen(),
     );
   }
 }

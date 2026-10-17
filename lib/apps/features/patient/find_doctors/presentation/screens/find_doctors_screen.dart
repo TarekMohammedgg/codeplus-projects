@@ -27,12 +27,16 @@ class FindDoctorsScreen extends StatefulWidget {
     this.specialtyId,
     this.sort,
     this.focusSearch = false,
+    this.favoritesOnly = false,
   });
 
   final String? query;
   final String? specialtyId;
   final DoctorSort? sort;
   final bool focusSearch;
+
+  /// Favorites tab: only the patient's favorite doctors, no search/filters.
+  final bool favoritesOnly;
 
   @override
   State<FindDoctorsScreen> createState() => _FindDoctorsScreenState();
@@ -50,6 +54,7 @@ class _FindDoctorsScreenState extends State<FindDoctorsScreen> {
       query: widget.query,
       specialtyId: widget.specialtyId,
       sort: widget.sort,
+      favoritesOnly: widget.favoritesOnly,
     );
   }
 
@@ -93,17 +98,19 @@ class _FindDoctorsScreenState extends State<FindDoctorsScreen> {
       },
       child: BlocBuilder<FindDoctorsCubit, FindDoctorsState>(
         builder: (context, state) {
-          final title = switch (widget.sort) {
-            DoctorSort.popular => context.tr.popularDoctors,
-            DoctorSort.topRated => context.tr.topRatedDoctors,
-            null => context.tr.findDoctors,
-          };
+          final title = widget.favoritesOnly
+              ? context.tr.tabFavorites
+              : switch (widget.sort) {
+                  DoctorSort.popular => context.tr.popularDoctors,
+                  DoctorSort.topRated => context.tr.topRatedDoctors,
+                  null => context.tr.findDoctors,
+                };
           return Scaffold(
             backgroundColor: AppColors.background,
             appBar: AppBar(
               leadingWidth: 50,
               automaticallyImplyLeading: false,
-              leading: widget.sort == null
+              leading: widget.favoritesOnly
                   ? null
                   : AppBackButton.leading(onTap: () => _handleBack(context)),
               titleSpacing: 19,
@@ -111,7 +118,7 @@ class _FindDoctorsScreenState extends State<FindDoctorsScreen> {
             ),
             body: Column(
               children: [
-                if (widget.sort == null) ...[
+                if (widget.sort == null && !widget.favoritesOnly) ...[
                   16.verticalSpace,
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -185,7 +192,10 @@ class _FindDoctorsScreenState extends State<FindDoctorsScreen> {
       FindDoctorsFailure() => Center(
         child: Text(context.tr.serviceError, style: context.semiBold16TextMain),
       ),
-      FindDoctorsSuccess() => _DoctorsList(state: state),
+      FindDoctorsSuccess() => RefreshIndicator(
+        onRefresh: context.read<FindDoctorsCubit>().refresh,
+        child: _DoctorsList(state: state),
+      ),
     };
   }
 }
@@ -200,16 +210,22 @@ class _DoctorsList extends StatelessWidget {
     final favoriteIds = context.watch<FavoritesCubit>().state.doctorIds;
     final doctors = visibleDoctors(state, favoriteIds);
     if (doctors.isEmpty) {
-      return Center(
-        child: Text(
-          state.favoritesOnly
-              ? context.tr.noFavoritesFound
-              : context.tr.noDoctorsFound,
-          style: context.semiBold16TextMain,
-        ),
+      return ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.only(top: 120),
+        children: [
+          Text(
+            state.favoritesOnly
+                ? context.tr.noFavoritesFound
+                : context.tr.noDoctorsFound,
+            textAlign: TextAlign.center,
+            style: context.semiBold16TextMain,
+          ),
+        ],
       );
     }
     return ListView.separated(
+      physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.fromLTRB(20, 14, 20, 32),
       itemCount: doctors.length,
       separatorBuilder: (_, _) => 14.verticalSpace,

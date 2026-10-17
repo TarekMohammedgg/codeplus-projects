@@ -14,7 +14,7 @@ import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_text_field.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_avatar_placeholder.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_image.dart';
-import 'package:doctor_hunt/apps/features/patient/rate_doctor/presentation/cubit/rate_doctor_cubit.dart';
+import 'package:doctor_hunt/apps/features/patient/rate_doctor/presentation/controller/cubit/rate_doctor_cubit.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 

@@ -19,73 +19,28 @@ class SocialAuthButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.transparent,
-      child: InkWell(
-        onTap: isLoading ? null : onPressed,
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          height: 54,
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            color: AppColors.surface,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.outline, width: 1),
-            boxShadow: const [
-              BoxShadow(
-                //CR hardcode color
-                // Solved
-                color: AppColors.shadowSoft,
-                blurRadius: 10,
-                offset: Offset(0, 3),
-              ),
-            ],
-          ),
-          child: isLoading
-              ? const Center(
-                  child: SizedBox(
-                    width: 22,
-                    height: 22,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        AppColors.primary,
-                      ),
-                    ),
-                  ),
-                )
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SocialMark(image: image),
-                    const SizedBox(width: 10),
-                    Text(
-                      label,
-                      style: context.medium16TextSecondary.copyWith(
-                        fontSize: 15,
-                      ),
-                    ),
-                  ],
-                ),
-        ),
+    return OutlinedButton.icon(
+      onPressed: isLoading ? null : onPressed,
+      style: OutlinedButton.styleFrom(
+        minimumSize: const Size.fromHeight(54),
+        backgroundColor: AppColors.surface,
+        foregroundColor: AppColors.textSecondary,
+        //CR hardcode color
+        // Solved
+        side: const BorderSide(color: AppColors.outline),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        textStyle: context.medium16TextSecondary.copyWith(fontSize: 15),
       ),
-    );
-  }
-}
-
-class SocialMark extends StatelessWidget {
-  final String image;
-  final double size;
-
-  const SocialMark({super.key, required this.image, this.size = 20});
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: size,
-      height: size,
-      child: Image.asset(image, width: size, height: size, fit: BoxFit.contain),
+      icon: isLoading
+          ? const SizedBox.square(
+              dimension: 22,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: AppColors.primary,
+              ),
+            )
+          : Image.asset(image, width: 20, height: 20),
+      label: Text(label),
     );
   }
 }

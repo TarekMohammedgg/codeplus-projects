@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
-import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_logout_dialog.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/controller/cubit/auth_cubit.dart';
 import 'package:doctor_hunt/apps/features/common/bottom_navigation_bar/presentation/widgets/main_bottom_navigation_bar.dart';
@@ -37,7 +36,6 @@ class PatientShell extends StatelessWidget {
         drawerEdgeDragWidth: 60,
         drawer: PatientMenuDrawer(
           onTabTap: navigationShell.goBranch,
-          onSettingsTap: () => const PatientSettingsRoute().push(context),
           onLogoutTap: () => _confirmLogOut(context),
         ),
         bottomNavigationBar: MainBottomNavigationBar(

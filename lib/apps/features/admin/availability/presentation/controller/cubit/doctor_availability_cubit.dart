@@ -18,9 +18,6 @@ class DoctorAvailabilityCubit extends Cubit<DoctorAvailabilityState> {
     _edit(state.copyWith(workingDays: days));
   }
 
-  void setWorkingDays(Set<int> days) =>
-      _edit(state.copyWith(workingDays: days));
-
   void setStartMinutes(int minutes) =>
       _edit(state.copyWith(startMinutes: minutes));
 

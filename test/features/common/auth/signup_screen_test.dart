@@ -27,7 +27,7 @@ void main() {
 
       expect(find.text(tr.google), findsOneWidget);
       expect(find.text(tr.facebook), findsNothing);
-      expect(find.byType(SocialMark), findsOneWidget);
+      expect(find.byType(SocialAuthButton), findsOneWidget);
 
       expect(find.text(tr.fullNameHint), findsOneWidget);
       expect(find.text(tr.emailAddress), findsOneWidget);

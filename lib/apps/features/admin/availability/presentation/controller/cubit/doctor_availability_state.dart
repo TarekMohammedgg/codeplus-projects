@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_availability.dart';
 
 enum DoctorAvailabilityStatus { initial, saving, success, failure }
@@ -10,7 +9,6 @@ enum AvailabilityValidationError {
   slotTooLong,
 }
 
-@immutable
 class DoctorAvailabilityState {
   const DoctorAvailabilityState({
     this.status = DoctorAvailabilityStatus.initial,
@@ -88,26 +86,4 @@ class DoctorAvailabilityState {
       errorMessage: errorMessage,
     );
   }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    return other is DoctorAvailabilityState &&
-        other.status == status &&
-        setEquals(other.workingDays, workingDays) &&
-        other.startMinutes == startMinutes &&
-        other.endMinutes == endMinutes &&
-        other.slotMinutes == slotMinutes &&
-        other.errorMessage == errorMessage;
-  }
-
-  @override
-  int get hashCode => Object.hash(
-    status,
-    Object.hashAll(workingDays),
-    startMinutes,
-    endMinutes,
-    slotMinutes,
-    errorMessage,
-  );
 }

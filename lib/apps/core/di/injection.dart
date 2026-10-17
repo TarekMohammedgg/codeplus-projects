@@ -9,7 +9,6 @@ import 'package:doctor_hunt/apps/core/services/doctor_service.dart';
 import 'package:doctor_hunt/apps/core/services/review_service.dart';
 import 'package:doctor_hunt/apps/core/services/specialty_service.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/data/repositories/admin_doctors_repository.dart';
-import 'package:doctor_hunt/apps/features/admin/doctors/data/service/admin_doctor_service.dart';
 import 'package:doctor_hunt/apps/features/admin/doctors/presentation/controller/cubit/admin_doctors_cubit.dart';
 import 'package:doctor_hunt/apps/features/admin/create_doctor/data/repositories/create_doctor_repository.dart';
 import 'package:doctor_hunt/apps/features/admin/availability/data/repositories/doctor_availability_repository.dart';
@@ -26,6 +25,7 @@ import 'package:doctor_hunt/apps/features/common/auth/presentation/controller/cu
 import 'package:doctor_hunt/apps/features/common/appointment_details/data/repositories/appointment_details_repository.dart';
 import 'package:doctor_hunt/apps/features/common/appointment_details/presentation/controller/cubit/appointment_details_cubit.dart';
 import 'package:doctor_hunt/apps/features/admin/doctor_details/presentation/controller/cubit/admin_doctor_details_cubit.dart';
+import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_availability.dart';
 import 'package:doctor_hunt/apps/features/patient/find_doctors/data/repositories/doctor_repository.dart';
@@ -43,9 +43,10 @@ import 'package:doctor_hunt/apps/features/patient/home/presentation/controller/c
 import 'package:doctor_hunt/apps/features/patient/profile/data/repositories/profile_repository.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/data/service/profile_service.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/presentation/controller/cubit/change_password_cubit.dart';
+import 'package:doctor_hunt/apps/features/patient/profile/presentation/controller/cubit/edit_profile_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/presentation/controller/cubit/profile_cubit.dart';
 import 'package:doctor_hunt/apps/features/patient/rate_doctor/data/repositories/rate_doctor_repository.dart';
-import 'package:doctor_hunt/apps/features/patient/rate_doctor/presentation/cubit/rate_doctor_cubit.dart';
+import 'package:doctor_hunt/apps/features/patient/rate_doctor/presentation/controller/cubit/rate_doctor_cubit.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:doctor_hunt/apps/core/services/app_preferences_service.dart';
@@ -80,9 +81,6 @@ void setupServiceLocator({required SharedPreferences preferences}) {
       specialtyService: getIt<SpecialtyService>(),
     ),
   );
-  getIt.registerLazySingleton<AdminDoctorService>(
-    () => AdminDoctorService(doctorService: getIt<DoctorService>()),
-  );
 
   getIt.registerLazySingleton<CloudinaryUploadService>(
     () => CloudinaryUploadService(dio: getIt<Dio>()),
@@ -114,13 +112,13 @@ void setupServiceLocator({required SharedPreferences preferences}) {
   );
   getIt.registerLazySingleton<AdminDoctorsRepository>(
     () => FirebaseAdminDoctorsRepository(
-      doctorService: getIt<AdminDoctorService>(),
+      doctorService: getIt<DoctorService>(),
       specialtyService: getIt<SpecialtyService>(),
     ),
   );
   getIt.registerLazySingleton<CreateDoctorRepository>(
     () => FirebaseCreateDoctorRepository(
-      doctorService: getIt<AdminDoctorService>(),
+      doctorService: getIt<DoctorService>(),
       specialtyService: getIt<SpecialtyService>(),
       uploadService: getIt<CloudinaryUploadService>(),
     ),
@@ -166,9 +164,8 @@ void setupServiceLocator({required SharedPreferences preferences}) {
     ),
   );
   getIt.registerLazySingleton<DoctorAvailabilityRepository>(
-    () => DoctorAvailabilityRepositoryImpl(
-      doctorService: getIt<AdminDoctorService>(),
-    ),
+    () =>
+        DoctorAvailabilityRepositoryImpl(doctorService: getIt<DoctorService>()),
   );
   getIt.registerLazySingleton<AdminProfileRepository>(
     () => AdminProfileRepositoryImpl(
@@ -223,6 +220,12 @@ void setupServiceLocator({required SharedPreferences preferences}) {
       authRepository: getIt<AuthRepository>(),
     ),
   );
+  getIt.registerFactory<EditProfileCubit>(
+    () => EditProfileCubit(
+      repository: getIt<ProfileRepository>(),
+      authRepository: getIt<AuthRepository>(),
+    ),
+  );
   getIt.registerFactory<ChangePasswordCubit>(
     () => ChangePasswordCubit(repository: getIt<AuthRepository>()),
   );
@@ -247,9 +250,10 @@ void setupServiceLocator({required SharedPreferences preferences}) {
       repository: getIt<AdminDoctorsRepository>(),
     ),
   );
-  getIt.registerFactory<AppointmentDetailsCubit>(
-    () => AppointmentDetailsCubit(
+  getIt.registerFactoryParam<AppointmentDetailsCubit, AppointmentModel, void>(
+    (appointment, _) => AppointmentDetailsCubit(
       repository: getIt<AppointmentDetailsRepository>(),
+      appointment: appointment,
     ),
   );
   getIt.registerFactory<AdminProfileCubit>(

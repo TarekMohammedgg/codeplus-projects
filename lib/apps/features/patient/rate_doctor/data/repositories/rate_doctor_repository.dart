@@ -2,7 +2,7 @@ import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
 import 'package:doctor_hunt/apps/core/services/review_service.dart';
 import 'package:doctor_hunt/apps/core/services/specialty_service.dart';
 
-abstract class RateDoctorRepository {
+abstract interface class RateDoctorRepository {
   Future<void> submitReview({
     required AppointmentModel appointment,
     required int rating,

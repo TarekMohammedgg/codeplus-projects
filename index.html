@@ -573,7 +573,7 @@ AppTextField(
 const LADDER=[['flutter','Flutter / Dart','b-teal','الأول: هل Flutter أو Dart أو الـ SDK عندهم الحل؟'],['core','lib/core و common','b-pur','تاني: هل الحل موجود في الـ codebase؟'],['pkg','package موجود','b-acc','تالت: هل package منزّلة بتعمل كده؟ (pub.dev لو مفيش)'],['scratch','من الصفر','b-warn','آخر حل: أصغر كود ممكن']];
 
 /* ---------------- overview lists ---------------- */
-const DONE=['موقع العيادة live في Doctor Details (<code>56533f4</code>)','Available slots في Doctor Details (<code>1043495</code>)','البروفايل: الإيميل ثابت، والاسم والتليفون والصورة قابلين للتعديل، وأيقونة بدل الصورة (<code>6728022</code>)','اللغة المختارة بتفضل بعد إعادة فتح التطبيق (<code>c58d7c8</code>)','التاب التاني Doctors والمفضلة فلتر جواه (<code>7c04f40</code>)','Mark Completed بعد ميعاد الزيارة بس، و Cancel للمريض قبل الميعاد بس، في الـ UI والـ rules (<code>020323b</code>)','الحجز بيرفض طبيب Deactivated أو slot مش من مواعيده (<code>afe4139</code>)','تاب Completed بيتحدث بعد التقييم (<code>a0cfd36</code>)','الأدمن بيشوف الـ availability الجديدة (<code>a0cfd36</code>)','Activate / Deactivate بنتيجة صادقة (<code>a0cfd36</code>)','فشل تحميل المواعيد بيظهر كخطأ (<code>a0cfd36</code>)','قاعدة باسورد واحدة (<code>a0ee21a</code>)','Profile من مصدر واحد (<code>a0cfd36</code>)'];
+const DONE=['الـ bottom nav بقى Home · Favorites · Appointments · Settings، و Find Doctors بيتفتح push من البحث أو التخصص في الـ Home، و Profile من كارت Settings (<code>fix/production-audit</code>)','الـ slots live: لو الأدمن أو المريض لغى، الميعاد يرجع متاح فورًا، ولو حد حجزه يختفي من غير ما تقفل الشاشة (<code>watchBookedStarts</code>)','مراجعة الجاهزية للتسليم: شاشات تفاصيل الموعد بقت live (زرار Rate Doctor بيختفي بعد التقييم)، والـ loading في الـ Cubits، و<code>TabBar</code>، وحذف <code>AdminDoctorService</code> (<code>fix/production-audit</code>)','موقع العيادة live في Doctor Details (<code>56533f4</code>)','Available slots في Doctor Details (<code>1043495</code>)','البروفايل: الإيميل ثابت، والاسم والتليفون والصورة قابلين للتعديل، وأيقونة بدل الصورة (<code>6728022</code>)','اللغة المختارة بتفضل بعد إعادة فتح التطبيق (<code>c58d7c8</code>)','التاب التاني Doctors والمفضلة فلتر جواه (<code>7c04f40</code>)','Mark Completed بعد ميعاد الزيارة بس، و Cancel للمريض قبل الميعاد بس، في الـ UI والـ rules (<code>020323b</code>)','الحجز بيرفض طبيب Deactivated أو slot مش من مواعيده (<code>afe4139</code>)','تاب Completed بيتحدث بعد التقييم (<code>a0cfd36</code>)','الأدمن بيشوف الـ availability الجديدة (<code>a0cfd36</code>)','Activate / Deactivate بنتيجة صادقة (<code>a0cfd36</code>)','فشل تحميل المواعيد بيظهر كخطأ (<code>a0cfd36</code>)','قاعدة باسورد واحدة (<code>a0ee21a</code>)','Profile من مصدر واحد (<code>a0cfd36</code>)'];
 $('#ov-done').innerHTML=DONE.map(x=>`<li><span class="dot" style="background:var(--ok)"></span><span>${x}</span></li>`).join('');
 $('#ov-left').innerHTML=STEPS.filter(s=>!s.shipped).map(s=>`<li style="cursor:pointer" data-go="${s.id}"><span class="dot" style="background:var(--${s.p==='p1'?'bad':s.p==='p2'?'warn':'accent'})"></span><span>${s.title} <span class="badge ${s.p==='p1'?'b-bad':s.p==='p2'?'b-warn':'b-acc'}">${s.p.toUpperCase()}</span></span></li>`).join('');
 if(!$('#ov-left').children.length)$('#ov-left').innerHTML='<li><span class="dot" style="background:var(--ok)"></span><span>مفيش حاجة باقية، كل الخطوات اتنفذت.</span></li>';
@@ -734,6 +734,7 @@ const W=[
  ['ok','تقييم واحد لكل موعد','id الـ review = id الموعد، ومفيش update',''],
  ['ok','المتوسط والعدد بيتحدثوا مع الـ review','transaction واحدة + rule على <code>doctors</code>',''],
  ['ok','مفيش حجز مزدوج','lock في <code>bookedSlots</code> جوه transaction',''],
+ ['fixed','الـ slots بتتحدث live بعد الإلغاء أو الحجز','<code>watchBookedStarts</code> (snapshots) بدل fetch مرة واحدة',''],
  ['ok','Deactivate بدل الحذف','<code>allow delete: if false</code>',''],
  ['ok','موقع عيادة واحد','<code>clinic/settings</code>',''],
  ['ok','دخول الأدمن بإيميل وباسورد بس','Google مخفي للأدمن',''],
@@ -744,7 +745,7 @@ const W=[
  ['fixed','"مفيش مواعيد" غير "فشل التحميل"','<code>BookingLoadFailure</code> + test',''],
  ['fixed','قاعدة باسورد واحدة','<code>AppValidators.validatePassword</code>',''],
  ['fixed','Profile من مصدر واحد','الـ <code>ProfileCubit</code> بتاع الـ shell',''],
- ['fixed','4 تابات: Home · Doctors · Appointments · Profile','<code>FindDoctorsRoute</code> هو الـ branch التاني + فلتر المفضلة','s6'],
+ ['fixed','4 تابات: Home · Favorites · Appointments · Settings (قرار Tarek)','<code>FavoritesRoute</code> = <code>FindDoctorsScreen(favoritesOnly)</code>، و <code>FindDoctorsRoute</code> push من الـ Home','s6'],
  ['fixed','Doctor Details فيها Available slots','<code>AvailableSlotsSection</code> بيعرض أقرب 4 مواعيد من <code>BookingCubit</code>','s5'],
  ['fixed','موقع العيادة فورًا في Doctor Details','<code>watchClinic()</code> بدل <code>fetchClinic()</code>','s3'],
  ['fixed','اللغة تفضل بعد إعادة الفتح','<code>main.dart</code> بيرجّع اللغة المحفوظة ويحفظ كل تغيير','s4'],
@@ -804,7 +805,7 @@ const FLOWS=[
  {n:'التقييم (القسم 7)',path:['Completed','RateDoctorRoute','RateDoctorCubit','ReviewService','transaction'],
   good:['الشرط في 3 أماكن: الشاشة، الـ Cubit، والـ rules.','review + rating + reviewsCount + isReviewed في transaction واحدة.','القايمة بتتحدث بعد التقييم.'],
   bad:[]},
- {n:'Profile و Settings (القسم 8)',path:['Profile tab','ProfileCubit','ProfileRepository','ProfileService'],
+ {n:'Profile و Settings (القسم 8)',path:['Settings tab → Profile','ProfileCubit','ProfileRepository','ProfileService'],
   good:['الصورة والاسم والتليفون والميلاد والنوع، والإعدادات كاملة.','اللغة بترجع بعد إعادة الفتح (خطوة 4 ✓)، والتاب التاني Doctors (خطوة 6 ✓).','الإيميل مقفول للقراءة فقط (read-only) ومحدش يقدر يعدله، والتعديل مقتصر على الاسم ورقم الهاتف للمريض.'],
   bad:[]},
  {n:'Doctor Details والأدمن (الأقسام 4 و 9)',path:['Admin Doctors','Details','Edit / Availability / Status','Admin Appointments'],
@@ -831,7 +832,8 @@ const COMMITS=[
  ['7c04f40','feat(patient): make Doctors the second tab with a favorites filter','b-ok','خطوة 6 (P2)','16 ملف','<code>FindDoctorsRoute</code> بقى التاب التاني، والمفضلة زرار قلب، وحذف <code>FavoritesScreen</code>.'],
  ['56533f4','fix(patient): show the live clinic location on doctor details','b-ok','خطوة 3 (P3)','4 ملفات','<code>DoctorDetailsCubit</code> بيسمع لـ <code>watchClinic()</code> فالموقع بيتحدث فورًا.'],
  ['1043495','feat(patient): show available slots on doctor details','b-ok','خطوة 5 (P3)','9 ملفات','<code>AvailableSlotsSection</code> بيعيد استخدام <code>BookingCubit</code> و<code>TimeSlotsSection</code>، ومفتاح <code>availableSlots</code>.'],
- ['6728022','docs: align workflow with the code on profile email, rating name and success dialog','b-ok','خطوة 7 (P3)','1 ملف','الإيميل view only، والاسم <code>rating</code>، والنجاح dialog. الكود نفسه كان مطابق (الإيميل مقفول، الاسم والتليفون والصورة قابلين للتعديل).']
+ ['6728022','docs: align workflow with the code on profile email, rating name and success dialog','b-ok','خطوة 7 (P3)','1 ملف','الإيميل view only، والاسم <code>rating</code>، والنجاح dialog. الكود نفسه كان مطابق (الإيميل مقفول، الاسم والتليفون والصورة قابلين للتعديل).'],
+ ['fix/production-audit','refactor(common): production-readiness audit fixes','b-ok','مراجعة التسليم','~60 ملف','شاشات تفاصيل الموعد بتسمع لـ <code>streamAppointment</code>، و<code>EditProfileCubit</code> و<code>CreateDoctorCubit.submit</code> و<code>AppointmentDetailsCubit</code> بقوا ماسكين الـ loading/error، و<code>AppSegmentedTabBar</code> على <code>TabBar</code>، و<code>showDragHandle</code>، و<code>OutlinedButton.icon</code>، وavatar واحد، وحذف <code>AdminDoctorService</code> و<code>==</code> اليدوي، ودمج شجرتين الـ tests، وأسماء التخصصات تحت الأيقونات، وpull-to-refresh، و Get Started. تعليقات <code>//CR</code> كلها اتسابت (152).']
 ];
 $('#clist').innerHTML=COMMITS.map(([h,t,c,tag,stat,body],i)=>`<div class="card step" style="border-inline-start-color:var(--${c==='b-pur'?'purple':c==='b-teal'?'teal':'accent'})" data-i="${i}">
   <div class="step-head"><code>${h}</code><span class="t">${t}</span><span class="badge ${c}">${tag}</span><span class="caret">▾</span></div>
@@ -848,7 +850,7 @@ const P=[
  ['4. Duplicated widgets','b-ok','اتنفذ + اتوسّع','dialogs مشتركة إضافية و<code>DoctorImage</code> للـ avatars.'],
  ['5. Layers / DI','b-ok','اتنفذ + اتوسّع','باقي الـ Cubits بقت بتنادي repositories.'],
  ['6. Swallowed errors','b-ok','اتنفذ','الـ <code>catch (_)</code> الباقية في الـ pickers بتعرض snackbar.'],
- ['7. AdminDoctorModel / AdminDoctorService','b-warn','جزئي','<code>AdminDoctorService</code> لسه pass-through لأن فيه سطور <code>//CR</code> (قاعدة 5).']
+ ['7. AdminDoctorModel / AdminDoctorService','b-ok','اتنفذ','<code>AdminDoctorService</code> اتشال والـ repositories بتستخدم <code>DoctorService</code> مباشرة. سطور الـ <code>//CR</code> بتاعته اتنقلت فوق constructor <code>DoctorService</code> (قاعدة 5).']
 ];
 $('#ptable').innerHTML=P.map(([a,c,b,n])=>`<tr><td>${a}</td><td><span class="badge ${c}">${b}</span></td><td class="small">${n}</td></tr>`).join('');
 

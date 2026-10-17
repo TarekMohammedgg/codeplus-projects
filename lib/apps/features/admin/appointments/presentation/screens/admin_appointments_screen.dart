@@ -11,6 +11,7 @@ import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_empty_state.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_segmented_tab_bar.dart';
 import 'package:doctor_hunt/apps/features/admin/appointments/presentation/controller/cubit/admin_appointments_cubit.dart';
 import 'package:doctor_hunt/apps/features/admin/appointments/presentation/controller/cubit/admin_appointments_state.dart';
 import 'package:doctor_hunt/apps/features/admin/appointments/presentation/widgets/admin_appointment_card.dart';
@@ -19,48 +20,9 @@ import 'package:doctor_hunt/generated/style_atoms.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_list_skeleton.dart';
 import 'package:doctor_hunt/apps/core/widgets/skeleton_placeholders.dart';
 
-class AdminAppointmentsScreen extends StatefulWidget {
+class AdminAppointmentsScreen extends StatelessWidget {
   const AdminAppointmentsScreen({super.key, this.adminPhotoUrl});
 
-  final String? adminPhotoUrl;
-
-  @override
-  State<AdminAppointmentsScreen> createState() =>
-      _AdminAppointmentsScreenState();
-}
-
-class _AdminAppointmentsScreenState extends State<AdminAppointmentsScreen>
-    with SingleTickerProviderStateMixin {
-  late final TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 4, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return _AdminAppointmentsView(
-      tabController: _tabController,
-      adminPhotoUrl: widget.adminPhotoUrl,
-    );
-  }
-}
-
-class _AdminAppointmentsView extends StatelessWidget {
-  const _AdminAppointmentsView({
-    required this.tabController,
-    required this.adminPhotoUrl,
-  });
-
-  final TabController tabController;
   final String? adminPhotoUrl;
 
   String _emptyMessageForTab(BuildContext context, AdminAppointmentTab tab) {
@@ -130,43 +92,18 @@ class _AdminAppointmentsView extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: ListenableBuilder(
-                listenable: tabController,
-                builder: (context, _) => Row(
-                  spacing: 8,
-                  children: [
-                    for (final (index, label) in [
-                      context.tr.all,
-                      context.tr.upcoming,
-                      context.tr.completed,
-                      context.tr.cancelled,
-                    ].indexed)
-                      Expanded(
-                        child: AppPrimaryButton(
-                          label: label,
-                          height: 38,
-                          padding: EdgeInsets.zero,
-                          borderRadius: const BorderRadius.all(
-                            Radius.circular(8),
-                          ),
-                          backgroundColor: tabController.index == index
-                              ? AppColors.primary
-                              : AppColors.primaryLight,
-                          foregroundColor: tabController.index == index
-                              ? AppColors.white
-                              : AppColors.primary,
-                          textStyle: tabController.index == index
-                              ? context.medium12White
-                              : context.regular12Primary,
-                          onPressed: () {
-                            tabController.animateTo(index);
-                            context.read<AdminAppointmentsCubit>().selectTab(
-                              AdminAppointmentTab.values[index],
-                            );
-                          },
-                        ),
-                      ),
+              child: DefaultTabController(
+                length: AdminAppointmentTab.values.length,
+                child: AppSegmentedTabBar(
+                  labels: [
+                    context.tr.all,
+                    context.tr.upcoming,
+                    context.tr.completed,
+                    context.tr.cancelled,
                   ],
+                  onTap: (index) => context
+                      .read<AdminAppointmentsCubit>()
+                      .selectTab(AdminAppointmentTab.values[index]),
                 ),
               ),
             ),

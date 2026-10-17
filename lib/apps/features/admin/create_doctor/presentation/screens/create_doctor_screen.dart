@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
-import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
@@ -43,8 +42,6 @@ class CreateDoctorScreenState extends State<CreateDoctorScreen> {
   XFile? _selectedImage;
   Uint8List? _selectedImageBytes;
   String? _imageUrl;
-  bool _isSaving = false;
-  bool _isUploadingImage = false;
 
   bool get isEditing => widget.doctor != null;
 
@@ -100,7 +97,7 @@ class CreateDoctorScreenState extends State<CreateDoctorScreen> {
     }
   }
 
-  Future<void> _submit() async {
+  void _submit() {
     if (!_formKey.currentState!.validate() || _specialty == null) {
       if (_specialty == null) {
         context.showErrorSnackBar(tr.selectSpecialtyError);
@@ -113,63 +110,16 @@ class CreateDoctorScreenState extends State<CreateDoctorScreen> {
     }
 
     FocusScope.of(context).unfocus();
-    setState(() => _isSaving = true);
-    try {
-      final fullNameAr = _nameArController.text.trim();
-      final fullNameEn = _nameEnController.text.trim();
-      final consultationFee = double.parse(_feeController.text.trim());
-      var imageUrl = _imageUrl;
-      if (_selectedImage != null) {
-        setState(() => _isUploadingImage = true);
-        try {
-          imageUrl = await _createDoctorCubit.uploadImage(
-            bytes: _selectedImageBytes!,
-            fileName: _selectedImage!.name,
-          );
-          _imageUrl = imageUrl;
-        } catch (_) {
-          if (!mounted) return;
-          context.showErrorSnackBar(tr.uploadImageError);
-          return;
-        } finally {
-          if (mounted) setState(() => _isUploadingImage = false);
-        }
-      }
-      if (isEditing) {
-        await _createDoctorCubit.updateDoctor(
-          id: widget.doctor!.id,
-          fullNameAr: fullNameAr,
-          fullNameEn: fullNameEn,
-          specialtyId: _specialty!.id,
-          consultationFee: consultationFee,
-          imageUrl: imageUrl,
-        );
-      } else {
-        await _createDoctorCubit.createDoctor(
-          fullNameAr: fullNameAr,
-          fullNameEn: fullNameEn,
-          specialtyId: _specialty!.id,
-          consultationFee: consultationFee,
-          imageUrl: imageUrl,
-        );
-      }
-
-      if (!mounted) return;
-      context.showSuccessSnackBar(
-        isEditing ? tr.doctorUpdatedSuccess : tr.doctorCreatedSuccess,
-      );
-      context.pop();
-    } catch (e) {
-      if (!mounted) return;
-      context.showErrorSnackBar(AppException.from(e).message);
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isSaving = false;
-          _isUploadingImage = false;
-        });
-      }
-    }
+    _createDoctorCubit.submit(
+      doctorId: widget.doctor?.id,
+      fullNameAr: _nameArController.text.trim(),
+      fullNameEn: _nameEnController.text.trim(),
+      specialtyId: _specialty!.id,
+      consultationFee: double.parse(_feeController.text.trim()),
+      imageUrl: _imageUrl,
+      imageBytes: _selectedImageBytes,
+      imageName: _selectedImage?.name,
+    );
   }
 
   @override
@@ -179,6 +129,16 @@ class CreateDoctorScreenState extends State<CreateDoctorScreen> {
         switch (state) {
           case CreateDoctorFailure(:final errorMessage):
             context.showErrorSnackBar(errorMessage);
+          case CreateDoctorSuccess(submit: CreateDoctorSubmit.saved):
+            context.showSuccessSnackBar(
+              isEditing ? tr.doctorUpdatedSuccess : tr.doctorCreatedSuccess,
+            );
+            context.pop();
+          case CreateDoctorSuccess(
+            submit: CreateDoctorSubmit.failed,
+            :final submitError,
+          ):
+            context.showErrorSnackBar(submitError ?? tr.serviceError);
           case CreateDoctorSuccess(:final specialties):
             _selectEditingSpecialty(specialties);
           default:
@@ -186,6 +146,10 @@ class CreateDoctorScreenState extends State<CreateDoctorScreen> {
         }
       },
       builder: (context, state) {
+        final submit = state is CreateDoctorSuccess
+            ? state.submit
+            : CreateDoctorSubmit.idle;
+        final isSaving = state is CreateDoctorSuccess && state.isSubmitting;
         return Scaffold(
           backgroundColor: AppColors.background,
           appBar: AppBar(
@@ -207,7 +171,7 @@ class CreateDoctorScreenState extends State<CreateDoctorScreen> {
                     child: DoctorImagePickerField(
                       imageUrl: _imageUrl,
                       selectedBytes: _selectedImageBytes,
-                      isUploading: _isUploadingImage,
+                      isUploading: submit == CreateDoctorSubmit.uploadingImage,
                       onPick: _pickImage,
                     ),
                   ),
@@ -251,8 +215,8 @@ class CreateDoctorScreenState extends State<CreateDoctorScreen> {
                   32.verticalSpace,
                   AppPrimaryButton(
                     label: isEditing ? tr.saveChanges : tr.createDoctorButton,
-                    isLoading: _isSaving,
-                    onPressed: _isSaving ? null : _submit,
+                    isLoading: isSaving,
+                    onPressed: isSaving ? null : _submit,
                     height: 52,
                   ),
                 ],

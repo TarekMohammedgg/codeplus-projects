@@ -788,14 +788,8 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: 'Favorites'
 	String get tabFavorites => 'Favorites';
 
-	/// en: 'Doctors'
-	String get tabDoctors => 'Doctors';
-
 	/// en: 'Appointments'
 	String get tabAppointments => 'Appointments';
-
-	/// en: 'Profile'
-	String get tabProfile => 'Profile';
 
 	/// en: 'My Appointments'
 	String get myAppointments => 'My Appointments';
@@ -1334,9 +1328,7 @@ extension on Translations {
 			'placeholderDoctorName' => 'Dr. Pediatrician',
 			'tabHome' => 'Home',
 			'tabFavorites' => 'Favorites',
-			'tabDoctors' => 'Doctors',
 			'tabAppointments' => 'Appointments',
-			'tabProfile' => 'Profile',
 			'myAppointments' => 'My Appointments',
 			'noFavoritesFound' => 'No favorite doctors yet',
 			'appointments' => 'Appointments',

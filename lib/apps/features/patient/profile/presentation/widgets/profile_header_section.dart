@@ -1,7 +1,7 @@
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_header_section.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_icon_button.dart';
-import 'package:doctor_hunt/apps/features/patient/profile/presentation/widgets/profile_avatar.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_profile_avatar.dart';
 import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 
@@ -47,7 +47,7 @@ class ProfileHeaderSection extends StatelessWidget {
           child: Stack(
             alignment: Alignment.center,
             children: [
-              ProfileAvatar(avatarUrl: avatarUrl, size: 110),
+              AppProfileAvatar(imageUrl: avatarUrl, size: 110, elevated: true),
               Positioned(
                 bottom: 2,
                 right: 2,

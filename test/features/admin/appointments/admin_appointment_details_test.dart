@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -38,6 +40,11 @@ class _FakeSpecialtyService extends Fake implements SpecialtyService {
 }
 
 class _FakeAppointmentService extends Fake implements AppointmentService {
+  final updates = StreamController<AppointmentModel?>.broadcast();
+
+  @override
+  Stream<AppointmentModel?> streamAppointment(String id) => updates.stream;
+
   AppointmentModel? cancelledAppointment;
   CancelledBy? lastCancelledBy;
   String? markedCompletedAppointmentId;
@@ -423,13 +430,15 @@ Widget _detailsScreen({
   AppointmentService? appointmentService,
 }) {
   return BlocProvider<AppointmentDetailsCubit>(
+    key: ValueKey(appointment.id),
     create: (_) => AppointmentDetailsCubit(
       repository: AppointmentDetailsRepositoryImpl(
         clinicService: clinicService ?? _FakeClinicService(),
         specialtyService: specialtyService ?? _FakeSpecialtyService(),
         appointmentService: appointmentService ?? _FakeAppointmentService(),
       ),
-    )..init(appointment),
-    child: AdminAppointmentDetailsScreen(appointment: appointment),
+      appointment: appointment,
+    )..init(),
+    child: const AdminAppointmentDetailsScreen(),
   );
 }
