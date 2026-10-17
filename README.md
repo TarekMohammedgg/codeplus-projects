@@ -31,10 +31,10 @@
 <summary><strong>📑 Table of Contents</strong></summary>
 
 - [About](#-about)
+- [Demo Video](#-demo-video)
 - [Screenshots](#-screenshots)
 - [Features](#-features)
 - [Start Here (Reviewer Guide)](#-start-here-reviewer-guide)
-- [Demo Video](#-demo-video)
 - [Workflow Coverage](#-workflow-coverage)
 - [Project Structure](#-project-structure)
 - [Firestore Model](#-firestore-model)
@@ -67,6 +67,32 @@ appointments and the clinic location. The whole app follows one linear journey:
 ```text
 Find Doctor → Doctor Details → Book Slot → Manage Booking → Rate Doctor
 ```
+
+## 🎬 Demo Video
+
+<p align="center">
+  <a href="https://cdn.jsdelivr.net/gh/TarekMohammedgg/codeplus-projects@f8d1f7d/assets/demo/doctor-hunt-demo.mp4"><strong>▶ Watch the full demo (1:30, 3 MB)</strong></a> · <a href="docs/media/doctor-hunt-demo.mp4">download</a>
+</p>
+
+The video opens with the workflow as a mind map, shows each step in the real app, then
+comes back to the map and lights that step up.
+
+| Time | Chapter |
+| :---: | :--- |
+| `00:00` | Intro and the 9-step workflow map |
+| `00:04` | Onboarding and choosing a role |
+| `00:10` | Sign up and reset password |
+| `00:16` | Find a doctor: home, search by specialty, favorites |
+| `00:27` | Doctor details: rating and reviews |
+| `00:31` | Book a slot: date → time slot → review → confirm |
+| `00:44` | Manage booking: upcoming, completed, cancelled |
+| `00:49` | Side menu |
+| `00:52` | Profile, Arabic / English, logout |
+| `01:03` | Admin: login, doctors list, deactivate a doctor |
+| `01:14` | Admin: cancel / mark completed, clinic location, settings |
+| `01:24` | Every step done |
+
+---
 
 ## 📸 Screenshots
 
@@ -149,32 +175,6 @@ Screen  →  Cubit  →  Repository  →  Service  →  Firestore / Firebase Aut
   rating average are written in **one transaction**.
 - Doctors are **deactivated, never deleted**, so booking history stays intact.
 - Every doctor shows the **single clinic location** set by the admin.
-
----
-
-## 🎬 Demo Video
-
-<p align="center">
-  <a href="https://cdn.jsdelivr.net/gh/TarekMohammedgg/codeplus-projects@f8d1f7d/assets/demo/doctor-hunt-demo.mp4"><strong>▶ Watch the full demo (1:30, 3 MB)</strong></a> · <a href="docs/media/doctor-hunt-demo.mp4">download</a>
-</p>
-
-The video opens with the workflow as a mind map, shows each step in the real app, then
-comes back to the map and lights that step up.
-
-| Time | Chapter |
-| :---: | :--- |
-| `00:00` | Intro and the 9-step workflow map |
-| `00:04` | Onboarding and choosing a role |
-| `00:10` | Sign up and reset password |
-| `00:16` | Find a doctor: home, search by specialty, favorites |
-| `00:27` | Doctor details: rating and reviews |
-| `00:31` | Book a slot: date → time slot → review → confirm |
-| `00:44` | Manage booking: upcoming, completed, cancelled |
-| `00:49` | Side menu |
-| `00:52` | Profile, Arabic / English, logout |
-| `01:03` | Admin: login, doctors list, deactivate a doctor |
-| `01:14` | Admin: cancel / mark completed, clinic location, settings |
-| `01:24` | Every step done |
 
 ---
 
