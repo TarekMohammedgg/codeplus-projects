@@ -27,20 +27,97 @@
   <a href="#-start-here-reviewer-guide"><img src="https://img.shields.io/badge/%F0%9F%A7%AD%20Reviewer%20guide-start%20here-222B45?style=for-the-badge" alt="Reviewer guide"/></a>
 </p>
 
-<p align="center">
-  <a href="#-start-here-reviewer-guide">Reviewer guide</a> ·
-  <a href="#-demo-video">Demo</a> ·
-  <a href="#-workflow-coverage">Workflow coverage</a> ·
-  <a href="#-project-structure">Project structure</a> ·
-  <a href="#-firestore-model">Firestore</a> · <a href="#-run-it-locally">Run it</a> ·
-  <a href="#-repository-branches">Branches</a>
-</p>
+<details>
+<summary><strong>📑 Table of Contents</strong></summary>
+
+- [About](#-about)
+- [Screenshots](#-screenshots)
+- [Features](#-features)
+- [Start Here (Reviewer Guide)](#-start-here-reviewer-guide)
+- [Demo Video](#-demo-video)
+- [Workflow Coverage](#-workflow-coverage)
+- [Project Structure](#-project-structure)
+- [Firestore Model](#-firestore-model)
+- [Getting Started](#-getting-started)
+- [Testing](#-testing)
+- [How to Use the App](#-how-to-use-the-app)
+- [Main Packages](#-main-packages)
+- [Out of Scope (MVP)](#-out-of-scope-mvp)
+- [Dart Lessons](#-dart-lessons)
+- [Repository Branches](#-repository-branches)
+- [Author](#-author)
+
+</details>
 
 ---
 
 > [!IMPORTANT]
 > **`main` contains the full, final source code of Doctor Hunt** (merged from
 > [`doctor-hunt-bloc`](https://github.com/TarekMohammedgg/codeplus-projects/tree/doctor-hunt-bloc)). Clone it and run, no branch switching needed.
+
+## 📖 About
+
+**Doctor Hunt** is a clinic appointment app built during the **Code Plus Software House**
+Flutter internship. One app, two roles (**Patient** and **Admin**), one clinic.
+
+Patients find the right doctor, book a free time slot, manage the booking and rate the
+doctor after the visit. The clinic admin manages doctors, their working hours,
+appointments and the clinic location. The whole app follows one linear journey:
+
+```text
+Find Doctor → Doctor Details → Book Slot → Manage Booking → Rate Doctor
+```
+
+## 📸 Screenshots
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/media/screens/home.png" width="180" alt="Home"/><br/><sub><b>Home</b></sub></td>
+    <td align="center"><img src="docs/media/screens/doctor-details.png" width="180" alt="Doctor details"/><br/><sub><b>Doctor details</b></sub></td>
+    <td align="center"><img src="docs/media/screens/booking.png" width="180" alt="Pick a slot"/><br/><sub><b>Pick a slot</b></sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/media/screens/booked.png" width="180" alt="Booking confirmed"/><br/><sub><b>Booking confirmed</b></sub></td>
+    <td align="center"><img src="docs/media/screens/admin-doctors.png" width="180" alt="Admin doctors"/><br/><sub><b>Admin: doctors</b></sub></td>
+    <td align="center"><img src="docs/media/screens/admin-appointments.png" width="180" alt="Admin appointments"/><br/><sub><b>Admin: appointments</b></sub></td>
+  </tr>
+</table>
+
+## ✨ Features
+
+### 🧑 Patient
+- **Auth** — sign up, login, Google Sign-In, forgot / reset password.
+- **Home** — greeting with avatar, search, specialty chips, **Popular** (most reviews)
+  and **Top Rated** (highest rating) doctors with *See All*.
+- **Doctors** — search by name, filter by specialty, favorites filter. Each card shows
+  image, name, specialty, rating + count, fee, heart and *Book Now*.
+- **Doctor details** — photo, fee, `4.7 · 24 Reviews` summary, recent reviews,
+  available slots and the live clinic location on a map.
+- **Booking (4 steps)** — pick a date from the doctor's working days → pick a free slot →
+  review → confirm. The slot is locked in a Firestore transaction so two patients
+  can never book the same time.
+- **Appointments** — Upcoming (cancel), Completed (rate doctor), Cancelled (view only).
+- **Rate doctor** — 1–5 stars + optional comment, one review per completed appointment.
+  The review and the doctor's rating average are written in one transaction.
+- **Profile & settings** — edit photo, name, phone, date of birth, gender; change password,
+  notifications toggle, Arabic / English, logout.
+
+### 🛡️ Admin
+- **Doctors list** — total / active counters, search and specialty filter.
+- **Create / edit doctor** — photo (uploaded to Cloudinary), bilingual name, specialty, fee.
+- **Availability** — working days, start / end time, slot duration. This is what
+  generates the patient's bookable slots.
+- **Activate / deactivate** — doctors are never deleted, so booking history stays intact.
+  Patients only see active doctors.
+- **Appointments** — tabs All / Upcoming / Completed / Cancelled; cancel or mark completed.
+  Details include the patient's contact info.
+- **Profile** — photo, name, and the **clinic location** used by every doctor.
+
+### 🌐 Common
+- Onboarding → choose role (Patient / Admin).
+- Full **Arabic (RTL)** and **English (LTR)** support with in-app switching (`slang`).
+
+---
 
 ## 🧭 Start Here (Reviewer Guide)
 
@@ -168,7 +245,16 @@ Access rules live in [`firestore.rules`](firestore.rules).
 
 ---
 
-## 🚀 Run It Locally
+## 🚀 Getting Started
+
+### Prerequisites
+
+- [Flutter SDK](https://docs.flutter.dev/get-started/install) with Dart `^3.12.2`
+- A Firebase project with **Authentication** (Email/Password + Google) and **Cloud Firestore**
+- [FlutterFire CLI](https://firebase.google.com/docs/flutter/setup) and [Firebase CLI](https://firebase.google.com/docs/cli)
+- A [Cloudinary](https://cloudinary.com) account with an **unsigned** upload preset (doctor photos)
+
+### Install and run
 
 ```bash
 git clone https://github.com/TarekMohammedgg/codeplus-projects.git
@@ -183,11 +269,10 @@ flutter pub get
    `CLOUDINARY_CLOUD_NAME` and `CLOUDINARY_UPLOAD_PRESET` (unsigned preset).
 3. **Admin account:** create a user in Firebase Authentication, then set
    `role: "admin"` on its `users/{uid}` document in Firestore.
-4. **Generate code, test and run:**
+4. **Generate code and run:**
 
 ```bash
 dart run build_runner build -d
-flutter test
 flutter run
 ```
 
@@ -201,6 +286,19 @@ CLOUDINARY_UPLOAD_PRESET=your_unsigned_upload_preset
 
 > `lib/firebase_options.dart` and `android/app/google-services.json` are not committed;
 > `flutterfire configure` generates them for your Firebase project.
+
+---
+
+## 🧪 Testing
+
+```bash
+flutter analyze
+flutter test
+```
+
+**64 test files** cover the core logic (slot generation, rating aggregate, doctor sorting,
+validators, models), the router, cubits for every main feature, and widget tests for
+key screens and shared widgets. See [`test/`](test).
 
 ---
 
@@ -223,7 +321,7 @@ CLOUDINARY_UPLOAD_PRESET=your_unsigned_upload_preset
 <details>
 <summary><strong>As an Admin</strong></summary>
 
-> There is no admin sign-up. The admin account is created by the clinic owner (see [Run it locally](#-run-it-locally)).
+> There is no admin sign-up. The admin account is created by the clinic owner (see [Run it locally](#-getting-started)).
 
 1. Choose **Admin** and log in with email and password.
 2. **Doctors list:** total / active counters, search, specialty filter.
@@ -263,19 +361,11 @@ this version.
 
 ---
 
-## 🌿 Repository Branches
+## 📚 Dart Lessons
 
-| Branch | Status | What's inside |
-| :--- | :---: | :--- |
-| **`main`** | ✅ **Final** | The complete Doctor Hunt app (this README). **Review this one.** |
-| **[`doctor-hunt-bloc`](https://github.com/TarekMohammedgg/codeplus-projects/tree/doctor-hunt-bloc)** | 🛠️ Development | Where Doctor Hunt was built; merged into `main`. |
-| [`doctor-hunt`](https://github.com/TarekMohammedgg/codeplus-projects/tree/doctor-hunt) | 🗄️ Earlier | First version (UI-first, services called from widgets). Kept for history. |
-| [`doctor-hunt-auth-clean-arch`](https://github.com/TarekMohammedgg/codeplus-projects/tree/doctor-hunt-auth-clean-arch) | 🧪 Experiment | Auth module rebuilt with Clean Architecture next to the MVVM version. |
-| [`doctor-hunt-auth-test`](https://github.com/TarekMohammedgg/codeplus-projects/tree/doctor-hunt-auth-test) | 🧪 Experiment | Unit, repository, cubit and widget tests for the auth feature. |
-| [`dart-lessons`](https://github.com/TarekMohammedgg/codeplus-projects/tree/dart-lessons) | 📚 Done | Dart fundamentals, OOP, collections and async (Lessons 01–04). |
-
-<details>
-<summary><strong>📚 Dart lessons</strong></summary>
+> [!NOTE]
+> The Dart lessons are part of this internship too, but they are **not on `main`**.
+> They live on their own branch: **[`dart-lessons`](https://github.com/TarekMohammedgg/codeplus-projects/tree/dart-lessons)**.
 
 | Lesson | Script | Topics |
 | :---: | :--- | :--- |
@@ -289,11 +379,23 @@ git checkout dart-lessons
 dart run lesson-1.dart
 ```
 
-</details>
+---
+
+## 🌿 Repository Branches
+
+| Branch | Status | What's inside |
+| :--- | :---: | :--- |
+| **`main`** | ✅ **Final** | The complete Doctor Hunt app (this README). **Review this one.** |
+| **[`doctor-hunt-bloc`](https://github.com/TarekMohammedgg/codeplus-projects/tree/doctor-hunt-bloc)** | 🛠️ Development | Where Doctor Hunt was built; merged into `main`. |
+| [`doctor-hunt`](https://github.com/TarekMohammedgg/codeplus-projects/tree/doctor-hunt) | 🗄️ Earlier | First version (UI-first, services called from widgets). Kept for history. |
+| [`doctor-hunt-auth-clean-arch`](https://github.com/TarekMohammedgg/codeplus-projects/tree/doctor-hunt-auth-clean-arch) | 🧪 Experiment | Auth module rebuilt with Clean Architecture next to the MVVM version. |
+| [`doctor-hunt-auth-test`](https://github.com/TarekMohammedgg/codeplus-projects/tree/doctor-hunt-auth-test) | 🧪 Experiment | Unit, repository, cubit and widget tests for the auth feature. |
+| [`dart-lessons`](https://github.com/TarekMohammedgg/codeplus-projects/tree/dart-lessons) | 📚 Done | Dart fundamentals, OOP, collections and async (Lessons 01–04). |
+
 
 ---
 
-## ℹ️ Internship Details
+## 👤 Author
 
 <p>
   <img src="docs/media/code-plus-logo.png" alt="Code Plus Software House" width="72" align="left"/>
@@ -301,9 +403,9 @@ dart run lesson-1.dart
 
 | | |
 | :--- | :--- |
-| **Intern** | Tarek Mohammed |
+| **Developer** | Tarek Mohammed · [@TarekMohammedgg](https://github.com/TarekMohammedgg) |
 | **Company** | Code Plus Software House |
-| **Track** | Mobile Development (Flutter & Dart) |
+| **Track** | Mobile Development (Flutter & Dart) internship |
 | **Final project** | Doctor Hunt |
 
 <br clear="left"/>
