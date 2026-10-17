@@ -15,6 +15,9 @@
 
 ---
 
+> [!NOTE]
+> 📚 **Dart lessons branch.** The internship's final project, **Doctor Hunt**, is presented on the [`main` README](https://github.com/TarekMohammedgg/codeplus-projects#readme) and its code is on [`doctor-hunt-bloc`](https://github.com/TarekMohammedgg/codeplus-projects/tree/doctor-hunt-bloc).
+
 ## About
 
 This repository contains the internship assignment solutions for **Code Plus Software House**. Each lesson focuses on core Dart concepts that form the foundation for Flutter mobile development.
