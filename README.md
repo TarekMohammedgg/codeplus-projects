@@ -1,3 +1,20 @@
+<p align="center">
+  <img src="https://cdn.jsdelivr.net/gh/TarekMohammedgg/codeplus-projects@f8d1f7d/assets/doctor-hunt-logo.png" alt="Doctor Hunt" width="280"/>
+</p>
+
+<p align="center">
+  <a href="https://cdn.jsdelivr.net/gh/TarekMohammedgg/codeplus-projects@f8d1f7d/assets/demo/doctor-hunt-demo.mp4"><img src="https://cdn.jsdelivr.net/gh/TarekMohammedgg/codeplus-projects@f8d1f7d/assets/demo/doctor-hunt-preview.gif" alt="Doctor Hunt demo preview" width="240"/></a>
+</p>
+
+<p align="center">
+  <a href="https://cdn.jsdelivr.net/gh/TarekMohammedgg/codeplus-projects@f8d1f7d/assets/demo/doctor-hunt-demo.mp4"><img src="https://img.shields.io/badge/%E2%96%B6%20Watch%20the%20demo-1%3A30-0EBE7E?style=for-the-badge" alt="Watch the demo"/></a>
+  &nbsp;
+  <a href="https://github.com/TarekMohammedgg/codeplus-projects#readme"><img src="https://img.shields.io/badge/%F0%9F%93%98%20Start%20here-main%20README-222B45?style=for-the-badge" alt="Start at the main README"/></a>
+</p>
+
+> [!NOTE]
+> 🗄️ **Earlier version of Doctor Hunt, kept for history.** The final code is on [`doctor-hunt-bloc`](https://github.com/TarekMohammedgg/codeplus-projects/tree/doctor-hunt-bloc). Start with the [`main` README](https://github.com/TarekMohammedgg/codeplus-projects#readme).
+
 # Doctor Hunt 🩺
 
 [![Flutter](https://img.shields.io/badge/Flutter-3.x-blue.svg?logo=flutter)](https://flutter.dev)
