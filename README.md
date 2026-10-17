@@ -16,13 +16,13 @@
 </p>
 
 <p align="center">
-  <a href="assets/demo/doctor-hunt-demo.mp4">
+  <a href="https://cdn.jsdelivr.net/gh/TarekMohammedgg/codeplus-projects@f8d1f7d/assets/demo/doctor-hunt-demo.mp4">
     <img src="assets/demo/doctor-hunt-preview.gif" alt="Doctor Hunt demo preview" width="300"/>
   </a>
 </p>
 
 <p align="center">
-  <a href="assets/demo/doctor-hunt-demo.mp4"><img src="https://img.shields.io/badge/%E2%96%B6%20Watch%20the%20full%20demo-1%3A30-0EBE7E?style=for-the-badge" alt="Watch the full demo (1:30)"/></a>
+  <a href="https://cdn.jsdelivr.net/gh/TarekMohammedgg/codeplus-projects@f8d1f7d/assets/demo/doctor-hunt-demo.mp4"><img src="https://img.shields.io/badge/%E2%96%B6%20Watch%20the%20full%20demo-1%3A30-0EBE7E?style=for-the-badge" alt="Watch the full demo (1:30)"/></a>
   &nbsp;
   <a href="https://github.com/TarekMohammedgg/codeplus-projects/tree/doctor-hunt-bloc"><img src="https://img.shields.io/badge/%F0%9F%93%82%20Browse%20the%20code-doctor--hunt--bloc-222B45?style=for-the-badge" alt="Browse the code"/></a>
 </p>
@@ -54,7 +54,7 @@ the `doctor-hunt-bloc` branch.
 
 | # | Look at | Why |
 | :---: | :--- | :--- |
-| 1 | 🎬 [Demo video](assets/demo/doctor-hunt-demo.mp4) (1:30) | See the full patient + admin journey before reading code |
+| 1 | 🎬 [Demo video](https://cdn.jsdelivr.net/gh/TarekMohammedgg/codeplus-projects@f8d1f7d/assets/demo/doctor-hunt-demo.mp4) (1:30) | See the full patient + admin journey before reading code |
 | 2 | 📄 [`workflow.md`](https://github.com/TarekMohammedgg/codeplus-projects/blob/doctor-hunt-bloc/workflow.md) | The locked MVP scope: screens, states and rules the app follows |
 | 3 | 🚪 [`lib/main.dart`](https://github.com/TarekMohammedgg/codeplus-projects/blob/doctor-hunt-bloc/lib/main.dart) | App entry: Firebase, dependency injection, router, localization |
 | 4 | 🧩 [`core/di/injection.dart`](https://github.com/TarekMohammedgg/codeplus-projects/blob/doctor-hunt-bloc/lib/apps/core/di/injection.dart) | Every service, repository and cubit registered with `get_it` |
@@ -84,7 +84,7 @@ Screen  →  Cubit  →  Repository  →  Service  →  Firestore / Firebase Aut
 ## 🎬 Demo Video
 
 <p align="center">
-  <a href="assets/demo/doctor-hunt-demo.mp4"><strong>▶ Watch the full demo (1:30, 3 MB)</strong></a>
+  <a href="https://cdn.jsdelivr.net/gh/TarekMohammedgg/codeplus-projects@f8d1f7d/assets/demo/doctor-hunt-demo.mp4"><strong>▶ Watch the full demo (1:30, 3 MB)</strong></a> · <a href="assets/demo/doctor-hunt-demo.mp4">download</a>
 </p>
 
 The video opens with the workflow as a mind map, shows each step in the real app, then
