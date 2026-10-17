@@ -1,0 +1,69 @@
+import 'package:doctor_hunt/apps/core/utils/phone_utils.dart';
+import 'package:doctor_hunt/generated/i18n/translations.g.dart';
+
+abstract final class AppValidators {
+  static String? validateEmail(String? value) {
+    final email = value?.trim() ?? '';
+    if (email.isEmpty) return tr.enterEmailAddress;
+    if (!email.contains('@') || !email.contains('.')) {
+      return tr.enterValidEmailAddress;
+    }
+    return null;
+  }
+
+  static String? validatePassword(String? value) {
+    if ((value ?? '').length < 8) {
+      return tr.useAtLeast8Characters;
+    }
+    return null;
+  }
+
+  static String? validateRequiredPassword(String? value) {
+    if ((value ?? '').isEmpty) {
+      return tr.enterPassword;
+    }
+    return null;
+  }
+
+  static String? validateName(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return tr.enterFullName;
+    }
+    return null;
+  }
+
+  static String? validateDoctorName(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return tr.enterDoctorName;
+    }
+    return null;
+  }
+
+  static String? validateFee(String? value) {
+    final fee = double.tryParse(value?.trim() ?? '');
+    if (fee == null || fee <= 0) return tr.enterValidFee;
+    return null;
+  }
+
+  static String? validateSpecialty(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return tr.selectSpecialtyError;
+    }
+    return null;
+  }
+
+  static String? validatePhone(String? value) {
+    final phone = value?.trim() ?? '';
+    if (phone.isEmpty) {
+      //CR hardcode text
+      // Solved
+      return tr.enterPhoneNumber;
+    }
+    if (!PhoneUtils.isValidPhone(phone)) {
+      //CR hardcode text
+      // Solved
+      return tr.enterValidPhoneNumber;
+    }
+    return null;
+  }
+}
