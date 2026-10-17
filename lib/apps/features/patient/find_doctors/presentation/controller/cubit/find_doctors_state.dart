@@ -51,7 +51,5 @@ final class FindDoctorsSuccess extends FindDoctorsState {
 }
 
 final class FindDoctorsFailure extends FindDoctorsState {
-  const FindDoctorsFailure({required this.errorMessage});
-
-  final String errorMessage;
+  const FindDoctorsFailure();
 }

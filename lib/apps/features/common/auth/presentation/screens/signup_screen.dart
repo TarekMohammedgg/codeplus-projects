@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:doctor_hunt/apps/core/extensions/app_error_text.dart';
 import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
@@ -37,10 +38,6 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   void initState() {
     super.initState();
-    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
-    // solved
-    //CR Use `getIt<Cubit>()` directly or inject via constructor.
-    // solved
     //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
     // solved
     //CR Use `getIt<Cubit>()` directly or inject via constructor.
@@ -85,8 +82,8 @@ class _SignupScreenState extends State<SignupScreen> {
     return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
         switch (state) {
-          case AuthFailure(:final errorMessage):
-            context.showErrorSnackBar(errorMessage);
+          case AuthFailure(:final error):
+            context.showErrorSnackBar(error.localized(context.tr));
           case AuthSuccess(action: AuthAction.signUp):
             //CR hardcode text
             // Solved
@@ -170,7 +167,6 @@ class _SignupScreenState extends State<SignupScreen> {
                     isLoading: isEmailLoading,
                     onPressed: isAnyLoading ? null : _createAccount,
                     height: 54,
-                    fontSize: 16,
                   ),
                   28.verticalSpace,
                   _LoginFooter(disabled: isAnyLoading),
@@ -199,10 +195,7 @@ class _PasswordHintRow extends StatelessWidget {
         8.horizontalSpace,
         Text(
           tr.passwordLengthNotice,
-          style: context.regular14TextSecondary.copyWith(
-            fontSize: 13,
-            height: 1.2,
-          ),
+          style: context.regular13TextSecondary.copyWith(height: 1.2),
         ),
       ],
     );
@@ -241,20 +234,17 @@ class _TermsCheckbox extends StatelessWidget {
             padding: const EdgeInsets.only(top: 2),
             child: Text.rich(
               TextSpan(
-                style: context.regular14TextMain.copyWith(
-                  fontSize: 13.5,
-                  height: 1.35,
-                ),
+                style: context.regular14TextMain.copyWith(height: 1.35),
                 children: [
                   TextSpan(text: tr.agreeTermsPrefix),
                   TextSpan(
                     text: tr.termsOfService,
-                    style: context.semiBold14Primary.copyWith(fontSize: 13.5),
+                    style: context.semiBold14Primary,
                   ),
                   TextSpan(text: tr.andText),
                   TextSpan(
                     text: tr.privacyPolicy,
-                    style: context.semiBold14Primary.copyWith(fontSize: 13.5),
+                    style: context.semiBold14Primary,
                   ),
                 ],
               ),

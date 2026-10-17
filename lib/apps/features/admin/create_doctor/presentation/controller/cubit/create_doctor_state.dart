@@ -1,3 +1,4 @@
+import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/apps/core/models/specialty_model.dart';
 
 enum CreateDoctorSubmit { idle, uploadingImage, saving, saved, failed }
@@ -23,7 +24,7 @@ final class CreateDoctorSuccess extends CreateDoctorState {
 
   final List<SpecialtyModel> specialties;
   final CreateDoctorSubmit submit;
-  final String? submitError;
+  final AppErrorCode? submitError;
 
   bool get isSubmitting =>
       submit == CreateDoctorSubmit.uploadingImage ||
@@ -31,7 +32,7 @@ final class CreateDoctorSuccess extends CreateDoctorState {
 
   CreateDoctorSuccess copyWith({
     required CreateDoctorSubmit submit,
-    String? submitError,
+    AppErrorCode? submitError,
   }) {
     return CreateDoctorSuccess(
       specialties: specialties,
@@ -42,7 +43,7 @@ final class CreateDoctorSuccess extends CreateDoctorState {
 }
 
 final class CreateDoctorFailure extends CreateDoctorState {
-  const CreateDoctorFailure({required this.errorMessage});
+  const CreateDoctorFailure({required this.error});
 
-  final String errorMessage;
+  final AppErrorCode error;
 }

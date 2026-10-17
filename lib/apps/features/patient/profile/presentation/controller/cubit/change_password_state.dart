@@ -1,3 +1,5 @@
+import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
+
 sealed class ChangePasswordState {
   const ChangePasswordState();
 }
@@ -15,7 +17,7 @@ final class ChangePasswordSuccess extends ChangePasswordState {
 }
 
 final class ChangePasswordFailure extends ChangePasswordState {
-  const ChangePasswordFailure(this.message);
+  const ChangePasswordFailure(this.error);
 
-  final String message;
+  final AppErrorCode error;
 }

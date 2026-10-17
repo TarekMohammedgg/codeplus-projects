@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
+import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
+import 'package:doctor_hunt/apps/core/extensions/app_error_text.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/utils/validators.dart';
@@ -117,7 +119,13 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
       listener: (context, state) {
         _populateFromState(state);
 
+        final error = state.error;
         if (state.status == AdminProfileStatus.success) {
+          if (error != null) {
+            // Profile and clinic saved; only the email change failed.
+            context.showErrorSnackBar(error.localized(context.tr));
+            return;
+          }
           final message = state.emailVerificationSent
               ? context.tr.emailVerificationSent(email: _emailController.text)
               : context.tr.adminProfileUpdatedSuccess;
@@ -125,11 +133,9 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
           context.showSuccessSnackBar(message);
           Navigator.of(context).maybePop();
         } else if (state.status == AdminProfileStatus.failure) {
-          final message =
-              state.failure == AdminProfileFailure.requiresRecentLogin
-              ? context.tr.requiresRecentLogin
-              : (state.errorMessage ?? context.tr.unexpectedError);
-          context.showErrorSnackBar(message);
+          context.showErrorSnackBar(
+            (error ?? AppErrorCode.unexpected).localized(context.tr),
+          );
         }
       },
       builder: (context, state) {

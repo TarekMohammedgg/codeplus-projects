@@ -1,3 +1,4 @@
+import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
 import 'package:doctor_hunt/apps/core/models/specialty_model.dart';
 
@@ -19,7 +20,7 @@ class AdminAppointmentsState {
     this.selectedTab = AdminAppointmentTab.all,
     this.specialties = const {},
     this.patientPhotos = const {},
-    this.errorMessage,
+    this.error,
   });
 
   final AdminAppointmentsStatus status;
@@ -27,7 +28,7 @@ class AdminAppointmentsState {
   final AdminAppointmentTab selectedTab;
   final Map<String, SpecialtyModel> specialties;
   final Map<String, String> patientPhotos;
-  final String? errorMessage;
+  final AppErrorCode? error;
 
   List<AppointmentModel> get currentAppointments =>
       filterAppointmentsByTab(appointments, selectedTab);
@@ -38,7 +39,7 @@ class AdminAppointmentsState {
     AdminAppointmentTab? selectedTab,
     Map<String, SpecialtyModel>? specialties,
     Map<String, String>? patientPhotos,
-    String? errorMessage,
+    AppErrorCode? error,
   }) {
     return AdminAppointmentsState(
       status: status ?? this.status,
@@ -46,7 +47,7 @@ class AdminAppointmentsState {
       selectedTab: selectedTab ?? this.selectedTab,
       specialties: specialties ?? this.specialties,
       patientPhotos: patientPhotos ?? this.patientPhotos,
-      errorMessage: errorMessage,
+      error: error,
     );
   }
 }

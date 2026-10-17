@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
+import 'package:doctor_hunt/apps/core/utils/formatters.dart';
 import 'package:doctor_hunt/apps/core/extensions/context_extensions.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/models/clinic_model.dart';
@@ -31,7 +32,7 @@ class DoctorRatingSummary extends StatelessWidget {
         6.horizontalSpace,
         Text(
           context.tr.ratingSummary(
-            rating: doctor.rating.toStringAsFixed(1),
+            rating: formatRating(doctor.rating),
             count: doctor.reviewsCount,
           ),
           style: context.semiBold16TextMain,

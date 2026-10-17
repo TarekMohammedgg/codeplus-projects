@@ -1,3 +1,4 @@
+import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
 import 'package:doctor_hunt/apps/core/models/clinic_model.dart';
 
@@ -16,7 +17,7 @@ final class AppointmentDetailsState {
     this.specialtyName,
     this.clinic,
     this.action = AppointmentActionStatus.idle,
-    this.errorMessage,
+    this.error,
   });
 
   /// Live copy of the appointment; starts from the one the list passed in.
@@ -24,7 +25,7 @@ final class AppointmentDetailsState {
   final String? specialtyName;
   final ClinicModel? clinic;
   final AppointmentActionStatus action;
-  final String? errorMessage;
+  final AppErrorCode? error;
 
   bool get isBusy =>
       action == AppointmentActionStatus.cancelling ||
@@ -35,14 +36,14 @@ final class AppointmentDetailsState {
     String? specialtyName,
     ClinicModel? clinic,
     AppointmentActionStatus? action,
-    String? errorMessage,
+    AppErrorCode? error,
   }) {
     return AppointmentDetailsState(
       appointment: appointment ?? this.appointment,
       specialtyName: specialtyName ?? this.specialtyName,
       clinic: clinic ?? this.clinic,
       action: action ?? this.action,
-      errorMessage: errorMessage,
+      error: error,
     );
   }
 }

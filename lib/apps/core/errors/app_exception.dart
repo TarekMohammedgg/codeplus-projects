@@ -1,100 +1,72 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:doctor_hunt/generated/i18n/translations.g.dart';
+
+/// Semantic failure reasons. Data and Cubits pass these codes along; only the
+/// UI turns them into localized text (see `AppErrorCodeText`).
+enum AppErrorCode {
+  userNotFound,
+  wrongPassword,
+  wrongCurrentPassword,
+  emailAlreadyInUse,
+  invalidEmail,
+  weakPassword,
+  userDisabled,
+  tooManyRequests,
+  networkRequestFailed,
+  accountExistsWithDifferentCredential,
+  operationNotAllowed,
+  requiresRecentLogin,
+  googleSignInConfig,
+  googleSignInInterrupted,
+  googleSignInFailed,
+  adminPermissionDenied,
+  uploadImage,
+  alreadyReviewed,
+  appointmentNotCompleted,
+  ratingRequired,
+  service,
+  unexpected,
+}
 
 class AppException implements Exception {
-  final String message;
-  final String? code;
+  const AppException(this.code);
 
-  const AppException({required this.message, this.code});
-
-  factory AppException.fromFirebaseAuth(FirebaseAuthException e) {
-    return AppException(
-      message: _mapFirebaseAuthError(e.code, e.message),
-      code: e.code,
-    );
-  }
-
-  factory AppException.fromGoogleSignIn(GoogleSignInException e) {
-    return AppException(
-      message: _mapGoogleSignInError(e.code, e.description),
-      code: e.code.name,
-    );
-  }
+  final AppErrorCode code;
 
   factory AppException.from(Object error) {
-    if (error is AppException) return error;
-    if (error is FirebaseAuthException) {
-      return AppException.fromFirebaseAuth(error);
-    }
-    if (error is GoogleSignInException) {
-      return AppException.fromGoogleSignIn(error);
-    }
-    if (error is FirebaseException) {
-      return AppException(
-        message: error.message ?? tr.serviceError,
-        code: error.code,
-      );
-    }
-    return AppException(message: tr.unexpectedError);
+    return switch (error) {
+      AppException() => error,
+      FirebaseAuthException(:final code) => AppException(_authCode(code)),
+      GoogleSignInException(:final code) => AppException(switch (code) {
+        GoogleSignInExceptionCode.clientConfigurationError =>
+          AppErrorCode.googleSignInConfig,
+        GoogleSignInExceptionCode.interrupted =>
+          AppErrorCode.googleSignInInterrupted,
+        _ => AppErrorCode.googleSignInFailed,
+      }),
+      FirebaseException() => const AppException(AppErrorCode.service),
+      _ => const AppException(AppErrorCode.unexpected),
+    };
   }
 
-  static String _mapFirebaseAuthError(String code, [String? defaultMessage]) {
-    switch (code) {
-      case 'user-not-found':
-        return tr.userNotFoundError;
-      case 'wrong-password':
-      case 'invalid-credential':
-        return tr.wrongPasswordError;
-      case 'email-already-in-use':
-        return tr.emailAlreadyInUseError;
-      case 'invalid-email':
-        return tr.invalidEmailError;
-      case 'weak-password':
-        return tr.weakPasswordError;
-      case 'user-disabled':
-        return tr.userDisabledError;
-      case 'too-many-requests':
-        return tr.tooManyRequestsError;
-      case 'network-request-failed':
-        return tr.networkRequestFailedError;
-      case 'account-exists-with-different-credential':
-        return tr.accountExistsWithDifferentCredentialError;
-      case 'operation-not-allowed':
-        return tr.operationNotAllowedError;
-      case 'invalid-verification-code':
-        return tr.invalidVerificationCodeError;
-      case 'invalid-verification-id':
-        return tr.invalidVerificationIdError;
-      case 'session-expired':
-        return tr.sessionExpiredError;
-      case 'invalid-phone-number':
-        return tr.invalidPhoneNumberError;
-      case 'quota-exceeded':
-        return tr.quotaExceededError;
-      case 'captcha-check-failed':
-        return tr.captchaCheckFailedError;
-      default:
-        return defaultMessage ?? tr.unexpectedError;
-    }
-  }
-
-  static String _mapGoogleSignInError(
-    GoogleSignInExceptionCode code, [
-    String? description,
-  ]) {
-    switch (code) {
-      case GoogleSignInExceptionCode.clientConfigurationError:
-        return tr.googleSignInConfigError;
-      case GoogleSignInExceptionCode.interrupted:
-        return tr.googleSignInInterruptedError;
-      default:
-        return description ?? tr.googleSignInFailedError;
-    }
-  }
+  static AppErrorCode _authCode(String code) => switch (code) {
+    'user-not-found' => AppErrorCode.userNotFound,
+    'wrong-password' || 'invalid-credential' => AppErrorCode.wrongPassword,
+    'email-already-in-use' => AppErrorCode.emailAlreadyInUse,
+    'invalid-email' => AppErrorCode.invalidEmail,
+    'weak-password' => AppErrorCode.weakPassword,
+    'user-disabled' => AppErrorCode.userDisabled,
+    'too-many-requests' => AppErrorCode.tooManyRequests,
+    'network-request-failed' => AppErrorCode.networkRequestFailed,
+    'account-exists-with-different-credential' =>
+      AppErrorCode.accountExistsWithDifferentCredential,
+    'operation-not-allowed' => AppErrorCode.operationNotAllowed,
+    'requires-recent-login' => AppErrorCode.requiresRecentLogin,
+    _ => AppErrorCode.unexpected,
+  };
 
   @override
-  String toString() => message;
+  String toString() => 'AppException(${code.name})';
 }
 
 class SlotAlreadyBookedException implements Exception {

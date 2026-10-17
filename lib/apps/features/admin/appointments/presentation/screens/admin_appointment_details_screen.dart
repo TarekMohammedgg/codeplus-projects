@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
+import 'package:doctor_hunt/apps/core/extensions/app_error_text.dart';
 import 'package:doctor_hunt/apps/core/extensions/context_extensions.dart';
 import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
@@ -46,7 +48,7 @@ class AdminAppointmentDetailsScreen extends StatelessWidget {
         Navigator.of(context).maybePop();
       case AppointmentActionStatus.failed:
         context.showErrorSnackBar(
-          state.errorMessage ?? context.tr.serviceError,
+          (state.error ?? AppErrorCode.service).localized(context.tr),
         );
       default:
         break;

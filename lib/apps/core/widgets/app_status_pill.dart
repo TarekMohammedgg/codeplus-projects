@@ -35,8 +35,9 @@ class AppStatusPill extends StatelessWidget {
           5.horizontalSpace,
           Text(
             label,
-            style: (textStyle ?? context.medium10TextMain.copyWith(fontSize: 9))
-                .copyWith(color: color),
+            style: (textStyle ?? context.medium9TextMain).copyWith(
+              color: color,
+            ),
           ),
         ],
       ),

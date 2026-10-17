@@ -25,7 +25,5 @@ final class AdminDoctorsSuccess extends AdminDoctorsState {
 }
 
 final class AdminDoctorsFailure extends AdminDoctorsState {
-  const AdminDoctorsFailure({required this.errorMessage});
-
-  final String errorMessage;
+  const AdminDoctorsFailure();
 }

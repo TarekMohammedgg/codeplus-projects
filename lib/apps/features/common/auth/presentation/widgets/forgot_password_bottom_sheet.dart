@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:doctor_hunt/apps/core/extensions/app_error_text.dart';
 import 'package:doctor_hunt/apps/core/di/injection.dart';
 import 'package:doctor_hunt/apps/core/extensions/context_extensions.dart';
 import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
@@ -48,10 +49,6 @@ class ForgotPasswordBottomSheetState extends State<ForgotPasswordBottomSheet> {
     // solved
     //CR Use `getIt<Cubit>()` directly or inject via constructor.
     // solved
-    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
-    // solved
-    //CR Use `getIt<Cubit>()` directly or inject via constructor.
-    // solved
     _authCubit = context.read<AuthCubit>();
   }
 
@@ -79,9 +76,9 @@ class ForgotPasswordBottomSheetState extends State<ForgotPasswordBottomSheet> {
           case AuthSuccess(action: AuthAction.resetPassword):
             Navigator.of(context).pop();
             context.showSuccessSnackBar(tr.passwordResetSuccess);
-          case AuthFailure(:final errorMessage):
+          case AuthFailure(:final error):
             Navigator.of(context).pop();
-            context.showErrorSnackBar(errorMessage);
+            context.showErrorSnackBar(error.localized(context.tr));
           default:
             break;
         }

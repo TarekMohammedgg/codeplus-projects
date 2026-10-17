@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'package:doctor_hunt/apps/core/services/firestore_collections.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_availability.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/core/models/specialty_model.dart';
@@ -10,21 +11,13 @@ class DoctorService {
   //CR Bad DI: Avoid mixing static singletons and swallowing Firebase uninitialized errors with catch (_) => null.
   //CR Inject non-nullable `FirebaseFirestore` via constructor.
   // solved
-
-  //CR Bad DI: Avoid mixing static singletons and swallowing Firebase uninitialized errors with catch (_) => null.
-  //CR Inject non-nullable `FirebaseFirestore` via constructor.
-  // solved
-
-  //CR Bad DI: Avoid mixing static singletons and swallowing Firebase uninitialized errors with catch (_) => null.
-  //CR Inject non-nullable `FirebaseFirestore` via constructor.
-  // solved
   DoctorService({required this.firestore, required this.specialtyService});
 
   final FirebaseFirestore firestore;
   final SpecialtyService specialtyService;
 
   CollectionReference<Map<String, dynamic>> get _doctors =>
-      firestore.collection('doctors');
+      firestore.collection(FirestoreCollections.doctors);
 
   Future<List<DoctorModel>> fetchActiveDoctors() async {
     final snapshot = await _doctors.where('isActive', isEqualTo: true).get();

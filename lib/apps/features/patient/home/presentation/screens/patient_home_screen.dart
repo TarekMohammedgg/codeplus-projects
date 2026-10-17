@@ -1,6 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:doctor_hunt/apps/features/common/auth/data/models/session_user.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_header_section.dart';
@@ -17,7 +17,7 @@ import '../widgets/home_load_error.dart';
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, this.user});
 
-  final User? user;
+  final SessionUser? user;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -31,22 +31,14 @@ class _HomeScreenState extends State<HomeScreen> {
     // solved
     //CR Use `getIt<Cubit>()` directly or inject via constructor.
     // solved
-    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
-    // solved
-    //CR Use `getIt<Cubit>()` directly or inject via constructor.
-    // solved
-    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
-    // solved
-    //CR Use `getIt<Cubit>()` directly or inject via constructor.
-    // solved
     context.read<HomeCubit>().load();
   }
 
-  String _greeting(User? user) {
-    final rawName = user?.displayName?.trim();
-    final name = (rawName != null && rawName.isNotEmpty)
+  String _greeting(SessionUser? user) {
+    final rawName = user?.displayName ?? '';
+    final name = rawName.isNotEmpty
         ? rawName.split(' ').first
-        : user?.email?.split('@').firstOrNull;
+        : user?.email.split('@').firstOrNull;
     return (name != null && name.isNotEmpty)
         ? tr.greetingWithName(name: name)
         : tr.greetingGeneric;
@@ -75,7 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         const FindDoctorsRoute(focus: true).push(context),
                     showLanguageToggle: true,
                     showProfile: true,
-                    profileImage: user?.photoURL,
+                    profileImage: user?.photoUrl,
                     leading: AppIconButton(
                       icon: Icons.menu_rounded,
                       iconSize: 22,

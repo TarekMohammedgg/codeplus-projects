@@ -5,7 +5,6 @@ import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
 import 'package:doctor_hunt/apps/core/models/specialty_model.dart';
 import 'package:doctor_hunt/apps/features/patient/appointments/data/repositories/patient_appointments_repository.dart';
-import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'patient_appointments_state.dart';
 
 export 'patient_appointments_state.dart';
@@ -21,7 +20,7 @@ class PatientAppointmentsCubit extends Cubit<PatientAppointmentsState> {
   Future<void> init() async {
     final userId = repository.currentUserId;
     if (userId == null) {
-      emit(PatientAppointmentsError(tr.userNotFoundError));
+      emit(PatientAppointmentsError(AppErrorCode.userNotFound));
       return;
     }
 
@@ -45,7 +44,7 @@ class PatientAppointmentsCubit extends Cubit<PatientAppointmentsState> {
             ),
           ),
           onError: (Object error) =>
-              emit(PatientAppointmentsError(AppException.from(error).message)),
+              emit(PatientAppointmentsError(AppException.from(error).code)),
         );
   }
 

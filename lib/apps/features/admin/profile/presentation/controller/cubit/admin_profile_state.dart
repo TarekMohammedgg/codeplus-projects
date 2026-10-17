@@ -1,8 +1,8 @@
 import 'package:latlong2/latlong.dart';
 
-enum AdminProfileStatus { initial, loading, loaded, saving, success, failure }
+import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 
-enum AdminProfileFailure { requiresRecentLogin, unknown }
+enum AdminProfileStatus { initial, loading, loaded, saving, success, failure }
 
 class AdminProfileState {
   const AdminProfileState({
@@ -13,9 +13,8 @@ class AdminProfileState {
     this.addressAr = '',
     this.addressEn = '',
     this.location,
-    this.errorMessage,
     this.emailVerificationSent = false,
-    this.failure,
+    this.error,
   });
 
   final AdminProfileStatus status;
@@ -25,9 +24,10 @@ class AdminProfileState {
   final String addressAr;
   final String addressEn;
   final LatLng? location;
-  final String? errorMessage;
   final bool emailVerificationSent;
-  final AdminProfileFailure? failure;
+
+  /// Failure of the whole save, or (with `success`) of the email change only.
+  final AppErrorCode? error;
 
   AdminProfileState copyWith({
     AdminProfileStatus? status,
@@ -37,9 +37,8 @@ class AdminProfileState {
     String? addressAr,
     String? addressEn,
     LatLng? location,
-    String? errorMessage,
     bool? emailVerificationSent,
-    AdminProfileFailure? failure,
+    AppErrorCode? error,
   }) {
     return AdminProfileState(
       status: status ?? this.status,
@@ -49,10 +48,9 @@ class AdminProfileState {
       addressAr: addressAr ?? this.addressAr,
       addressEn: addressEn ?? this.addressEn,
       location: location ?? this.location,
-      errorMessage: errorMessage,
       emailVerificationSent:
           emailVerificationSent ?? this.emailVerificationSent,
-      failure: failure,
+      error: error,
     );
   }
 }

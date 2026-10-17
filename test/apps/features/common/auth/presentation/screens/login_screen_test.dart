@@ -1,0 +1,71 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+import 'package:doctor_hunt/apps/features/common/auth/presentation/controller/cubit/auth_cubit.dart';
+import 'package:doctor_hunt/apps/features/common/auth/presentation/screens/login_screen.dart';
+import 'package:doctor_hunt/apps/core/widgets/app_back_button.dart';
+import 'package:doctor_hunt/apps/features/common/auth/presentation/widgets/auth_buttons.dart';
+import 'package:doctor_hunt/generated/i18n/translations.g.dart';
+import '../../../../../../helpers/test_app.dart';
+import '../../../../../../helpers/test_fakes.dart';
+
+void main() {
+  testWidgets('LoginScreen renders Doctor Hunt UI components properly', (
+    WidgetTester tester,
+  ) async {
+    final tr = AppLocale.en.buildSync();
+
+    await tester.pumpWidget(
+      buildTestApp(
+        BlocProvider<AuthCubit>(
+          create: (_) => AuthCubit(repository: FakeAuthRepository()),
+          child: const LoginScreen(),
+        ),
+      ),
+    );
+
+    expect(find.text(tr.welcomeBack), findsOneWidget);
+    expect(find.text(tr.loginSubtitle), findsOneWidget);
+
+    expect(find.text(tr.google), findsOneWidget);
+    expect(find.text(tr.facebook), findsNothing);
+    expect(find.byType(SocialAuthButton), findsOneWidget);
+    expect(find.byType(Image), findsWidgets);
+
+    expect(find.text(tr.emailHint), findsOneWidget);
+    expect(find.text(tr.enterPasswordHint), findsOneWidget);
+
+    expect(find.text(tr.forgotPassword), findsOneWidget);
+    expect(find.text(tr.logIn), findsOneWidget);
+
+    expect(find.text(tr.dontHaveAccount), findsOneWidget);
+    expect(find.text(tr.joinUs), findsOneWidget);
+  });
+
+  testWidgets('patient login can go back to Choose Role', (
+    WidgetTester tester,
+  ) async {
+    final router = GoRouter(
+      initialLocation: '/login',
+      routes: [
+        GoRoute(
+          path: '/login',
+          builder: (_, _) => BlocProvider<AuthCubit>(
+            create: (_) => AuthCubit(repository: FakeAuthRepository()),
+            child: const LoginScreen(),
+          ),
+        ),
+        GoRoute(path: '/role-selection', builder: (_, _) => const Scaffold()),
+      ],
+    );
+    addTearDown(router.dispose);
+    await tester.pumpWidget(buildTestRouterApp(router));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byType(AppBackButton));
+    await tester.pumpAndSettle();
+
+    expect(router.state.matchedLocation, '/role-selection');
+  });
+}

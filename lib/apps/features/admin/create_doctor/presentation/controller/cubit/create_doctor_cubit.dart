@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/apps/features/admin/create_doctor/data/repositories/create_doctor_repository.dart';
 import 'package:doctor_hunt/apps/features/admin/create_doctor/presentation/controller/cubit/create_doctor_state.dart';
-import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
 class CreateDoctorCubit extends Cubit<CreateDoctorState> {
   CreateDoctorCubit({required this.repository})
@@ -24,7 +23,7 @@ class CreateDoctorCubit extends Cubit<CreateDoctorState> {
     } catch (error, stackTrace) {
       if (isClosed) return;
       addError(error, stackTrace);
-      emit(CreateDoctorFailure(errorMessage: AppException.from(error).message));
+      emit(CreateDoctorFailure(error: AppException.from(error).code));
     }
   }
 
@@ -52,7 +51,7 @@ class CreateDoctorCubit extends Cubit<CreateDoctorState> {
           fileName: imageName ?? 'doctor.jpg',
         );
       } catch (error, stackTrace) {
-        _fail(current, tr.uploadImageError, error, stackTrace);
+        _fail(current, AppErrorCode.uploadImage, error, stackTrace);
         return;
       }
     }
@@ -79,20 +78,20 @@ class CreateDoctorCubit extends Cubit<CreateDoctorState> {
       }
       if (!isClosed) emit(current.copyWith(submit: CreateDoctorSubmit.saved));
     } catch (error, stackTrace) {
-      _fail(current, AppException.from(error).message, error, stackTrace);
+      _fail(current, AppException.from(error).code, error, stackTrace);
     }
   }
 
   void _fail(
     CreateDoctorSuccess current,
-    String message,
+    AppErrorCode code,
     Object error,
     StackTrace stackTrace,
   ) {
     if (isClosed) return;
     addError(error, stackTrace);
     emit(
-      current.copyWith(submit: CreateDoctorSubmit.failed, submitError: message),
+      current.copyWith(submit: CreateDoctorSubmit.failed, submitError: code),
     );
   }
 }

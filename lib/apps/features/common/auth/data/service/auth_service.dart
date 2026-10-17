@@ -2,9 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:doctor_hunt/apps/core/services/firestore_collections.dart';
 import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/apps/features/common/role_selection/data/models/user_role.dart';
-import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 
 class AuthService {
   static String get serverClientId =>
@@ -120,12 +120,14 @@ class AuthService {
       if (e.code == GoogleSignInExceptionCode.canceled) {
         return null;
       }
-      throw AppException.fromGoogleSignIn(e);
+      throw AppException.from(e);
     }
   }
 
   Future<void> ensureUserProfile(User user) async {
-    final reference = firestore.collection('users').doc(user.uid);
+    final reference = firestore
+        .collection(FirestoreCollections.users)
+        .doc(user.uid);
     final snapshot = await reference.get();
 
     if (snapshot.exists) {
@@ -170,7 +172,10 @@ class AuthService {
       return false;
     }
     if (_isAdmin != null) return _isAdmin!;
-    final snapshot = await firestore.collection('users').doc(user.uid).get();
+    final snapshot = await firestore
+        .collection(FirestoreCollections.users)
+        .doc(user.uid)
+        .get();
     final isAdmin = snapshot.data()?['role'] == UserRole.admin.name;
     _isAdmin = isAdmin;
     return isAdmin;
@@ -179,8 +184,6 @@ class AuthService {
   Future<void> resetPassword({required String email}) async {
     try {
       await auth.sendPasswordResetEmail(email: email.trim());
-    } on FirebaseAuthException catch (e) {
-      throw AppException.fromFirebaseAuth(e);
     } catch (e) {
       throw AppException.from(e);
     }
@@ -192,7 +195,7 @@ class AuthService {
   }) async {
     final user = currentUser;
     if (user == null || user.email == null || user.email!.isEmpty) {
-      throw AppException(message: tr.userNotFoundError);
+      throw const AppException(AppErrorCode.userNotFound);
     }
     try {
       final credential = EmailAuthProvider.credential(
@@ -203,9 +206,9 @@ class AuthService {
       await user.updatePassword(newPassword);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'wrong-password' || e.code == 'invalid-credential') {
-        throw AppException(message: tr.wrongCurrentPassword, code: e.code);
+        throw const AppException(AppErrorCode.wrongCurrentPassword);
       }
-      throw AppException.fromFirebaseAuth(e);
+      throw AppException.from(e);
     } catch (e) {
       throw AppException.from(e);
     }

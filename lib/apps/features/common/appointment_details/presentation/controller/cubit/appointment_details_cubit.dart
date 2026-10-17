@@ -72,7 +72,7 @@ class AppointmentDetailsCubit extends Cubit<AppointmentDetailsState> {
       emit(
         state.copyWith(
           action: AppointmentActionStatus.failed,
-          errorMessage: AppException.from(error).message,
+          error: AppException.from(error).code,
         ),
       );
     }

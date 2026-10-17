@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:doctor_hunt/apps/core/services/firestore_collections.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/data/models/user_profile_model.dart';
 
 class ProfileService {
@@ -7,7 +8,7 @@ class ProfileService {
   final FirebaseFirestore firestore;
 
   DocumentReference<Map<String, dynamic>> _userDoc(String uid) =>
-      firestore.collection('users').doc(uid);
+      firestore.collection(FirestoreCollections.users).doc(uid);
 
   Stream<UserProfileModel> streamProfile(String uid) {
     return _userDoc(uid).snapshots().map(UserProfileModel.fromFirestore);
@@ -24,7 +25,7 @@ class ProfileService {
     final snapshots = await Future.wait([
       for (var start = 0; start < ids.length; start += batchSize)
         firestore
-            .collection('users')
+            .collection(FirestoreCollections.users)
             .where(
               FieldPath.documentId,
               whereIn: ids.skip(start).take(batchSize).toList(),

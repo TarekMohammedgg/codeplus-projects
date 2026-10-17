@@ -28,7 +28,5 @@ final class HomeSuccess extends HomeState {
 }
 
 final class HomeFailure extends HomeState {
-  const HomeFailure({required this.errorMessage});
-
-  final String errorMessage;
+  const HomeFailure();
 }

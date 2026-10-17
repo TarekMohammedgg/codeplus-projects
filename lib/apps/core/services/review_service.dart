@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'package:doctor_hunt/apps/core/services/firestore_collections.dart';
 import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
 import 'package:doctor_hunt/apps/core/models/review_model.dart';
@@ -11,7 +12,7 @@ class ReviewService {
   final FirebaseFirestore firestore;
 
   CollectionReference<Map<String, dynamic>> get _reviews =>
-      firestore.collection('reviews');
+      firestore.collection(FirestoreCollections.reviews);
 
   Future<List<ReviewModel>> fetchRecentReviews(
     String doctorId, {
@@ -42,10 +43,12 @@ class ReviewService {
         appointment.isReviewed) {
       throw const ReviewNotAllowedException();
     }
-    final doctorRef = firestore.collection('doctors').doc(appointment.doctorId);
+    final doctorRef = firestore
+        .collection(FirestoreCollections.doctors)
+        .doc(appointment.doctorId);
     final reviewRef = _reviews.doc(appointment.id);
     final appointmentRef = firestore
-        .collection('appointments')
+        .collection(FirestoreCollections.appointments)
         .doc(appointment.id);
 
     await firestore.runTransaction((transaction) async {

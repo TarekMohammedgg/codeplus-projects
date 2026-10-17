@@ -38,9 +38,8 @@ class AppointmentInfoTile extends StatelessWidget {
                 label,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: context.regular10TextMain.copyWith(
+                style: context.regular9TextMain.copyWith(
                   color: AppColors.textMuted,
-                  fontSize: 9,
                 ),
               ),
               2.verticalSpace,

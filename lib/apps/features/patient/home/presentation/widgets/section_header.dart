@@ -38,8 +38,7 @@ class SectionHeader extends StatelessWidget {
                 children: [
                   Text(
                     tr.seeAll,
-                    style: context.medium14TextSecondary.copyWith(
-                      fontSize: 13,
+                    style: context.medium13TextSecondary.copyWith(
                       color: AppColors.textSecondary.withValues(alpha: 0.8),
                     ),
                   ),

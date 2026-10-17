@@ -1,12 +1,11 @@
 import 'dart:typed_data';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:doctor_hunt/apps/features/common/auth/data/models/session_user.dart';
 import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/apps/features/common/auth/data/repositories/auth_repository.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/data/repositories/profile_repository.dart';
-import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'edit_profile_state.dart';
 
 export 'edit_profile_state.dart';
@@ -18,7 +17,7 @@ class EditProfileCubit extends Cubit<EditProfileState> {
   final ProfileRepository repository;
   final AuthRepository authRepository;
 
-  User? get currentUser => authRepository.currentUser;
+  SessionUser? get currentUser => authRepository.sessionUser;
 
   Future<void> save({
     required String name,
@@ -32,7 +31,7 @@ class EditProfileCubit extends Cubit<EditProfileState> {
     if (state is EditProfileSaving) return;
     final uid = currentUser?.uid;
     if (uid == null) {
-      emit(EditProfileFailure(tr.userNotFoundError));
+      emit(EditProfileFailure(AppErrorCode.userNotFound));
       return;
     }
 
@@ -52,7 +51,7 @@ class EditProfileCubit extends Cubit<EditProfileState> {
     } catch (error, stackTrace) {
       if (isClosed) return;
       addError(error, stackTrace);
-      emit(EditProfileFailure(AppException.from(error).message));
+      emit(EditProfileFailure(AppException.from(error).code));
     }
   }
 }

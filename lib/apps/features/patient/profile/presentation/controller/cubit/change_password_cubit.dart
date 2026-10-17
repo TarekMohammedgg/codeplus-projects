@@ -25,7 +25,7 @@ class ChangePasswordCubit extends Cubit<ChangePasswordState> {
       emit(const ChangePasswordSuccess());
     } catch (e) {
       final appEx = AppException.from(e);
-      emit(ChangePasswordFailure(appEx.message));
+      emit(ChangePasswordFailure(appEx.code));
     }
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:doctor_hunt/apps/core/extensions/app_error_text.dart';
 import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
@@ -44,7 +45,7 @@ class AdminAppointmentsScreen extends StatelessWidget {
       context.showSuccessSnackBar(context.tr.appointmentCancelledSuccess);
     } catch (e) {
       if (!context.mounted) return;
-      context.showErrorSnackBar(AppException.from(e).message);
+      context.showErrorSnackBar(context.errorText(e));
     }
   }
 
@@ -61,7 +62,7 @@ class AdminAppointmentsScreen extends StatelessWidget {
       context.showSuccessSnackBar(context.tr.appointmentMarkedCompletedSuccess);
     } catch (e) {
       if (!context.mounted) return;
-      context.showErrorSnackBar(AppException.from(e).message);
+      context.showErrorSnackBar(context.errorText(e));
     }
   }
 
@@ -129,7 +130,8 @@ class AdminAppointmentsScreen extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  state.errorMessage ?? context.tr.serviceError,
+                                  (state.error ?? AppErrorCode.service)
+                                      .localized(context.tr),
                                   style: context.medium14TextSecondary,
                                   textAlign: TextAlign.center,
                                 ),

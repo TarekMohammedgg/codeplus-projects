@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
 import 'package:doctor_hunt/apps/features/patient/rate_doctor/data/repositories/rate_doctor_repository.dart';
-import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'rate_doctor_state.dart';
 
 export 'rate_doctor_state.dart';
@@ -21,7 +20,7 @@ class RateDoctorCubit extends Cubit<RateDoctorState> {
         status: state.status == RateDoctorStatus.failure
             ? RateDoctorStatus.initial
             : state.status,
-        errorMessage: null,
+        error: null,
       ),
     );
   }
@@ -47,9 +46,9 @@ class RateDoctorCubit extends Cubit<RateDoctorState> {
       emit(
         state.copyWith(
           status: RateDoctorStatus.failure,
-          errorMessage: appointment.isReviewed
-              ? tr.alreadyReviewed
-              : tr.appointmentNotCompleted,
+          error: appointment.isReviewed
+              ? AppErrorCode.alreadyReviewed
+              : AppErrorCode.appointmentNotCompleted,
         ),
       );
       return;
@@ -59,7 +58,7 @@ class RateDoctorCubit extends Cubit<RateDoctorState> {
       emit(
         state.copyWith(
           status: RateDoctorStatus.failure,
-          errorMessage: tr.selectRatingRequired,
+          error: AppErrorCode.ratingRequired,
         ),
       );
       return;
@@ -79,12 +78,7 @@ class RateDoctorCubit extends Cubit<RateDoctorState> {
     } catch (e) {
       if (!isClosed) {
         final ex = AppException.from(e);
-        emit(
-          state.copyWith(
-            status: RateDoctorStatus.failure,
-            errorMessage: ex.message,
-          ),
-        );
+        emit(state.copyWith(status: RateDoctorStatus.failure, error: ex.code));
       }
     }
   }

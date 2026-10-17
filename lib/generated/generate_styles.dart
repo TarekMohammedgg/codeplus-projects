@@ -30,11 +30,13 @@ void main() {
   ];
   final List<int> fontSizes = [
     8,
+    9,
     11,
     12,
     10,
     13,
     14,
+    15,
     16,
     18,
     20,

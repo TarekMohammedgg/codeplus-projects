@@ -92,7 +92,7 @@ class AppIconButton extends StatelessWidget {
         boxShadow: effectiveBoxShadow.isEmpty ? null : effectiveBoxShadow,
       ),
       child: Material(
-        color: Colors.transparent,
+        color: AppColors.transparent,
         child: InkWell(
           onTap: onTap,
           borderRadius: effectiveBorderRadius is BorderRadius

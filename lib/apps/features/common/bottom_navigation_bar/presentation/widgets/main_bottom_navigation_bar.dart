@@ -100,7 +100,7 @@ class NavItem extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: isSelected ? AppColors.primary : Colors.transparent,
+                color: isSelected ? AppColors.primary : AppColors.transparent,
                 shape: BoxShape.circle,
                 boxShadow: isSelected
                     ? [
@@ -115,7 +115,7 @@ class NavItem extends StatelessWidget {
               child: Icon(
                 icon,
                 color: isSelected
-                    ? Colors.white
+                    ? AppColors.white
                     : AppColors.textSecondary.withValues(alpha: 0.6),
                 size: 24,
               ),

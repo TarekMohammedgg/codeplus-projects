@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import 'package:doctor_hunt/apps/core/utils/formatters.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_confirm_dialog.dart';
@@ -97,7 +98,7 @@ class AdminDoctorListTile extends StatelessWidget {
                           Flexible(
                             child: Text(
                               tr.ratingSummary(
-                                rating: doctor.rating.toStringAsFixed(1),
+                                rating: formatRating(doctor.rating),
                                 count: doctor.reviewsCount,
                               ),
                               maxLines: 1,
