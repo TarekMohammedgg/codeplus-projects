@@ -1,0 +1,43 @@
+{
+  "projectId": "doctor-hunt-67c1b",
+  "sourceCollection": "doctors",
+  "capturedAt": "2026-09-10",
+  "idMap": {
+    "4oYtF6rRuJpu2PAYRZCo": "doctor_001",
+    "doc_1": "doctor_002",
+    "doc_2": "doctor_003",
+    "doc_3": "doctor_004",
+    "doc_4": "doctor_005",
+    "doc_5": "doctor_006",
+    "doc_6": "doctor_007",
+    "fav_1": "doctor_008",
+    "fav_2": "doctor_009",
+    "feat_1": "doctor_010",
+    "feat_2": "doctor_011",
+    "live_1": "doctor_012",
+    "live_2": "doctor_013",
+    "live_3": "doctor_014",
+    "live_4": "doctor_015",
+    "pop_3": "doctor_016",
+    "pop_4": "doctor_017"
+  },
+  "images": {
+    "4oYtF6rRuJpu2PAYRZCo": "https://qmqthwkommmvcubgedfd.supabase.co/storage/v1/object/public/doctor-images/1788881503630_961339608.jpg",
+    "doc_1": "https://res.cloudinary.com/diexaortk/image/upload/f_auto,q_auto/v1787859417/doctor_1_haur1u",
+    "doc_2": "https://res.cloudinary.com/diexaortk/image/upload/f_auto,q_auto/v1787859417/doctor_2_yguxbv",
+    "doc_3": "https://res.cloudinary.com/diexaortk/image/upload/f_auto,q_auto/v1787859417/doctor_3_nk1ncd",
+    "doc_4": "https://res.cloudinary.com/diexaortk/image/upload/f_auto,q_auto/v1787859417/doctor_4_kadfwv",
+    "doc_5": "https://res.cloudinary.com/diexaortk/image/upload/f_auto,q_auto/v1787859489/popular_doctor_1_gtwouv",
+    "doc_6": "https://res.cloudinary.com/diexaortk/image/upload/f_auto,q_auto/v1787859489/popular_doctor_2_vuvwk8",
+    "fav_1": "https://res.cloudinary.com/diexaortk/image/upload/f_auto,q_auto/v1787859417/doctor_1_haur1u",
+    "fav_2": "https://res.cloudinary.com/diexaortk/image/upload/f_auto,q_auto/v1787859417/doctor_2_yguxbv",
+    "feat_1": "https://res.cloudinary.com/diexaortk/image/upload/f_auto,q_auto/v1787859417/doctor_1_haur1u",
+    "feat_2": "https://res.cloudinary.com/diexaortk/image/upload/f_auto,q_auto/v1787859417/doctor_2_yguxbv",
+    "live_1": "https://res.cloudinary.com/diexaortk/image/upload/f_auto,q_auto/v1787859487/live_doctor_1_fqllaa",
+    "live_2": "https://res.cloudinary.com/diexaortk/image/upload/f_auto,q_auto/v1787859488/live_doctor_2_ksvuhm",
+    "live_3": "https://res.cloudinary.com/diexaortk/image/upload/f_auto,q_auto/v1787859488/live_doctor_3_zacwbe",
+    "live_4": "https://res.cloudinary.com/diexaortk/image/upload/f_auto,q_auto/v1787859487/live_doctor_1_fqllaa",
+    "pop_3": "https://res.cloudinary.com/diexaortk/image/upload/f_auto,q_auto/v1787859489/popular_doctor_1_gtwouv",
+    "pop_4": "https://res.cloudinary.com/diexaortk/image/upload/f_auto,q_auto/v1787859489/popular_doctor_2_vuvwk8"
+  }
+}

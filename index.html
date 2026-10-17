@@ -1,0 +1,860 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Doctor Hunt — التطور والخطة</title>
+<style>
+:root{
+  --bg:#f6f5f1;--surface:#ffffff;--surface-2:#efede7;--text:#1f1e1b;--muted:#6b6a64;--faint:#9a988f;
+  --border:#dcd9d0;--accent:#185fa5;--accent-bg:#e6f1fb;--ok:#3b6d11;--ok-bg:#eaf3de;
+  --warn:#854f0b;--warn-bg:#faeeda;--bad:#a32d2d;--bad-bg:#fcebeb;--purple:#534ab7;--purple-bg:#eeedfe;
+  --teal:#0f6e56;--teal-bg:#e1f5ee;--radius:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#1b1b19;--surface:#252523;--surface-2:#2f2f2c;--text:#ecebe6;--muted:#a9a79f;--faint:#7d7b74;
+  --border:#3d3c38;--accent:#85b7eb;--accent-bg:#0c2c4a;--ok:#97c459;--ok-bg:#1f3109;--warn:#ef9f27;--warn-bg:#3a2706;
+  --bad:#f09595;--bad-bg:#4a1717;--purple:#afa9ec;--purple-bg:#2a2560;--teal:#5dcaa5;--teal-bg:#073a2f;}}
+:root[data-theme="dark"]{
+  --bg:#1b1b19;--surface:#252523;--surface-2:#2f2f2c;--text:#ecebe6;--muted:#a9a79f;--faint:#7d7b74;
+  --border:#3d3c38;--accent:#85b7eb;--accent-bg:#0c2c4a;--ok:#97c459;--ok-bg:#1f3109;--warn:#ef9f27;--warn-bg:#3a2706;
+  --bad:#f09595;--bad-bg:#4a1717;--purple:#afa9ec;--purple-bg:#2a2560;--teal:#5dcaa5;--teal-bg:#073a2f;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Tahoma,"Noto Sans Arabic",system-ui,sans-serif;line-height:1.75;font-size:15px}
+code,.mono{font-family:Consolas,"Cascadia Code",ui-monospace,monospace;font-size:13px;direction:ltr;unicode-bidi:isolate}
+code{background:var(--surface-2);padding:1px 6px;border-radius:5px}
+pre{direction:ltr;text-align:left;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;overflow:auto;margin:6px 0 10px;font-size:12.5px;line-height:1.55}
+pre code{background:none;padding:0}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 16px 64px}
+header h1{font-size:26px;font-weight:600;margin:0 0 6px}
+header p{margin:0;color:var(--muted)}
+.topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:22px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;padding:3px 10px;border-radius:999px;background:var(--surface-2);color:var(--muted);border:1px solid var(--border)}
+button{font:inherit;color:inherit;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 12px;cursor:pointer}
+button:hover{border-color:var(--faint)}
+button.on{background:var(--accent-bg);color:var(--accent);border-color:var(--accent)}
+nav.tabs{display:flex;gap:6px;flex-wrap:wrap;position:sticky;top:0;background:var(--bg);padding:10px 0;z-index:5;border-bottom:1px solid var(--border);margin-bottom:22px}
+section.panel{display:none}section.panel.active{display:block}
+h2{font-size:20px;font-weight:600;margin:0 0 4px}
+h3{font-size:16px;font-weight:600;margin:0 0 6px}
+.lead{color:var(--muted);margin:0 0 18px}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+.metric{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px}
+.metric .k{font-size:12.5px;color:var(--muted)}.metric .v{font-size:24px;font-weight:600}
+.metric .s{font-size:12px;color:var(--faint)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:12px}
+.muted{color:var(--muted)}.small{font-size:13px}
+.badge{display:inline-block;font-size:12px;padding:1px 9px;border-radius:999px;font-weight:600;white-space:nowrap}
+.b-ok{background:var(--ok-bg);color:var(--ok)}.b-warn{background:var(--warn-bg);color:var(--warn)}
+.b-bad{background:var(--bad-bg);color:var(--bad)}.b-acc{background:var(--accent-bg);color:var(--accent)}
+.b-pur{background:var(--purple-bg);color:var(--purple)}.b-teal{background:var(--teal-bg);color:var(--teal)}
+ul.clean{list-style:none;margin:0;padding:0}
+ul.clean li{padding:5px 0;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:flex-start}
+ul.clean li:last-child{border-bottom:0}
+.dot{flex:0 0 auto;width:8px;height:8px;border-radius:50%;margin-top:10px;background:var(--faint)}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+@media (max-width:820px){.two{grid-template-columns:1fr}}
+.bar{height:12px;background:var(--surface-2);border-radius:999px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:999px;transition:width .5s}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:start;padding:9px 8px;border-bottom:1px solid var(--border);vertical-align:top}
+th{font-size:12.5px;color:var(--muted);font-weight:600}
+tr.hidden{display:none}
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 12px}
+.flow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px}
+.flow span{background:var(--surface-2);border:1px solid var(--border);border-radius:7px;padding:2px 9px}
+footer{margin-top:40px;color:var(--faint);font-size:12.5px}
+
+/* evolution */
+.player{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.player input[type=range]{flex:1;min-width:180px;accent-color:var(--accent)}
+.evo{display:grid;grid-template-columns:300px minmax(0,1fr);gap:12px}
+.evo>*{min-width:0}
+@media (max-width:860px){.evo{grid-template-columns:minmax(0,1fr)}}
+.tower{display:flex;flex-direction:column-reverse;gap:6px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:12px;min-height:520px}
+.blk{border-radius:9px;padding:7px 10px;border:1px solid var(--border);background:var(--surface-2);cursor:pointer;transition:opacity .35s,transform .35s,box-shadow .2s;font-size:13px;line-height:1.4}
+.blk .h{font-weight:600}
+.blk.past{background:var(--purple-bg);border-color:var(--purple);color:var(--purple)}
+.blk.base{background:var(--teal-bg);border-color:var(--teal);color:var(--teal)}
+.blk.plan{background:transparent;border-style:dashed;border-color:var(--accent);color:var(--accent)}
+.blk.future{opacity:.25}
+.blk.cur{box-shadow:0 0 0 3px var(--accent);transform:scale(1.02)}
+.blk.dep{box-shadow:0 0 0 2px var(--warn)}
+@keyframes drop{from{transform:translateY(-14px);opacity:0}to{transform:none;opacity:1}}
+.blk.new{animation:drop .45s ease-out}
+.matrix{overflow-x:auto}
+.matrix table{font-size:12px;min-width:560px}
+.matrix th,.matrix td{padding:4px;text-align:center;border-bottom:1px solid var(--border)}
+.matrix th.l,.matrix td.l{text-align:start;white-space:nowrap;font-size:12.5px;color:var(--muted)}
+.cell{display:inline-block;width:22px;height:22px;border-radius:6px;background:var(--surface-2);border:1px solid var(--border);cursor:default}
+.cell.hit{cursor:pointer}
+.cell.past{background:var(--purple);border-color:var(--purple)}
+.cell.base{background:var(--teal);border-color:var(--teal)}
+.cell.plan{background:var(--accent-bg);border:1.5px dashed var(--accent)}
+.cell.fut{opacity:.25}
+.col-cur{background:var(--accent-bg)}
+.depchip{display:inline-block;margin:2px 4px 2px 0;font-size:12px;padding:1px 9px;border-radius:999px;border:1px solid var(--warn);color:var(--warn);background:var(--warn-bg);cursor:pointer}
+
+/* workflow path */
+.pgrid{display:flex;flex-wrap:wrap;gap:10px;align-items:stretch;margin:6px 0 14px}
+.pnode{flex:1 1 150px;min-width:140px;text-align:start;border-radius:12px;padding:10px 12px;border:2px solid var(--border);background:var(--surface);cursor:pointer}
+.pnode .t{font-weight:600}.pnode .c{font-size:12.5px}
+.pnode.g{border-color:var(--ok);background:var(--ok-bg);color:var(--ok)}
+.pnode.o{border-color:var(--warn);background:var(--warn-bg);color:var(--warn)}
+.pnode.r{border-color:var(--bad);background:var(--bad-bg);color:var(--bad)}
+.pnode.sel{outline:3px solid var(--accent);outline-offset:2px}
+.parrow{align-self:center;color:var(--faint)}
+.prow{display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-bottom:1px solid var(--border)}
+.prow:last-child{border-bottom:0}
+.prow .dot.g{background:var(--ok)}.prow .dot.r{background:var(--bad)}
+.step.shipped{border-inline-start-color:var(--ok)}
+/* plan */
+.ladder{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+@media (max-width:820px){.ladder{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.rung{border:1px solid var(--border);border-radius:10px;padding:10px 12px;background:var(--surface-2);cursor:pointer}
+.rung.on{border-color:var(--accent);background:var(--accent-bg)}
+.rung .n{font-size:22px;font-weight:600}
+.step{border-inline-start:4px solid var(--border);border-radius:0 12px 12px 0}
+.step.p1{border-inline-start-color:var(--bad)}.step.p2{border-inline-start-color:var(--warn)}.step.p3{border-inline-start-color:var(--accent)}
+.step.done{opacity:.6}
+.step-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;cursor:pointer;user-select:none}
+.step-head .t{font-weight:600;font-size:15.5px}
+.step-head input{width:18px;height:18px;accent-color:var(--ok);cursor:pointer}
+.step-body{display:none;margin-top:12px;border-top:1px dashed var(--border);padding-top:12px}
+.step.open .step-body{display:block}
+.caret{margin-inline-start:auto;color:var(--faint);transition:transform .2s}
+.step.open .caret{transform:rotate(180deg)}
+.kv{display:grid;grid-template-columns:120px 1fr;gap:6px 12px;font-size:14px}
+.kv dt{color:var(--muted)}.kv dd{margin:0}
+.lad-row{display:flex;gap:8px;align-items:flex-start;margin:3px 0}
+.lad-row .badge{min-width:118px;text-align:center}
+blockquote{margin:0;padding:6px 12px;border-inline-start:3px solid var(--teal);background:var(--teal-bg);color:var(--teal);border-radius:0 8px 8px 0;font-size:13.5px}
+.hl{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="topbar">
+  <header>
+    <h1>Doctor Hunt — التطور والخطة لـ 100% من workflow.md</h1>
+    <p>من commit الـ review <code>5ca801d</code> لحد <code>afe4139</code>، والخطوات الجاية لحد ما الكود يطابق <code>workflow.md</code> بالكامل.</p>
+  </header>
+  <div style="display:flex;gap:6px;flex-wrap:wrap">
+    <span class="chip">11 commits</span>
+    <span class="chip">flutter analyze: 0 issues</span>
+    <span class="chip">flutter test: 317 passed</span>
+    <button id="theme">الوضع الليلي / النهاري</button>
+  </div>
+</div>
+
+<nav class="tabs">
+  <button class="on" data-tab="overview">نظرة عامة</button>
+  <button data-tab="evolution">التطور طبقة فوق طبقة</button>
+  <button data-tab="plan">الخطة العملية لـ 100%</button>
+  <button data-tab="workflow">القرب من workflow.md</button>
+  <button data-tab="logic">مراجعة الـ logic</button>
+  <button data-tab="commits">الـ commits بالتفصيل</button>
+  <button data-tab="fixplan">REVIEW_FIX_PLAN</button>
+</nav>
+
+<!-- ================= OVERVIEW ================= -->
+<section class="panel active" id="overview">
+  <h2>الخلاصة</h2>
+  <p class="lead">التحديثات لحد دلوقتي مضافتش features ومشالتش features؛ خلّت نفس الـ flows <b>تشتغل صح</b> والكود أبسط. الخطة بتكمّل الـ 7 حاجات الباقية بتعديلات صغيرة فوق اللي موجود.</p>
+  <div class="grid" style="margin-bottom:18px">
+    <div class="metric"><div class="k">صحة سلوك الـ workflow</div><div class="v">41% ← 100%</div><div class="s">22 من 22 سلوك مضبوط</div></div>
+    <div class="metric"><div class="k">بعد الخطة العملية</div><div class="v">100%</div><div class="s">كل الخطوات اتنفذت</div></div>
+    <div class="metric"><div class="k">دوال جديدة من الصفر في الخطة</div><div class="v">0</div><div class="s">كله إعادة استخدام + getters صغيرة</div></div>
+    <div class="metric"><div class="k">مفاتيح ترجمة جديدة</div><div class="v">1</div><div class="s"><code>availableSlots</code> بس، والباقي موجود</div></div>
+  </div>
+  <div class="two">
+    <div class="card">
+      <h3>اللي اتعمل (قرّبنا)</h3>
+      <ul class="clean" id="ov-done"></ul>
+    </div>
+    <div class="card">
+      <h3>اللي فاضل (الخطة)</h3>
+      <ul class="clean" id="ov-left"></ul>
+      <p class="small muted" style="margin:10px 0 0">اضغط على أي بند يفتح خطوته في الخطة.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= EVOLUTION ================= -->
+<section class="panel" id="evolution">
+  <h2>التطور طبقة فوق طبقة</h2>
+  <p class="lead">كل بلوك اتبنى على اللي تحته. حرّك الـ slider أو اضغط تشغيل: البلوك الجديد بينزل فوق البرج، والـ layers اللي اتلمست بتنوّر في المصفوفة، والنسبة بتتحدث. البلوكات البرتقالي هي اللي الخطوة الحالية <b>مبنية عليها</b>.</p>
+  <div class="player">
+    <button id="prev" aria-label="السابق">◀ السابق</button>
+    <button id="play">▶ تشغيل</button>
+    <button id="next" aria-label="التالي">التالي ▶</button>
+    <input type="range" id="stage" min="0" max="11" step="1" value="11" aria-label="المرحلة">
+    <span class="badge b-acc" id="stageLabel"></span>
+  </div>
+  <div class="evo">
+    <div class="tower" id="tower" aria-label="برج التطور"></div>
+    <div>
+      <div class="card" id="stageCard"></div>
+      <div class="card">
+        <h3>نسبة صحة الـ workflow عبر المراحل</h3>
+        <svg id="chart" viewBox="0 0 640 190" width="100%" role="img" aria-label="منحنى النسبة"></svg>
+        <div class="small muted">الخط المتصل = اتنفذ، والمتقطع = الخطة. اضغط على أي نقطة.</div>
+      </div>
+      <div class="card matrix">
+        <h3>الـ layers اللي كل مرحلة لمستها</h3>
+        <div class="small muted" style="margin-bottom:6px">اضغط على أي مربع ملوّن تعرف اتغير إيه في الـ layer دي.</div>
+        <table id="matrix"></table>
+        <div id="cellInfo" class="small" style="margin-top:8px;min-height:24px"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PLAN ================= -->
+<section class="panel" id="plan">
+  <h2>الخطة العملية: وصلنا 100%</h2>
+  <p class="lead">7 خطوات صغيرة، <b>كل الخطوات السبع اتنفذت</b> (P1 و P2 و P3).</p>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+      <h3 style="margin:0">التقدم المتوقع</h3>
+      <span class="badge b-ok" id="projLabel"></span>
+    </div>
+    <div class="bar" style="margin:10px 0 4px;height:16px"><i id="projBar" style="width:100%;background:var(--ok)"></i></div>
+    <div class="small muted" id="projSub"></div>
+  </div>
+
+  <div class="card">
+    <h3>قاعدة "دوّر قبل ما تكتب" على الخطة دي</h3>
+    <p class="small muted" style="margin:0 0 10px">لكل حاجة في الخطة دوّرنا بالترتيب ده، ووقفنا عند أول درجة لقت حل. اضغط على درجة تشوف إيه اللي اتاخد منها، والخطوات اللي بتستخدمها هتتعلّم.</p>
+    <div class="ladder" id="ladder"></div>
+    <div id="ladderInfo" class="small" style="margin-top:10px"></div>
+  </div>
+
+  <div class="card small">
+    <b>قواعد التنفيذ لكل خطوة:</b> مفيش نص أو لون أو مسافة hardcoded (الترجمة من <code>context.tr</code>، والألوان من <code>AppColors</code>)، والـ flow ثابت: Screen ← Cubit ← Repository ← Service. وبعد كل خطوة لازم <code>dart format</code> ← <code>build_runner</code> لو اتغيرت routes أو ترجمة ← <code>flutter analyze</code> ← <code>flutter test</code> ← commit. التعديل في <code>firestore.rules</code> بيتعمل في الكود بس، والـ deploy عليك.
+  </div>
+
+  <div class="filters" id="pfilters">
+    <button class="on" data-p="all">الكل</button>
+    <button data-p="p1">P1 — بيكسر قاعدة</button>
+    <button data-p="p2">P2 — اختلاف عن الـ spec</button>
+    <button data-p="p3">P3 — تحسين</button>
+  </div>
+  <div id="steps"></div>
+</section>
+
+<!-- ================= WORKFLOW ================= -->
+<section class="panel" id="workflow">
+  <h2>القرب من workflow.md</h2>
+  <p class="lead">22 سلوك من الـ workflow، متقاسين على الكود و<code>firestore.rules</code> عند <code>5ca801d</code> وعند <code>HEAD</code> (<code>afe4139</code>)، والعمود الأخير بيقول أنهي خطوة في الخطة بتقفل البند.</p>
+  <div class="two" style="margin-bottom:12px">
+    <div class="card">
+      <h3>صحة السلوك</h3>
+      <div class="small muted">قبل — <code>5ca801d</code></div>
+      <div class="bar"><i style="width:41%;background:var(--faint)"></i></div><div class="small" style="margin:2px 0 8px">9 / 22 = 41%</div>
+      <div class="small muted">دلوقتي — <code>HEAD</code></div>
+      <div class="bar"><i style="width:100%;background:var(--ok)"></i></div><div class="small" style="margin:2px 0 8px">22 / 22 = 100%</div>
+      
+    </div>
+    <div class="card">
+      <h3>تغطية الـ checklist (34 بند)</h3>
+      <p class="small muted" style="margin:0 0 10px">كل الـ features موجودة، و"Doctor Details &amp; Location" بقى كامل (الـ slots والموقع live).</p>
+      <div class="bar"><i style="width:100%;background:var(--teal)"></i></div><div class="small" style="margin:2px 0 8px">34 / 34</div>
+    </div>
+  </div>
+  <div class="filters" id="wfilters">
+    <button class="on" data-f="all">الكل (22)</button>
+    <button data-f="fixed">اتصلح (13)</button>
+    <button data-f="ok">كان صح (9)</button>
+    <button data-f="open">مفتوح (0)</button>
+    <button data-f="path">🧭 مسار الـ workflow</button>
+  </div>
+  <div id="wpath" style="display:none">
+    <div class="player">
+      <button id="pnow" class="on">دلوقتي</button>
+      <button id="pbefore">عند <span class="mono">5ca801d</span></button>
+      <span class="small muted">أخضر = كله اتنفذ · برتقالي = جزء اتنفذ · أحمر = لسه ماتبدأش. اضغط على أي محطة تفتح خطواتها.</span>
+    </div>
+    <div class="pgrid" id="pgrid"></div>
+    <div class="card" id="pdetail"><span class="muted">اختار محطة من المسار.</span></div>
+  </div>
+  <div class="card" id="wtableCard" style="padding:4px 12px">
+    <table id="wtable"><thead><tr><th>السلوك المطلوب</th><th style="width:80px">قبل</th><th style="width:80px">دلوقتي</th><th>الدليل في الكود</th><th style="width:90px">الخطة</th></tr></thead><tbody></tbody></table>
+  </div>
+</section>
+
+<!-- ================= LOGIC ================= -->
+<section class="panel" id="logic">
+  <h2>مراجعة الـ logic مقابل الـ workflow</h2>
+  <p class="lead">كل flow متتبع من الشاشة لحد Firestore. البنود الحمرا مربوطة بخطوة في الخطة، اضغط عليها.</p>
+  <div id="flows"></div>
+</section>
+
+<!-- ================= COMMITS ================= -->
+<section class="panel" id="commits">
+  <h2>الـ commits بالتفصيل</h2>
+  <p class="lead">اضغط على أي commit يفتح التفاصيل.</p>
+  <div id="clist"></div>
+</section>
+
+<!-- ================= FIX PLAN ================= -->
+<section class="panel" id="fixplan">
+  <h2>حالة REVIEW_FIX_PLAN.md</h2>
+  <p class="lead">خطوات 1 لـ 6 اتنفذت قبل <code>5ca801d</code>. الـ self-check بتاع الـ plan نضيف على <code>HEAD</code> (الـ hits الباقية هي المسموح بيها في الـ plan نفسه).</p>
+  <div class="card" style="padding:4px 12px"><table><thead><tr><th>الخطوة</th><th style="width:150px">الحالة</th><th>ملاحظة</th></tr></thead><tbody id="ptable"></tbody></table></div>
+</section>
+
+<footer>اتعمل من قراءة الكود و<code>git</code> و<code>firestore.rules</code> و<code>workflow.md</code> و<code>REVIEW_FIX_PLAN.md</code>. أكواد الخطة اتكتبت بعد التأكد إن كل function ومفتاح ترجمة بتستخدمه موجود فعلاً في الـ codebase.</footer>
+</div>
+
+<script>
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const $=s=>document.querySelector(s);
+const $$=s=>[...document.querySelectorAll(s)];
+const store={get(k,d){try{const v=localStorage.getItem(k);return v===null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+
+/* ---------------- tabs ---------------- */
+function openTab(id){
+  $$('nav.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===id));
+  $$('section.panel').forEach(s=>s.classList.toggle('active',s.id===id));
+  store.set('dh-tab',id);
+}
+$$('nav.tabs button').forEach(b=>b.onclick=()=>openTab(b.dataset.tab));
+$('#theme').onclick=()=>{const r=document.documentElement;const dark=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;r.dataset.theme=dark?'light':'dark'};
+
+/* ---------------- layers + stages ---------------- */
+const LAYERS=[['rules','Firestore rules'],['model','Model / Errors'],['service','Service'],['repo','Repository'],['cubit','Cubit / State'],['route','Route / DI / main'],['screen','Screen / Widget'],['i18n','Translations'],['tests','Tests'],['docs','Docs']];
+const STAGES=[
+ {id:'base',h:'5ca801d',name:'الأساس: REVIEW_FIX_PLAN 1–6',kind:'base',score:9,on:[],
+  sum:'نقطة البداية. خطوات الـ plan من 1 لـ 6 كانت متنفذة: formatters، و<code>AppCard</code>، والـ dialogs، و<code>AppointmentDetailsCubit</code>، والـ Cubits في الـ routes. الـ rules بتحمي الـ 3 states والـ review والـ double booking.',
+  cells:{rules:'الـ rules بتحمي: 3 states، review بعد completed، lock للـ slot، منع حذف الطبيب.',model:'<code>AppointmentModel</code>، <code>DoctorModel</code> (لسه فيه legacy fields)، <code>Gender</code> enum.',service:'<code>DoctorService</code>، <code>AppointmentService.book</code> بـ transaction، <code>ReviewService</code>.',repo:'repository لكل feature.',cubit:'Cubits بـ sealed states، وبعضها لسه بينادي services.',route:'typed routes بتوفر معظم الـ Cubits.',screen:'شاشات Figma، و<code>AppCard</code> والـ dialogs المشتركة.',i18n:'en / ar، وفيهم 6 مفاتيح متكررة.',tests:'330 test.',docs:'<code>workflow.md</code> و<code>REVIEW_FIX_PLAN.md</code> اتضافوا.'}},
+ {id:'c1',h:'a0f67fc',name:'تنظيف الـ comments',kind:'past',score:9,on:['base'],
+  sum:'شال comments بتكرر الكود في 100 ملف في <code>lib</code> و47 في <code>test</code>، من غير تغيير في السلوك.',
+  cells:{model:'حذف comments زيادة.',service:'حذف comments زيادة.',route:'تنظيف <code>app_router.dart</code> و<code>injection.dart</code>.',screen:'حذف comments في الـ widgets.',i18n:'تقارير الترجمة الناقصة وغير المستخدمة.',tests:'تبسيط وصف الـ tests.'}},
+ {id:'c2',h:'a0cfd36',name:'الـ review: تبسيط وتصليح الـ states',kind:'past',score:14,on:['base','c1'],
+  sum:'أكبر طبقة: 5 bugs في السلوك اتصلحوا، 5 layers pass-through اتشالوا، والـ Cubits بقت بتنادي repositories بس. الطبقة دي بقت الأساس اللي الخطوات الجاية مبنية عليه (<code>slotsByDate</code>، <code>favoritesOnly</code>، <code>requestEmailChange</code>، الـ dialogs).',
+  cells:{model:'<code>DoctorModel</code> من 215 لـ 75 سطر، وشيل <code>==</code> الجزئي من الـ states.',service:'<code>SpecialtyService.fetchSpecialtyName</code>، و<code>ProfileService.fetchProfile</code>، و<code>AuthService.requestEmailChange</code>، والـ constructors بـ <code>required this</code>.',repo:'شيل <code>HomeRepository</code>، والـ repositories بقت مصدر <code>currentUserId</code> و<code>uploadPhoto</code>.',cubit:'<code>BookingCubit</code> بـ <code>slotsByDate</code> بس، و<code>FindDoctorsCubit</code> فيه <code>favoritesOnly</code>، و<code>toggleActive</code> بيرجّع <code>bool</code>.',route:'<code>$extra</code> بقى required، والـ Cubits بتتعمل في الـ routes، و<code>Dio</code> في DI.',screen:'dialogs مشتركة، و<code>DoctorImage</code> للـ avatars، و<code>FavoritesScreen</code> على <code>FindDoctorsCubit</code>.',i18n:'شيل 6 مفاتيح مكررة، وإضافة <code>perSlot</code>.',tests:'4 regression tests، وكل الـ tests اتحدثت.'}},
+ {id:'c3',h:'a0ee21a',name:'قاعدة باسورد واحدة',kind:'past',score:15,on:['c2'],
+  sum:'تغيير الباسورد بقى بيستخدم <code>AppValidators</code> (8 حروف) زي التسجيل.',
+  cells:{screen:'<code>ChangePasswordScreen</code> بيستخدم <code>AppValidators</code>.',i18n:'شيل <code>passwordMinLength</code>.',tests:'تحديث <code>change_password_test</code>.'}},
+ {id:'c4',h:'2cd1ffd',name:'صور المرضى بقراءات مجمعة',kind:'past',score:15,on:['c2'],
+  sum:'مبنية على <code>ProfileService</code> من طبقة الـ review: قراءات <code>whereIn</code> على دفعات 30، والخطأ بيتبلّغ ويتعاد.',
+  cells:{service:'<code>ProfileService.fetchPhotoUrls</code>.',repo:'<code>fetchPatientPhotos</code>.',cubit:'طلب واحد لكل مريض + retry.',tests:'2 tests جديدة.'}},
+ {id:'s1',h:'020323b',name:'الوقت يحكم الموعد',kind:'past',score:17,on:['c2'],step:'s1',
+  sum:'Mark Completed بعد الميعاد بس، و Cancel للمريض قبل الميعاد بس. مبنية على الـ dialogs المشتركة من الـ review.',
+  cells:{rules:'شرطين بـ <code>request.time</code> مقابل <code>startAt</code>.',model:'getter <code>hasStarted</code> في <code>AppointmentModel</code>.',screen:'إظهار الزرار حسب <code>hasStarted</code> في 4 أماكن.',tests:'unit + widget test.'}},
+ {id:'s2',h:'afe4139',name:'الحجز يتأكد إن الطبيب متاح',kind:'past',score:18,on:['c2','base'],step:'s2',
+  sum:'الـ transaction بيقرأ الطبيب ويتأكد إنه Active والـ slot لسه جوه الـ availability، باستخدام <code>slotsForDay</code> الموجودة.',
+  cells:{rules:'شرط <code>isActive</code> على إنشاء الموعد.',model:'<code>DoctorUnavailableException</code> جنب <code>SlotAlreadyBookedException</code>.',service:'قراءة الطبيب جوه <code>AppointmentService.book</code>.',cubit:'<code>BookingFailureCode.doctorUnavailable</code>.',screen:'رسالة بمفتاح موجود <code>doctorNoAvailableTimes</code>.',tests:'Cubit test.'}},
+ {id:'s4',h:'c58d7c8',name:'اللغة ترجع بعد إعادة الفتح',kind:'past',score:19,on:['base'],step:'s4',
+  sum:'<code>AppPreferencesService</code> الموجود + <code>LocaleSettings.getLocaleStream()</code> من slang، فأي تغيير لغة من أي مكان بيتحفظ.',
+  cells:{service:'<code>languageCode</code> و<code>setLanguageCode</code> في <code>AppPreferencesService</code>.',route:'<code>main.dart</code> بيرجّع اللغة المحفوظة.',tests:'test للـ preferences.'}},
+ {id:'s6',h:'7c04f40',name:'تاب Doctors زي الـ spec',kind:'past',score:20,on:['c2'],step:'s6',
+  sum:'<code>FindDoctorsRoute</code> يبقى التاب التاني، والمفضلة تبقى فلتر جواه عن طريق <code>favoritesOnly</code> اللي الـ review جهّزه.',
+  cells:{route:'تبديل الـ branch، و<code>.push</code> لـ <code>.go</code> في الـ Home.',cubit:'رجوع <code>toggleFavoritesOnly</code> (سطر واحد).',screen:'زرار القلب جنب البحث، وحذف <code>FavoritesScreen</code>.',tests:'نقل tests المفضلة لـ Find Doctors.'}},
+ {id:'s3',h:'56533f4',name:'موقع العيادة live في Doctor Details',kind:'past',score:21,on:['c2'],step:'s3',
+  sum:'نفس pattern <code>AppointmentDetailsCubit</code>: <code>watchClinic()</code> بدل <code>fetchClinic()</code>.',
+  cells:{repo:'<code>watchClinic()</code> بيرجع <code>clinicService.streamClinic()</code>.',cubit:'subscription للعيادة وإلغاؤها في <code>close()</code>.',tests:'Cubit test بـ stream.'}},
+ {id:'s5',h:'1043495',name:'Available slots في Doctor Details',kind:'past',score:22,on:['c2','s3'],step:'s5',
+  sum:'إعادة استخدام <code>BookingCubit</code> (<code>slotsByDate</code> من الـ review) و<code>TimeSlotsSection</code>، من غير logic جديد.',
+  cells:{route:'<code>DoctorDetailsRoute</code> بيوفر <code>BookingCubit</code> كمان.',screen:'section صغير بأقرب 4 slots.',i18n:'مفتاح جديد واحد <code>availableSlots</code>.',tests:'widget test.'}},
+ {id:'s7',h:'6728022',name:'تعديل الاسم والهاتف وتثبيت الإيميل',kind:'past',score:22,on:['c2','s6'],step:'s7',
+  sum:'تثبيت الإيميل كـ read-only لا يمكن تعديله، وقصر التعديل على الاسم ورقم الهاتف للمريض فقط، وتوحيد الأسماء في <code>workflow.md</code>.',
+  cells:{screen:'الإيميل يفضل <code>readOnly: true</code>، والتعديل مقتصر على الاسم ورقم الهاتف.',docs:'<code>avgRating</code> ← <code>rating</code>، و"Success screen" ← dialog، وتثبيت قصر التعديل على الاسم ورقم الهاتف.'}}
+];
+
+/* ---------------- plan steps ---------------- */
+const STEPS=[
+ {id:'s1',p:'p1',gain:2,shipped:'020323b',title:'الوقت يحكم حالة الموعد',close:['Completed معناها إن الزيارة حصلت','Cancel للـ Upcoming قبل ميعاده'],
+  quote:'Completed: Consultation concluded. Unlocks doctor review & rating eligibility.',
+  problem:'الأدمن يقدر يعمل Mark Completed لموعد لسه وقته ماجاش، فالمريض يقيّم زيارة محصلتش. وكمان المريض يقدر يلغي موعد عدى وقته، فالموعد يفضل Upcoming للأبد.',
+  logic:'قاعدة واحدة: الموعد قبل وقته يتلغي بس، وبعد وقته الأدمن بس يقرر (Completed أو Cancelled، عشان الـ no-show). القاعدة بتتطبق في مكانين: الـ UI بيخفي الزرار، والـ rules بترفض حتى لو حد بعت request مباشرة.',
+  ladder:{flutter:['<code>DateTime.isAfter</code>','<code>request.time</code> في Firestore rules'],core:['<code>showMarkCompletedDialog</code> و<code>showCancelAppointmentDialog</code> (من الـ review)','نفس الـ cards الموجودة'],pkg:[],scratch:['getter واحد <code>hasStarted</code> (سطر واحد)']},
+  files:['lib/apps/core/models/appointment_model.dart','admin_appointment_card.dart','admin_appointment_details_screen.dart','patient_appointment_card.dart','patient_appointment_details_screen.dart','firestore.rules'],
+  code:[['appointment_model.dart',`bool get hasStarted => !startAt.isAfter(DateTime.now());`],
+   ['admin_appointment_card.dart (السطر 153)',`if (appointment.status == AppointmentStatus.upcoming)
+  Row(
+    spacing: 8,
+    children: [
+      Expanded(child: /* زرار Cancel زي ما هو */),
+      if (appointment.hasStarted)
+        Expanded(child: /* زرار Mark completed زي ما هو */),
+    ],
+  )`],
+   ['patient_appointment_card.dart (السطر 146)',`if (appointment.status == AppointmentStatus.upcoming &&
+    !appointment.hasStarted) ...[
+  /* زرار Cancel زي ما هو */
+]`]],
+  rules:`// admin update: completed بعد الميعاد بس
+&& (request.resource.data.status == 'cancelled'
+    || request.time >= resource.data.startAt)
+
+// patient cancel: قبل الميعاد بس
+&& request.time < resource.data.startAt`,
+  test:'unit test لـ <code>hasStarted</code>، و widget test إن زرار Mark completed مش ظاهر لموعد بكرة.',
+  i18n:'مفيش نص جديد.',effort:'صغير (~ساعة)',decision:'',deploy:true},
+ {id:'s2',p:'p1',gain:1,shipped:'afe4139',title:'الحجز يتأكد إن الطبيب لسه متاح',close:['الحجز مسموح لطبيب Active بس'],
+  quote:'Deactivate doctors, never delete. Patients see active doctors only.',
+  problem:'الـ transaction بيقرأ الـ slot lock بس. لو الأدمن عمل Deactivate أو غيّر المواعيد والمريض فاتح شاشة الحجز، الحجز هيعدي على طبيب مش متاح.',
+  logic:'جوه نفس الـ transaction اللي بيحجز: اقرأ الطبيب، ولو مش Active أو الـ slot مبقاش من مواعيده الحالية، ارمي exception. الحساب بيستخدم <code>slotsForDay</code> نفسها اللي بتولّد المواعيد، فمفيش logic جديد. وفي Firestore الـ reads لازم تيجي قبل الـ writes، والكود الحالي ماشي كده أصلاً.',
+  ladder:{flutter:['<code>Transaction.get</code> من cloud_firestore','<code>List.contains</code>'],core:['<code>slotsForDay</code> من <code>slot_generator.dart</code>','<code>DoctorAvailability.tryParse</code>','نفس pattern <code>SlotAlreadyBookedException</code> و<code>BookingFailureCode</code>'],pkg:[],scratch:['class exception فاضي زي اللي جنبه']},
+  files:['lib/apps/core/errors/app_exception.dart','lib/apps/core/services/appointment_service.dart','booking_cubit.dart','booking_state.dart','booking_review_screen.dart','firestore.rules'],
+  code:[['app_exception.dart',`class DoctorUnavailableException implements Exception {
+  const DoctorUnavailableException();
+}`],
+   ['appointment_service.dart — جوه runTransaction قبل الـ slot',`final doctorData = (await transaction.get(
+  firestore.collection('doctors').doc(doctor.id),
+)).data();
+final availability = DoctorAvailability.tryParse(doctorData?['availability']);
+final isOpen = doctorData?['isActive'] == true &&
+    availability != null &&
+    slotsForDay(availability, startAt, const {}, DateTime.now())
+        .contains(startAt);
+if (!isOpen) throw const DoctorUnavailableException();`],
+   ['booking_cubit.dart + booking_state.dart',`enum BookingFailureCode { slotAlreadyBooked, doctorUnavailable, unknown }
+
+} on DoctorUnavailableException {
+  if (isClosed) return;
+  emit(const BookingConfirmFailure(code: BookingFailureCode.doctorUnavailable));
+}`],
+   ['booking_review_screen.dart',`case BookingConfirmFailure(code: BookingFailureCode.doctorUnavailable):
+  context.showErrorSnackBar(context.tr.doctorNoAvailableTimes);
+  context.pop(true);`]],
+  rules:`// appointments create
+&& get(/databases/$(database)/documents/doctors/$(request.resource.data.doctorId))
+     .data.isActive == true`,
+  test:'Cubit test بـ <code>FakeBookingRepository(bookError: DoctorUnavailableException())</code> بيتوقع <code>doctorUnavailable</code>.',
+  i18n:'إعادة استخدام <code>doctorNoAvailableTimes</code> الموجود.',effort:'متوسط (~2 ساعة)',decision:'',deploy:true},
+ {id:'s3',shipped:'56533f4',p:'p3',gain:1,title:'موقع العيادة live في Doctor Details',close:['تغيير موقع العيادة يظهر فورًا في Doctor Details'],
+  quote:'When Admin updates the Clinic Location, it instantly updates on Doctor Details, Slot Review & Appointment Details.',
+  problem:'<code>DoctorDetailsCubit</code> بيجيب العيادة مرة واحدة بـ <code>fetchClinic()</code>، فلو الأدمن غيّر الموقع والشاشة مفتوحة مش هيتحدث (مراجعة الحجز وتفاصيل الموعد بيتحدثوا).',
+  logic:'استخدام الـ stream الموجود. نفس pattern <code>AppointmentDetailsCubit</code> بالظبط: subscription واحد بيتلغي في <code>close()</code>.',
+  ladder:{flutter:['<code>StreamSubscription</code>'],core:['<code>ClinicService.streamClinic()</code>','pattern <code>AppointmentDetailsCubit</code>','<code>watchClinic()</code> نفس اللي في <code>BookingRepository</code>'],pkg:[],scratch:[]},
+  files:['doctor_details_repository.dart','doctor_details_cubit.dart'],
+  code:[['doctor_details_repository.dart',`Stream<ClinicModel?> watchClinic() => clinicService.streamClinic();`],
+   ['doctor_details_cubit.dart',`StreamSubscription<ClinicModel?>? _clinicSubscription;
+
+Future<void> load(String doctorId) async {
+  emit(const DoctorDetailsLoading());
+  try {
+    final reviews = await repository.fetchRecentReviews(doctorId);
+    if (isClosed) return;
+    _clinicSubscription = repository.watchClinic().listen(
+      (clinic) => emit(DoctorDetailsSuccess(reviews: reviews, clinic: clinic)),
+      onError: addError,
+    );
+  } catch (error, stackTrace) {
+    if (isClosed) return;
+    addError(error, stackTrace);
+    emit(DoctorDetailsFailure(errorMessage: error.toString()));
+  }
+}
+
+@override
+Future<void> close() {
+  _clinicSubscription?.cancel();
+  return super.close();
+}`]],
+  rules:'',test:'Cubit test بـ fake repository بيبعت عيادتين ورا بعض والـ state بيتحدث.',
+  i18n:'مفيش نص جديد.',effort:'صغير (~ساعة)',decision:'',deploy:false},
+ {id:'s4',p:'p2',gain:1,shipped:'c58d7c8',title:'اللغة المختارة ترجع بعد إعادة الفتح',close:['اللغة المختارة في الإعدادات تفضل بعد إعادة الفتح'],
+  quote:'Settings: Change Password, Notifications toggle, Language, Logout confirmation modal.',
+  problem:'<code>main.dart</code> بيعمل <code>useDeviceLocale()</code> كل مرة، فاللغة اللي المستخدم اختارها من الإعدادات أو من زرار الـ Home بتضيع.',
+  logic:'مكان واحد بيسمع لأي تغيير لغة (<code>getLocaleStream</code> من slang)، فمش محتاجين نعدّل كل زرار لغة. والحفظ بيتعمل في <code>AppPreferencesService</code> الموجود بنفس طريقة <code>hasSeenOnboarding</code>.',
+  ladder:{flutter:['<code>SharedPreferences.getString</code> / <code>setString</code> (متسجل في DI)'],core:['<code>AppPreferencesService</code>'],pkg:['slang: <code>LocaleSettings.getLocaleStream()</code> و<code>setLocaleRawSync()</code>'],scratch:['getter + setter بنفس شكل اللي موجود']},
+  files:['lib/apps/core/services/app_preferences_service.dart','lib/main.dart','test/helpers/test_fakes.dart'],
+  code:[['app_preferences_service.dart',`static const String _keyLanguageCode = 'language_code';
+
+String? get languageCode => preferences.getString(_keyLanguageCode);
+
+Future<bool> setLanguageCode(String code) =>
+    preferences.setString(_keyLanguageCode, code);`],
+   ['main.dart — مكان LocaleSettings.useDeviceLocale()',`final preferencesService = getIt<AppPreferencesService>();
+final savedLanguage = preferencesService.languageCode;
+if (savedLanguage == null) {
+  LocaleSettings.useDeviceLocale();
+} else {
+  LocaleSettings.setLocaleRawSync(savedLanguage);
+}
+LocaleSettings.getLocaleStream().listen(
+  (locale) => preferencesService.setLanguageCode(locale.languageCode),
+);`]],
+  rules:'',test:'unit test لـ <code>AppPreferencesService</code> (إضافة <code>getString</code>/<code>setString</code> لـ <code>FakeSharedPreferences</code>).',
+  i18n:'مفيش نص جديد.',effort:'صغير (~45 دقيقة)',decision:'',deploy:false},
+ {id:'s5',shipped:'1043495',p:'p3',gain:1,title:'Available slots في Doctor Details',close:['Doctor Details فيها Available slots'],
+  quote:'Doctor Details: … Rating summary, Recent Reviews, Clinic Location, and Available slots.',
+  problem:'الـ slots بتظهر بس بعد Book Now، والـ spec عايزها على صفحة الطبيب.',
+  logic:'مش هنكتب logic جديد. نفس <code>BookingCubit</code> بيتوفر في الـ route، وبنعرض أقرب يوم فيه مواعيد بـ <code>TimeSlotsSection</code> الموجود، والضغط على أي slot بيفتح Select Time. ملاحظة: ده بيعمل نفس قراءات شاشة الحجز (14 يوم)، وده مقبول لعيادة صغيرة.',
+  ladder:{flutter:['<code>Iterable.where</code> و<code>firstOrNull</code> و<code>take</code>','<code>MultiBlocProvider</code>'],core:['<code>BookingCubit</code> و<code>slotsByDate</code> (من الـ review)','<code>TimeSlotsSection</code>','<code>formatBookingDayLabel</code>'],pkg:[],scratch:[]},
+  files:['lib/apps/core/router/routes.dart','doctor_details_sections.dart','patient_doctor_details_screen.dart','assets/translation/en.json, ar.json'],
+  code:[['routes.dart — DoctorDetailsRoute',`return MultiBlocProvider(
+  providers: [
+    BlocProvider(create: (_) => getIt<DoctorDetailsCubit>()),
+    BlocProvider(create: (_) => getIt<BookingCubit>()..init($extra)),
+  ],
+  child: DoctorDetailsScreen(doctor: $extra),
+);`],
+   ['doctor_details_sections.dart — section جديد',`BlocBuilder<BookingCubit, BookingState>(
+  builder: (context, state) {
+    if (state is BookingUnavailable) {
+      return Text(context.tr.doctorNoAvailableTimes,
+          style: context.regular14TextSecondary);
+    }
+    if (state is! BookingLoaded || state.isLoadingSlots) {
+      return const SizedBox.shrink();
+    }
+    final day = state.bookableDates
+        .where((date) => state.slotsByDate[date]?.isNotEmpty ?? false)
+        .firstOrNull;
+    if (day == null) {
+      return Text(context.tr.noSlotsAvailable,
+          style: context.regular14TextSecondary);
+    }
+    return TimeSlotsSection(
+      title: formatBookingDayLabel(context, day),
+      slots: state.slotsByDate[day]!.take(4).toList(),
+      onSelectSlot: (_) => SelectTimeRoute(doctor).push(context),
+    );
+  },
+)`]],
+  rules:'',test:'widget test: طبيب عنده availability بيظهر 4 slots، والضغط بيفتح Select Time.',
+  i18n:'مفتاح واحد جديد <code>availableSlots</code> لعنوان الـ section (en + ar)، والباقي موجود.',effort:'متوسط (~2 ساعة)',decision:'',deploy:false},
+ {id:'s6',p:'p2',gain:1,shipped:'7c04f40',title:'تاب Doctors زي الـ spec، والمفضلة فلتر جواه',close:['الـ 4 تابات: Home · Doctors · Appointments · Profile'],
+  quote:'Doctors: Discovery list, Specialty filters, Favorites.',
+  problem:'التاب التاني <code>FavoritesRoute</code> (من <code>5d4f5a4</code>)، والـ Doctors بيفتح كشاشة push. ده عكس <code>workflow.md</code> و Trello Locked decisions.',
+  logic:'الكود جاهز تقريبًا: <code>FindDoctorsScreen</code> فيه <code>didUpdateWidget</code> لتغيير الـ params (سلوك tab)، وفيه مكانين بيعملوا <code>FindDoctorsRoute().go</code>، و<code>FindDoctorsCubit</code> فيه <code>favoritesOnly</code>. فبنبدّل الـ branch، والمفضلة تبقى زرار قلب جنب البحث، والـ drawer بيفتح Doctors بالفلتر.',
+  ladder:{flutter:['<code>go_router</code> typed shell branch و<code>.go()</code>'],core:['<code>FindDoctorsCubit.favoritesOnly</code> و<code>visibleDoctors</code>','<code>AppIconButton</code> + <code>FavoriteHeartIcon</code>','مفتاح <code>tabDoctors</code> الموجود'],pkg:[],scratch:['رجوع <code>toggleFavoritesOnly</code> (سطر واحد)']},
+  files:['lib/apps/core/router/routes.dart','find_doctors_screen.dart','find_doctors_cubit.dart','main_bottom_navigation_bar.dart','patient_menu_drawer.dart','doctors_data.dart + patient_home_screen.dart','حذف favorites_screen.dart'],
+  code:[['routes.dart — PatientShellRoute',`TypedStatefulShellBranch<PatientDoctorsBranch>(
+  routes: [TypedGoRoute<FindDoctorsRoute>(path: AppRoutePaths.doctors)],
+),
+// FindDoctorsRoute: شيل @TypedGoRoute اللي فوقه وضيف
+final bool favorites; // query param زي focus`],
+   ['find_doctors_cubit.dart',`void toggleFavoritesOnly() =>
+    _update((state) => state.copyWith(favoritesOnly: !state.favoritesOnly));`],
+   ['find_doctors_screen.dart — جنب AppSearchBar',`AppIconButton(
+  onTap: cubit.toggleFavoritesOnly,
+  child: FavoriteHeartIcon(isFavorite: state.favoritesOnly, size: 20),
+)`],
+   ['home + drawer',`const FindDoctorsRoute(sort: DoctorSort.popular).go(context); // كان push
+const FindDoctorsRoute(favorites: true).go(context);         // drawer`]],
+  rules:'',test:'نقل tests المفضلة لـ <code>find_doctors_screen_test</code>، وتحديث <code>route_providers_lifecycle_test</code>.',
+  i18n:'إعادة استخدام <code>tabDoctors</code> و<code>tabFavorites</code>.',effort:'متوسط (~3 ساعات)',decision:'محتاج قرارك: الـ spec (Doctors) ولا تصميم Figma (Favorites). الخطة ماشية على الـ spec لأن AGENTS.md و Trello الاتنين بيقولوا Doctors.',deploy:false},
+ {id:'s7',shipped:'6728022',p:'p3',gain:0,title:'تعديل الاسم ورقم الهاتف وتثبيت الإيميل (Read-only)',close:[],
+  quote:'Profile: Name & Phone are editable; Email is read-only (cannot be changed).',
+  problem:'الـ spec كان يذكر تعديل البروفايل، لكن الإيميل مرتبط بـ Firebase Auth وحساب المريض وممنوع تعديله، والتعديل مقتصر على الاسم ورقم الهاتف للمريض فقط. وفيه اختلافات توثيقية في التسمية بين <code>workflow.md</code> والكود: <code>avgRating</code> مقابل <code>rating</code>، و"Success screen" مقابل dialog.',
+  logic:'حقل الإيميل يفضل ثابت ومحمي في الكود كـ read-only (<code>readOnly: true</code> و<code>enabled: false</code>) ومحدش يقدر يعدله، والتعديل مقتصر على الاسم ورقم الهاتف فقط. مع توثيق ذلك في <code>workflow.md</code> وتحديث مسميات الحقول لتطابق Locked decisions.',
+  ladder:{flutter:['<code>readOnly: true</code>'],core:['<code>AppValidators.validateName</code>','<code>AppValidators.validatePhone</code>'],pkg:[],scratch:[]},
+  files:['lib/apps/features/patient/profile/presentation/screens/edit_profile_screen.dart','workflow.md'],
+  code:[['edit_profile_screen.dart — الإيميل مقفول ومحمي',`AppTextField(
+  key: const Key('edit_profile_email_field'),
+  controller: _emailController,
+  hintText: context.tr.emailAddress,
+  prefixIcon: Icons.email_outlined,
+  enabled: false,
+  readOnly: true, // الإيميل ثابت ومحدش يقدر يعدله
+)`],
+   ['edit_profile_screen.dart — التعديل مقتصر على الاسم ورقم الهاتف',`AppTextField(
+  key: const Key('edit_profile_name_field'),
+  controller: _nameController,
+  validator: AppValidators.validateName,
+),
+AppTextField(
+  key: const Key('edit_profile_phone_field'),
+  controller: _phoneController,
+  validator: AppValidators.validatePhone,
+)`]],
+  rules:'',test:'widget test للتأكد إن حقل الإيميل معطل وممنوع تعديله، وحفظ الاسم ورقم الهاتف يعمل بنجاح.',
+  i18n:'مفيش نصوص جديدة، نصوص الاسم والهاتف والإيميل موجودة.',effort:'صغير (~30 دقيقة)',decision:'قرار نهائي: عدم السماح بتعديل الإيميل نهائيًا وتثبيته كـ read-only، وقصر التعديل على الاسم ورقم الهاتف فقط للمريض.',deploy:false}
+];
+
+const LADDER=[['flutter','Flutter / Dart','b-teal','الأول: هل Flutter أو Dart أو الـ SDK عندهم الحل؟'],['core','lib/core و common','b-pur','تاني: هل الحل موجود في الـ codebase؟'],['pkg','package موجود','b-acc','تالت: هل package منزّلة بتعمل كده؟ (pub.dev لو مفيش)'],['scratch','من الصفر','b-warn','آخر حل: أصغر كود ممكن']];
+
+/* ---------------- overview lists ---------------- */
+const DONE=['الـ bottom nav بقى Home · Favorites · Appointments · Settings، و Find Doctors بيتفتح push من البحث أو التخصص في الـ Home، و Profile من كارت Settings (<code>fix/production-audit</code>)','الـ slots live: لو الأدمن أو المريض لغى، الميعاد يرجع متاح فورًا، ولو حد حجزه يختفي من غير ما تقفل الشاشة (<code>watchBookedStarts</code>)','مراجعة الجاهزية للتسليم: شاشات تفاصيل الموعد بقت live (زرار Rate Doctor بيختفي بعد التقييم)، والـ loading في الـ Cubits، و<code>TabBar</code>، وحذف <code>AdminDoctorService</code> (<code>fix/production-audit</code>)','موقع العيادة live في Doctor Details (<code>56533f4</code>)','Available slots في Doctor Details (<code>1043495</code>)','البروفايل: الإيميل ثابت، والاسم والتليفون والصورة قابلين للتعديل، وأيقونة بدل الصورة (<code>6728022</code>)','اللغة المختارة بتفضل بعد إعادة فتح التطبيق (<code>c58d7c8</code>)','التاب التاني Doctors والمفضلة فلتر جواه (<code>7c04f40</code>)','Mark Completed بعد ميعاد الزيارة بس، و Cancel للمريض قبل الميعاد بس، في الـ UI والـ rules (<code>020323b</code>)','الحجز بيرفض طبيب Deactivated أو slot مش من مواعيده (<code>afe4139</code>)','تاب Completed بيتحدث بعد التقييم (<code>a0cfd36</code>)','الأدمن بيشوف الـ availability الجديدة (<code>a0cfd36</code>)','Activate / Deactivate بنتيجة صادقة (<code>a0cfd36</code>)','فشل تحميل المواعيد بيظهر كخطأ (<code>a0cfd36</code>)','قاعدة باسورد واحدة (<code>a0ee21a</code>)','Profile من مصدر واحد (<code>a0cfd36</code>)'];
+$('#ov-done').innerHTML=DONE.map(x=>`<li><span class="dot" style="background:var(--ok)"></span><span>${x}</span></li>`).join('');
+$('#ov-left').innerHTML=STEPS.filter(s=>!s.shipped).map(s=>`<li style="cursor:pointer" data-go="${s.id}"><span class="dot" style="background:var(--${s.p==='p1'?'bad':s.p==='p2'?'warn':'accent'})"></span><span>${s.title} <span class="badge ${s.p==='p1'?'b-bad':s.p==='p2'?'b-warn':'b-acc'}">${s.p.toUpperCase()}</span></span></li>`).join('');
+if(!$('#ov-left').children.length)$('#ov-left').innerHTML='<li><span class="dot" style="background:var(--ok)"></span><span>مفيش حاجة باقية، كل الخطوات اتنفذت.</span></li>';
+$$('#ov-left li').forEach(li=>li.onclick=()=>gotoStep(li.dataset.go));
+
+/* ---------------- evolution ---------------- */
+let cur=11,timer=null,prevCur=-1;
+const tower=$('#tower');
+function kindClass(s){return s.kind==='base'?'base':s.kind==='past'?'past':'plan'}
+function renderEvolution(){
+  const s=STAGES[cur];
+  const deps=new Set(s.on);
+  tower.innerHTML=STAGES.map((st,i)=>{
+    const cls=['blk',kindClass(st)];
+    if(i>cur)cls.push('future');if(i===cur)cls.push('cur');if(deps.has(st.id))cls.push('dep');
+    if(i===cur&&cur>prevCur)cls.push('new');
+    return `<div class="${cls.join(' ')}" data-i="${i}"><div class="h"><span class="mono">${st.h}</span> · ${st.name}</div><div class="small">${Math.round(st.score/22*100)}%</div></div>`;
+  }).join('');
+  $$('#tower .blk').forEach(b=>b.onclick=()=>setStage(+b.dataset.i));
+  const pct=Math.round(s.score/22*100);
+  const prevPct=cur>0?Math.round(STAGES[cur-1].score/22*100):pct;
+  const diff=pct-prevPct;
+  $('#stageLabel').textContent=`${cur+1} / ${STAGES.length} — ${pct}%`;
+  $('#stageCard').innerHTML=`<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px">
+    <span class="badge ${s.kind==='plan'?'b-acc':s.kind==='base'?'b-teal':'b-pur'}">${s.kind==='plan'?'خطة':s.kind==='base'?'أساس':'اتنفذ'}</span>
+    <h3 style="margin:0"><span class="mono">${s.h}</span> — ${s.name}</h3></div>
+    <p style="margin:0 0 8px">${s.sum}</p>
+    <div class="small"><b>النسبة:</b> ${s.score} / 22 = ${pct}% ${diff>0?`<span class="badge b-ok">+${diff}%</span>`:''}</div>
+    ${s.on.length?`<div class="small" style="margin-top:6px"><b>مبنية على:</b> ${s.on.map(id=>{const i=STAGES.findIndex(x=>x.id===id);return `<span class="depchip" data-i="${i}">${STAGES[i].h} · ${STAGES[i].name}</span>`}).join('')}</div>`:''}
+    ${s.step?`<div style="margin-top:10px"><button data-step="${s.step}">افتح الخطوة في الخطة ←</button></div>`:''}`;
+  $$('#stageCard .depchip').forEach(c=>c.onclick=()=>setStage(+c.dataset.i));
+  const sb=$('#stageCard button[data-step]');if(sb)sb.onclick=()=>gotoStep(sb.dataset.step);
+  renderMatrix();renderChart();prevCur=cur;
+  $('#stage').value=cur;
+}
+function setStage(i){cur=Math.max(0,Math.min(STAGES.length-1,i));renderEvolution()}
+$('#prev').onclick=()=>setStage(cur-1);
+$('#next').onclick=()=>setStage(cur+1);
+$('#stage').oninput=e=>setStage(+e.target.value);
+$('#play').onclick=()=>{
+  if(timer){clearInterval(timer);timer=null;$('#play').textContent='▶ تشغيل';return;}
+  if(cur>=STAGES.length-1)setStage(0);
+  $('#play').textContent='⏸ إيقاف';
+  timer=setInterval(()=>{if(cur>=STAGES.length-1){clearInterval(timer);timer=null;$('#play').textContent='▶ تشغيل';return;}setStage(cur+1)},1700);
+};
+function renderMatrix(){
+  let h='<tr><th class="l">Layer</th>'+STAGES.map((s,i)=>`<th class="${i===cur?'col-cur':''}" title="${s.name}"><span class="mono" style="font-size:11px">${s.kind==='plan'?'S'+s.h.replace(/\D/g,''):s.h.slice(0,4)}</span></th>`).join('')+'</tr>';
+  LAYERS.forEach(([k,label])=>{
+    h+=`<tr><td class="l">${label}</td>`+STAGES.map((s,i)=>{
+      const hit=s.cells[k];const cls=['cell'];
+      if(hit){cls.push('hit',kindClass(s));if(i>cur)cls.push('fut');}
+      return `<td class="${i===cur?'col-cur':''}"><span class="${cls.join(' ')}" ${hit?`data-s="${i}" data-l="${k}" tabindex="0" role="button" aria-label="${label} ${s.h}"`:''}></span></td>`;
+    }).join('')+'</tr>';
+  });
+  $('#matrix').innerHTML=h;
+  $$('#matrix .cell.hit').forEach(c=>{const f=()=>{const s=STAGES[+c.dataset.s];const l=LAYERS.find(x=>x[0]===c.dataset.l)[1];
+    $('#cellInfo').innerHTML=`<b>${l}</b> في <span class="mono">${s.h}</span> (${s.name}): ${s.cells[c.dataset.l]}`;};
+    c.onclick=f;c.onkeydown=e=>{if(e.key==='Enter')f()}});
+  const s=STAGES[cur];const first=LAYERS.find(([k])=>s.cells[k]);
+  $('#cellInfo').innerHTML=first?`<b>${first[1]}</b> في <span class="mono">${s.h}</span>: ${s.cells[first[0]]}`:'';
+}
+function renderChart(){
+  const W=640,H=190,pl=36,pr=14,pt=14,pb=28;
+  const x=i=>W-pr-(i*(W-pl-pr)/(STAGES.length-1)); // RTL: first stage on the right
+  const y=v=>pt+(H-pt-pb)*(1-v/100);
+  let g='';
+  [0,25,50,75,100].forEach(v=>{g+=`<line x1="${pl}" x2="${W-pr}" y1="${y(v)}" y2="${y(v)}" stroke="var(--border)" stroke-width="1"/><text x="${pl-6}" y="${y(v)+4}" font-size="11" text-anchor="end" fill="var(--faint)">${v}%</text>`});
+  const pts=STAGES.map((s,i)=>[x(i),y(s.score/22*100)]);
+  const lastPast=STAGES.map(s=>s.kind!=='plan').lastIndexOf(true);
+  g+=`<polyline points="${pts.slice(0,lastPast+1).map(p=>p.join(',')).join(' ')}" fill="none" stroke="var(--purple)" stroke-width="2.5"/>`;
+  g+=`<polyline points="${pts.slice(lastPast).map(p=>p.join(',')).join(' ')}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-dasharray="6 5"/>`;
+  STAGES.forEach((s,i)=>{const [px,py]=pts[i];const on=i===cur;
+    g+=`<g style="cursor:pointer" data-i="${i}"><circle cx="${px}" cy="${py}" r="${on?8:5}" fill="${on?'var(--accent)':s.kind==='plan'?'var(--surface)':'var(--purple)'}" stroke="${s.kind==='plan'?'var(--accent)':'var(--purple)'}" stroke-width="2"/>
+    <text x="${px}" y="${H-8}" font-size="10.5" text-anchor="middle" fill="${on?'var(--accent)':'var(--faint)'}" class="mono">${s.kind==='plan'?'S'+s.h.replace(/\D/g,''):s.h.slice(0,4)}</text>
+    ${on?`<text x="${px}" y="${py-13}" font-size="12" font-weight="600" text-anchor="middle" fill="var(--accent)">${Math.round(s.score/22*100)}%</text>`:''}</g>`;});
+  $('#chart').innerHTML=g;
+  $$('#chart g[data-i]').forEach(n=>n.onclick=()=>setStage(+n.dataset.i));
+}
+renderEvolution();
+
+/* ---------------- plan ---------------- */
+const done=new Set([...store.get('dh-done',[]),...STEPS.filter(s=>s.shipped).map(s=>s.id)]);
+const stepsEl=$('#steps');
+const plabel={p1:['P1','b-bad'],p2:['P2','b-warn'],p3:['P3','b-acc']};
+STEPS.forEach((s,idx)=>{
+  const d=document.createElement('div');d.className='card step '+s.p+(s.shipped?' shipped':'');d.id='step-'+s.id;d.dataset.p=s.p;
+  const ladderRows=LADDER.map(([k,name,cls])=>{const items=s.ladder[k]||[];
+    return `<div class="lad-row"><span class="badge ${cls}">${name}</span><span class="small">${items.length?items.join('، '):'<span class="muted">مش محتاجين</span>'}</span></div>`}).join('');
+  d.innerHTML=`<div class="step-head">
+    <input type="checkbox" aria-label="اتنفذ" ${done.has(s.id)?'checked':''} ${s.shipped?'disabled':''}>
+    <span class="badge ${plabel[s.p][1]}">${plabel[s.p][0]}</span>
+    <span class="t">خطوة ${idx+1}: ${s.title}</span>
+    ${s.gain?`<span class="badge b-ok">+${s.gain} سلوك</span>`:'<span class="badge b-teal">نص الـ spec</span>'}
+    ${s.decision?'<span class="badge b-warn">محتاج قرار</span>':''}
+    ${s.shipped?`<span class="badge b-ok">اتنفذ ✓ <span class="mono">${s.shipped}</span></span>`:''}
+    ${s.deploy?'<span class="badge b-bad">deploy rules</span>':''}
+    <span class="caret">▾</span></div>
+  <div class="step-body">
+    <blockquote>${s.quote}</blockquote>
+    <dl class="kv" style="margin-top:12px">
+      <dt>المشكلة دلوقتي</dt><dd>${s.problem}</dd>
+      <dt>الـ logic الصح</dt><dd>${s.logic}</dd>
+      <dt>بيقفل</dt><dd>${s.close.length?s.close.map(c=>`<span class="badge b-warn" style="margin:0 0 4px 4px">${c}</span>`).join(''):'<span class="muted">بنود نص الـ spec (مش من الـ 22)</span>'}</dd>
+      <dt>دوّرنا فين</dt><dd>${ladderRows}</dd>
+      <dt>الملفات</dt><dd class="small">${s.files.map(f=>`<code>${f}</code>`).join(' · ')}</dd>
+    </dl>
+    <div style="margin-top:10px">${s.code.map(([f,c])=>`<div class="small muted mono" style="margin-top:8px">${f}</div><pre><code>${esc(c)}</code></pre>`).join('')}</div>
+    ${s.rules?`<div class="small muted mono">firestore.rules</div><pre><code>${esc(s.rules)}</code></pre>`:''}
+    <dl class="kv">
+      <dt>Test</dt><dd>${s.test}</dd>
+      <dt>الترجمة</dt><dd>${s.i18n}</dd>
+      <dt>المجهود</dt><dd>${s.effort}</dd>
+      ${s.decision?`<dt>قرار</dt><dd style="color:var(--warn)">${s.decision}</dd>`:''}
+      ${s.deploy?`<dt>Deploy</dt><dd>الـ rules بتتعدل في الكود، و<code>firebase deploy --only firestore:rules</code> عليك.</dd>`:''}
+    </dl>
+  </div>`;
+  d.querySelector('.step-head').onclick=e=>{if(e.target.tagName==='INPUT')return;d.classList.toggle('open')};
+  d.querySelector('input').onchange=e=>{e.target.checked?done.add(s.id):done.delete(s.id);store.set('dh-done',[...done]);d.classList.toggle('done',e.target.checked);updateProjection()};
+  if(done.has(s.id))d.classList.add('done');
+  stepsEl.appendChild(d);
+});
+function updateProjection(){
+  const gained=STEPS.filter(s=>done.has(s.id)).reduce((a,s)=>a+s.gain,0);
+  const score=15+gained;const pct=Math.round(score/22*100);
+  $('#projBar').style.width=pct+'%';
+  $('#projLabel').textContent=`${score} / 22 = ${pct}%`;
+  const left=STEPS.filter(s=>!done.has(s.id)).length;
+  $('#projSub').innerHTML=`اتعلّم على ${STEPS.length-left} من ${STEPS.length} خطوات. ${pct===100?(done.has('s7')?'وصلت 100% والـ spec كامل ومحدّث.':'وصلت 100% من السلوك؛ خطوة 7 بتثبت بيانات البروفايل وتوثيق الأسماء.'):`فاضل ${22-score} سلوك.`}`;
+}
+updateProjection();
+$$('#pfilters button').forEach(b=>b.onclick=()=>{$$('#pfilters button').forEach(x=>x.classList.toggle('on',x===b));
+  $$('#steps .step').forEach(c=>c.style.display=(b.dataset.p==='all'||c.dataset.p===b.dataset.p)?'':'none')});
+function gotoStep(id){openTab('plan');const el=$('#step-'+id);if(!el)return;el.classList.add('open');el.scrollIntoView({behavior:'smooth',block:'start'});
+  el.classList.add('hl');setTimeout(()=>el.classList.remove('hl'),1600)}
+
+/* ladder */
+const ladderEl=$('#ladder');
+LADDER.forEach(([k,name,cls,desc])=>{
+  const count=STEPS.reduce((a,s)=>a+(s.ladder[k]||[]).length,0);
+  const r=document.createElement('div');r.className='rung';r.dataset.k=k;
+  r.innerHTML=`<span class="badge ${cls}">${name}</span><div class="n">${count}</div><div class="small muted">${desc}</div>`;
+  r.onclick=()=>{
+    const on=!r.classList.contains('on');$$('.rung').forEach(x=>x.classList.remove('on'));
+    $$('#steps .step').forEach(c=>c.classList.remove('hl'));
+    if(!on){$('#ladderInfo').innerHTML='';return}
+    r.classList.add('on');
+    const used=STEPS.filter(s=>(s.ladder[k]||[]).length);
+    used.forEach(s=>$('#step-'+s.id).classList.add('hl'));
+    $('#ladderInfo').innerHTML=used.length?used.map(s=>`<div><b>${s.title}:</b> ${s.ladder[k].join('، ')}</div>`).join(''):'<span class="muted">مفيش خطوة محتاجة الدرجة دي.</span>';
+  };
+  ladderEl.appendChild(r);
+});
+
+/* ---------------- workflow table ---------------- */
+const W=[
+ ['ok','3 حالات بس للموعد','<code>enum AppointmentStatus</code> + انتقالات upcoming فقط في الـ rules',''],
+ ['ok','التقييم بعد Completed بس','الشاشة + <code>RateDoctorCubit</code> + <code>ReviewService</code> + الـ rules',''],
+ ['ok','تقييم واحد لكل موعد','id الـ review = id الموعد، ومفيش update',''],
+ ['ok','المتوسط والعدد بيتحدثوا مع الـ review','transaction واحدة + rule على <code>doctors</code>',''],
+ ['ok','مفيش حجز مزدوج','lock في <code>bookedSlots</code> جوه transaction',''],
+ ['fixed','الـ slots بتتحدث live بعد الإلغاء أو الحجز','<code>watchBookedStarts</code> (snapshots) بدل fetch مرة واحدة',''],
+ ['ok','Deactivate بدل الحذف','<code>allow delete: if false</code>',''],
+ ['ok','موقع عيادة واحد','<code>clinic/settings</code>',''],
+ ['ok','دخول الأدمن بإيميل وباسورد بس','Google مخفي للأدمن',''],
+ ['ok','Popular / Top rated و Active بس','<code>sortByPopularity</code> / <code>sortByTopRated</code> + <code>fetchActiveDoctors</code>',''],
+ ['fixed','الموعد يظهر Reviewed بعد التقييم','شيل <code>==</code> الجزئي + test',''],
+ ['fixed','الأدمن يشوف الـ availability الجديدة','شيل <code>==</code> الجزئي',''],
+ ['fixed','نتيجة صادقة لـ Activate / Deactivate','<code>toggleActive</code> → <code>bool</code> + test',''],
+ ['fixed','"مفيش مواعيد" غير "فشل التحميل"','<code>BookingLoadFailure</code> + test',''],
+ ['fixed','قاعدة باسورد واحدة','<code>AppValidators.validatePassword</code>',''],
+ ['fixed','Profile من مصدر واحد','الـ <code>ProfileCubit</code> بتاع الـ shell',''],
+ ['fixed','4 تابات: Home · Favorites · Appointments · Settings (قرار Tarek)','<code>FavoritesRoute</code> = <code>FindDoctorsScreen(favoritesOnly)</code>، و <code>FindDoctorsRoute</code> push من الـ Home','s6'],
+ ['fixed','Doctor Details فيها Available slots','<code>AvailableSlotsSection</code> بيعرض أقرب 4 مواعيد من <code>BookingCubit</code>','s5'],
+ ['fixed','موقع العيادة فورًا في Doctor Details','<code>watchClinic()</code> بدل <code>fetchClinic()</code>','s3'],
+ ['fixed','اللغة تفضل بعد إعادة الفتح','<code>main.dart</code> بيرجّع اللغة المحفوظة ويحفظ كل تغيير','s4'],
+ ['fixed','Completed = الزيارة حصلت','<code>hasStarted</code> في الـ UI + <code>request.time >= startAt</code> في الـ rules','s1'],
+ ['fixed','الحجز لطبيب Active بس','الـ transaction بيقرا الطبيب + rule على الإنشاء','s2'],
+ ['fixed','Cancel قبل الميعاد','الزرار مخفي بعد <code>startAt</code> + <code>request.time < startAt</code> في الـ rules','s1']
+];
+const lab={ok:['صح','b-ok'],fixed:['غلط','b-bad'],open:['غلط','b-bad']};
+const lab2={ok:['صح','b-ok'],fixed:['اتصلح','b-ok'],open:['مفتوح','b-warn']};
+const tb=$('#wtable tbody');
+W.forEach(([k,a,b,st])=>{const tr=document.createElement('tr');tr.dataset.k=k;
+  const n=st?STEPS.findIndex(s=>s.id===st)+1:0;
+  tr.innerHTML=`<td>${a}</td><td><span class="badge ${lab[k][1]}">${lab[k][0]}</span></td><td><span class="badge ${lab2[k][1]}">${lab2[k][0]}</span></td><td class="small">${b}</td><td>${st?`<button class="small" data-step="${st}">خطوة ${n}${STEPS[n-1].shipped?' ✓':''}</button>`:'—'}</td>`;tb.appendChild(tr);});
+$$('#wtable button[data-step]').forEach(b=>b.onclick=()=>gotoStep(b.dataset.step));
+$$('#wfilters button').forEach(btn=>btn.onclick=()=>{$$('#wfilters button').forEach(x=>x.classList.toggle('on',x===btn));
+  const f=btn.dataset.f;
+  $('#wpath').style.display=f==='path'?'block':'none';
+  $('#wtableCard').style.display=f==='path'?'none':'block';
+  tb.querySelectorAll('tr').forEach(r=>r.classList.toggle('hidden',f!=='all'&&r.dataset.k!==f))});
+
+const PATH=[
+ ['auth','1. دخول واختيار الدور',[7]],
+ ['find','2. Find Doctor',[8,15]],
+ ['details','3. Doctor Details',[6,16,17]],
+ ['book','4. Book Slot',[4,12,20]],
+ ['manage','5. Manage Booking',[0,19,21]],
+ ['rate','6. Rate Doctor',[1,2,3,9]],
+ ['profile','Profile و Settings',[13,14,18]],
+ ['admin','Admin',[5,10,11]]
+];
+let pathMode='now',pathSel=null;
+const rowDone=k=>pathMode==='now'?k!=='open':k==='ok';
+function renderPath(){
+  $('#pgrid').innerHTML=PATH.map(([id,label,rows],i)=>{
+    const n=rows.filter(r=>rowDone(W[r][0])).length;
+    const cls=n===rows.length?'g':n===0?'r':'o';
+    return (i?'<span class="parrow">←</span>':'')+`<button class="pnode ${cls} ${pathSel===id?'sel':''}" data-id="${id}"><div class="t">${label}</div><div class="c">${n} / ${rows.length} ${n===rows.length?'✓':''}</div></button>`}).join('');
+  $$('#pgrid .pnode').forEach(b=>b.onclick=()=>{pathSel=b.dataset.id;renderPath()});
+  const node=PATH.find(x=>x[0]===pathSel);
+  if(!node)return;
+  $('#pdetail').innerHTML=`<h3>${node[1]}</h3>`+node[2].map(r=>{const [k,a,b,st]=W[r];const d=rowDone(k);
+    return `<div class="prow"><span class="dot ${d?'g':'r'}"></span><div style="flex:1"><div>${a} <span class="badge ${d?'b-ok':'b-bad'}">${d?'اتنفذ':'لسه'}</span></div><div class="small muted">${b}</div></div>${st?`<button class="small" data-step="${st}">خطوة ${STEPS.findIndex(x=>x.id===st)+1}</button>`:''}</div>`}).join('');
+  $$('#pdetail button[data-step]').forEach(b=>b.onclick=()=>gotoStep(b.dataset.step));
+}
+$('#pnow').onclick=()=>{pathMode='now';$('#pnow').classList.add('on');$('#pbefore').classList.remove('on');renderPath()};
+$('#pbefore').onclick=()=>{pathMode='before';$('#pbefore').classList.add('on');$('#pnow').classList.remove('on');renderPath()};
+renderPath();
+
+/* ---------------- logic flows ---------------- */
+const FLOWS=[
+ {n:'الحجز (القسم 5)',path:['Doctor Details','SelectTimeRoute','BookingCubit','BookingRepository','AppointmentService.book','transaction'],
+  good:['التواريخ من أيام الشغل، والـ slots من الساعات ناقص المحجوز.','الـ lock بيمنع الحجز المزدوج، والـ rules بتربط الموعد بالـ lock.','مراجعة الحجز فيها موقع العيادة live.','الـ transaction بيتأكد إن الطبيب Active وإن الـ slot لسه في مواعيده (خطوة 2 ✓).'],
+  bad:[]},
+ {n:'حالات الموعد (القسم 6)',path:['Upcoming','Cancel','Mark Completed','Rate Doctor'],
+  good:['الانتقال من upcoming بس، والمريض يلغي مواعيده هو بس.','الإلغاء بيمسح الـ lock.','Mark Completed بعد ميعاد الزيارة بس، والمريض يلغي قبل الميعاد بس (خطوة 1 ✓).'],
+  bad:[]},
+ {n:'التقييم (القسم 7)',path:['Completed','RateDoctorRoute','RateDoctorCubit','ReviewService','transaction'],
+  good:['الشرط في 3 أماكن: الشاشة، الـ Cubit، والـ rules.','review + rating + reviewsCount + isReviewed في transaction واحدة.','القايمة بتتحدث بعد التقييم.'],
+  bad:[]},
+ {n:'Profile و Settings (القسم 8)',path:['Settings tab → Profile','ProfileCubit','ProfileRepository','ProfileService'],
+  good:['الصورة والاسم والتليفون والميلاد والنوع، والإعدادات كاملة.','اللغة بترجع بعد إعادة الفتح (خطوة 4 ✓)، والتاب التاني Doctors (خطوة 6 ✓).','الإيميل مقفول للقراءة فقط (read-only) ومحدش يقدر يعدله، والتعديل مقتصر على الاسم ورقم الهاتف للمريض.'],
+  bad:[]},
+ {n:'Doctor Details والأدمن (الأقسام 4 و 9)',path:['Admin Doctors','Details','Edit / Availability / Status','Admin Appointments'],
+  good:['العدادات والبحث والفلتر وإنشاء وتعديل الطبيب.','الـ 4 تابات وبيانات المريض جوه التفاصيل.','تغيير الموقع فوري في مراجعة الحجز وتفاصيل الموعد.'],
+  bad:[]}
+];
+const fl=$('#flows');
+FLOWS.forEach(f=>{const d=document.createElement('div');d.className='card';
+  d.innerHTML=`<h3>${f.n}</h3><div class="flow" style="margin:6px 0 12px">${f.path.map(p=>`<span>${p}</span>`).join('<span style="background:none;border:0;color:var(--faint)">←</span>')}</div>
+  <div class="two"><div><div class="small" style="color:var(--ok);font-weight:600">ماشي صح</div><ul class="clean">${f.good.map(x=>`<li><span class="dot" style="background:var(--ok)"></span><span>${x}</span></li>`).join('')}</ul></div>
+  <div><div class="small" style="color:var(--bad);font-weight:600">محتاج تعديل</div><ul class="clean">${f.bad.length?f.bad.map(([x,st])=>`<li style="cursor:pointer" data-step="${st}"><span class="dot" style="background:var(--bad)"></span><span>${x} <span class="badge b-acc">خطوة ${STEPS.findIndex(s=>s.id===st)+1}</span></span></li>`).join(''):'<li><span class="dot" style="background:var(--ok)"></span><span class="muted">مفيش حاجة مفتوحة.</span></li>'}</ul></div></div>`;
+  fl.appendChild(d);});
+$$('#flows li[data-step]').forEach(li=>li.onclick=()=>gotoStep(li.dataset.step));
+
+/* ---------------- commits ---------------- */
+const COMMITS=[
+ ['a0f67fc','Refactor tests to remove unnecessary comments and improve clarity','b-teal','تنظيف','149 ملف · +114 / −872','شيل comments بتكرر الكود، من غير تغيير في السلوك.'],
+ ['a0cfd36','refactor(common): simplify lib for readability and fix stale states','b-pur','الـ review','113 ملف · +1,641 / −3,187','5 bugs في السلوك، حذف 5 layers pass-through، و<code>DoctorModel</code> من 215 لـ 75 سطر، وdialogs مشتركة، والـ Cubits بقت بتنادي repositories بس، و4 regression tests.'],
+ ['a0ee21a','fix(patient): use the 8-character sign-up rule on change password','b-acc','إجابة 2','7 ملفات · +13 / −36','<code>AppValidators</code> في تغيير الباسورد.'],
+ ['2cd1ffd','fix(admin): batch patient photo reads and stop hiding their errors','b-acc','إجابة 3','5 ملفات · +94 / −24','قراءات <code>whereIn</code> مجمعة، وطلب واحد لكل مريض، والخطأ بيتبلّغ ويتعاد.'],
+ ['020323b','fix(firestore): let the visit time decide complete and cancel','b-ok','خطوة 1 (P1)','11 ملف','<code>hasStarted</code> + إخفاء الأزرار + شرط <code>request.time</code> في الـ rules + 3 tests. محتاج deploy للـ rules.'],
+ ['afe4139','fix(booking): reject booking when the doctor is no longer available','b-ok','خطوة 2 (P1)','7 ملفات','الـ transaction بيقرا الطبيب، و<code>DoctorUnavailableException</code>، ورسالة في شاشة المراجعة، وrule على الإنشاء. محتاج deploy.'],
+ ['c58d7c8','fix(common): restore the saved language on app start','b-ok','خطوة 4 (P2)','4 ملفات','<code>languageCode</code> في <code>AppPreferencesService</code> + <code>main.dart</code> بيرجّعها ويسمع لتغيير اللغة.'],
+ ['7c04f40','feat(patient): make Doctors the second tab with a favorites filter','b-ok','خطوة 6 (P2)','16 ملف','<code>FindDoctorsRoute</code> بقى التاب التاني، والمفضلة زرار قلب، وحذف <code>FavoritesScreen</code>.'],
+ ['56533f4','fix(patient): show the live clinic location on doctor details','b-ok','خطوة 3 (P3)','4 ملفات','<code>DoctorDetailsCubit</code> بيسمع لـ <code>watchClinic()</code> فالموقع بيتحدث فورًا.'],
+ ['1043495','feat(patient): show available slots on doctor details','b-ok','خطوة 5 (P3)','9 ملفات','<code>AvailableSlotsSection</code> بيعيد استخدام <code>BookingCubit</code> و<code>TimeSlotsSection</code>، ومفتاح <code>availableSlots</code>.'],
+ ['6728022','docs: align workflow with the code on profile email, rating name and success dialog','b-ok','خطوة 7 (P3)','1 ملف','الإيميل view only، والاسم <code>rating</code>، والنجاح dialog. الكود نفسه كان مطابق (الإيميل مقفول، الاسم والتليفون والصورة قابلين للتعديل).'],
+ ['fix/production-audit','refactor(common): production-readiness audit fixes','b-ok','مراجعة التسليم','~60 ملف','شاشات تفاصيل الموعد بتسمع لـ <code>streamAppointment</code>، و<code>EditProfileCubit</code> و<code>CreateDoctorCubit.submit</code> و<code>AppointmentDetailsCubit</code> بقوا ماسكين الـ loading/error، و<code>AppSegmentedTabBar</code> على <code>TabBar</code>، و<code>showDragHandle</code>، و<code>OutlinedButton.icon</code>، وavatar واحد، وحذف <code>AdminDoctorService</code> و<code>==</code> اليدوي، ودمج شجرتين الـ tests، وأسماء التخصصات تحت الأيقونات، وpull-to-refresh، و Get Started. تعليقات <code>//CR</code> كلها اتسابت (152).']
+];
+$('#clist').innerHTML=COMMITS.map(([h,t,c,tag,stat,body],i)=>`<div class="card step" style="border-inline-start-color:var(--${c==='b-pur'?'purple':c==='b-teal'?'teal':'accent'})" data-i="${i}">
+  <div class="step-head"><code>${h}</code><span class="t">${t}</span><span class="badge ${c}">${tag}</span><span class="caret">▾</span></div>
+  <div class="small muted">${stat}</div>
+  <div class="step-body"><p style="margin:0 0 8px">${body}</p><button data-stage="${i+1}">شوفه في التطور ←</button></div></div>`).join('');
+$$('#clist .step-head').forEach(h=>h.onclick=()=>h.parentElement.classList.toggle('open'));
+$$('#clist button[data-stage]').forEach(b=>b.onclick=()=>{openTab('evolution');setStage(+b.dataset.stage)});
+
+/* ---------------- fix plan ---------------- */
+const P=[
+ ['1. Shared helpers','b-ok','اتنفذ','<code>context.localeCode</code> و<code>formatters.dart</code>.'],
+ ['2. Hardcoded + magic strings + gender','b-ok','اتنفذ','والـ review شال باقي النصوص الإنجليزي من الـ cubits.'],
+ ['3. Snackbars, pop, AppBar','b-ok','اتنفذ','مفيش <code>ScaffoldMessenger...showSnackBar</code> ولا <code>_popScreen</code>.'],
+ ['4. Duplicated widgets','b-ok','اتنفذ + اتوسّع','dialogs مشتركة إضافية و<code>DoctorImage</code> للـ avatars.'],
+ ['5. Layers / DI','b-ok','اتنفذ + اتوسّع','باقي الـ Cubits بقت بتنادي repositories.'],
+ ['6. Swallowed errors','b-ok','اتنفذ','الـ <code>catch (_)</code> الباقية في الـ pickers بتعرض snackbar.'],
+ ['7. AdminDoctorModel / AdminDoctorService','b-ok','اتنفذ','<code>AdminDoctorService</code> اتشال والـ repositories بتستخدم <code>DoctorService</code> مباشرة. سطور الـ <code>//CR</code> بتاعته اتنقلت فوق constructor <code>DoctorService</code> (قاعدة 5).']
+];
+$('#ptable').innerHTML=P.map(([a,c,b,n])=>`<tr><td>${a}</td><td><span class="badge ${c}">${b}</span></td><td class="small">${n}</td></tr>`).join('');
+
+const saved=store.get('dh-tab','overview');if(document.getElementById(saved))openTab(saved);
+</script>
+</body>
+</html>

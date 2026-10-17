@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "618475193124",
+    "project_id": "doctor-hunt-67c1b",
+    "storage_bucket": "doctor-hunt-67c1b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:618475193124:android:c273a037aacb927577a9b1",
+        "android_client_info": {
+          "package_name": "com.example.doctor_hunt"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "618475193124-juj451gbe5ms155fpgalq5qj8r1v8a1g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZyG1_asYxlfri14SzKcDn7ltevTFDnWc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "618475193124-juj451gbe5ms155fpgalq5qj8r1v8a1g.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
