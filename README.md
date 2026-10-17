@@ -71,7 +71,9 @@ Find Doctor → Doctor Details → Book Slot → Manage Booking → Rate Doctor
 ## 🎬 Demo Video
 
 <p align="center">
-  <a href="https://cdn.jsdelivr.net/gh/TarekMohammedgg/codeplus-projects@f8d1f7d/assets/demo/doctor-hunt-demo.mp4"><strong>▶ Watch the full demo (1:30, 3 MB)</strong></a> · <a href="docs/media/doctor-hunt-demo.mp4">download</a>
+  <a href="https://cdn.jsdelivr.net/gh/TarekMohammedgg/codeplus-projects@f8d1f7d/assets/demo/doctor-hunt-demo.mp4" title="Play the full demo (1:30)">
+    <img src="docs/media/doctor-hunt-player.gif" alt="Doctor Hunt demo video (1:30), click to play" width="640"/>
+  </a>
 </p>
 
 The video opens with the workflow as a mind map, shows each step in the real app, then
