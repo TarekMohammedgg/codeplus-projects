@@ -1,3 +1,20 @@
+<p align="center">
+  <img src="https://cdn.jsdelivr.net/gh/TarekMohammedgg/codeplus-projects@f8d1f7d/assets/doctor-hunt-logo.png" alt="Doctor Hunt" width="280"/>
+</p>
+
+<p align="center">
+  <a href="https://cdn.jsdelivr.net/gh/TarekMohammedgg/codeplus-projects@f8d1f7d/assets/demo/doctor-hunt-demo.mp4"><img src="https://cdn.jsdelivr.net/gh/TarekMohammedgg/codeplus-projects@f8d1f7d/assets/demo/doctor-hunt-preview.gif" alt="Doctor Hunt demo preview" width="240"/></a>
+</p>
+
+<p align="center">
+  <a href="https://cdn.jsdelivr.net/gh/TarekMohammedgg/codeplus-projects@f8d1f7d/assets/demo/doctor-hunt-demo.mp4"><img src="https://img.shields.io/badge/%E2%96%B6%20Watch%20the%20demo-1%3A30-0EBE7E?style=for-the-badge" alt="Watch the demo"/></a>
+  &nbsp;
+  <a href="https://github.com/TarekMohammedgg/codeplus-projects#readme"><img src="https://img.shields.io/badge/%F0%9F%93%98%20Start%20here-main%20README-222B45?style=for-the-badge" alt="Start at the main README"/></a>
+</p>
+
+> [!NOTE]
+> ✅ **This branch is the final source code of Doctor Hunt.** New here? The [reviewer guide on `main`](https://github.com/TarekMohammedgg/codeplus-projects#-start-here-reviewer-guide) walks through the code step by step.
+
 # Doctor Hunt 🩺
 
 [![Flutter](https://img.shields.io/badge/Flutter-3.x-blue.svg?logo=flutter)](https://flutter.dev)
@@ -14,9 +31,6 @@ doctors, their working hours, appointments and the clinic location.
 ```text
 Find Doctor → Doctor Details → Book Slot → Manage Booking → Rate Doctor
 ```
-
-> 📽️ **Want to see the app in action?** The step-by-step usage guide and demo
-> video live on the [`main` branch README](https://github.com/TarekMohammedgg/codeplus-projects#-how-to-use-doctor-hunt).
 
 ---
 
