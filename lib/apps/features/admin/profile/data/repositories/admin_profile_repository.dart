@@ -21,11 +21,11 @@ abstract interface class AdminProfileRepository {
     required String uid,
     required String displayName,
     String? photoUrl,
-    String? newEmail,
     required String addressAr,
     required String addressEn,
     required LatLng location,
   });
+  Future<void> requestEmailChange(String newEmail);
 }
 
 class AdminProfileRepositoryImpl implements AdminProfileRepository {
@@ -62,22 +62,25 @@ class AdminProfileRepositoryImpl implements AdminProfileRepository {
     required String uid,
     required String displayName,
     String? photoUrl,
-    String? newEmail,
     required String addressAr,
     required String addressEn,
     required LatLng location,
   }) async {
-    if (newEmail != null) await authService.requestEmailChange(newEmail);
-    await authService.updateDisplayNameAndPhoto(displayName, photoUrl);
-    await profileService.updateProfile(
-      uid: uid,
-      displayName: displayName,
-      photoUrl: photoUrl,
-    );
+    // Clinic first: it is the shared location every doctor shows.
     await clinicService.updateClinic(
       addressAr: addressAr,
       addressEn: addressEn,
       location: location,
     );
+    await profileService.updateProfile(
+      uid: uid,
+      displayName: displayName,
+      photoUrl: photoUrl,
+    );
+    await authService.updateDisplayNameAndPhoto(displayName, photoUrl);
   }
+
+  @override
+  Future<void> requestEmailChange(String newEmail) =>
+      authService.requestEmailChange(newEmail);
 }

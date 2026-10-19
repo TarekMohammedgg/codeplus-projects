@@ -43,7 +43,7 @@ class AdminAppointmentsCubit extends Cubit<AdminAppointmentsState> {
         emit(
           state.copyWith(
             status: AdminAppointmentsStatus.failure,
-            errorMessage: ex.message,
+            error: ex.code,
           ),
         );
       },

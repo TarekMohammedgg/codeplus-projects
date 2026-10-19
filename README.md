@@ -16,13 +16,13 @@
 </p>
 
 <p align="center">
-  <a href="https://cdn.jsdelivr.net/gh/TarekMohammedgg/codeplus-projects@f8d1f7d/assets/demo/doctor-hunt-demo.mp4">
+  <a href="https://cdn.jsdelivr.net/gh/TarekMohammedgg/codeplus-projects@main/docs/media/doctor-hunt-demo.mp4">
     <img src="docs/media/doctor-hunt-preview.gif" alt="Doctor Hunt demo preview" width="300"/>
   </a>
 </p>
 
 <p align="center">
-  <a href="https://cdn.jsdelivr.net/gh/TarekMohammedgg/codeplus-projects@f8d1f7d/assets/demo/doctor-hunt-demo.mp4"><img src="https://img.shields.io/badge/%E2%96%B6%20Watch%20the%20full%20demo-1%3A30-0EBE7E?style=for-the-badge" alt="Watch the full demo (1:30)"/></a>
+  <a href="https://cdn.jsdelivr.net/gh/TarekMohammedgg/codeplus-projects@main/docs/media/doctor-hunt-demo.mp4"><img src="https://img.shields.io/badge/%E2%96%B6%20Watch%20the%20full%20demo-2%3A08-0EBE7E?style=for-the-badge" alt="Watch the full demo (2:08)"/></a>
   &nbsp;
   <a href="#-start-here-reviewer-guide"><img src="https://img.shields.io/badge/%F0%9F%A7%AD%20Reviewer%20guide-start%20here-222B45?style=for-the-badge" alt="Reviewer guide"/></a>
 </p>
@@ -108,7 +108,7 @@ Find Doctor → Doctor Details → Book Slot → Manage Booking → Rate Doctor
   generates the patient's bookable slots.
 - **Activate / deactivate** — doctors are never deleted, so booking history stays intact.
   Patients only see active doctors.
-- **Appointments** — tabs All / Upcoming / Completed / Cancelled; cancel or mark completed.
+- **Appointments** — tabs Upcoming / Completed / Cancelled; cancel or mark completed.
   Details include the patient's contact info.
 - **Profile** — photo, name, and the **clinic location** used by every doctor.
 
@@ -124,7 +124,7 @@ Follow this path to review the project in about 15 minutes. Every link opens the
 
 | # | Look at | Why |
 | :---: | :--- | :--- |
-| 1 | 🎬 [Demo video](https://cdn.jsdelivr.net/gh/TarekMohammedgg/codeplus-projects@f8d1f7d/assets/demo/doctor-hunt-demo.mp4) (1:30) | See the full patient + admin journey before reading code |
+| 1 | 🎬 [Demo video](https://cdn.jsdelivr.net/gh/TarekMohammedgg/codeplus-projects@main/docs/media/doctor-hunt-demo.mp4) (2:08) | See the full patient + admin journey before reading code |
 | 2 | 📄 [`workflow.md`](workflow.md) | The locked MVP scope: screens, states and rules the app follows |
 | 3 | 🚪 [`lib/main.dart`](lib/main.dart) | App entry: Firebase, dependency injection, router, localization |
 | 4 | 🧩 [`core/di/injection.dart`](lib/apps/core/di/injection.dart) | Every service, repository and cubit registered with `get_it` |

@@ -1,5 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:doctor_hunt/apps/features/common/auth/data/models/session_user.dart';
 import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/apps/features/common/auth/data/repositories/auth_repository.dart';
 import 'package:doctor_hunt/apps/features/common/auth/presentation/controller/cubit/auth_state.dart';
@@ -9,7 +9,7 @@ class AuthCubit extends Cubit<AuthState> {
 
   final AuthRepository repository;
 
-  User? get currentUser => repository.currentUser;
+  SessionUser? get currentUser => repository.sessionUser;
 
   bool get hasPasswordProvider => repository.hasPasswordProvider;
 
@@ -78,7 +78,7 @@ class AuthCubit extends Cubit<AuthState> {
         emit(
           //CR hardcode text
           // Solved
-          const AuthFailure(code: AuthFailureCode.adminPermissionDenied),
+          const AuthFailure(AppErrorCode.adminPermissionDenied),
         );
         return;
       }
@@ -114,6 +114,6 @@ class AuthCubit extends Cubit<AuthState> {
   void _emitFailure(Object error, StackTrace stackTrace) {
     if (isClosed) return;
     addError(error, stackTrace);
-    emit(AuthFailure.withMessage(AppException.from(error).message));
+    emit(AuthFailure(AppException.from(error).code));
   }
 }

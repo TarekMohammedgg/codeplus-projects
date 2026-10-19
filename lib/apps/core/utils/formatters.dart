@@ -16,3 +16,11 @@ String formatDate(DateTime date, String locale) =>
 
 String formatTime(DateTime date, String locale) =>
     DateFormat('hh:mm a', locale).format(date);
+
+String formatDayMonth(DateTime date, String locale) =>
+    DateFormat('d MMM', locale).format(date);
+
+String formatWeekdayDayMonth(DateTime date, String locale) =>
+    DateFormat('E, d MMM', locale).format(date);
+
+String formatRating(double rating) => rating.toStringAsFixed(1);

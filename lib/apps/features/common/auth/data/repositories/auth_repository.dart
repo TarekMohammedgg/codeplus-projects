@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:doctor_hunt/apps/features/common/auth/data/models/session_user.dart';
 import 'package:doctor_hunt/apps/features/common/auth/data/service/auth_service.dart';
 
 abstract interface class AuthRepository {
@@ -27,6 +28,8 @@ abstract interface class AuthRepository {
   });
 
   User? get currentUser;
+
+  SessionUser? get sessionUser;
 
   bool get hasPasswordProvider;
 
@@ -103,4 +106,16 @@ class FirebaseAuthRepository implements AuthRepository {
 
   @override
   User? get currentUser => authService.currentUser;
+
+  @override
+  SessionUser? get sessionUser {
+    final user = authService.currentUser;
+    if (user == null) return null;
+    return SessionUser(
+      uid: user.uid,
+      displayName: user.displayName?.trim() ?? '',
+      email: user.email?.trim() ?? '',
+      photoUrl: user.photoURL,
+    );
+  }
 }

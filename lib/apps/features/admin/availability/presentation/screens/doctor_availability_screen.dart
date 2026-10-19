@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:doctor_hunt/apps/core/extensions/app_error_text.dart';
 import 'package:doctor_hunt/apps/core/extensions/context_extensions.dart';
 import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_availability.dart';
@@ -49,7 +50,8 @@ class DoctorAvailabilityScreen extends StatelessWidget {
         context.tr.errorStartMustBeBeforeEnd,
       AvailabilityValidationError.slotTooLong =>
         context.tr.errorSlotDurationTooLong,
-      AvailabilityValidationError.none => state.errorMessage ?? '',
+      AvailabilityValidationError.none =>
+        state.error?.localized(context.tr) ?? '',
     };
 
     if (message.isNotEmpty) context.showErrorSnackBar(message);

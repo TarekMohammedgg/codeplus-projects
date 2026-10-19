@@ -22,7 +22,5 @@ final class DoctorDetailsSuccess extends DoctorDetailsState {
 }
 
 final class DoctorDetailsFailure extends DoctorDetailsState {
-  const DoctorDetailsFailure({required this.errorMessage});
-
-  final String errorMessage;
+  const DoctorDetailsFailure();
 }

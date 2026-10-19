@@ -22,7 +22,7 @@ class AdminDoctorsCubit extends Cubit<AdminDoctorsState> {
     } catch (error, stackTrace) {
       if (isClosed) return;
       addError(error, stackTrace);
-      emit(AdminDoctorsFailure(errorMessage: error.toString()));
+      emit(const AdminDoctorsFailure());
       return;
     }
     if (isClosed) return;
@@ -31,7 +31,7 @@ class AdminDoctorsCubit extends Cubit<AdminDoctorsState> {
           emit(AdminDoctorsSuccess(doctors: doctors, specialties: specialties)),
       onError: (Object error, StackTrace stackTrace) {
         addError(error, stackTrace);
-        emit(AdminDoctorsFailure(errorMessage: error.toString()));
+        emit(const AdminDoctorsFailure());
       },
     );
   }

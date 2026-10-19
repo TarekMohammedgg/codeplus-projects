@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:doctor_hunt/apps/core/extensions/app_error_text.dart';
 import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
@@ -29,14 +30,14 @@ class AdminSettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = context.read<AuthCubit>().currentUser;
-    final displayName = user?.displayName?.trim() ?? '';
+    final displayName = user?.displayName ?? '';
     final name = displayName.isNotEmpty ? displayName : tr.adminRoleTitle;
 
     return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
         switch (state) {
-          case AuthFailure(:final errorMessage):
-            context.showErrorSnackBar(errorMessage);
+          case AuthFailure(:final error):
+            context.showErrorSnackBar(error.localized(context.tr));
           default:
             break;
         }
@@ -60,7 +61,7 @@ class AdminSettingsScreen extends StatelessWidget {
                         child: Text(tr.settings, style: context.bold18TextMain),
                       ),
                       AppProfileAvatar(
-                        imageUrl: user?.photoURL,
+                        imageUrl: user?.photoUrl,
                         onTap: () => const AdminProfileRoute().push(context),
                       ),
                     ],
@@ -84,7 +85,7 @@ class AdminSettingsScreen extends StatelessWidget {
                                 children: [
                                   ClipOval(
                                     child: DoctorImage(
-                                      imageUrl: user?.photoURL,
+                                      imageUrl: user?.photoUrl,
                                       width: 56,
                                       height: 56,
                                       fallback: const DoctorAvatarPlaceholder(

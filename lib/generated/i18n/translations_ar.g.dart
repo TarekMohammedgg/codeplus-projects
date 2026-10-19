@@ -353,10 +353,8 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override String emailVerificationSent({required Object email}) => 'تم إرسال بريد التحقق إلى ${email}';
 	@override String get requiresRecentLogin => 'يرجى تسجيل الدخول مجدداً لتغيير البريد الإلكتروني';
 	@override String get adminProfileUpdatedSuccess => 'تم تحديث ملف المسؤول وبيانات العيادة بنجاح';
-	@override String get all => 'الكل';
 	@override String patientNameLabel({required Object name}) => 'المريض: ${name}';
 	@override String doctorWithNameLabel({required Object name}) => 'الطبيب: ${name}';
-	@override String get noAppointmentsFound => 'لا توجد مواعيد';
 	@override String get markCompleted => 'تحديد كمكتمل';
 	@override String get markCompletedTitle => 'تحديد الموعد كمكتمل';
 	@override String get markCompletedMessage => 'هل أنت متأكد من رغبتك في تحديد هذا الموعد كمكتمل؟';
@@ -706,10 +704,8 @@ extension on TranslationsAr {
 			'emailVerificationSent' => ({required Object email}) => 'تم إرسال بريد التحقق إلى ${email}',
 			'requiresRecentLogin' => 'يرجى تسجيل الدخول مجدداً لتغيير البريد الإلكتروني',
 			'adminProfileUpdatedSuccess' => 'تم تحديث ملف المسؤول وبيانات العيادة بنجاح',
-			'all' => 'الكل',
 			'patientNameLabel' => ({required Object name}) => 'المريض: ${name}',
 			'doctorWithNameLabel' => ({required Object name}) => 'الطبيب: ${name}',
-			'noAppointmentsFound' => 'لا توجد مواعيد',
 			'markCompleted' => 'تحديد كمكتمل',
 			'markCompletedTitle' => 'تحديد الموعد كمكتمل',
 			'markCompletedMessage' => 'هل أنت متأكد من رغبتك في تحديد هذا الموعد كمكتمل؟',

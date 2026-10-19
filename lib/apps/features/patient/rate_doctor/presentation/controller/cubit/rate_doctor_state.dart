@@ -1,3 +1,5 @@
+import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
+
 enum RateDoctorStatus { initial, submitting, success, failure }
 
 class RateDoctorState {
@@ -6,14 +8,14 @@ class RateDoctorState {
     this.rating = 0,
     this.comment = '',
     this.specialtyName,
-    this.errorMessage,
+    this.error,
   });
 
   final RateDoctorStatus status;
   final int rating;
   final String comment;
   final String? specialtyName;
-  final String? errorMessage;
+  final AppErrorCode? error;
 
   bool get canSubmit =>
       rating >= 1 && rating <= 5 && status != RateDoctorStatus.submitting;
@@ -23,14 +25,14 @@ class RateDoctorState {
     int? rating,
     String? comment,
     String? specialtyName,
-    String? errorMessage,
+    AppErrorCode? error,
   }) {
     return RateDoctorState(
       status: status ?? this.status,
       rating: rating ?? this.rating,
       comment: comment ?? this.comment,
       specialtyName: specialtyName ?? this.specialtyName,
-      errorMessage: errorMessage,
+      error: error,
     );
   }
 }

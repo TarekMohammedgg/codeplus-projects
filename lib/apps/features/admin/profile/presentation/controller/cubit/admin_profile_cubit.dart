@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:latlong2/latlong.dart';
 
@@ -41,7 +40,7 @@ class AdminProfileCubit extends Cubit<AdminProfileState> {
       emit(
         state.copyWith(
           status: AdminProfileStatus.failure,
-          errorMessage: AppException.from(e).message,
+          error: AppException.from(e).code,
         ),
       );
     }
@@ -65,7 +64,7 @@ class AdminProfileCubit extends Cubit<AdminProfileState> {
       emit(
         state.copyWith(
           status: AdminProfileStatus.failure,
-          failure: AdminProfileFailure.unknown,
+          error: AppErrorCode.userNotFound,
         ),
       );
       return false;
@@ -74,67 +73,61 @@ class AdminProfileCubit extends Cubit<AdminProfileState> {
     emit(
       state.copyWith(
         status: AdminProfileStatus.saving,
-        errorMessage: null,
         emailVerificationSent: false,
       ),
     );
 
+    final String? photoUrl;
     try {
-      var photoUrl = state.currentPhotoUrl;
-      if (newImageBytes != null) {
-        photoUrl = await repository.uploadPhoto(
-          bytes: newImageBytes,
-          fileName: newImageName ?? 'admin_profile_$uid.jpg',
-        );
-      }
-
-      final emailChanged =
-          email.trim().toLowerCase() != state.email.trim().toLowerCase();
-
+      photoUrl = newImageBytes == null
+          ? state.currentPhotoUrl
+          : await repository.uploadPhoto(
+              bytes: newImageBytes,
+              fileName: newImageName ?? 'admin_profile_$uid.jpg',
+            );
       await repository.updateAdminProfileAndClinic(
         uid: uid,
         displayName: displayName.trim(),
         photoUrl: photoUrl,
-        newEmail: emailChanged ? email.trim() : null,
         addressAr: addressAr.trim(),
         addressEn: addressEn.trim(),
         location: location,
       );
-
-      emit(
-        state.copyWith(
-          status: AdminProfileStatus.success,
-          displayName: displayName.trim(),
-          email: email.trim(),
-          currentPhotoUrl: photoUrl,
-          addressAr: addressAr.trim(),
-          addressEn: addressEn.trim(),
-          location: location,
-          emailVerificationSent: emailChanged,
-        ),
-      );
-      return true;
-    } on FirebaseAuthException catch (e) {
-      final isRecentLogin = e.code == 'requires-recent-login';
-      emit(
-        state.copyWith(
-          status: AdminProfileStatus.failure,
-          errorMessage: isRecentLogin ? null : e.message,
-          failure: isRecentLogin
-              ? AdminProfileFailure.requiresRecentLogin
-              : AdminProfileFailure.unknown,
-        ),
-      );
-      return false;
     } catch (e) {
       emit(
         state.copyWith(
           status: AdminProfileStatus.failure,
-          errorMessage: AppException.from(e).message,
-          failure: AdminProfileFailure.unknown,
+          error: AppException.from(e).code,
         ),
       );
       return false;
     }
+
+    // The email change is separate: if it fails (often requires-recent-login)
+    // the profile and clinic location above are already saved.
+    final emailChanged =
+        email.trim().toLowerCase() != state.email.trim().toLowerCase();
+    AppErrorCode? emailError;
+    if (emailChanged) {
+      try {
+        await repository.requestEmailChange(email.trim());
+      } catch (e) {
+        emailError = AppException.from(e).code;
+      }
+    }
+
+    emit(
+      state.copyWith(
+        status: AdminProfileStatus.success,
+        displayName: displayName.trim(),
+        currentPhotoUrl: photoUrl,
+        addressAr: addressAr.trim(),
+        addressEn: addressEn.trim(),
+        location: location,
+        emailVerificationSent: emailChanged && emailError == null,
+        error: emailError,
+      ),
+    );
+    return true;
   }
 }

@@ -98,7 +98,7 @@ class FindDoctorCard extends StatelessWidget {
                           const Spacer(),
                           Text.rich(
                             TextSpan(
-                              text: doctor.rating.toStringAsFixed(1),
+                              text: formatRating(doctor.rating),
                               style: context.medium16TextMain,
                               children: [
                                 TextSpan(
@@ -127,7 +127,7 @@ class FindDoctorCard extends StatelessWidget {
               children: [
                 Text(
                   formatFee(doctor.consultationFee),
-                  style: context.bold16Primary.copyWith(fontSize: 15),
+                  style: context.bold15Primary,
                 ),
                 AppPrimaryButton(
                   label: context.tr.bookNow,

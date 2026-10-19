@@ -45,7 +45,7 @@ class DoctorAvailabilityCubit extends Cubit<DoctorAvailabilityState> {
       emit(
         state.copyWith(
           status: DoctorAvailabilityStatus.failure,
-          errorMessage: AppException.from(e).message,
+          error: AppException.from(e).code,
         ),
       );
       return false;

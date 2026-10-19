@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:doctor_hunt/apps/core/extensions/app_error_text.dart';
 import 'package:doctor_hunt/apps/core/extensions/context_extensions.dart';
 import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
@@ -48,8 +49,9 @@ class AdminDoctorDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<AdminDoctorDetailsCubit, AdminDoctorDetailsState>(
       listener: (context, state) {
-        if (state.errorMessage != null) {
-          context.showErrorSnackBar(state.errorMessage!);
+        final error = state.error;
+        if (error != null) {
+          context.showErrorSnackBar(error.localized(context.tr));
         }
       },
       builder: (context, state) {
@@ -240,7 +242,7 @@ class _DoctorInfoCard extends StatelessWidget {
             Flexible(
               child: Text(
                 context.tr.ratingSummary(
-                  rating: doctor.rating.toStringAsFixed(1),
+                  rating: formatRating(doctor.rating),
                   count: doctor.reviewsCount,
                 ),
                 style: context.regular10TextSecondary,

@@ -1,25 +1,24 @@
+import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
 import 'package:doctor_hunt/apps/core/models/specialty_model.dart';
 
-enum AdminAppointmentTab { all, upcoming, completed, cancelled }
+enum AdminAppointmentTab { upcoming, completed, cancelled }
 
 enum AdminAppointmentsStatus { initial, loading, loaded, failure }
 
 List<AppointmentModel> filterAppointmentsByTab(
   List<AppointmentModel> appointments,
   AdminAppointmentTab tab,
-) => tab == AdminAppointmentTab.all
-    ? appointments
-    : appointments.where((a) => a.status.name == tab.name).toList();
+) => appointments.where((a) => a.status.name == tab.name).toList();
 
 class AdminAppointmentsState {
   const AdminAppointmentsState({
     this.status = AdminAppointmentsStatus.initial,
     this.appointments = const [],
-    this.selectedTab = AdminAppointmentTab.all,
+    this.selectedTab = AdminAppointmentTab.upcoming,
     this.specialties = const {},
     this.patientPhotos = const {},
-    this.errorMessage,
+    this.error,
   });
 
   final AdminAppointmentsStatus status;
@@ -27,7 +26,7 @@ class AdminAppointmentsState {
   final AdminAppointmentTab selectedTab;
   final Map<String, SpecialtyModel> specialties;
   final Map<String, String> patientPhotos;
-  final String? errorMessage;
+  final AppErrorCode? error;
 
   List<AppointmentModel> get currentAppointments =>
       filterAppointmentsByTab(appointments, selectedTab);
@@ -38,7 +37,7 @@ class AdminAppointmentsState {
     AdminAppointmentTab? selectedTab,
     Map<String, SpecialtyModel>? specialties,
     Map<String, String>? patientPhotos,
-    String? errorMessage,
+    AppErrorCode? error,
   }) {
     return AdminAppointmentsState(
       status: status ?? this.status,
@@ -46,7 +45,7 @@ class AdminAppointmentsState {
       selectedTab: selectedTab ?? this.selectedTab,
       specialties: specialties ?? this.specialties,
       patientPhotos: patientPhotos ?? this.patientPhotos,
-      errorMessage: errorMessage,
+      error: error,
     );
   }
 }

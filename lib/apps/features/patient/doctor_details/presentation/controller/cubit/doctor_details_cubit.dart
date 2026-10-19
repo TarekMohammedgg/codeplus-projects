@@ -30,14 +30,14 @@ class DoctorDetailsCubit extends Cubit<DoctorDetailsState> {
         onError: (Object error, StackTrace stackTrace) {
           addError(error, stackTrace);
           if (!isClosed) {
-            emit(DoctorDetailsFailure(errorMessage: error.toString()));
+            emit(const DoctorDetailsFailure());
           }
         },
       );
     } catch (error, stackTrace) {
       if (isClosed) return;
       addError(error, stackTrace);
-      emit(DoctorDetailsFailure(errorMessage: error.toString()));
+      emit(const DoctorDetailsFailure());
     }
   }
 

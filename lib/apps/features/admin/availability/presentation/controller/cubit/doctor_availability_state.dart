@@ -1,3 +1,4 @@
+import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_availability.dart';
 
 enum DoctorAvailabilityStatus { initial, saving, success, failure }
@@ -16,7 +17,7 @@ class DoctorAvailabilityState {
     this.startMinutes = 540,
     this.endMinutes = 1020,
     this.slotMinutes = 30,
-    this.errorMessage,
+    this.error,
   });
 
   factory DoctorAvailabilityState.fromAvailability(
@@ -38,7 +39,7 @@ class DoctorAvailabilityState {
   final int startMinutes;
   final int endMinutes;
   final int slotMinutes;
-  final String? errorMessage;
+  final AppErrorCode? error;
 
   int get slotsPerDay {
     if (endMinutes <= startMinutes || slotMinutes <= 0) return 0;
@@ -75,7 +76,7 @@ class DoctorAvailabilityState {
     int? startMinutes,
     int? endMinutes,
     int? slotMinutes,
-    String? errorMessage,
+    AppErrorCode? error,
   }) {
     return DoctorAvailabilityState(
       status: status ?? this.status,
@@ -83,7 +84,7 @@ class DoctorAvailabilityState {
       startMinutes: startMinutes ?? this.startMinutes,
       endMinutes: endMinutes ?? this.endMinutes,
       slotMinutes: slotMinutes ?? this.slotMinutes,
-      errorMessage: errorMessage,
+      error: error,
     );
   }
 }

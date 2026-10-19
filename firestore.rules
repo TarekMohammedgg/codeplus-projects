@@ -32,11 +32,21 @@ service cloud.firestore {
           signedIn()
           && changedOnly(['rating', 'reviewsCount', 'lastReviewId'])
           && request.resource.data.reviewsCount == resource.data.reviewsCount + 1
-          && request.resource.data.rating >= 1
-          && request.resource.data.rating <= 5
           && !exists(/databases/$(database)/documents/reviews/$(request.resource.data.lastReviewId))
           && existsAfter(/databases/$(database)/documents/reviews/$(request.resource.data.lastReviewId))
+          && newReview().doctorId == doctorId
+          // The new average must be the real one (client rounds to 2 decimals).
+          && math.abs(request.resource.data.rating - expectedAverage()) < 0.01
         );
+
+      function newReview() {
+        return getAfter(/databases/$(database)/documents/reviews/$(request.resource.data.lastReviewId)).data;
+      }
+
+      function expectedAverage() {
+        return (float(resource.data.get('rating', 0)) * resource.data.reviewsCount + newReview().rating)
+          / (resource.data.reviewsCount + 1);
+      }
     }
 
     match /specialty/{specialtyId} {
@@ -113,12 +123,31 @@ service cloud.firestore {
       allow read: if (signedIn() && resource.data.patientId == request.auth.uid)
         || isAdmin();
 
+      // The doctor/fee snapshot must match the doctor doc, and the time must
+      // match the slot lock created in the same transaction.
       allow create: if signedIn()
         && request.resource.data.patientId == request.auth.uid
         && request.resource.data.status == 'upcoming'
         && request.resource.data.isReviewed == false
-        && get(/databases/$(database)/documents/doctors/$(request.resource.data.doctorId)).data.get('isActive', true) == true
-        && existsAfter(/databases/$(database)/documents/bookedSlots/$(request.resource.data.slotId));
+        && request.resource.data.cancelledBy == null
+        && request.resource.data.startAt > request.time
+        && request.resource.data.slotId.matches(request.resource.data.doctorId + '_[0-9]{12}')
+        && bookedDoctor().get('isActive', true) == true
+        && request.resource.data.fee == bookedDoctor().consultationFee
+        && request.resource.data.specialtyId == bookedDoctor().specialtyId
+        && request.resource.data.doctorName.ar == bookedDoctor().fullName.ar
+        && request.resource.data.doctorName.en == bookedDoctor().fullName.en
+        && existsAfter(/databases/$(database)/documents/bookedSlots/$(request.resource.data.slotId))
+        && bookedSlot().doctorId == request.resource.data.doctorId
+        && bookedSlot().startAt == request.resource.data.startAt;
+
+      function bookedDoctor() {
+        return get(/databases/$(database)/documents/doctors/$(request.resource.data.doctorId)).data;
+      }
+
+      function bookedSlot() {
+        return getAfter(/databases/$(database)/documents/bookedSlots/$(request.resource.data.slotId)).data;
+      }
 
       // Admin: upcoming -> completed (only once the visit time has started),
       // or upcoming -> cancelled by admin.
@@ -166,6 +195,7 @@ service cloud.firestore {
         && request.resource.data.rating is int
         && request.resource.data.rating >= 1
         && request.resource.data.rating <= 5
+        && request.resource.data.get('comment', '').size() <= 500
         && get(/databases/$(database)/documents/appointments/$(appointmentId)).data.status == 'completed'
         && get(/databases/$(database)/documents/appointments/$(appointmentId)).data.patientId == request.auth.uid
         && get(/databases/$(database)/documents/appointments/$(appointmentId)).data.doctorId == request.resource.data.doctorId;

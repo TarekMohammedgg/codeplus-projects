@@ -1,3 +1,5 @@
+import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
+
 sealed class EditProfileState {
   const EditProfileState();
 }
@@ -15,7 +17,7 @@ final class EditProfileSuccess extends EditProfileState {
 }
 
 final class EditProfileFailure extends EditProfileState {
-  const EditProfileFailure(this.message);
+  const EditProfileFailure(this.error);
 
-  final String message;
+  final AppErrorCode error;
 }
