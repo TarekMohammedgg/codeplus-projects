@@ -175,7 +175,6 @@ void main() {
     testWidgets('hides mark completed before the appointment time', (
       tester,
     ) async {
-      // arrange
       final appt = _buildTestAppt(
         id: 'appt_future',
         status: AppointmentStatus.upcoming,
@@ -195,10 +194,8 @@ void main() {
         ),
       );
 
-      // act
       await tester.pumpAndSettle();
 
-      // assert
       expect(
         find.byKey(const Key('admin_mark_completed_button')),
         findsNothing,

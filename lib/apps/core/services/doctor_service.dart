@@ -7,7 +7,6 @@ import 'package:doctor_hunt/apps/core/models/specialty_model.dart';
 import 'package:doctor_hunt/apps/core/services/specialty_service.dart';
 
 class DoctorService {
-  // Moved from the removed AdminDoctorService (it only forwarded to this class).
   //CR Bad DI: Avoid mixing static singletons and swallowing Firebase uninitialized errors with catch (_) => null.
   //CR Inject non-nullable `FirebaseFirestore` via constructor.
   // solved

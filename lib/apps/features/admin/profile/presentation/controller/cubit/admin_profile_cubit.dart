@@ -103,8 +103,6 @@ class AdminProfileCubit extends Cubit<AdminProfileState> {
       return false;
     }
 
-    // The email change is separate: if it fails (often requires-recent-login)
-    // the profile and clinic location above are already saved.
     final emailChanged =
         email.trim().toLowerCase() != state.email.trim().toLowerCase();
     AppErrorCode? emailError;

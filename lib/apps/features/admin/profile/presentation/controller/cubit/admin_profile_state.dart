@@ -26,7 +26,6 @@ class AdminProfileState {
   final LatLng? location;
   final bool emailVerificationSent;
 
-  /// Failure of the whole save, or (with `success`) of the email change only.
   final AppErrorCode? error;
 
   AdminProfileState copyWith({

@@ -43,7 +43,6 @@ class FindDoctorsCubit extends Cubit<FindDoctorsState> {
     }
   }
 
-  /// Pull-to-refresh: reloads the doctors and keeps the current filters.
   Future<void> refresh() async {
     final current = state;
     if (current is! FindDoctorsSuccess) return load();

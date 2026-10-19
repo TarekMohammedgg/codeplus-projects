@@ -124,7 +124,6 @@ void main() {
   testWidgets(
     'shows the next available slots when the doctor has availability',
     (WidgetTester tester) async {
-      // arrange
       final doctor = DoctorModel(
         id: 'doc-1',
         nameEn: 'Dr. Sara',
@@ -136,10 +135,8 @@ void main() {
         ),
       );
 
-      // act
       await pumpDetails(tester, FakeDoctorDetailsRepository(), doctor: doctor);
 
-      // assert
       expect(
         find.text(AppLocale.en.buildSync().availableSlots),
         findsOneWidget,
@@ -151,10 +148,8 @@ void main() {
   testWidgets('shows the no available times message without availability', (
     WidgetTester tester,
   ) async {
-    // act
     await pumpDetails(tester, FakeDoctorDetailsRepository());
 
-    // assert
     expect(
       find.text(AppLocale.en.buildSync().doctorNoAvailableTimes),
       findsOneWidget,

@@ -27,8 +27,6 @@ class CreateDoctorCubit extends Cubit<CreateDoctorState> {
     }
   }
 
-  /// Uploads the picked image (if any), then creates the doctor, or updates it
-  /// when [doctorId] is given.
   Future<void> submit({
     String? doctorId,
     required String fullNameAr,

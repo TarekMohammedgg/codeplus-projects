@@ -1,5 +1,3 @@
-/// The signed-in account as the app needs it, so presentation code does not
-/// depend on the Firebase `User` type.
 class SessionUser {
   const SessionUser({
     required this.uid,

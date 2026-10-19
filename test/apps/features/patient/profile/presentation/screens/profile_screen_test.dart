@@ -105,7 +105,6 @@ void main() {
 
       expect(find.text(tr.location), findsNothing);
 
-      // Pushed from the Settings tab, so it has a back button.
       expect(find.byIcon(Icons.arrow_back_ios_new_rounded), findsOneWidget);
 
       expect(find.widgetWithText(AppPrimaryButton, tr.edit), findsNothing);

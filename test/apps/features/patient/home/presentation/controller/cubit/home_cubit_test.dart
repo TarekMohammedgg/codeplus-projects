@@ -22,7 +22,6 @@ void main() {
   );
 
   test('load sorts popular by reviews and top rated by rating', () async {
-    // arrange
     final cubit = HomeCubit(
       repository: FakeDoctorRepository(
         doctors: [bestRated, mostReviewed],
@@ -32,10 +31,8 @@ void main() {
       ),
     );
 
-    // act
     await cubit.load();
 
-    // assert
     final state = cubit.state as HomeSuccess;
     expect(state.popularDoctors.map((d) => d.id), [
       'most_reviewed',
@@ -50,7 +47,6 @@ void main() {
   });
 
   test('load emits loading then failure when the repository throws', () async {
-    // arrange
     final cubit = HomeCubit(
       repository: FakeDoctorRepository(error: StateError('load failed')),
     );
@@ -59,10 +55,8 @@ void main() {
       emitsInOrder([isA<HomeLoading>(), isA<HomeFailure>()]),
     );
 
-    // act
     await cubit.load();
 
-    // assert
     await states;
     await cubit.close();
   });

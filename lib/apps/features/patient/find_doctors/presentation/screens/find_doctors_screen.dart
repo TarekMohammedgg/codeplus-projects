@@ -35,7 +35,6 @@ class FindDoctorsScreen extends StatefulWidget {
   final DoctorSort? sort;
   final bool focusSearch;
 
-  /// Favorites tab: only the patient's favorite doctors, no search/filters.
   final bool favoritesOnly;
 
   @override

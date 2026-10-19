@@ -27,7 +27,6 @@ class AuthService {
   final FirebaseAuth auth;
   final FirebaseFirestore firestore;
 
-  // Cached role of the signed-in user; reset on every sign-in / sign-out.
   bool? _isAdmin;
 
   static Future<void> initialize() async {

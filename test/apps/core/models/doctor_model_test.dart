@@ -15,7 +15,6 @@ void main() {
   tearDown(() => LocaleSettings.setLocaleSync(AppLocale.en));
 
   test('fromFirestore reads the locked doctor fields', () {
-    // arrange
     final data = {
       'fullName': {'ar': 'د. أحمد', 'en': 'Dr. Ahmed'},
       'specialtyId': 'cardiologist',
@@ -32,14 +31,12 @@ void main() {
       },
     };
 
-    // act
     final doctor = DoctorModel.fromFirestore(
       'doc_1',
       data,
       specialty: cardiology,
     );
 
-    // assert
     expect(doctor.nameEn, 'Dr. Ahmed');
     expect(doctor.nameAr, 'د. أحمد');
     expect(doctor.specialtyEn, 'Cardiologist');
@@ -52,12 +49,10 @@ void main() {
   });
 
   test('fromFirestore uses safe defaults for missing optional fields', () {
-    // act
     final doctor = DoctorModel.fromFirestore('doc_2', {
       'fullName': {'en': 'Dr. New'},
     });
 
-    // assert
     expect(doctor.rating, 0);
     expect(doctor.reviewsCount, 0);
     expect(doctor.consultationFee, 0);
@@ -67,39 +62,31 @@ void main() {
   });
 
   test('name and specialty follow the current locale', () {
-    // arrange
     final doctor = DoctorModel.fromFirestore('doc_3', {
       'fullName': {'ar': 'د. سامي', 'en': 'Dr. Sami'},
     }, specialty: cardiology);
 
-    // act
     LocaleSettings.setLocaleSync(AppLocale.ar);
 
-    // assert
     expect(doctor.name, 'د. سامي');
     expect(doctor.specialty, 'طبيب قلب');
   });
 
   test('Arabic locale falls back to English when Arabic is empty', () {
-    // arrange
     const doctor = DoctorModel(id: 'doc_4', nameEn: 'Dr. Only English');
 
-    // act
     LocaleSettings.setLocaleSync(AppLocale.ar);
 
-    // assert
     expect(doctor.name, 'Dr. Only English');
   });
 
   test('nameContains matches either language and ignores case', () {
-    // arrange
     const doctor = DoctorModel(
       id: 'doc_5',
       nameEn: 'Dr. Ahmed',
       nameAr: 'د. أحمد',
     );
 
-    // act
     final results = [
       doctor.nameContains('ahm'),
       doctor.nameContains('أحمد'),
@@ -107,7 +94,6 @@ void main() {
       doctor.nameContains('sara'),
     ];
 
-    // assert
     expect(results, [true, true, true, false]);
   });
 

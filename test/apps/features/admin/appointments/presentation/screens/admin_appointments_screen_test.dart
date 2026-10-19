@@ -182,17 +182,14 @@ void main() {
     );
 
     test('loads patient photos in one request per new patient', () async {
-      // arrange
       repo.photos = {'patient_1': 'https://example.com/p1.png'};
       await cubit.init();
 
-      // act
       repo.streamController.add(allAppointments);
       await Future<void>.delayed(const Duration(milliseconds: 50));
       repo.streamController.add(allAppointments);
       await Future<void>.delayed(const Duration(milliseconds: 50));
 
-      // assert
       expect(repo.photoRequests, [
         {'patient_1', 'patient_2', 'patient_3'},
       ]);
@@ -204,18 +201,15 @@ void main() {
     test(
       'photo failure keeps the list and retries on the next update',
       () async {
-        // arrange
         repo.photoError = StateError('offline');
         await cubit.init();
         repo.streamController.add(allAppointments);
         await Future<void>.delayed(const Duration(milliseconds: 50));
         repo.photoError = null;
 
-        // act
         repo.streamController.add(allAppointments);
         await Future<void>.delayed(const Duration(milliseconds: 50));
 
-        // assert
         expect(cubit.state.status, AdminAppointmentsStatus.loaded);
         expect(cubit.state.appointments, hasLength(3));
         expect(repo.photoRequests, hasLength(2));

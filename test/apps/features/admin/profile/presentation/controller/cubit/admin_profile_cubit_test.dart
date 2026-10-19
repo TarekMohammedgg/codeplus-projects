@@ -147,12 +147,10 @@ void main() {
     test(
       'a failed email change still saves the clinic location and profile',
       () async {
-        // arrange
         repository.emailChangeError = const AppException(
           AppErrorCode.requiresRecentLogin,
         );
 
-        // act
         final success = await cubit.saveProfileAndClinic(
           displayName: 'New Admin',
           email: 'changed@hunt.com',
@@ -161,7 +159,6 @@ void main() {
           location: const LatLng(30.0, 31.0),
         );
 
-        // assert
         expect(success, isTrue);
         expect(cubit.state.status, AdminProfileStatus.success);
         expect(cubit.state.error, AppErrorCode.requiresRecentLogin);

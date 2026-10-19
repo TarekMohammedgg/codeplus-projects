@@ -18,8 +18,6 @@ class AppointmentService {
   CollectionReference<Map<String, dynamic>> get _bookedSlots =>
       firestore.collection(FirestoreCollections.bookedSlots);
 
-  /// Live booked starts for [days], so a slot freed by a cancel (patient or
-  /// admin) or taken by another patient updates open booking screens.
   Stream<Set<DateTime>> watchBookedStarts(
     String doctorId,
     List<DateTime> days,
@@ -68,8 +66,6 @@ class AppointmentService {
             DateTime.now(),
           ).contains(startAt);
       if (!isBookable) throw const DoctorUnavailableException();
-      // Snapshot from the doc read in this transaction, not the possibly
-      // stale model on screen; firestore.rules checks these values.
       final current = DoctorModel.fromFirestore(doctor.id, doctorData);
       if ((await transaction.get(slotRef)).exists) {
         throw const SlotAlreadyBookedException();

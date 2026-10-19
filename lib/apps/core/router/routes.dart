@@ -203,7 +203,6 @@ class FavoritesRoute extends GoRouteData with $FavoritesRoute {
   }
 }
 
-/// Settings tab; [ProfileCubit] and [AuthCubit] come from [PatientShellRoute].
 class PatientSettingsRoute extends GoRouteData with $PatientSettingsRoute {
   const PatientSettingsRoute();
 
