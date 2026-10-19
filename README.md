@@ -63,7 +63,7 @@ branch around the locked MVP scope:
   generates the patient's bookable slots.
 - **Activate / deactivate** — doctors are never deleted, so booking history stays intact.
   Patients only see active doctors.
-- **Appointments** — tabs All / Upcoming / Completed / Cancelled; cancel or mark completed.
+- **Appointments** — tabs Upcoming / Completed / Cancelled; cancel or mark completed.
   Details include the patient's contact info.
 - **Profile** — photo, name, and the **clinic location** used by every doctor.
 

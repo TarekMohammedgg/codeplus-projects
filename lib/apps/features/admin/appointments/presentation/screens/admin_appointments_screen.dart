@@ -28,7 +28,6 @@ class AdminAppointmentsScreen extends StatelessWidget {
 
   String _emptyMessageForTab(BuildContext context, AdminAppointmentTab tab) {
     return switch (tab) {
-      AdminAppointmentTab.all => context.tr.noAppointmentsFound,
       AdminAppointmentTab.upcoming => context.tr.noUpcomingAppointments,
       AdminAppointmentTab.completed => context.tr.noCompletedAppointments,
       AdminAppointmentTab.cancelled => context.tr.noCancelledAppointments,
@@ -97,7 +96,6 @@ class AdminAppointmentsScreen extends StatelessWidget {
                 length: AdminAppointmentTab.values.length,
                 child: AppSegmentedTabBar(
                   labels: [
-                    context.tr.all,
                     context.tr.upcoming,
                     context.tr.completed,
                     context.tr.cancelled,

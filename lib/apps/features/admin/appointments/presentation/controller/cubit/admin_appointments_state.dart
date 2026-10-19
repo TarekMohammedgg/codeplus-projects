@@ -2,22 +2,20 @@ import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
 import 'package:doctor_hunt/apps/core/models/specialty_model.dart';
 
-enum AdminAppointmentTab { all, upcoming, completed, cancelled }
+enum AdminAppointmentTab { upcoming, completed, cancelled }
 
 enum AdminAppointmentsStatus { initial, loading, loaded, failure }
 
 List<AppointmentModel> filterAppointmentsByTab(
   List<AppointmentModel> appointments,
   AdminAppointmentTab tab,
-) => tab == AdminAppointmentTab.all
-    ? appointments
-    : appointments.where((a) => a.status.name == tab.name).toList();
+) => appointments.where((a) => a.status.name == tab.name).toList();
 
 class AdminAppointmentsState {
   const AdminAppointmentsState({
     this.status = AdminAppointmentsStatus.initial,
     this.appointments = const [],
-    this.selectedTab = AdminAppointmentTab.all,
+    this.selectedTab = AdminAppointmentTab.upcoming,
     this.specialties = const {},
     this.patientPhotos = const {},
     this.error,

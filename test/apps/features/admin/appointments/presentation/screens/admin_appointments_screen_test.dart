@@ -124,15 +124,6 @@ void main() {
   ];
 
   group('Pure filterAppointmentsByTab', () {
-    test('all returns all appointments', () {
-      final result = filterAppointmentsByTab(
-        allAppointments,
-        AdminAppointmentTab.all,
-      );
-      expect(result.length, 3);
-      expect(result, containsAll(allAppointments));
-    });
-
     test('upcoming returns only upcoming appointments', () {
       final result = filterAppointmentsByTab(
         allAppointments,
@@ -186,7 +177,7 @@ void main() {
         expect(cubit.state.status, AdminAppointmentsStatus.loaded);
         expect(cubit.state.appointments.length, 3);
         expect(cubit.state.specialties.containsKey('spec_1'), isTrue);
-        expect(cubit.state.currentAppointments.length, 3);
+        expect(cubit.state.currentAppointments.length, 1);
       },
     );
 
@@ -252,10 +243,6 @@ void main() {
         expect(cubit.state.selectedTab, AdminAppointmentTab.cancelled);
         expect(cubit.state.currentAppointments.length, 1);
         expect(cubit.state.currentAppointments.first.id, 'appt_3');
-
-        cubit.selectTab(AdminAppointmentTab.all);
-        expect(cubit.state.selectedTab, AdminAppointmentTab.all);
-        expect(cubit.state.currentAppointments.length, 3);
       },
     );
 
@@ -324,13 +311,12 @@ void main() {
       await cubit.close();
     });
 
-    testWidgets('renders 4 tabs and displays appointments', (tester) async {
+    testWidgets('renders 3 tabs and opens on upcoming', (tester) async {
       final cubit = AdminAppointmentsCubit(
         repository: repo,
         initialState: AdminAppointmentsState(
           status: AdminAppointmentsStatus.loaded,
           appointments: allAppointments,
-          selectedTab: AdminAppointmentTab.all,
           specialties: {
             'spec_1': const SpecialtyModel(
               id: 'spec_1',
@@ -352,15 +338,14 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Appointments'), findsWidgets);
-      expect(find.widgetWithText(Tab, 'All'), findsOneWidget);
+      expect(find.byType(Tab), findsNWidgets(3));
       expect(find.widgetWithText(Tab, 'Upcoming'), findsOneWidget);
       expect(find.widgetWithText(Tab, 'Completed'), findsOneWidget);
       expect(find.widgetWithText(Tab, 'Cancelled'), findsOneWidget);
 
-      expect(find.byType(AdminAppointmentCard), findsNWidgets(3));
+      expect(cubit.state.selectedTab, AdminAppointmentTab.upcoming);
+      expect(find.byType(AdminAppointmentCard), findsOneWidget);
       expect(find.textContaining('Jane Patient'), findsOneWidget);
-      expect(find.textContaining('Bob Smith'), findsOneWidget);
-      expect(find.textContaining('Alice Green'), findsOneWidget);
 
       await cubit.close();
     });
@@ -371,7 +356,6 @@ void main() {
         initialState: AdminAppointmentsState(
           status: AdminAppointmentsStatus.loaded,
           appointments: allAppointments,
-          selectedTab: AdminAppointmentTab.all,
         ),
       );
 
@@ -385,12 +369,6 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byType(AdminAppointmentCard), findsNWidgets(3));
-
-      await tester.tap(find.widgetWithText(Tab, 'Upcoming'));
-      await tester.pumpAndSettle();
-
-      expect(cubit.state.selectedTab, AdminAppointmentTab.upcoming);
       expect(find.byType(AdminAppointmentCard), findsOneWidget);
       expect(find.textContaining('Jane Patient'), findsOneWidget);
       expect(find.textContaining('Bob Smith'), findsNothing);
@@ -449,7 +427,6 @@ void main() {
         initialState: const AdminAppointmentsState(
           status: AdminAppointmentsStatus.loaded,
           appointments: [],
-          selectedTab: AdminAppointmentTab.all,
         ),
       );
 
@@ -464,7 +441,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(AdminAppointmentCard), findsNothing);
-      expect(find.text('No appointments found'), findsOneWidget);
+      expect(find.text('No upcoming appointments'), findsOneWidget);
 
       await cubit.close();
     });
