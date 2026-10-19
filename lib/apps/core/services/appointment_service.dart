@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'package:doctor_hunt/apps/core/services/firestore_collections.dart';
 import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_availability.dart';
@@ -12,10 +13,10 @@ class AppointmentService {
   final FirebaseFirestore firestore;
 
   CollectionReference<Map<String, dynamic>> get _appointments =>
-      firestore.collection('appointments');
+      firestore.collection(FirestoreCollections.appointments);
 
   CollectionReference<Map<String, dynamic>> get _bookedSlots =>
-      firestore.collection('bookedSlots');
+      firestore.collection(FirestoreCollections.bookedSlots);
 
   /// Live booked starts for [days], so a slot freed by a cancel (patient or
   /// admin) or taken by another patient updates open booking screens.
@@ -50,7 +51,7 @@ class AppointmentService {
 
     await firestore.runTransaction((transaction) async {
       final doctorDoc = await transaction.get(
-        firestore.collection('doctors').doc(doctor.id),
+        firestore.collection(FirestoreCollections.doctors).doc(doctor.id),
       );
       final doctorData = doctorDoc.data();
       final availability = DoctorAvailability.tryParse(
@@ -67,6 +68,9 @@ class AppointmentService {
             DateTime.now(),
           ).contains(startAt);
       if (!isBookable) throw const DoctorUnavailableException();
+      // Snapshot from the doc read in this transaction, not the possibly
+      // stale model on screen; firestore.rules checks these values.
+      final current = DoctorModel.fromFirestore(doctor.id, doctorData);
       if ((await transaction.get(slotRef)).exists) {
         throw const SlotAlreadyBookedException();
       }
@@ -83,10 +87,10 @@ class AppointmentService {
         'patientEmail': patientEmail,
         'patientPhone': patientPhone,
         'doctorId': doctor.id,
-        'doctorName': {'ar': doctor.nameAr, 'en': doctor.nameEn},
-        'specialtyId': doctor.specialtyId,
-        'doctorImageUrl': doctor.imageUrl,
-        'fee': doctor.consultationFee,
+        'doctorName': {'ar': current.nameAr, 'en': current.nameEn},
+        'specialtyId': current.specialtyId,
+        'doctorImageUrl': current.imageUrl,
+        'fee': doctorData['consultationFee'],
         'startAt': startTimestamp,
         'slotId': slotId,
         'status': AppointmentStatus.upcoming.name,

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
+import 'package:doctor_hunt/apps/core/extensions/app_error_text.dart';
 import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
@@ -61,7 +61,7 @@ class _PatientAppointmentsScreenState extends State<PatientAppointmentsScreen>
         }
       } catch (e) {
         if (context.mounted) {
-          context.showErrorSnackBar(AppException.from(e).message);
+          context.showErrorSnackBar(context.errorText(e));
         }
       }
     }
@@ -118,7 +118,7 @@ class _PatientAppointmentsScreenState extends State<PatientAppointmentsScreen>
                     ),
                     12.verticalSpace,
                     Text(
-                      state.message,
+                      state.error.localized(context.tr),
                       style: context.medium14TextSecondary,
                       textAlign: TextAlign.center,
                     ),

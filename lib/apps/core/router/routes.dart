@@ -173,7 +173,7 @@ class HomeRoute extends GoRouteData with $HomeRoute {
   Widget build(BuildContext context, GoRouterState state) {
     return BlocProvider<HomeCubit>(
       create: (_) => getIt<HomeCubit>(),
-      child: HomeScreen(user: getIt<AuthRepository>().currentUser),
+      child: HomeScreen(user: getIt<AuthRepository>().sessionUser),
     );
   }
 }
@@ -267,7 +267,7 @@ class AdminDoctorsRoute extends GoRouteData with $AdminDoctorsRoute {
     return BlocProvider<AdminDoctorsCubit>(
       create: (_) => getIt<AdminDoctorsCubit>(),
       child: AdminDoctorsScreen(
-        adminPhotoUrl: getIt<AuthRepository>().currentUser?.photoURL,
+        adminPhotoUrl: getIt<AuthRepository>().sessionUser?.photoUrl,
       ),
     );
   }
@@ -281,7 +281,7 @@ class AdminAppointmentsRoute extends GoRouteData with $AdminAppointmentsRoute {
     return BlocProvider<AdminAppointmentsCubit>(
       create: (_) => getIt<AdminAppointmentsCubit>()..init(),
       child: AdminAppointmentsScreen(
-        adminPhotoUrl: getIt<AuthRepository>().currentUser?.photoURL,
+        adminPhotoUrl: getIt<AuthRepository>().sessionUser?.photoUrl,
       ),
     );
   }

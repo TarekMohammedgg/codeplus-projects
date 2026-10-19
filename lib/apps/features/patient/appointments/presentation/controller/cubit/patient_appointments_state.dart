@@ -1,3 +1,4 @@
+import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/apps/core/models/appointment_model.dart';
 import 'package:doctor_hunt/apps/core/models/specialty_model.dart';
 import 'package:doctor_hunt/apps/features/patient/appointments/data/models/patient_appointments_group.dart';
@@ -50,7 +51,7 @@ final class PatientAppointmentsLoaded extends PatientAppointmentsState {
 }
 
 final class PatientAppointmentsError extends PatientAppointmentsState {
-  const PatientAppointmentsError(this.message);
+  const PatientAppointmentsError(this.error);
 
-  final String message;
+  final AppErrorCode error;
 }

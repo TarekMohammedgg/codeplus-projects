@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
+import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
+import 'package:doctor_hunt/apps/core/extensions/app_error_text.dart';
 import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
@@ -48,10 +50,6 @@ class CreateDoctorScreenState extends State<CreateDoctorScreen> {
   @override
   void initState() {
     super.initState();
-    //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
-    // solved
-    //CR Use `getIt<Cubit>()` directly or inject via constructor.
-    // solved
     //CR Bad DI: Avoid checking `getIt.isRegistered` with manual fallback instantiations in UI initState.
     // solved
     //CR Use `getIt<Cubit>()` directly or inject via constructor.
@@ -127,8 +125,8 @@ class CreateDoctorScreenState extends State<CreateDoctorScreen> {
     return BlocConsumer<CreateDoctorCubit, CreateDoctorState>(
       listener: (context, state) {
         switch (state) {
-          case CreateDoctorFailure(:final errorMessage):
-            context.showErrorSnackBar(errorMessage);
+          case CreateDoctorFailure(:final error):
+            context.showErrorSnackBar(error.localized(context.tr));
           case CreateDoctorSuccess(submit: CreateDoctorSubmit.saved):
             context.showSuccessSnackBar(
               isEditing ? tr.doctorUpdatedSuccess : tr.doctorCreatedSuccess,
@@ -138,7 +136,9 @@ class CreateDoctorScreenState extends State<CreateDoctorScreen> {
             submit: CreateDoctorSubmit.failed,
             :final submitError,
           ):
-            context.showErrorSnackBar(submitError ?? tr.serviceError);
+            context.showErrorSnackBar(
+              (submitError ?? AppErrorCode.service).localized(context.tr),
+            );
           case CreateDoctorSuccess(:final specialties):
             _selectEditingSpecialty(specialties);
           default:

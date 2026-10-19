@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:doctor_hunt/apps/features/common/auth/data/models/session_user.dart';
 import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
 import 'package:doctor_hunt/apps/core/models/specialty_model.dart';
@@ -118,7 +119,7 @@ class FakeAuthRepository implements AuthRepository {
   final bool shouldFail;
   final FirebaseAuth? auth;
   final bool isAdmin;
-  final String? changePasswordError;
+  final AppErrorCode? changePasswordError;
   bool changePasswordCalled = false;
   String? lastCurrentPassword;
   String? lastNewPassword;
@@ -126,6 +127,18 @@ class FakeAuthRepository implements AuthRepository {
 
   @override
   User? get currentUser => auth != null ? auth!.currentUser : _currentUser;
+
+  @override
+  SessionUser? get sessionUser {
+    final user = currentUser;
+    if (user == null) return null;
+    return SessionUser(
+      uid: user.uid,
+      displayName: user.displayName ?? '',
+      email: user.email ?? '',
+      photoUrl: user.photoURL,
+    );
+  }
 
   @override
   bool get hasPasswordProvider =>
@@ -182,7 +195,7 @@ class FakeAuthRepository implements AuthRepository {
     required String newPassword,
   }) async {
     if (changePasswordError != null) {
-      throw AppException(message: changePasswordError!);
+      throw AppException(changePasswordError!);
     }
     _throwIfNeeded();
     changePasswordCalled = true;

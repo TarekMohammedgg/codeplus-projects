@@ -9,12 +9,12 @@ class AdminDoctorDetailsState {
   const AdminDoctorDetailsState({
     required this.doctor,
     this.isTogglingActive = false,
-    this.errorMessage,
+    this.error,
   });
 
   final DoctorModel doctor;
   final bool isTogglingActive;
-  final String? errorMessage;
+  final AppErrorCode? error;
 }
 
 class AdminDoctorDetailsCubit extends Cubit<AdminDoctorDetailsState> {
@@ -29,7 +29,7 @@ class AdminDoctorDetailsCubit extends Cubit<AdminDoctorDetailsState> {
       onError: (Object error) => emit(
         AdminDoctorDetailsState(
           doctor: state.doctor,
-          errorMessage: AppException.from(error).message,
+          error: AppException.from(error).code,
         ),
       ),
     );
@@ -50,7 +50,7 @@ class AdminDoctorDetailsCubit extends Cubit<AdminDoctorDetailsState> {
       emit(
         AdminDoctorDetailsState(
           doctor: state.doctor,
-          errorMessage: AppException.from(error).message,
+          error: AppException.from(error).code,
         ),
       );
       return false;

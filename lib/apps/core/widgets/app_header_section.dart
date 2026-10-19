@@ -132,9 +132,8 @@ class AppHeaderSection extends StatelessWidget {
                         if (greeting != null && greeting!.isNotEmpty) ...[
                           Text(
                             greeting!,
-                            style: context.regular16White.copyWith(
-                              color: Colors.white.withValues(alpha: 0.9),
-                              fontSize: 15,
+                            style: context.regular15White.copyWith(
+                              color: AppColors.white.withValues(alpha: 0.9),
                             ),
                           ),
                           4.verticalSpace,
@@ -155,7 +154,7 @@ class AppHeaderSection extends StatelessWidget {
                   children: [
                     if (showLanguageToggle || onLanguageToggle != null)
                       Material(
-                        color: Colors.transparent,
+                        color: AppColors.transparent,
                         child: InkWell(
                           onTap:
                               onLanguageToggle ??
@@ -172,13 +171,17 @@ class AppHeaderSection extends StatelessWidget {
                               vertical: 6,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.2),
+                              color: AppColors.white.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(langIcon, color: Colors.white, size: 18),
+                                Icon(
+                                  langIcon,
+                                  color: AppColors.white,
+                                  size: 18,
+                                ),
                                 6.horizontalSpace,
                                 Text(
                                   targetLangLabel,
@@ -203,7 +206,7 @@ class AppHeaderSection extends StatelessWidget {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.7),
+                              color: AppColors.white.withValues(alpha: 0.7),
                               width: 2,
                             ),
                             boxShadow: const [

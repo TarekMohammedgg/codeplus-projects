@@ -28,7 +28,7 @@ class HomeCubit extends Cubit<HomeState> {
     } catch (error, stackTrace) {
       if (isClosed) return;
       addError(error, stackTrace);
-      emit(HomeFailure(errorMessage: error.toString()));
+      emit(const HomeFailure());
     }
   }
 }

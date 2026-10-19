@@ -1,12 +1,11 @@
 import 'dart:async';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:doctor_hunt/apps/features/common/auth/data/models/session_user.dart';
 import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/apps/features/common/auth/data/repositories/auth_repository.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/data/models/user_profile_model.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/data/repositories/profile_repository.dart';
-import 'package:doctor_hunt/generated/i18n/translations.g.dart';
 import 'profile_state.dart';
 
 class ProfileCubit extends Cubit<ProfileState> {
@@ -21,7 +20,7 @@ class ProfileCubit extends Cubit<ProfileState> {
   void init({String? uid}) {
     final targetUid = uid ?? currentUser?.uid;
     if (targetUid == null) {
-      emit(ProfileError(tr.userNotFoundError));
+      emit(ProfileError(AppErrorCode.userNotFound));
       return;
     }
 
@@ -33,16 +32,16 @@ class ProfileCubit extends Cubit<ProfileState> {
           (profile) => emit(
             ProfileLoaded(
               profile.avatarUrl == null
-                  ? profile.copyWith(avatarUrl: currentUser?.photoURL)
+                  ? profile.copyWith(avatarUrl: currentUser?.photoUrl)
                   : profile,
             ),
           ),
           onError: (Object error) =>
-              emit(ProfileError(AppException.from(error).message)),
+              emit(ProfileError(AppException.from(error).code)),
         );
   }
 
-  User? get currentUser => authRepository.currentUser;
+  SessionUser? get currentUser => authRepository.sessionUser;
 
   Future<void> setNotifications(bool enabled) async {
     final uid = currentUser?.uid;

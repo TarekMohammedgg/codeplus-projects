@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:doctor_hunt/apps/core/extensions/app_error_text.dart';
 import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
@@ -71,7 +72,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               Navigator.of(context).pop();
             }
           } else if (state is ChangePasswordFailure) {
-            context.showErrorSnackBar(state.message);
+            context.showErrorSnackBar(state.error.localized(context.tr));
           }
         },
         builder: (context, state) {

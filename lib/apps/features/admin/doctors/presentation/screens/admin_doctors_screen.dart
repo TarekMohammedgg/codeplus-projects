@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
+import 'package:doctor_hunt/apps/core/extensions/app_error_text.dart';
 import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
@@ -80,7 +80,7 @@ class AdminDoctorsScreenState extends State<AdminDoctorsScreen> {
       );
     } catch (e) {
       if (!mounted) return;
-      context.showErrorSnackBar(AppException.from(e).message);
+      context.showErrorSnackBar(context.errorText(e));
     }
   }
 

@@ -1,3 +1,4 @@
+import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 import 'package:doctor_hunt/apps/features/patient/profile/data/models/user_profile_model.dart';
 
 sealed class ProfileState {
@@ -19,7 +20,7 @@ class ProfileLoaded extends ProfileState {
 }
 
 class ProfileError extends ProfileState {
-  const ProfileError(this.message);
+  const ProfileError(this.error);
 
-  final String message;
+  final AppErrorCode error;
 }

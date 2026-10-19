@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:doctor_hunt/apps/core/models/review_model.dart';
+import 'package:doctor_hunt/apps/core/extensions/app_error_text.dart';
 import 'package:doctor_hunt/apps/core/extensions/context_extensions.dart';
 import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
@@ -56,8 +58,8 @@ class _RateDoctorScreenState extends State<RateDoctorScreen> {
             context.showSuccessSnackBar(context.tr.reviewAddedSuccess);
             Navigator.of(context).maybePop();
           } else if (state.status == RateDoctorStatus.failure &&
-              state.errorMessage != null) {
-            context.showErrorSnackBar(state.errorMessage!);
+              state.error != null) {
+            context.showErrorSnackBar(state.error!.localized(context.tr));
           }
         },
         builder: (context, state) {
@@ -240,7 +242,9 @@ class _RateDoctorScreenState extends State<RateDoctorScreen> {
                           maxLines: 4,
                           minLines: 3,
                           inputFormatters: [
-                            LengthLimitingTextInputFormatter(500),
+                            LengthLimitingTextInputFormatter(
+                              reviewCommentMaxLength,
+                            ),
                           ],
                           onChanged: cubit.setComment,
                         ),
@@ -248,7 +252,7 @@ class _RateDoctorScreenState extends State<RateDoctorScreen> {
                         Align(
                           alignment: AlignmentDirectional.centerEnd,
                           child: Text(
-                            '${state.comment.length}/500',
+                            '${state.comment.length}/$reviewCommentMaxLength',
                             style: context.regular12TextSecondary,
                           ),
                         ),

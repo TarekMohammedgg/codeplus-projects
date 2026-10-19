@@ -29,7 +29,7 @@ class SocialAuthButton extends StatelessWidget {
         // Solved
         side: const BorderSide(color: AppColors.outline),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        textStyle: context.medium16TextSecondary.copyWith(fontSize: 15),
+        textStyle: context.medium15TextSecondary,
       ),
       icon: isLoading
           ? const SizedBox.square(

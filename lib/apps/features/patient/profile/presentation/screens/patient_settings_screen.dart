@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
+import 'package:doctor_hunt/apps/core/extensions/app_error_text.dart';
 import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/router/routes.dart';
@@ -30,7 +30,7 @@ class _PatientSettingsScreenState extends State<PatientSettingsScreen> {
       await context.read<ProfileCubit>().setNotifications(value);
     } catch (e) {
       if (!mounted) return;
-      context.showErrorSnackBar(AppException.from(e).message);
+      context.showErrorSnackBar(context.errorText(e));
     }
   }
 
@@ -41,7 +41,7 @@ class _PatientSettingsScreenState extends State<PatientSettingsScreen> {
       await cubit.setLanguage(locale.languageCode);
     } catch (e) {
       if (!mounted) return;
-      context.showErrorSnackBar(AppException.from(e).message);
+      context.showErrorSnackBar(context.errorText(e));
     }
   }
 
@@ -80,15 +80,15 @@ class _PatientSettingsScreenState extends State<PatientSettingsScreen> {
 
     final displayName = profile?.name.isNotEmpty == true
         ? profile!.name
-        : (currentUser?.displayName?.isNotEmpty == true
-              ? currentUser!.displayName!
+        : (currentUser?.displayName.isNotEmpty == true
+              ? currentUser!.displayName
               : tr.patientRoleTitle);
 
     final displayEmail = profile?.email.isNotEmpty == true
         ? profile!.email
         : (currentUser?.email ?? '');
 
-    final avatarUrl = profile?.avatarUrl ?? currentUser?.photoURL;
+    final avatarUrl = profile?.avatarUrl ?? currentUser?.photoUrl;
     const chevron = Icon(
       Icons.chevron_right_rounded,
       color: AppColors.textSecondary,

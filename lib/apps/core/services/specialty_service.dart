@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:doctor_hunt/apps/core/services/firestore_collections.dart';
 import 'package:doctor_hunt/apps/core/models/specialty_model.dart';
 
 class SpecialtyService {
@@ -7,7 +8,7 @@ class SpecialtyService {
   final FirebaseFirestore firestore;
 
   CollectionReference<Map<String, dynamic>> get _specialties =>
-      firestore.collection('specialty');
+      firestore.collection(FirestoreCollections.specialty);
 
   Future<List<SpecialtyModel>> fetchActiveSpecialties() async {
     final snapshot = await _specialties

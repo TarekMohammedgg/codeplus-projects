@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:doctor_hunt/apps/core/services/firestore_collections.dart';
 
 class FavoritesService {
   FavoritesService({required this.firestore});
@@ -6,7 +7,10 @@ class FavoritesService {
   final FirebaseFirestore firestore;
 
   CollectionReference<Map<String, dynamic>> _favorites(String userId) =>
-      firestore.collection('users').doc(userId).collection('favorites');
+      firestore
+          .collection(FirestoreCollections.users)
+          .doc(userId)
+          .collection(FirestoreCollections.favorites);
 
   Stream<Set<String>> watchFavoriteIds(String userId) {
     return _favorites(

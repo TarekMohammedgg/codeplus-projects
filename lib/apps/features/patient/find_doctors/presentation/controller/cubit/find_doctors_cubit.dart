@@ -39,7 +39,7 @@ class FindDoctorsCubit extends Cubit<FindDoctorsState> {
     } catch (error, stackTrace) {
       if (isClosed) return;
       addError(error, stackTrace);
-      emit(FindDoctorsFailure(errorMessage: error.toString()));
+      emit(const FindDoctorsFailure());
     }
   }
 

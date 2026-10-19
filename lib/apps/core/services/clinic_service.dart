@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:latlong2/latlong.dart';
 
+import 'package:doctor_hunt/apps/core/services/firestore_collections.dart';
 import 'package:doctor_hunt/apps/core/models/clinic_model.dart';
 
 class ClinicService {
@@ -8,8 +9,9 @@ class ClinicService {
 
   final FirebaseFirestore firestore;
 
-  DocumentReference<Map<String, dynamic>> get _settings =>
-      firestore.collection('clinic').doc('settings');
+  DocumentReference<Map<String, dynamic>> get _settings => firestore
+      .collection(FirestoreCollections.clinic)
+      .doc(FirestoreCollections.clinicSettingsDoc);
 
   Stream<ClinicModel?> streamClinic() =>
       _settings.snapshots().map((snapshot) => _parse(snapshot.data()));

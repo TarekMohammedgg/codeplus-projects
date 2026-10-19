@@ -42,7 +42,7 @@ extension CustomSnackBarExtension on BuildContext {
       SnackBar(
         duration: duration,
         behavior: SnackBarBehavior.floating,
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.transparent,
         elevation: 0,
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         padding: EdgeInsets.zero,

@@ -36,7 +36,7 @@ class BookingSuccessDialog extends StatelessWidget {
             12.verticalSpace,
             Text(
               context.tr.thankYou,
-              style: context.medium36TextMain.copyWith(fontSize: 38),
+              style: context.medium36TextMain,
               textAlign: TextAlign.center,
             ),
             5.verticalSpace,

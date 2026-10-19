@@ -1,4 +1,4 @@
-import 'package:doctor_hunt/generated/i18n/translations.g.dart';
+import 'package:doctor_hunt/apps/core/errors/app_exception.dart';
 
 enum AuthAction {
   signIn,
@@ -8,8 +8,6 @@ enum AuthAction {
   adminSignIn,
   signOut,
 }
-
-enum AuthFailureCode { adminPermissionDenied }
 
 sealed class AuthState {
   const AuthState();
@@ -32,19 +30,7 @@ final class AuthSuccess extends AuthState {
 }
 
 final class AuthFailure extends AuthState {
-  const AuthFailure({this.code}) : _errorMessage = null;
+  const AuthFailure(this.error);
 
-  const AuthFailure.withMessage(String message)
-    : _errorMessage = message,
-      code = null;
-
-  final String? _errorMessage;
-  final AuthFailureCode? code;
-
-  String get errorMessage =>
-      _errorMessage ??
-      switch (code) {
-        AuthFailureCode.adminPermissionDenied => tr.adminPermissionDenied,
-        null => tr.unexpectedError,
-      };
+  final AppErrorCode error;
 }

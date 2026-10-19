@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:doctor_hunt/apps/core/extensions/app_error_text.dart';
 import 'package:doctor_hunt/apps/core/extensions/context_extensions.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/utils/formatters.dart';
@@ -34,11 +35,11 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
           ),
-          ProfileError(:final message) => Center(
+          ProfileError(:final error) => Center(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Text(
-                message,
+                error.localized(context.tr),
                 style: context.semiBold16TextSecondary,
                 textAlign: TextAlign.center,
               ),

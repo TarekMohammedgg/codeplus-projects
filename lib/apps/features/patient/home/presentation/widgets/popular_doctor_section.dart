@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:doctor_hunt/apps/core/utils/formatters.dart';
 import 'package:doctor_hunt/apps/core/widgets/favorite_heart_icon.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/models/doctor_model.dart';
@@ -157,7 +158,7 @@ class PopularDoctorCard extends StatelessWidget {
                     doctor.name,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: context.bold16TextMain.copyWith(fontSize: 15),
+                    style: context.bold15TextMain,
                   ),
                   4.verticalSpace,
                   Text(
@@ -180,7 +181,7 @@ class PopularDoctorCard extends StatelessWidget {
                       ),
                       4.horizontalSpace,
                       Text(
-                        doctor.rating.toStringAsFixed(1),
+                        formatRating(doctor.rating),
                         style: context.semiBold12TextMain,
                       ),
                       6.horizontalSpace,

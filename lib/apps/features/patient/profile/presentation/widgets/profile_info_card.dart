@@ -52,7 +52,7 @@ class ProfileInfoCard extends StatelessWidget {
                 4.verticalSpace,
                 Text(
                   value.isNotEmpty ? value : ' ',
-                  style: context.regular16TextSecondary.copyWith(fontSize: 15),
+                  style: context.regular15TextSecondary,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),

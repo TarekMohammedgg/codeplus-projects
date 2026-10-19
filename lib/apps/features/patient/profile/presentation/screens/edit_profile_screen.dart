@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:doctor_hunt/apps/core/extensions/app_error_text.dart';
 import 'package:doctor_hunt/apps/core/extensions/context_extensions.dart';
 import 'package:doctor_hunt/apps/core/extensions/custom_snack_bar.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
@@ -63,7 +64,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _phoneController = TextEditingController(text: profile?.phone ?? '');
     _selectedDob = profile?.dob;
     _selectedGender = profile?.gender;
-    _currentPhotoUrl = profile?.avatarUrl ?? currentUser?.photoURL;
+    _currentPhotoUrl = profile?.avatarUrl ?? currentUser?.photoUrl;
   }
 
   @override
@@ -135,8 +136,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           case EditProfileSuccess():
             context.showSuccessSnackBar(context.tr.profileUpdatedSuccess);
             Navigator.of(context).maybePop();
-          case EditProfileFailure(:final message):
-            context.showErrorSnackBar(message);
+          case EditProfileFailure(:final error):
+            context.showErrorSnackBar(error.localized(context.tr));
           default:
             break;
         }
@@ -199,7 +200,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             child: const Icon(
                               Icons.camera_alt_outlined,
                               size: 18,
-                              color: Colors.white,
+                              color: AppColors.white,
                             ),
                           ),
                         ),

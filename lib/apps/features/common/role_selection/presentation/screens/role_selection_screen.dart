@@ -49,10 +49,7 @@ class RoleSelectionScreenState extends State<RoleSelectionScreen> {
             Text(
               tr.roleSelectionSubtitle,
               textAlign: TextAlign.center,
-              style: context.regular14TextSecondary.copyWith(
-                fontSize: 13.5,
-                height: 1.4,
-              ),
+              style: context.regular14TextSecondary.copyWith(height: 1.4),
             ),
             const SizedBox(height: 32),
             buildRoleCard(
@@ -163,16 +160,12 @@ class RoleSelectionScreenState extends State<RoleSelectionScreen> {
                   children: [
                     Text(
                       title,
-                      style: context.bold16TextMain.copyWith(
-                        fontSize: 17,
-                        height: 1.2,
-                      ),
+                      style: context.bold18TextMain.copyWith(height: 1.2),
                     ),
                     const SizedBox(height: 6),
                     Text(
                       description,
-                      style: context.regular14TextSecondary.copyWith(
-                        fontSize: 13,
+                      style: context.regular13TextSecondary.copyWith(
                         height: 1.35,
                       ),
                     ),

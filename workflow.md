@@ -231,7 +231,7 @@ $$\text{Admin Settings} \longrightarrow \text{Admin Profile Edit [Photo, Name, E
                        [ GENERATED SLOTS ] (Open for Patient Booking)
                                │
                                ▼
-[ ADMIN APPOINTMENTS ] (All / Upcoming / Completed / Cancelled)
+[ ADMIN APPOINTMENTS ] (Upcoming / Completed / Cancelled)
        │
        ▼
 [ Appointment Details ] (Embedded Patient Info)
@@ -278,7 +278,7 @@ $$\text{Admin Settings} \longrightarrow \text{Admin Profile Edit [Photo, Name, E
 - [x] Activate / Deactivate Switch
 - [x] Working Days Setup
 - [x] Working Hours & Slots Configuration
-- [x] 4 Appointment Tabs (All / Upcoming / Completed / Cancelled)
+- [x] 3 Appointment Tabs (Upcoming / Completed / Cancelled)
 - [x] Embedded Patient Info in Appointments
 - [x] Mark Appointment Completed
 - [x] Cancel Appointment

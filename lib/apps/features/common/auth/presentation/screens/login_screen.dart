@@ -1,3 +1,4 @@
+import 'package:doctor_hunt/apps/core/extensions/app_error_text.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_back_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_primary_button.dart';
 import 'package:doctor_hunt/apps/core/widgets/app_text_button.dart';
@@ -86,8 +87,8 @@ class LoginScreenState extends State<LoginScreen> {
     return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
         switch (state) {
-          case AuthFailure(:final errorMessage):
-            context.showErrorSnackBar(errorMessage);
+          case AuthFailure(:final error):
+            context.showErrorSnackBar(error.localized(context.tr));
           case AuthSuccess(action: AuthAction.adminSignIn):
             const AdminDoctorsRoute().go(context);
           case AuthSuccess(action: AuthAction.signIn) ||
@@ -166,7 +167,6 @@ class LoginScreenState extends State<LoginScreen> {
                     isLoading: isEmailLoading,
                     onPressed: isAnyLoading ? null : signIn,
                     height: 54,
-                    fontSize: 16,
                   ),
                   if (!isAdmin) ...[
                     28.verticalSpace,
@@ -218,7 +218,7 @@ class _ForgotPasswordButton extends StatelessWidget {
         padding: const EdgeInsets.only(top: 8, bottom: 8),
         minimumSize: Size.zero,
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        textStyle: context.medium14Primary.copyWith(fontSize: 13.5),
+        textStyle: context.medium14Primary,
         label: tr.forgotPassword,
       ),
     );

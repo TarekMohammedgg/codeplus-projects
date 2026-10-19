@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
+import 'package:doctor_hunt/apps/core/utils/formatters.dart';
 import 'package:doctor_hunt/apps/core/extensions/context_extensions.dart';
 import 'package:doctor_hunt/apps/core/extensions/num_extensions.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
@@ -10,7 +10,7 @@ import 'package:doctor_hunt/generated/style_atoms.dart';
 String formatBookingDayLabel(BuildContext context, DateTime date) {
   final now = DateTime.now();
   final locale = context.localeCode;
-  final datePart = DateFormat('d MMM', locale).format(date);
+  final datePart = formatDayMonth(date, locale);
 
   if (DateUtils.isSameDay(date, now)) {
     return '${context.tr.today}, $datePart';
@@ -18,7 +18,7 @@ String formatBookingDayLabel(BuildContext context, DateTime date) {
   if (DateUtils.isSameDay(date, now.add(const Duration(days: 1)))) {
     return '${context.tr.tomorrow}, $datePart';
   }
-  return DateFormat('E, d MMM', locale).format(date);
+  return formatWeekdayDayMonth(date, locale);
 }
 
 class DateSelectorList extends StatelessWidget {
