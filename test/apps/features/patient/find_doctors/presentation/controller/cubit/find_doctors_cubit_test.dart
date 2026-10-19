@@ -99,13 +99,10 @@ void main() {
   });
 
   test('favorites filter keeps only the patient favorites', () async {
-    // arrange
     await cubit.load();
 
-    // act
     cubit.toggleFavoritesOnly();
 
-    // assert
     expect(visibleIds({'dentist'}), ['dentist']);
   });
 

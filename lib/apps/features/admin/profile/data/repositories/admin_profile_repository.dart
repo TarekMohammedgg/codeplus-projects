@@ -66,7 +66,6 @@ class AdminProfileRepositoryImpl implements AdminProfileRepository {
     required String addressEn,
     required LatLng location,
   }) async {
-    // Clinic first: it is the shared location every doctor shows.
     await clinicService.updateClinic(
       addressAr: addressAr,
       addressEn: addressEn,

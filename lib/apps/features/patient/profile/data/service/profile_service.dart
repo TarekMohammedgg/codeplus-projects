@@ -19,7 +19,6 @@ class ProfileService {
   }
 
   Future<Map<String, String>> fetchPhotoUrls(Set<String> uids) async {
-    // Firestore allows at most 30 values in a whereIn filter.
     const batchSize = 30;
     final ids = uids.toList();
     final snapshots = await Future.wait([

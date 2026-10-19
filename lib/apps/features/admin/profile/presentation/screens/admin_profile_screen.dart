@@ -122,7 +122,6 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
         final error = state.error;
         if (state.status == AdminProfileStatus.success) {
           if (error != null) {
-            // Profile and clinic saved; only the email change failed.
             context.showErrorSnackBar(error.localized(context.tr));
             return;
           }

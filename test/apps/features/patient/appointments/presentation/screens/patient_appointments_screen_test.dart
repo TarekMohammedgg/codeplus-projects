@@ -45,7 +45,6 @@ void main() {
 
   group('PatientAppointmentsCubit', () {
     test('re-emits when only isReviewed changes after rating', () async {
-      // arrange
       final completed = _buildTestAppt(
         id: 'appt_rated',
         status: AppointmentStatus.completed,
@@ -56,7 +55,6 @@ void main() {
       await cubit.init();
       await pumpEventQueue();
 
-      // act
       repo.emitAppointments([
         _buildTestAppt(
           id: 'appt_rated',
@@ -67,7 +65,6 @@ void main() {
       ]);
       await pumpEventQueue();
 
-      // assert
       final loaded = cubit.state as PatientAppointmentsLoaded;
       expect(loaded.grouped.completed.single.isReviewed, isTrue);
       await cubit.close();

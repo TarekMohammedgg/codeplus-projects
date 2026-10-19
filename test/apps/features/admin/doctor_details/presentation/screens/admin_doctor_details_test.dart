@@ -155,7 +155,6 @@ void main() {
     testWidgets('failed status change shows no success message', (
       WidgetTester tester,
     ) async {
-      // arrange
       const doctor = DoctorModel(id: 'doc_fail', nameEn: 'Dr. Fail');
       final cubit = AdminDoctorDetailsCubit(
         initialDoctor: doctor,
@@ -177,12 +176,10 @@ void main() {
       await tester.tap(find.text(tr.deactivateDoctorTitle));
       await tester.pumpAndSettle();
 
-      // act
       await tester.tap(find.widgetWithText(AppTextButton, tr.deactivate));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      // assert
       expect(find.text(tr.doctorDeactivatedSuccess), findsNothing);
 
       await cubit.close();

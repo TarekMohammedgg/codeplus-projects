@@ -51,20 +51,17 @@ void main() {
   });
 
   test('clinic changes made by the admin reach the open screen', () async {
-    // arrange
     final updates = StreamController<ClinicModel?>();
     final cubit = DoctorDetailsCubit(
       repository: FakeDoctorDetailsRepository(clinicUpdates: updates.stream),
     );
     await cubit.load('doc-1');
 
-    // act
     updates.add(const ClinicModel(addressAr: 'قديم', addressEn: 'Old street'));
     await Future<void>.delayed(Duration.zero);
     updates.add(const ClinicModel(addressAr: 'جديد', addressEn: 'New street'));
     await Future<void>.delayed(Duration.zero);
 
-    // assert
     final state = cubit.state as DoctorDetailsSuccess;
     expect(state.clinic?.addressEn, 'New street');
     await cubit.close();

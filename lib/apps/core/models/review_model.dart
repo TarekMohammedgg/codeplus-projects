@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-/// Max review comment length (also enforced in firestore.rules).
 const reviewCommentMaxLength = 500;
 
 class ReviewModel {

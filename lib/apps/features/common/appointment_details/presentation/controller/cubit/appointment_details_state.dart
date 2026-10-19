@@ -20,7 +20,6 @@ final class AppointmentDetailsState {
     this.error,
   });
 
-  /// Live copy of the appointment; starts from the one the list passed in.
   final AppointmentModel appointment;
   final String? specialtyName;
   final ClinicModel? clinic;

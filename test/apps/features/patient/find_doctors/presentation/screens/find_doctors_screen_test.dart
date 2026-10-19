@@ -85,7 +85,6 @@ void main() {
     expect(find.text(tr.findDoctors), findsOneWidget);
     expect(find.text('Dr. Shruti Kedia'), findsOneWidget);
     expect(find.text('Dr. Fillerup Grab'), findsOneWidget);
-    // Pushed from Home (search / specialty), so it has a back button.
     expect(find.byIcon(Icons.arrow_back_ios_new_rounded), findsOneWidget);
   });
 
@@ -124,14 +123,11 @@ void main() {
   testWidgets('heart filter shows only the favorite doctors', (
     WidgetTester tester,
   ) async {
-    // arrange
     await pumpScreen(tester, favorites: {'doc_1'});
 
-    // act
     await tester.tap(find.byKey(const Key('favorites_filter_button')));
     await tester.pump();
 
-    // assert
     expect(find.text('Dr. Shruti Kedia'), findsOneWidget);
     expect(find.text('Dr. Fillerup Grab'), findsNothing);
   });
@@ -139,7 +135,6 @@ void main() {
   testWidgets('Favorites tab lists only favorites, no search or back', (
     WidgetTester tester,
   ) async {
-    // arrange: patient already signed in with one favorite
     addTearDown(favoritesCubit.close);
     favoritesRepository = FakeFavoritesRepository(
       initialUserId: 'patient-1',
@@ -147,11 +142,9 @@ void main() {
     );
     favoritesCubit = FavoritesCubit(repository: favoritesRepository);
 
-    // act
     await pumpScreen(tester, favoritesOnly: true);
     await tester.pump();
 
-    // assert
     expect(find.text(AppLocale.en.buildSync().tabFavorites), findsOneWidget);
     expect(find.text('Dr. Shruti Kedia'), findsOneWidget);
     expect(find.text('Dr. Fillerup Grab'), findsNothing);
@@ -162,14 +155,11 @@ void main() {
   testWidgets(
     'heart filter with no favorites shows the favorites empty state',
     (WidgetTester tester) async {
-      // arrange
       await pumpScreen(tester, favorites: {});
 
-      // act
       await tester.tap(find.byKey(const Key('favorites_filter_button')));
       await tester.pump();
 
-      // assert
       expect(
         find.text(AppLocale.en.buildSync().noFavoritesFound),
         findsOneWidget,

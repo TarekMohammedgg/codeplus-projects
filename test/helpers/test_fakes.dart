@@ -432,7 +432,6 @@ class FakeBookingRepository implements BookingRepository {
   final bookedDrafts = <BookingDraft>[];
   final clinic = StreamController<ClinicModel?>.broadcast();
 
-  /// Push a new booked set to simulate a live change (cancel / new booking).
   final bookedChanges = StreamController<Set<DateTime>>.broadcast();
 
   @override

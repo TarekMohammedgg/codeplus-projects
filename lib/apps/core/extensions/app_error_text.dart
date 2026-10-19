@@ -32,7 +32,6 @@ extension AppErrorCodeText on AppErrorCode {
 }
 
 extension AppErrorContext on BuildContext {
-  /// Localized text for any error thrown by the data layer.
   String errorText(Object error) =>
       AppException.from(error).code.localized(this.tr);
 }

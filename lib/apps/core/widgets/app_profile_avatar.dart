@@ -4,8 +4,6 @@ import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_avatar_placeholder.dart';
 import 'package:doctor_hunt/apps/core/widgets/doctor_image.dart';
 
-/// Circular user photo with a person-icon fallback. [elevated] adds the white
-/// ring and shadow used on the profile header.
 class AppProfileAvatar extends StatelessWidget {
   const AppProfileAvatar({
     super.key,

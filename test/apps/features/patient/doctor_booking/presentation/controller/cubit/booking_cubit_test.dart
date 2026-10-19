@@ -83,7 +83,6 @@ void main() {
     test(
       'a fully booked day has no slots while the next day keeps its slots',
       () async {
-        // arrange
         final repo = FakeBookingRepository(
           booked: [
             DateTime(2026, 3, 2, 9, 0),
@@ -93,11 +92,9 @@ void main() {
         );
         final cubit = BookingCubit(repository: repo);
 
-        // act
         await cubit.init(testDoctorWithAvail, now: DateTime(2026, 3, 2, 8, 0));
         await Future<void>.delayed(Duration.zero);
 
-        // assert
         final loaded = cubit.state as BookingLoaded;
         expect(loaded.slots, isEmpty);
         expect(loaded.slotsByDate[DateTime(2026, 3, 3)], hasLength(3));
@@ -108,7 +105,6 @@ void main() {
     test(
       'a slot freed by a cancel reappears and a taken slot disappears live',
       () async {
-        // arrange
         final taken = DateTime(2026, 3, 2, 9, 0);
         final repo = FakeBookingRepository(booked: [taken]);
         final cubit = BookingCubit(repository: repo);
@@ -116,19 +112,15 @@ void main() {
         await Future<void>.delayed(Duration.zero);
         expect((cubit.state as BookingLoaded).slots, isNot(contains(taken)));
 
-        // act: admin cancels -> lock deleted
         repo.bookedChanges.add({});
         await Future<void>.delayed(Duration.zero);
 
-        // assert
         expect((cubit.state as BookingLoaded).slots, contains(taken));
 
-        // act: patient selects, then someone else books that slot
         cubit.selectSlot(taken);
         repo.bookedChanges.add({taken});
         await Future<void>.delayed(Duration.zero);
 
-        // assert
         final loaded = cubit.state as BookingLoaded;
         expect(loaded.slots, isNot(contains(taken)));
         expect(loaded.selectedSlot, isNull);
@@ -139,15 +131,12 @@ void main() {
     test(
       'emits BookingLoadFailure when booked slots cannot be loaded',
       () async {
-        // arrange
         final repo = FakeBookingRepository(fetchError: StateError('offline'));
         final cubit = BookingCubit(repository: repo);
 
-        // act
         await cubit.init(testDoctorWithAvail, now: DateTime(2026, 3, 2, 8, 0));
         await Future<void>.delayed(Duration.zero);
 
-        // assert
         expect(cubit.state, isA<BookingLoadFailure>());
         await cubit.close();
       },
@@ -189,16 +178,13 @@ void main() {
     });
 
     test('deactivated doctor gets doctorUnavailable', () async {
-      // arrange
       final repo = FakeBookingRepository(
         bookError: const DoctorUnavailableException(),
       );
       final cubit = BookingCubit(repository: repo);
 
-      // act
       await cubit.confirm(draft);
 
-      // assert
       final state = cubit.state as BookingConfirmFailure;
       expect(state.code, BookingFailureCode.doctorUnavailable);
       await cubit.close();

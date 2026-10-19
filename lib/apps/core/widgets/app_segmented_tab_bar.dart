@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:doctor_hunt/apps/core/theme/app_theme.dart';
 import 'package:doctor_hunt/generated/style_atoms.dart';
 
-/// Pill-style [TabBar] used by the appointment screens. Uses the nearest
-/// [DefaultTabController] unless [controller] is given.
 class AppSegmentedTabBar extends StatelessWidget {
   const AppSegmentedTabBar({
     super.key,

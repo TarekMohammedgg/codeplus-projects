@@ -1,8 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-/// Semantic failure reasons. Data and Cubits pass these codes along; only the
-/// UI turns them into localized text (see `AppErrorCodeText`).
 enum AppErrorCode {
   userNotFound,
   wrongPassword,

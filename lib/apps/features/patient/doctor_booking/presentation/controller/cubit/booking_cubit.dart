@@ -43,8 +43,6 @@ class BookingCubit extends Cubit<BookingState> {
         .listen(_onBookedChanged, onError: _emitLoadFailure);
   }
 
-  /// Rebuilds every day's slots from the live booked set and keeps the
-  /// patient's selection while it is still free.
   void _onBookedChanged(Set<DateTime> booked) {
     final current = state;
     if (current is! BookingLoaded) return;
