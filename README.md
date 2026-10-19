@@ -51,8 +51,8 @@
 ---
 
 > [!IMPORTANT]
-> **`main` contains the full, final source code of Doctor Hunt** (merged from
-> [`doctor-hunt-bloc`](https://github.com/TarekMohammedgg/codeplus-projects/tree/doctor-hunt-bloc)). Clone it and run, no branch switching needed.
+> **`main` contains the full, final source code of Doctor Hunt** (built on `doctor-hunt-bloc`, now archived as
+> [`archive/doctor-hunt-bloc`](https://github.com/TarekMohammedgg/codeplus-projects/tree/archive/doctor-hunt-bloc)). Clone it and run, no branch switching needed.
 
 ## 📖 About
 
@@ -356,14 +356,17 @@ dart run lesson-1.dart
 
 ## 🌿 Repository Branches
 
-| Branch | Status | What's inside |
+| Branch / tag | Status | What's inside |
 | :--- | :---: | :--- |
 | **`main`** | ✅ **Final** | The complete Doctor Hunt app (this README). **Review this one.** |
-| **[`doctor-hunt-bloc`](https://github.com/TarekMohammedgg/codeplus-projects/tree/doctor-hunt-bloc)** | 🛠️ Development | Where Doctor Hunt was built; merged into `main`. |
-| [`doctor-hunt`](https://github.com/TarekMohammedgg/codeplus-projects/tree/doctor-hunt) | 🗄️ Earlier | First version (UI-first, services called from widgets). Kept for history. |
-| [`doctor-hunt-auth-clean-arch`](https://github.com/TarekMohammedgg/codeplus-projects/tree/doctor-hunt-auth-clean-arch) | 🧪 Experiment | Auth module rebuilt with Clean Architecture next to the MVVM version. |
-| [`doctor-hunt-auth-test`](https://github.com/TarekMohammedgg/codeplus-projects/tree/doctor-hunt-auth-test) | 🧪 Experiment | Unit, repository, cubit and widget tests for the auth feature. |
+| [`archive/doctor-hunt-bloc`](https://github.com/TarekMohammedgg/codeplus-projects/tree/archive/doctor-hunt-bloc) | 🗄️ Tag | Where Doctor Hunt was built; merged into `main`. |
+| [`archive/doctor-hunt`](https://github.com/TarekMohammedgg/codeplus-projects/tree/archive/doctor-hunt) | 🗄️ Tag | First version (UI-first, services called from widgets). |
+| [`archive/doctor-hunt-auth-clean-arch`](https://github.com/TarekMohammedgg/codeplus-projects/tree/archive/doctor-hunt-auth-clean-arch) | 🗄️ Tag | Auth module rebuilt with Clean Architecture next to the MVVM version. |
+| [`archive/doctor-hunt-auth-test`](https://github.com/TarekMohammedgg/codeplus-projects/tree/archive/doctor-hunt-auth-test) | 🗄️ Tag | Unit, repository, cubit and widget tests for the auth feature. |
 | [`dart-lessons`](https://github.com/TarekMohammedgg/codeplus-projects/tree/dart-lessons) | 📚 Done | Dart fundamentals, OOP, collections and async (Lessons 01–04). |
+
+Only two branches stay open: `main` and `dart-lessons`. Earlier versions of
+Doctor Hunt are kept as read-only `archive/*` tags, so their history is not lost.
 
 
 ---
